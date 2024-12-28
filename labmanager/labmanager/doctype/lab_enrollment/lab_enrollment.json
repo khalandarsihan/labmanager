@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{lab_user}-{lab_course}",
+ "creation": "2024-12-22 13:38:10.992689",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "lab_user",
+  "enrollment_date",
+  "column_break_szot",
+  "lab_course",
+  "unlocked",
+  "section_break_uere",
+  "lab_lesson_progress"
+ ],
+ "fields": [
+  {
+   "fieldname": "lab_user",
+   "fieldtype": "Link",
+   "label": "Lab User",
+   "options": "Lab User"
+  },
+  {
+   "default": "0",
+   "fieldname": "unlocked",
+   "fieldtype": "Check",
+   "label": "Unlocked"
+  },
+  {
+   "fieldname": "column_break_szot",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lab_course",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lab course",
+   "options": "Lab Course",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_uere",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lab_lesson_progress",
+   "fieldtype": "Table",
+   "label": "Lesson Progress",
+   "options": "Lab Lesson Progress"
+  },
+  {
+   "fieldname": "enrollment_date",
+   "fieldtype": "Date",
+   "label": "Enrollment Date"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-22 15:07:07.342837",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Enrollment",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

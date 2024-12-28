@@ -1,0 +1,73 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{lesson}-{quiz_title}",
+ "creation": "2024-12-22 18:48:19.355546",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "quiz_title",
+  "time_limit",
+  "passing_score_",
+  "lesson",
+  "column_break_iuoj",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "quiz_title",
+   "fieldtype": "Data",
+   "label": "Quiz Title"
+  },
+  {
+   "fieldname": "time_limit",
+   "fieldtype": "Int",
+   "label": "Time Limit"
+  },
+  {
+   "fieldname": "passing_score_",
+   "fieldtype": "Float",
+   "label": "Passing Score (%)"
+  },
+  {
+   "fieldname": "lesson",
+   "fieldtype": "Link",
+   "label": "Lesson",
+   "options": "Lab Lesson"
+  },
+  {
+   "fieldname": "column_break_iuoj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-22 18:51:02.244822",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Quiz",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

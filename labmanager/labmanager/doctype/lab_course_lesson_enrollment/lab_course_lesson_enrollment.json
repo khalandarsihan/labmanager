@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{lab_course}-{lab_lesson}-{lab_enrollment}",
+ "creation": "2024-12-22 14:01:57.934375",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "lab_enrollment",
+  "lab_lesson_progress_status",
+  "lab_lesson_progress",
+  "column_break_zsgs",
+  "lab_course",
+  "lab_lesson"
+ ],
+ "fields": [
+  {
+   "fieldname": "lab_course",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lab Course",
+   "options": "Lab Course",
+   "reqd": 1
+  },
+  {
+   "fieldname": "lab_enrollment",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lab Enrollment",
+   "options": "Lab Enrollment",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_zsgs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lab_lesson",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lab Lesson",
+   "options": "Lab Lesson",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "lab_lesson_progress.status",
+   "fieldname": "lab_lesson_progress_status",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Lab Lesson Progress Status"
+  },
+  {
+   "fieldname": "lab_lesson_progress",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Lab Lesson Progress",
+   "options": "Lab Lesson Progress"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-22 15:37:00.676951",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Course Lesson Enrollment",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

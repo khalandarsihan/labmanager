@@ -1,0 +1,284 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:LAB-SSN-{######}",
+ "creation": "2024-12-21 22:38:10.229721",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "basic_info_section",
+  "session_id",
+  "user",
+  "user_ip",
+  "start_time",
+  "duration",
+  "end_reason",
+  "column_break_lrzi",
+  "lab_template",
+  "status",
+  "user_agent",
+  "end_time",
+  "actual_end_time",
+  "section_break_yrfc",
+  "lab_course",
+  "dockerfile",
+  "column_break_nteu",
+  "lab_lesson",
+  "container_section",
+  "container_id",
+  "container_name",
+  "container_port",
+  "column_break_yrkx",
+  "image_id",
+  "image_name",
+  "access_section",
+  "username",
+  "password",
+  "column_break_nsgg",
+  "guacamole_connection_id",
+  "guacamole_connection_name",
+  "guacamole_url",
+  "timing_section",
+  "last_activity",
+  "column_break_aphm",
+  "connection_attempts",
+  "section_break_kqzn",
+  "session_logs"
+ ],
+ "fields": [
+  {
+   "fieldname": "session_id",
+   "fieldtype": "Data",
+   "label": "Session ID",
+   "unique": 1
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_lrzi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lab_template",
+   "fieldtype": "Link",
+   "label": "Lab Template",
+   "options": "Lab Template"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nActive\nExpired\nCompleted\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "container_section",
+   "fieldtype": "Section Break",
+   "label": "Container Details"
+  },
+  {
+   "fieldname": "access_section",
+   "fieldtype": "Section Break",
+   "label": "Guacamole Info"
+  },
+  {
+   "fieldname": "username",
+   "fieldtype": "Data",
+   "label": "Username",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_nsgg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "guacamole_connection_id",
+   "fieldtype": "Data",
+   "label": "Guacamole Connection ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "timing_section",
+   "fieldtype": "Section Break",
+   "label": "Monitoring"
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Datetime",
+   "label": "Start Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Datetime",
+   "label": "End Time",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_aphm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Int",
+   "label": "Duration",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_yrfc",
+   "fieldtype": "Section Break",
+   "label": "Course Details"
+  },
+  {
+   "fieldname": "lab_course",
+   "fieldtype": "Link",
+   "label": "Lab Course",
+   "options": "Lab Course",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_nteu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lab_lesson",
+   "fieldtype": "Link",
+   "label": "Lab Lesson",
+   "options": "Lab Lesson",
+   "read_only": 1
+  },
+  {
+   "fieldname": "container_id",
+   "fieldtype": "Data",
+   "label": "Container ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_yrkx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "password",
+   "fieldtype": "Data",
+   "label": "Password",
+   "read_only": 1
+  },
+  {
+   "fieldname": "basic_info_section",
+   "fieldtype": "Section Break",
+   "label": "Basic Info"
+  },
+  {
+   "fieldname": "user_ip",
+   "fieldtype": "Data",
+   "label": "User IP",
+   "read_only": 1
+  },
+  {
+   "fieldname": "end_reason",
+   "fieldtype": "Data",
+   "label": "End Reason",
+   "read_only": 1
+  },
+  {
+   "fieldname": "user_agent",
+   "fieldtype": "Data",
+   "label": "User Agent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "actual_end_time",
+   "fieldtype": "Datetime",
+   "label": "Actual End Time"
+  },
+  {
+   "fieldname": "container_name",
+   "fieldtype": "Data",
+   "label": "Container Name"
+  },
+  {
+   "fieldname": "container_port",
+   "fieldtype": "Int",
+   "label": "Container Port"
+  },
+  {
+   "fieldname": "image_id",
+   "fieldtype": "Data",
+   "label": "Image ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "image_name",
+   "fieldtype": "Data",
+   "label": "Image Name"
+  },
+  {
+   "fieldname": "guacamole_connection_name",
+   "fieldtype": "Data",
+   "label": "Guacamole Connection Name"
+  },
+  {
+   "fieldname": "guacamole_url",
+   "fieldtype": "Data",
+   "label": "Guacamole URL",
+   "read_only": 1
+  },
+  {
+   "fieldname": "last_activity",
+   "fieldtype": "Datetime",
+   "label": "Last Activity"
+  },
+  {
+   "fieldname": "connection_attempts",
+   "fieldtype": "Datetime",
+   "label": "Connection Attempts"
+  },
+  {
+   "fieldname": "session_logs",
+   "fieldtype": "Table",
+   "label": "Session Logs",
+   "options": "Lab Session Logs"
+  },
+  {
+   "fieldname": "dockerfile",
+   "fieldtype": "Link",
+   "label": "Dockerfile",
+   "options": "Lab Dockerfile",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_kqzn",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-28 16:28:11.772629",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Session",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

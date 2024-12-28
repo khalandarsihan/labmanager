@@ -1,0 +1,68 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-12-22 14:27:11.054219",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "lab_lesson",
+  "status",
+  "column_break_cqfa",
+  "unlocked",
+  "quiz_completed",
+  "exam_completed"
+ ],
+ "fields": [
+  {
+   "fieldname": "lab_lesson",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Lesson",
+   "options": "Lab Lesson"
+  },
+  {
+   "fieldname": "column_break_cqfa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "unlocked",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Unlocked"
+  },
+  {
+   "default": "0",
+   "fieldname": "quiz_completed",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Quiz Completed"
+  },
+  {
+   "default": "0",
+   "fieldname": "exam_completed",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Exam Completed"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Not Started\nIn Progress\nLab Completed\nQuiz Completed\nExam Completed\nPartially Completed\nCompleted\nFailed\nRetake Required\nSkipped"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-12-22 15:14:48.967370",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Lesson Progress",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
