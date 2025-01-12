@@ -27,6 +27,7 @@ app_license = "mit"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/labmanager/css/labmanager.css"
 # app_include_js = "/assets/labmanager/js/labmanager.js"
+app_include_js = ["/assets/labmanager/js/lab_dockerfile.js"]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/labmanager/css/labmanager.css"
@@ -257,4 +258,14 @@ modules = {
     "LabManager": {
         "lab_core": ["session_manager", "container_manager", "guacamole_manager"]
     }
+}
+
+allow_cors = "*"
+
+whitelisted_methods = {
+    "frappe.auth.get_csrf_token": True,
+    "labmanager.labmanager.lab_core.lab_controller.start_lab_session": True,
+    "labmanager.labmanager.lab_core.lab_controller.end_lab_session": True,
+    "labmanager.labmanager.lab_core.lab_controller.extend_lab_session": True,
+    "labmanager.labmanager.lab_core.lab_controller.get_active_session": True
 }

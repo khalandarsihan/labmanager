@@ -72,9 +72,10 @@
   {
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
-   "options": "Draft\nActive\nExpired\nCompleted\nFailed",
-   "read_only": 1
+   "options": "Draft\nActive\nExpired\nCompleted\nFailed"
   },
   {
    "fieldname": "container_section",
@@ -258,7 +259,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-12-28 16:28:11.772629",
+ "modified": "2025-01-05 16:51:01.176087",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Lab Session",

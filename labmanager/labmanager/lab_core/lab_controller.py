@@ -1,6 +1,8 @@
 import frappe
 import requests
 from frappe import _
+import traceback
+from frappe.utils import cstr
 
 @frappe.whitelist()
 def get_active_session(dockerfile_id):
@@ -39,16 +41,48 @@ def get_active_session(dockerfile_id):
             "error": str(e)
         }
 
-@frappe.whitelist()
-def start_lab_session(dockerfile_id, lab_course, lab_lesson, dockerfile_content):
+@frappe.whitelist(allow_guest=True)
+def start_lab_session(dockerfile_id, lab_course, lab_lesson, username, email):
     try:
+        
+        # Get or create the student user in Frappe
+        user = get_or_create_student_user(username, email)
+        
+        # Set the user context
+        frappe.set_user(user.name)
+        
+        
+        # Validate input parameters
+        if not dockerfile_id or not lab_course or not lab_lesson:
+            return {
+                "success": False,
+                "error": "Missing required parameters"
+            }
+            
+            
+         # Get the dockerfile content from Lab Dockerfile document
+        try:
+           dockerfile = frappe.get_doc("Lab Dockerfile", dockerfile_id)
+           dockerfile_content = dockerfile.dockerfile_content  # or whatever the field name is
+           
+           if not dockerfile_content:
+               return {
+                   "success": False,
+                   "error": "Dockerfile content not found"
+               }
+        except Exception as e:
+           return {
+               "success": False,
+               "error": f"Failed to get Dockerfile: {str(e)}"
+           }
+
+
         # Generate consistent names
         session_id = frappe.generate_hash(length=8)
         container_name = f"lab-container-{session_id}"
         image_name = f"lab-image-{session_id}"
 
-
-        # Flask API endpoint
+        # Get Flask API URL from config
         flask_url = frappe.conf.get("flask_api_url", "http://localhost:5000")
         
         # Check for existing active session
@@ -69,14 +103,31 @@ def start_lab_session(dockerfile_id, lab_course, lab_lesson, dockerfile_content)
             "container_name": container_name,
             "image_name": image_name
         }
+        
+        # Validate payload before sending
+        if not all(payload.values()):
+            missing_fields = [k for k, v in payload.items() if not v]
+            return {
+                "success": False,
+                "error": f"Missing required fields: {', '.join(missing_fields)}"
+            }
 
-        # Call Flask API
-        response = requests.post(
-            f"{flask_url}/api/launch-lab",
-            json=payload
-        )
-        response.raise_for_status()
-        data = response.json()
+        print("Debug: Sending payload to Flask:", payload)
+        
+        # Call Flask API with proper error handling
+        try:
+            response = requests.post(
+                f"{flask_url}/api/launch-lab",
+                json=payload,
+                timeout=300  # 5-minute timeout for long operations
+            )
+            response.raise_for_status()
+            data = response.json()
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"Failed to communicate with lab service: {str(e)}")
+
+        if not data.get("success"):
+            raise Exception(f"Lab service error: {data.get('error')}")
 
         # Create lab session record in Frappe
         lab_session = frappe.get_doc({
@@ -86,9 +137,8 @@ def start_lab_session(dockerfile_id, lab_course, lab_lesson, dockerfile_content)
             "lab_course": lab_course,
             "lab_lesson": lab_lesson,
             "container_id": data.get("container_id"),
-            "container_name": data.get("container_name"),
-            "container_port": data.get("port"),
-            "image_name": data.get("image_name"),
+            "container_name": container_name,
+            "image_name": image_name,
             "image_id": data.get("image_id"),
             "guacamole_connection_id": data.get("guacamole_connection_id"),
             "guacamole_url": data.get("guacamole_url"),
@@ -114,6 +164,32 @@ def start_lab_session(dockerfile_id, lab_course, lab_lesson, dockerfile_content)
             "success": False,
             "error": str(e)
         }
+        
+        
+def get_or_create_student_user(username, email):
+    """Get or create a student user in Frappe"""
+    try:
+        # Try to get existing user
+        user = frappe.get_doc("User", email)
+        return user
+    except frappe.DoesNotExistError:
+        # Create new user if doesn't exist
+        user = frappe.get_doc({
+            "doctype": "User",
+            "email": email,
+            "first_name": username,
+            "username": username,
+            "send_welcome_email": 0,
+            "role_profile_name": "Student",  # Make sure you have this role profile
+            "user_type": "System User",
+            "module_profile": "LabManager"  # Make sure you have this module profile
+        })
+        user.insert(ignore_permissions=True)
+        
+        # Add student role
+        user.add_roles("Student")
+        
+        return user
 
 @frappe.whitelist()
 def extend_lab_session(session_name, duration):
