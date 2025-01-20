@@ -1,0 +1,16 @@
+{
+  "name": "labmanager",
+  "version": "1.0.0",
+  "description": "Manage labs",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tailwindcss -i ./labmanager/templates/base.css -o ./labmanager/public/css/style.css",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}

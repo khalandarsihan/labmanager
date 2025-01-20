@@ -1,0 +1,117 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:lesson_name",
+ "creation": "2024-12-22 13:30:45.619099",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "lesson_name",
+  "course",
+  "moodle_lesson_id",
+  "column_break_rjto",
+  "lesson_number",
+  "previous_lesson",
+  "is_unlocked",
+  "section_break_amrc",
+  "lesson_dockerfile",
+  "exam_dockerfile",
+  "column_break_cega",
+  "quiz_dockerfile"
+ ],
+ "fields": [
+  {
+   "fieldname": "lesson_name",
+   "fieldtype": "Data",
+   "label": "Lesson Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "moodle_lesson_id",
+   "fieldtype": "Data",
+   "label": "Moodle Lesson ID"
+  },
+  {
+   "fieldname": "column_break_rjto",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lesson_number",
+   "fieldtype": "Int",
+   "label": "Lesson Number"
+  },
+  {
+   "fieldname": "previous_lesson",
+   "fieldtype": "Link",
+   "label": "Previous Lesson",
+   "options": "Lab Lesson"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_unlocked",
+   "fieldtype": "Check",
+   "label": "Is Unlocked"
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Course",
+   "options": "Lab Course"
+  },
+  {
+   "fieldname": "section_break_amrc",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "lesson_dockerfile",
+   "fieldtype": "Link",
+   "label": "Lesson Dockerfile",
+   "link_filters": "[[\"Lab Dockerfile\",\"lab_lesson\",\"=\",\"eval:doc.lesson_name\"],[\"Lab Dockerfile\",\"dockerfile_type\",\"=\",\"Lesson\"]]",
+   "options": "Lab Dockerfile"
+  },
+  {
+   "fieldname": "exam_dockerfile",
+   "fieldtype": "Link",
+   "label": "Exam Dockerfile",
+   "link_filters": "[[\"Lab Dockerfile\",\"lab_lesson\",\"=\",\"eval:doc.lesson_name\"],[\"Lab Dockerfile\",\"dockerfile_type\",\"=\",\"Exam\"]]",
+   "options": "Lab Dockerfile"
+  },
+  {
+   "fieldname": "column_break_cega",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quiz_dockerfile",
+   "fieldtype": "Link",
+   "label": "Quiz Dockerfile",
+   "link_filters": "[[\"Lab Dockerfile\",\"lab_lesson\",\"=\",\"eval:doc.lesson_name\"],[\"Lab Dockerfile\",\"dockerfile_type\",\"=\",\"Quiz\"]]",
+   "options": "Lab Dockerfile"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-22 14:25:28.087100",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Lesson",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "lesson_name"
+}

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+		/>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body>
+		<div class="footer-container">
+			<div class="container">
+				<div class="footer-content">
+					<div class="footer-section">
+						<h3>TechEthica</h3>
+						<p>Empowering learning through technology and faith.</p>
+						<div class="footer-links">
+							<a href="/about">About Us</a>
+							<a href="/careers">Careers</a>
+							<a href="/privacy">Privacy Policy</a>
+						</div>
+					</div>
+					<div class="footer-section">
+						<h4>Resources</h4>
+						<div class="footer-links">
+							<a href="/courses">All Courses</a>
+							<a href="/blog">Blog</a>
+							<a href="/faq">FAQ</a>
+							<a href="/support">Student Support</a>
+						</div>
+					</div>
+					<div class="footer-section">
+						<h4>Contact Us</h4>
+						<address class="contact-info">
+							#272 AhluSsunna Online Academy,<br />
+							BSK-3, Bengaluru, 676500<br />
+							<a href="mailto:info@techethica.com">
+								<i class="far fa-envelope"></i> info@techethica.com </a
+							><br />
+							<a href="tel:+919876543210">
+								<i class="fas fa-phone"></i> +91 98765 43210
+							</a>
+						</address>
+					</div>
+					<div class="footer-section">
+						<h4>Follow Us</h4>
+						<div class="social-icons">
+							<a href="#"><i class="fab fa-facebook"></i></a>
+							<a href="#"><i class="fab fa-twitter"></i></a>
+							<a href="#"><i class="fab fa-instagram"></i></a>
+							<a href="#"><i class="fab fa-linkedin"></i></a>
+							<a href="#"><i class="fab fa-youtube"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div
+				class="copyright-section bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] transition-all duration-700 ease-in-out hover:from-[#222222] hover:via-[#333333] hover:to-amber-100"
+			>
+				<div class="container">
+					<p>
+						Copyright © 2017–2025 - <span class="company-name">TechEthica</span> |
+						Powered by <span class="company-name">TechEthica</span>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<style>
+			.footer-container {
+				background: linear-gradient(to right, rgb(17, 24, 39), rgb(31, 41, 55), #444444);
+				color: #fff;
+				padding-top: 1.5rem;
+				font-family: Arial, sans-serif;
+				transition: all 0.3s ease-in-out;
+			}
+
+			.footer-content {
+				display: flex;
+				justify-content: space-between;
+				align-items: start;
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 1.5rem;
+				gap: 1.5rem;
+			}
+
+			.footer-section {
+				flex: 1;
+				min-width: 200px;
+				transition: transform 0.3s ease-in-out;
+			}
+
+			.footer-section:hover {
+				transform: scale(1.05);
+			}
+
+			.footer-section h3,
+			.footer-section h4 {
+				color: #fcd34d;
+				margin-bottom: 0.75rem;
+				font-weight: bold;
+				font-size: 1.1rem;
+			}
+
+			.footer-section p {
+				color: #e5e7eb;
+				line-height: 1.4;
+				font-size: 0.9rem;
+				margin-bottom: 0.75rem;
+			}
+
+			.footer-links {
+				display: flex;
+				flex-direction: column;
+				gap: 0.4rem;
+			}
+
+			.footer-links a {
+				color: #e5e7eb;
+				text-decoration: none;
+				font-size: 0.9rem;
+				transition: all 0.2s ease;
+			}
+
+			.footer-links a:hover {
+				color: #fcd34d;
+				transform: translateX(3px);
+			}
+
+			.contact-info {
+				font-style: normal;
+				line-height: 1.5;
+				font-size: 0.9rem;
+			}
+
+			.contact-info a {
+				color: #e5e7eb;
+				text-decoration: none;
+				transition: color 0.2s ease;
+			}
+
+			.contact-info a:hover {
+				color: #fcd34d;
+			}
+
+			.contact-info i {
+				color: #fcd34d;
+				width: 16px;
+				margin-right: 4px;
+			}
+
+			.social-icons {
+				display: flex;
+				gap: 0.75rem;
+				margin-top: 0.5rem;
+			}
+
+			.social-icons a {
+				color: #fcd34d;
+				font-size: 1.2rem;
+				transition: all 0.2s ease;
+			}
+
+			.social-icons a:hover {
+				color: #fde68a;
+				transform: translateY(-2px);
+			}
+
+			.copyright-section {
+				padding: 0.75rem 0;
+				margin-top: 1.5rem;
+				font-size: 0.875rem;
+				color: #e5e7eb;
+				text-align: center;
+			}
+
+			.company-name {
+				color: #fcd34d;
+				transition: color 0.2s ease;
+			}
+
+			.company-name:hover {
+				color: #fde68a;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 1rem;
+			}
+
+			@media (max-width: 992px) {
+				.footer-content {
+					flex-wrap: wrap;
+				}
+
+				.footer-section {
+					flex: 1 1 40%;
+				}
+			}
+
+			@media (max-width: 768px) {
+				.footer-content {
+					flex-direction: column;
+					text-align: center;
+					gap: 1.5rem;
+				}
+
+				.footer-section {
+					flex: 1 1 100%;
+				}
+
+				.social-icons {
+					justify-content: center;
+				}
+
+				.contact-info {
+					text-align: center;
+				}
+
+				.footer-links a:hover {
+					transform: scale(1.05);
+				}
+			}
+		</style>
+	</body>
+</html>

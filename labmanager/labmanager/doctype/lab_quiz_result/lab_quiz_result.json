@@ -1,0 +1,81 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{lab_user}-{quiz}-{attempt_number}-result",
+ "creation": "2024-12-22 19:01:44.683823",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "lab_user",
+  "attempt_number",
+  "attempt_date",
+  "column_break_tzto",
+  "quiz",
+  "score",
+  "passed"
+ ],
+ "fields": [
+  {
+   "fieldname": "lab_user",
+   "fieldtype": "Link",
+   "label": "Lab User",
+   "options": "Lab User"
+  },
+  {
+   "fieldname": "attempt_number",
+   "fieldtype": "Int",
+   "label": "Attempt Number"
+  },
+  {
+   "fieldname": "attempt_date",
+   "fieldtype": "Datetime",
+   "label": "Attempt Date"
+  },
+  {
+   "fieldname": "column_break_tzto",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quiz",
+   "fieldtype": "Link",
+   "label": "Quiz",
+   "options": "Lab Quiz"
+  },
+  {
+   "fieldname": "score",
+   "fieldtype": "Float",
+   "label": "Score"
+  },
+  {
+   "default": "0",
+   "fieldname": "passed",
+   "fieldtype": "Check",
+   "label": "Passed"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-22 19:04:46.500553",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Quiz Result",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

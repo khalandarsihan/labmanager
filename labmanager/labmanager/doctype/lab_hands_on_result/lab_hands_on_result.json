@@ -1,0 +1,96 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-12-22 19:01:04.363779",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "quiz_result",
+  "column_break_qhsi",
+  "question",
+  "section_break_aajx",
+  "student_submission",
+  "evaluation_status",
+  "score",
+  "column_break_gnsw",
+  "execution_output",
+  "evaluator_comments"
+ ],
+ "fields": [
+  {
+   "fieldname": "quiz_result",
+   "fieldtype": "Link",
+   "label": "Quiz Result",
+   "options": "Lab Quiz Result"
+  },
+  {
+   "fieldname": "column_break_qhsi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "question",
+   "fieldtype": "Link",
+   "label": "Question",
+   "options": "Lab Quiz Question"
+  },
+  {
+   "fieldname": "section_break_aajx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "Command or code submitted by the student.",
+   "fieldname": "student_submission",
+   "fieldtype": "Text",
+   "label": "Student Submission"
+  },
+  {
+   "fieldname": "evaluation_status",
+   "fieldtype": "Select",
+   "label": "Evaluation Status",
+   "options": "Correct\nPartially Correct\nIncorrect"
+  },
+  {
+   "fieldname": "score",
+   "fieldtype": "Float",
+   "label": "Score"
+  },
+  {
+   "fieldname": "column_break_gnsw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "execution_output",
+   "fieldtype": "Text",
+   "label": "Execution Output"
+  },
+  {
+   "fieldname": "evaluator_comments",
+   "fieldtype": "Small Text",
+   "label": "Evaluator Comments"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-22 19:13:03.777709",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Hands-On Result",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

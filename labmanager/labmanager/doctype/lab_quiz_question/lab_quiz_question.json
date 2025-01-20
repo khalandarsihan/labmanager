@@ -1,0 +1,119 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "format:{quiz}-question-{######}",
+ "creation": "2024-12-22 18:51:26.122674",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_fuij",
+  "quiz",
+  "column_break_qsep",
+  "question_type",
+  "column_break_exty",
+  "weightage",
+  "section_break_bops",
+  "question_text",
+  "column_break_ydcp",
+  "hint",
+  "question_group",
+  "question_sequence",
+  "column_break_nfob",
+  "correct_command"
+ ],
+ "fields": [
+  {
+   "fieldname": "question_text",
+   "fieldtype": "Text",
+   "label": "Question Text"
+  },
+  {
+   "fieldname": "column_break_ydcp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_fuij",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "hint",
+   "fieldtype": "Small Text",
+   "label": "Hint"
+  },
+  {
+   "fieldname": "column_break_exty",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "quiz",
+   "fieldtype": "Link",
+   "label": "Quiz",
+   "options": "Lab Quiz"
+  },
+  {
+   "fieldname": "question_type",
+   "fieldtype": "Select",
+   "label": "Question Type",
+   "options": "Hands-On\nMCQ\nTrue/False."
+  },
+  {
+   "fieldname": "weightage",
+   "fieldtype": "Float",
+   "label": "Weightage"
+  },
+  {
+   "fieldname": "correct_command",
+   "fieldtype": "Small Text",
+   "label": "Correct Command\t"
+  },
+  {
+   "fieldname": "section_break_bops",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_qsep",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_nfob",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "question_sequence",
+   "fieldtype": "Int",
+   "label": "Question Sequence"
+  },
+  {
+   "fieldname": "question_group",
+   "fieldtype": "Int",
+   "label": "Question Group"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-22 21:05:31.006906",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Quiz Question",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "question_text"
+}

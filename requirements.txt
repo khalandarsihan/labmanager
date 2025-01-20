@@ -1,0 +1,4 @@
+# labmanager/requirements.txt
+docker
+paramiko
+requests

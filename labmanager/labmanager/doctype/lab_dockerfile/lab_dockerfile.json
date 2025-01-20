@@ -1,0 +1,104 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{title}-{lab_course}-{lab_lesson}-{lab_lesson_number}",
+ "creation": "2024-12-22 13:45:13.456310",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "lab_lesson",
+  "dockerfile_type",
+  "column_break_qksy",
+  "lab_course",
+  "lab_lesson_number",
+  "dockerfile_version",
+  "section_break_pfoi",
+  "description",
+  "content",
+  "dockerfile_content"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title"
+  },
+  {
+   "fieldname": "lab_lesson",
+   "fieldtype": "Link",
+   "label": "Lab Lesson",
+   "options": "Lab Lesson"
+  },
+  {
+   "fieldname": "column_break_qksy",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lab_course",
+   "fieldtype": "Link",
+   "label": "Lab Course",
+   "options": "Lab Course"
+  },
+  {
+   "fieldname": "dockerfile_type",
+   "fieldtype": "Select",
+   "label": "Dockerfile Type",
+   "options": "Lesson\nQuiz\nExam"
+  },
+  {
+   "fieldname": "dockerfile_version",
+   "fieldtype": "Int",
+   "label": "Dockerfile Version"
+  },
+  {
+   "fieldname": "section_break_pfoi",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Dockerfile Description"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "dockerfile_content",
+   "fieldtype": "Code",
+   "label": "Dockerfile Content"
+  },
+  {
+   "fetch_from": "lab_lesson.lesson_number",
+   "fieldname": "lab_lesson_number",
+   "fieldtype": "Int",
+   "label": "Lab Lesson Number"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2024-12-28 09:30:33.963261",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Lab Dockerfile",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

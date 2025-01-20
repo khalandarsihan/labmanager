@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Carousel Container */
+.carousel-container > div {
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  overflow-x: hidden;
+
+  /* Hide scrollbar while keeping functionality */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.carousel-container > div::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, and Opera */
+}
+
+/* Scroll Snap for Slides */
+[id^="slide"] {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Optional: Add fade transition for images */
+.carousel-container img {
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Optional: Add hover effect for navigation buttons */
+.carousel-container a:hover {
+  transform: scale(1.1) translateY(-50%);
+}
+
+/* Carousel Wrapper */
+.carousel-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Carousel Slides */
+.carousel-slides {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+/* Carousel Dots */
+.carousel-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 0;
+  margin: 0 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+  background-color: #fcd34d;
+  transform: scale(1.2);
+}
