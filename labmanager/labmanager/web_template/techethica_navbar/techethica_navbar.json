@@ -1,0 +1,16 @@
+{
+ "__unsaved": 1,
+ "creation": "2025-01-17 23:27:12.485826",
+ "docstatus": 0,
+ "doctype": "Web Template",
+ "fields": [],
+ "idx": 0,
+ "modified": "2025-01-18 00:42:34.699965",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "TechEthica Navbar",
+ "owner": "Administrator",
+ "standard": 1,
+ "template": "",
+ "type": "Navbar"
+}

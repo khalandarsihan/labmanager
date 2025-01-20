@@ -63,7 +63,7 @@ doctype_js = {
 # ----------
 
 # application home page (will override Website Settings)
-# home_page = "login"
+home_page = "home"
 
 # website user home page (by Role)
 # role_home_page = {
@@ -268,4 +268,27 @@ whitelisted_methods = {
     "labmanager.labmanager.lab_core.lab_controller.end_lab_session": True,
     "labmanager.labmanager.lab_core.lab_controller.extend_lab_session": True,
     "labmanager.labmanager.lab_core.lab_controller.get_active_session": True
+}
+
+
+# In hooks.py
+web_template = [
+    {
+        "template": "labmanager/web_template/techethica_navbar/techethica_navbar.html",
+        "condition": [],
+        "name": "techethica_navbar"
+    },
+    {
+        "template": "labmanager/web_template/techethica_footer/techethica_footer.html",
+        "condition": [],
+        "name": "techethica_footer"
+    }
+]
+
+website_context = {
+    "hide_login": 1,
+    "hide_signup": 1,
+    "hide_footer": 1,
+    # "hide_navbar": 1,
+    "top_bar_items": []
 }

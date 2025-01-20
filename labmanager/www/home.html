@@ -1,0 +1,672 @@
+{% extends "templates/layout.html" %} {% block title %}TechEthica - Home{% endblock %} {% block
+head %}
+<link rel="stylesheet" href="/assets/labmanager/css/style.css" />
+
+{% endblock -%} {% block content %}
+<!-- Contact Bar -->
+<div
+	class="relative bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] text-gray-200 text-center py-4 px-6 transition-all duration-700 ease-in-out hover:from-[#222222] hover:via-[#333333] hover:to-amber-100 shadow-lg"
+>
+	<h1 class="text-4xl sm:text-3xl font-bold tracking-wide text-amber-200 drop-shadow-lg">
+		Let's Connect
+	</h1>
+	<div class="contact-info mt-4 text-lg sm:text-base flex justify-center gap-6 flex-wrap">
+		<a
+			href="tel:9074591600"
+			class="inline-flex items-center text-amber-100 font-semibold transition duration-300 ease-in-out hover:text-yellow-100 hover:scale-110 focus:ring-0 focus:outline-none"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-5 w-5 mr-2"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+				/>
+			</svg>
+			907-459-1600
+		</a>
+		<span class="text-gray-400">|</span>
+		<a
+			href="mailto:khasihan@asoa.com"
+			class="inline-flex items-center text-amber-100 font-semibold transition duration-300 ease-in-out hover:text-yellow-100 hover:scale-110 focus:ring-0 focus:outline-none"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-5 w-5 mr-2"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+				/>
+			</svg>
+			khasihan@asoa.com
+		</a>
+	</div>
+</div>
+
+{% include "templates/includes/navbar/techethica_navbar.html" %}
+
+<!-- Hero Section with Complete Overlay -->
+<section class="relative w-full h-screen min-h-[600px] overflow-hidden">
+	<!-- Video Container -->
+	<div class="absolute inset-0 w-full h-full">
+		<video class="w-full h-full object-cover" autoplay loop muted playsinline>
+			<source src="/files/background-video.mp4" type="video/mp4" />
+		</video>
+	</div>
+
+	<!-- Full Overlay -->
+	<!--<div class="absolute inset-0 w-full h-full bg-black/45"></div>-->
+	<!--<div class="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-900/70 via-gray-800/65 to-amber-900/60"></div>-->
+	<div class="absolute inset-0 bg-gradient-to-r from-gray-800/60 to-gray-700/55"></div>
+	<!--<div class="absolute inset-0 bg-gradient-to-r from-gray-900/75 via-slate-900/70 to-gray-800/75"></div>-->
+	<!-- Double gradient for better depth -->
+	<!--<div class="absolute inset-0">-->
+	<!--    <div class="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent"></div>-->
+	<!--    <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>-->
+	<!--</div>-->
+	<!--<div class="absolute inset-0 bg-gray-700/50"></div>-->
+	<!--<div class="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-900/70 via-gray-800/65 to-amber-900/60"></div>-->
+
+	<!-- Content -->
+	<div class="relative z-20 flex items-center justify-center h-full text-center px-4">
+		<div class="max-w-4xl">
+			<h1 class="text-4xl md:text-5xl font-bold text-amber-200 mb-6">
+				Why Choose TechEthica?
+			</h1>
+			<p class="text-lg md:text-xl text-gray-200 mb-8">
+				Discover a world of knowledge through our innovative online learning platform
+			</p>
+			<a
+				href="#courses"
+				class="inline-block bg-amber-300 text-gray-900 px-8 py-4 rounded-lg font-bold hover:bg-amber-200 transition duration-300"
+			>
+				Explore Courses
+			</a>
+		</div>
+	</div>
+</section>
+
+<!-- Features Section -->
+<!-- Features Section with Tech Pattern -->
+<section class="relative py-20 overflow-hidden">
+	<!-- Tech Pattern Background -->
+	<div class="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
+		<!-- Abstract Lines -->
+		<div class="absolute inset-0 opacity-10">
+			<div class="absolute h-full w-px bg-amber-300/30 left-1/4 transform -skew-x-12"></div>
+			<div class="absolute h-full w-px bg-amber-300/20 left-1/2 transform skew-x-12"></div>
+			<div class="absolute h-full w-px bg-amber-300/30 left-3/4 transform -skew-x-12"></div>
+			<div class="absolute w-full h-px bg-amber-300/20 top-1/4 transform -skew-y-12"></div>
+			<div class="absolute w-full h-px bg-amber-300/30 top-1/2 transform skew-y-12"></div>
+			<div class="absolute w-full h-px bg-amber-300/20 top-3/4 transform -skew-y-12"></div>
+		</div>
+
+		<!-- Floating Elements -->
+		<div class="absolute inset-0">
+			<div
+				class="absolute top-1/4 left-1/3 w-16 h-16 border border-amber-300/10 rounded-lg transform rotate-45"
+			></div>
+			<div
+				class="absolute top-2/3 right-1/4 w-24 h-24 border border-amber-300/10 rounded-full"
+			></div>
+			<div
+				class="absolute bottom-1/4 left-1/2 w-20 h-20 border border-amber-300/10 transform rotate-12"
+			></div>
+		</div>
+	</div>
+
+	<!-- Content -->
+	<div class="relative container mx-auto px-6 z-10">
+		<h2 class="text-4xl font-bold text-center text-amber-200 mb-12">Why Choose TechEthica?</h2>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+			<!-- Feature Item 1 -->
+			<div class="feature-item group">
+				<div
+					class="relative p-8 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-amber-300/50 transition-all duration-300 hover:transform hover:scale-105"
+				>
+					<div
+						class="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl"
+					></div>
+					<div class="relative z-10">
+						<div
+							class="w-16 h-16 mb-8 mx-auto bg-amber-300/10 rounded-lg flex items-center justify-center group-hover:bg-amber-300/20 transition-all duration-300"
+						>
+							<i class="fas fa-graduation-cap text-4xl text-amber-300"></i>
+						</div>
+						<h3 class="text-xl font-bold text-amber-200 mb-4 text-center">
+							Expert Instructors
+						</h3>
+						<p class="text-gray-300 text-center">
+							Learn from industry professionals and experienced educators
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Feature Item 2 -->
+			<div class="feature-item group">
+				<div
+					class="relative p-8 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-amber-300/50 transition-all duration-300 hover:transform hover:scale-105"
+				>
+					<div
+						class="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl"
+					></div>
+					<div class="relative z-10">
+						<div
+							class="w-16 h-16 mb-8 mx-auto bg-amber-300/10 rounded-lg flex items-center justify-center group-hover:bg-amber-300/20 transition-all duration-300"
+						>
+							<i class="fas fa-clock text-4xl text-amber-300"></i>
+						</div>
+						<h3 class="text-xl font-bold text-amber-200 mb-4 text-center">
+							Flexible Learning
+						</h3>
+						<p class="text-gray-300 text-center">
+							Study at your own pace with 24/7 course access
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Feature Item 3 -->
+			<div class="feature-item group">
+				<div
+					class="relative p-8 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-amber-300/50 transition-all duration-300 hover:transform hover:scale-105"
+				>
+					<div
+						class="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl"
+					></div>
+					<div class="relative z-10">
+						<div
+							class="w-16 h-16 mb-8 mx-auto bg-amber-300/10 rounded-lg flex items-center justify-center group-hover:bg-amber-300/20 transition-all duration-300"
+						>
+							<i class="fas fa-certificate text-4xl text-amber-300"></i>
+						</div>
+						<h3 class="text-xl font-bold text-amber-200 mb-4 text-center">
+							Certified Courses
+						</h3>
+						<p class="text-gray-300 text-center">
+							Earn recognized certificates upon completion
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Updated Carousel Section with Tech Pattern -->
+<!-- Updated Carousel Section -->
+<!-- Horizontal Carousel Section -->
+<section
+	class="relative py-20 overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700"
+>
+	<div class="carousel-container relative z-10 max-w-6xl mx-auto px-4">
+		<!-- Main carousel container with horizontal scroll -->
+		<div class="carousel-wrapper w-full h-[400px] md:h-[500px] relative overflow-x-hidden">
+			<div class="carousel-slides flex transition-transform duration-500 h-full">
+				<!-- Slide 1: Data Science -->
+				<div id="slide1" class="w-full flex-shrink-0 flex-grow-0" style="width: 100%">
+					<div class="relative h-full">
+						<img
+							src="/files/image1.jpg"
+							alt="Data Science"
+							class="w-full h-full object-cover"
+						/>
+						<div
+							class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6"
+						>
+							<h3 class="text-2xl font-bold text-amber-200 mb-2">Data Science</h3>
+							<p class="text-gray-200">
+								Unlock insights with machine learning and AI
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 2: Cyber Security -->
+				<div id="slide2" class="w-full flex-shrink-0 flex-grow-0" style="width: 100%">
+					<div class="relative h-full">
+						<img
+							src="/files/image-1.png"
+							alt="Cyber Security"
+							class="w-full h-full object-cover"
+						/>
+						<div
+							class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6"
+						>
+							<h3 class="text-2xl font-bold text-amber-200 mb-2">Cyber Security</h3>
+							<p class="text-gray-200">Protect systems and networks from threats</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Continue with similar structure for slides 3-8 -->
+
+				<!-- Slide 3: Web Development -->
+				<div id="slide3" class="w-full flex-shrink-0 flex-grow-0" style="width: 100%">
+					<div class="relative h-full">
+						<img
+							src="/files/image2.jpg"
+							alt="Web Development"
+							class="w-full h-full object-cover"
+						/>
+						<div
+							class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6"
+						>
+							<h3 class="text-2xl font-bold text-amber-200 mb-2">Web Development</h3>
+							<p class="text-gray-200">
+								Build modern and responsive web applications
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 4: Artificial Intelligence -->
+				<div id="slide4" class="w-full flex-shrink-0 flex-grow-0" style="width: 100%">
+					<div class="relative h-full">
+						<img
+							src="/files/image3.jpg"
+							alt="Artificial Intelligence"
+							class="w-full h-full object-cover"
+						/>
+						<div
+							class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6"
+						>
+							<h3 class="text-2xl font-bold text-amber-200 mb-2">
+								Artificial Intelligence
+							</h3>
+							<p class="text-gray-200">
+								Empower solutions with AI and deep learning
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 5: Cloud Computing -->
+				<div id="slide5" class="w-full flex-shrink-0 flex-grow-0" style="width: 100%">
+					<div class="relative h-full">
+						<img
+							src="/files/image4.jpg"
+							alt="Cloud Computing"
+							class="w-full h-full object-cover"
+						/>
+						<div
+							class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6"
+						>
+							<h3 class="text-2xl font-bold text-amber-200 mb-2">Cloud Computing</h3>
+							<p class="text-gray-200">
+								Scale applications with cloud infrastructure
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 6: Blockchain Technology -->
+				<div id="slide6" class="w-full flex-shrink-0 flex-grow-0" style="width: 100%">
+					<div class="relative h-full">
+						<img
+							src="/files/image5.jpg"
+							alt="Blockchain Technology"
+							class="w-full h-full object-cover"
+						/>
+						<div
+							class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6"
+						>
+							<h3 class="text-2xl font-bold text-amber-200 mb-2">
+								Blockchain Technology
+							</h3>
+							<p class="text-gray-200">
+								Secure and decentralized digital transactions
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 7: Internet of Things (IoT) -->
+				<div id="slide7" class="w-full flex-shrink-0 flex-grow-0" style="width: 100%">
+					<div class="relative h-full">
+						<img
+							src="/files/image6.jpeg"
+							alt="Internet of Things (IoT)"
+							class="w-full h-full object-cover"
+						/>
+						<div
+							class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6"
+						>
+							<h3 class="text-2xl font-bold text-amber-200 mb-2">
+								Internet of Things (IoT)
+							</h3>
+							<p class="text-gray-200">Connect devices for smart automation</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 8: Software Engineering -->
+				<div id="slide8" class="w-full flex-shrink-0 flex-grow-0" style="width: 100%">
+					<div class="relative h-full">
+						<img
+							src="/files/im7.png"
+							alt="Software Engineering"
+							class="w-full h-full object-cover"
+						/>
+						<div
+							class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-gray-900/80 to-transparent p-6"
+						>
+							<h3 class="text-2xl font-bold text-amber-200 mb-2">
+								Software Engineering
+							</h3>
+							<p class="text-gray-200">
+								Develop scalable and efficient software systems
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- ... other slides ... -->
+			</div>
+
+			<!-- Navigation Buttons -->
+			<button
+				class="prev absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700 p-2 rounded-full border border-amber-300/20 hover:border-amber-300/50 transition-all"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6 text-amber-200"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M15 19l-7-7 7-7"
+					/>
+				</svg>
+			</button>
+			<button
+				class="next absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700 p-2 rounded-full border border-amber-300/20 hover:border-amber-300/50 transition-all"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6 text-amber-200"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M9 5l7 7-7 7"
+					/>
+				</svg>
+			</button>
+
+			<!-- Dots Navigation -->
+			<div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+				<!-- Dots will be added by JavaScript -->
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Featured Courses -->
+<section class="py-20 bg-gray-50">
+	<div class="container mx-auto px-6">
+		<h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Featured Courses</h2>
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+			<!-- Course Card 1 -->
+			<div class="course-card bg-white rounded-lg overflow-hidden shadow-lg">
+				<img
+					src="/api/placeholder/400/250"
+					alt="Course 1"
+					class="w-full h-48 object-cover"
+				/>
+				<div class="p-6">
+					<h3 class="text-xl font-bold text-gray-800 mb-2">
+						Web Development Fundamentals
+					</h3>
+					<p class="text-gray-600 mb-4">
+						Master the basics of web development with HTML, CSS, and JavaScript
+					</p>
+					<div class="flex justify-between items-center">
+						<span class="text-amber-300 font-bold">$49.99</span>
+						<button
+							class="bg-amber-300 text-gray-900 px-4 py-2 rounded hover:bg-amber-200 transition duration-300"
+						>
+							Enroll Now
+						</button>
+					</div>
+				</div>
+			</div>
+			<!-- Course Card 2 -->
+			<div class="course-card bg-white rounded-lg overflow-hidden shadow-lg">
+				<img
+					src="/api/placeholder/400/250"
+					alt="Course 2"
+					class="w-full h-48 object-cover"
+				/>
+				<div class="p-6">
+					<h3 class="text-xl font-bold text-gray-800 mb-2">Data Science Essentials</h3>
+					<p class="text-gray-600 mb-4">
+						Learn data analysis, visualization, and machine learning basics
+					</p>
+					<div class="flex justify-between items-center">
+						<span class="text-amber-300 font-bold">$59.99</span>
+						<button
+							class="bg-amber-300 text-gray-900 px-4 py-2 rounded hover:bg-amber-200 transition duration-300"
+						>
+							Enroll Now
+						</button>
+					</div>
+				</div>
+			</div>
+			<!-- Course Card 3 -->
+			<div class="course-card bg-white rounded-lg overflow-hidden shadow-lg">
+				<img
+					src="/api/placeholder/400/250"
+					alt="Course 3"
+					class="w-full h-48 object-cover"
+				/>
+				<div class="p-6">
+					<h3 class="text-xl font-bold text-gray-800 mb-2">Digital Marketing</h3>
+					<p class="text-gray-600 mb-4">
+						Discover modern marketing strategies and tools for business growth
+					</p>
+					<div class="flex justify-between items-center">
+						<span class="text-amber-300 font-bold">$39.99</span>
+						<button
+							class="bg-amber-300 text-gray-900 px-4 py-2 rounded hover:bg-amber-200 transition duration-300"
+						>
+							Enroll Now
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-20 bg-[#1a1f2e]">
+	<div class="container mx-auto px-6">
+		<div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+			<!-- Students Counter -->
+			<div
+				class="counter bg-[#232836] rounded-lg p-6 text-center border border-gray-700 hover:border-amber-300 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_16px_rgba(0,0,0,0.2)]"
+			>
+				<div class="mb-4">
+					<i class="fas fa-user-graduate text-amber-300 text-3xl"></i>
+				</div>
+				<div class="text-3xl font-bold text-amber-300 mb-2">10,000+</div>
+				<div class="text-gray-300">Students</div>
+			</div>
+
+			<!-- Courses Counter -->
+			<div
+				class="counter bg-[#232836] rounded-lg p-6 text-center border border-gray-700 hover:border-amber-300 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_16px_rgba(0,0,0,0.2)]"
+			>
+				<div class="mb-4">
+					<i class="fas fa-book-open text-amber-300 text-3xl"></i>
+				</div>
+				<div class="text-3xl font-bold text-amber-300 mb-2">200+</div>
+				<div class="text-gray-300">Courses</div>
+			</div>
+
+			<!-- Instructors Counter -->
+			<div
+				class="counter bg-[#232836] rounded-lg p-6 text-center border border-gray-700 hover:border-amber-300 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_16px_rgba(0,0,0,0.2)]"
+			>
+				<div class="mb-4">
+					<i class="fas fa-chalkboard-teacher text-amber-300 text-3xl"></i>
+				</div>
+				<div class="text-3xl font-bold text-amber-300 mb-2">50+</div>
+				<div class="text-gray-300">Expert Instructors</div>
+			</div>
+
+			<!-- Satisfaction Counter -->
+			<div
+				class="counter bg-[#232836] rounded-lg p-6 text-center border border-gray-700 hover:border-amber-300 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.1)] hover:shadow-[0_8px_16px_rgba(0,0,0,0.2)]"
+			>
+				<div class="mb-4">
+					<i class="fas fa-star text-amber-300 text-3xl"></i>
+				</div>
+				<div class="text-3xl font-bold text-amber-300 mb-2">95%</div>
+				<div class="text-gray-300">Satisfaction Rate</div>
+			</div>
+		</div>
+	</div>
+</section>
+<!-- Spacer -->
+<div class="h-20 bg-gradient-to-b from-[#1a1f2e] to-[#131720]"></div>
+
+{% include "templates/includes/footer/techethica_footer.html" %} {% endblock %} {% block scripts %}
+<script>
+	document.addEventListener("DOMContentLoaded", function () {
+		// Carousel initialization
+		class Carousel {
+			constructor(element) {
+				this.carousel = element;
+				this.slides = element.querySelector(".carousel-slides");
+				this.slideElements = Array.from(this.slides.children);
+				this.nextButton = element.querySelector(".next");
+				this.prevButton = element.querySelector(".prev");
+				this.dotsContainer = element.querySelector(".absolute.bottom-4");
+				this.currentIndex = 0;
+				this.autoplayInterval = null;
+
+				this.init();
+			}
+
+			init() {
+				// Create dots
+				this.createDots();
+
+				// Add event listeners
+				this.addEventListeners();
+
+				// Start autoplay
+				this.startAutoplay();
+			}
+
+			createDots() {
+				this.slideElements.forEach((_, index) => {
+					const dot = document.createElement("button");
+					dot.classList.add("carousel-dot");
+					if (index === 0) dot.classList.add("active");
+					this.dotsContainer.appendChild(dot);
+				});
+			}
+
+			updateDots() {
+				const dots = this.dotsContainer.querySelectorAll(".carousel-dot");
+				dots.forEach((dot, index) => {
+					dot.classList.toggle("active", index === this.currentIndex);
+				});
+			}
+
+			moveToSlide(index) {
+				this.currentIndex = index;
+				this.slides.style.transform = `translateX(-${index * 100}%)`;
+				this.updateDots();
+			}
+
+			nextSlide() {
+				this.currentIndex = (this.currentIndex + 1) % this.slideElements.length;
+				this.moveToSlide(this.currentIndex);
+			}
+
+			prevSlide() {
+				this.currentIndex =
+					(this.currentIndex - 1 + this.slideElements.length) %
+					this.slideElements.length;
+				this.moveToSlide(this.currentIndex);
+			}
+
+			addEventListeners() {
+				// Next button click
+				this.nextButton.addEventListener("click", () => {
+					this.nextSlide();
+					this.resetAutoplay();
+				});
+
+				// Previous button click
+				this.prevButton.addEventListener("click", () => {
+					this.prevSlide();
+					this.resetAutoplay();
+				});
+
+				// Dot navigation
+				this.dotsContainer.addEventListener("click", (e) => {
+					if (e.target.classList.contains("carousel-dot")) {
+						const dotIndex = Array.from(this.dotsContainer.children).indexOf(e.target);
+						this.moveToSlide(dotIndex);
+						this.resetAutoplay();
+					}
+				});
+
+				// Pause on hover
+				this.carousel.addEventListener("mouseenter", () => this.stopAutoplay());
+				this.carousel.addEventListener("mouseleave", () => this.startAutoplay());
+			}
+
+			startAutoplay() {
+				this.stopAutoplay();
+				this.autoplayInterval = setInterval(() => {
+					this.nextSlide();
+				}, 1000); // Change slide every 5 seconds
+			}
+
+			stopAutoplay() {
+				if (this.autoplayInterval) {
+					clearInterval(this.autoplayInterval);
+					this.autoplayInterval = null;
+				}
+			}
+
+			resetAutoplay() {
+				this.stopAutoplay();
+				this.startAutoplay();
+			}
+		}
+
+		// Initialize all carousels on the page
+		const carousels = document.querySelectorAll(".carousel-wrapper");
+		carousels.forEach((carousel) => new Carousel(carousel));
+	});
+</script>
+{% endblock %}

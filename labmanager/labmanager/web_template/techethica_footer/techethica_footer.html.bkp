@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+		/>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body>
+		<div class="footer-container">
+			<div class="container">
+				<div class="footer-content">
+					<div class="footer-section about">
+						<h3>TechEthica</h3>
+						<p>Empowering learning through technology and faith.</p>
+					</div>
+					<div class="footer-section contact">
+						<h4>Contact Us</h4>
+						<p>#272 AhluSsunna Online Academy,<br />BSK-3, Bengaluru, 676500</p>
+					</div>
+					<div class="footer-section social">
+						<h4>Follow Us</h4>
+						<div class="social-icons">
+							<a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+							<a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+							<a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div
+				class="bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] transition-all duration-700 ease-in-out hover:from-[#222222] hover:via-[#333333] hover:to-amber-100 py-3 mt-5 text-sm text-gray-200"
+			>
+				<div class="container">
+					<p>
+						Copyright © 2017–2025 - <span class="company-name">TechEthica</span> |
+						Powered by <span class="company-name">TechEthica</span>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<style>
+			/* Footer Styling */
+			.footer-container {
+				background: linear-gradient(to right, rgb(17, 24, 39), rgb(31, 41, 55), #444444);
+				color: #fff;
+				padding: 40px 0 20px;
+				text-align: center;
+				font-family: Arial, sans-serif;
+				transition: all 0.3s ease-in-out;
+			}
+
+			/* Footer Content Layout */
+			.footer-content {
+				display: flex;
+				justify-content: space-between; /* Changed to space-between for maximum spacing */
+				align-items: flex-start; /* Align items to top */
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 60px; /* Increased padding */
+			}
+
+			.footer-section {
+				flex: 0 1 auto; /* Changed to auto to prevent stretching */
+				max-width: 300px; /* Added max-width */
+				margin: 0 20px; /* Added horizontal margin */
+				padding: 20px;
+				transition: transform 0.3s ease-in-out;
+			}
+
+			.footer-section:hover {
+				transform: scale(1.05);
+			}
+
+			.footer-section h3,
+			.footer-section h4 {
+				color: #fcd34d;
+				margin-bottom: 1.5rem;
+				font-weight: bold;
+				font-size: 1.25rem;
+				transition: color 0.3s ease-in-out;
+			}
+
+			.footer-section h3:hover,
+			.footer-section h4:hover {
+				color: #fde68a;
+			}
+
+			.footer-section p {
+				color: #e5e7eb;
+				line-height: 1.8;
+				font-size: 1rem;
+			}
+
+			.social-icons {
+				display: flex;
+				justify-content: center;
+				gap: 20px; /* Added gap between social icons */
+			}
+
+			.social-icon {
+				color: #fcd34d;
+				font-size: 24px;
+				text-decoration: none;
+				transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+				display: inline-block;
+			}
+
+			.social-icon:hover {
+				color: #fde68a;
+				transform: scale(1.1);
+			}
+
+			.company-name {
+				color: #fcd34d;
+				transition: all 0.3s ease-in-out;
+				display: inline-block;
+			}
+
+			.company-name:hover {
+				color: #fde68a;
+				transform: scale(1.1);
+				cursor: pointer;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 0 20px;
+			}
+
+			/* Responsive adjustments */
+			@media (max-width: 992px) {
+				.footer-content {
+					justify-content: space-around;
+					padding: 0 20px;
+				}
+
+				.footer-section {
+					margin: 0 10px;
+				}
+			}
+
+			@media (max-width: 768px) {
+				.footer-content {
+					flex-direction: column;
+					align-items: center;
+					gap: 40px;
+				}
+
+				.footer-section {
+					margin: 0;
+					text-align: center;
+				}
+			}
+		</style>
+	</body>
+</html>
