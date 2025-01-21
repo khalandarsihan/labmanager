@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* Carousel Container */
 .carousel-container > div {
   scroll-behavior: smooth;
@@ -62,3 +63,4 @@
   background-color: #fcd34d;
   transform: scale(1.2);
 }
+
