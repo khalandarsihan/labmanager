@@ -267,7 +267,8 @@ whitelisted_methods = {
     "labmanager.labmanager.lab_core.lab_controller.start_lab_session": True,
     "labmanager.labmanager.lab_core.lab_controller.end_lab_session": True,
     "labmanager.labmanager.lab_core.lab_controller.extend_lab_session": True,
-    "labmanager.labmanager.lab_core.lab_controller.get_active_session": True
+    "labmanager.labmanager.lab_core.lab_controller.get_active_session": True,
+    "labmanager.labmanager.api.api.get_course_details": True
 }
 
 
@@ -291,4 +292,27 @@ website_context = {
     "hide_footer": 1,
     # "hide_navbar": 1,
     "top_bar_items": []
+}
+
+{
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch",
+    "build:css": "tailwindcss -i ./src/styles/base.css -o ../labmanager/public/css/style.css --watch"
+  }
+}
+
+website_route_rules = [
+    {"from_route": "/courses/<course>", "to_route": "courses/details"},
+]
+
+api_spec = {
+    'labmanager.api.get_course_data': {
+        'methods': ['GET']
+    }
+}
+
+override_whitelisted_methods = {
+    "your_app.api.get_course_details": "labmanager.api.get_course_details",
+    "your_app.api.enroll_student": "labmanager.api.enroll_student"
 }

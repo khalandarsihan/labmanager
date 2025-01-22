@@ -1,0 +1,17 @@
+<!-- labmanager/www/courses/details.html -->
+{% extends "templates/web.html" %} {%- block head_include %}
+<link href="/assets/labmanager/css/style.css" rel="stylesheet" />
+<link rel="shortcut icon" href="/assets/labmanager/images/favicon.ico" type="image/x-icon" />
+<link rel="icon" href="/assets/labmanager/images/favicon.ico" type="image/x-icon" />
+{% endblock -%} {% block page_content %}
+<div id="react-root">
+	<div id="course-data" data-course="{{ frappe.form_dict.course }}"></div>
+</div>
+{% endblock %} {% block style %}
+<link href="/assets/labmanager/css/style.css" rel="stylesheet" />
+{% endblock %} {% block script %}
+<script type="text/javascript">
+	window.courseCode = document.getElementById("course-data").dataset.course;
+</script>
+<script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{module}-L-{sequence}",
+ "creation": "2025-01-21 18:14:59.238276",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "module",
+  "duration",
+  "preview_enabled",
+  "column_break_whxw",
+  "title",
+  "type",
+  "sequence"
+ ],
+ "fields": [
+  {
+   "fieldname": "module",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Course Module",
+   "options": "Course Module",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_whxw",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Lesson Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "duration",
+   "fieldtype": "Data",
+   "label": "Duration"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Lesson Type",
+   "options": "Video\nWorkshop\nQuiz\nAssignment"
+  },
+  {
+   "default": "0",
+   "fieldname": "preview_enabled",
+   "fieldtype": "Check",
+   "label": "Preview Enabled"
+  },
+  {
+   "fieldname": "sequence",
+   "fieldtype": "Int",
+   "label": "Sequence"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-21 18:46:31.730260",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Course Module Lesson",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title"
+}
