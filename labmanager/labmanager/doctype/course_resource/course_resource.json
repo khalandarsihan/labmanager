@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{lesson}-{title}-{type}",
+ "creation": "2025-01-23 01:07:33.720780",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "course",
+  "module",
+  "lesson",
+  "file",
+  "url",
+  "column_break_lwfj",
+  "type",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "depends_on": "eval:doc.type!='Link'",
+   "fieldname": "file",
+   "fieldtype": "Attach",
+   "label": "File"
+  },
+  {
+   "fieldname": "column_break_lwfj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "PDF\nCode\nVideo\nLink"
+  },
+  {
+   "depends_on": "eval:doc.type=='Link'",
+   "fieldname": "url",
+   "fieldtype": "Data",
+   "label": "URL"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "module",
+   "fieldtype": "Link",
+   "label": "Course Module",
+   "link_filters": "[[\"Course Module\",\"course\",\"=\",\"eval:doc.course\"]]",
+   "options": "Course Module"
+  },
+  {
+   "fieldname": "lesson",
+   "fieldtype": "Link",
+   "label": "Course Lesson",
+   "link_filters": "[[\"Course Module Lesson\",\"module\",\"=\",\"eval:doc.module\"],[\"Course Module Lesson\",\"course\",\"=\",\"eval:doc.course\"]]",
+   "options": "Course Module Lesson"
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Course",
+   "options": "Course"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-26 07:26:56.166229",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Course Resource",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -6,13 +6,18 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "course",
   "module",
   "duration",
+  "sequence",
   "preview_enabled",
   "column_break_whxw",
   "title",
   "type",
-  "sequence"
+  "unit",
+  "learning_objectives",
+  "section_break_kczv",
+  "lesson_content"
  ],
  "fields": [
   {
@@ -20,6 +25,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Course Module",
+   "link_filters": "[[\"Course Module\",\"course\",\"=\",\"eval:doc.course\"]]",
    "options": "Course Module",
    "reqd": 1
   },
@@ -37,6 +43,8 @@
   {
    "fieldname": "duration",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Duration"
   },
   {
@@ -49,17 +57,49 @@
    "default": "0",
    "fieldname": "preview_enabled",
    "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Preview Enabled"
   },
   {
    "fieldname": "sequence",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Sequence"
+  },
+  {
+   "fieldname": "lesson_content",
+   "fieldtype": "HTML Editor",
+   "label": "Lesson Content"
+  },
+  {
+   "fieldname": "learning_objectives",
+   "fieldtype": "HTML Editor",
+   "label": "Lesson Objectives"
+  },
+  {
+   "fieldname": "section_break_kczv",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Course",
+   "options": "Course",
+   "reqd": 1
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Unit",
+   "options": "Minutes\nHours\nDays\nWeeks"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-21 18:46:31.730260",
+ "modified": "2025-01-25 21:56:21.484364",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Course Module Lesson",

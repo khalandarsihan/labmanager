@@ -1,0 +1,116 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:QUIZ-{########}",
+ "creation": "2025-01-26 08:02:52.161137",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "question_type",
+  "section_break_slmo",
+  "question",
+  "section_break_pzzm",
+  "options",
+  "correct_text",
+  "correct_boolean",
+  "section_break_idqt",
+  "matching_pairs",
+  "section_break_pmqz",
+  "initial_code",
+  "test_cases"
+ ],
+ "fields": [
+  {
+   "fieldname": "question",
+   "fieldtype": "Text Editor",
+   "label": "Question"
+  },
+  {
+   "fieldname": "question_type",
+   "fieldtype": "Select",
+   "label": "Question Type",
+   "options": "MCQ\nTrue/False\nFill in the Blank\nMatching\nCode Assessment"
+  },
+  {
+   "default": "0",
+   "depends_on": "eval:doc.question_type=='True/False'",
+   "fieldname": "correct_boolean",
+   "fieldtype": "Check",
+   "label": "Correct Answer"
+  },
+  {
+   "depends_on": "eval:doc.question_type=='Fill in the Blank'",
+   "fieldname": "correct_text",
+   "fieldtype": "Small Text",
+   "label": "Correct Answer"
+  },
+  {
+   "depends_on": "eval:doc.question_type=='Code Assessment'",
+   "fieldname": "initial_code",
+   "fieldtype": "Code",
+   "label": "Initial Code"
+  },
+  {
+   "depends_on": "eval:doc.question_type=='Code Assessment'",
+   "fieldname": "test_cases",
+   "fieldtype": "Table",
+   "label": "Test Cases",
+   "options": "Code Test Case"
+  },
+  {
+   "depends_on": "eval:doc.question_type=='Matching'",
+   "fieldname": "matching_pairs",
+   "fieldtype": "Table",
+   "label": "Matching Pairs",
+   "options": "Matching Pairs"
+  },
+  {
+   "fieldname": "section_break_idqt",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_pmqz",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_slmo",
+   "fieldtype": "Section Break"
+  },
+  {
+   "depends_on": "eval:doc.question_type=='MCQ'",
+   "fieldname": "options",
+   "fieldtype": "Table",
+   "label": "Options",
+   "options": "Quiz Option"
+  },
+  {
+   "fieldname": "section_break_pzzm",
+   "fieldtype": "Section Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-26 09:25:09.964950",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Quiz Question",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

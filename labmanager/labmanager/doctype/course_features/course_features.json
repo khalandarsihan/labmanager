@@ -1,56 +1,42 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{course}-PRE-{sequence}",
- "creation": "2025-01-21 18:03:12.854415",
+ "autoname": "format:{course}-FEAT-{#####}",
+ "creation": "2025-01-25 23:42:45.986379",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "course",
-  "sequence",
-  "type",
-  "column_break_zzhc",
-  "prerequisite"
+  "feature_name",
+  "sequence"
  ],
  "fields": [
+  {
+   "fieldname": "feature_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Feature Name"
+  },
   {
    "fieldname": "course",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Course",
-   "options": "Course",
-   "reqd": 1
+   "options": "Course"
   },
   {
    "fieldname": "sequence",
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Sequence"
-  },
-  {
-   "fieldname": "column_break_zzhc",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "prerequisite",
-   "fieldtype": "Text Editor",
-   "in_list_view": 1,
-   "label": "Prerequisite",
-   "reqd": 1
-  },
-  {
-   "fieldname": "type",
-   "fieldtype": "Select",
-   "label": "Type",
-   "options": "Knowledge\nTechnical\nTool"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-25 07:17:43.011725",
+ "modified": "2025-01-26 07:11:19.190085",
  "modified_by": "Administrator",
  "module": "LabManager",
- "name": "Course Prerequisite",
+ "name": "Course Features",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

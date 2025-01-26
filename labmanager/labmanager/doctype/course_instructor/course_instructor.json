@@ -7,10 +7,14 @@
  "engine": "InnoDB",
  "field_order": [
   "full_name",
-  "experience",
+  "title",
+  "email",
+  "expertise_areas",
+  "linkedin_profile",
+  "rating",
   "image",
   "column_break_iuuc",
-  "title",
+  "experience",
   "bio"
  ],
  "fields": [
@@ -44,11 +48,33 @@
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Profile Image"
+  },
+  {
+   "fieldname": "expertise_areas",
+   "fieldtype": "Table MultiSelect",
+   "label": "Expertise Areas",
+   "options": "Skills Child"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email"
+  },
+  {
+   "fieldname": "linkedin_profile",
+   "fieldtype": "Data",
+   "label": "Linkedin Profile"
+  },
+  {
+   "fieldname": "rating",
+   "fieldtype": "Float",
+   "label": "Rating",
+   "precision": "2"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-22 14:43:58.402205",
+ "modified": "2025-01-23 00:41:06.648599",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Course Instructor",

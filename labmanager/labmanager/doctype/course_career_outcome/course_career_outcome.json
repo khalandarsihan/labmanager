@@ -1,0 +1,81 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:{course}-CO-{#####}",
+ "creation": "2025-01-24 15:18:40.835969",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "course",
+  "description",
+  "industry",
+  "column_break_zdoa",
+  "role_title",
+  "required_skills",
+  "salary_range"
+ ],
+ "fields": [
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "label": "Course",
+   "options": "Course"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_zdoa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "role_title",
+   "fieldtype": "Table MultiSelect",
+   "label": "Role Title",
+   "options": "Roles Child"
+  },
+  {
+   "fieldname": "required_skills",
+   "fieldtype": "Table MultiSelect",
+   "label": "Required Skills",
+   "options": "Skills Child"
+  },
+  {
+   "fieldname": "salary_range",
+   "fieldtype": "Small Text",
+   "label": "Salary Range"
+  },
+  {
+   "fieldname": "industry",
+   "fieldtype": "Data",
+   "label": "Industry"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-01-25 23:29:41.153307",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Course Career Outcome",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,49 +1,56 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{course}-OBJ-{sequence}",
- "creation": "2025-01-21 18:09:04.463555",
+ "autoname": "format:QZ-QUES-{########}",
+ "creation": "2025-01-26 09:28:34.625850",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "course",
-  "sequence",
-  "column_break_nuex",
-  "objective"
+  "quiz",
+  "column_break_uhfh",
+  "question",
+  "column_break_path",
+  "sequence"
  ],
  "fields": [
   {
-   "fieldname": "course",
+   "fieldname": "quiz",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Course",
-   "options": "Course",
-   "reqd": 1
+   "in_standard_filter": 1,
+   "label": "Quiz",
+   "options": "Quiz"
   },
   {
-   "fieldname": "column_break_nuex",
+   "fieldname": "question",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Question",
+   "options": "Quiz Question"
+  },
+  {
+   "fieldname": "column_break_uhfh",
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "objective",
-   "fieldtype": "Text Editor",
-   "in_list_view": 1,
-   "label": "Learning Objective",
-   "reqd": 1
+   "fieldname": "column_break_path",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "sequence",
    "fieldtype": "Int",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Sequence"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-25 07:22:09.640411",
+ "modified": "2025-01-26 09:37:49.405052",
  "modified_by": "Administrator",
  "module": "LabManager",
- "name": "Course Learning Objective",
+ "name": "Quiz Question Mapping",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [

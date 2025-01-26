@@ -37,7 +37,7 @@ def get_course_details(course_code):
         modules = frappe.get_all(
             "Course Module", 
             filters={"course": course_code},
-            fields=["name", "title", "description", "duration", "sequence"],
+            fields=["name", "title", "description", "duration", "unit", "sequence"],
             order_by="sequence",
             ignore_permissions=True
         )
@@ -47,7 +47,7 @@ def get_course_details(course_code):
             module.lessons = frappe.get_all(
                 "Course Module Lesson", 
                 filters={"module": module.name},
-                fields=["title", "duration", "type", "preview_enabled", "sequence"],
+                fields=["title", "duration", "unit", "type", "preview_enabled", "sequence"],
                 order_by="sequence",
                 ignore_permissions=True
             )
@@ -57,6 +57,7 @@ def get_course_details(course_code):
             "title": course.title,
             "description": course.description,
             "duration": course.duration,
+            "unit": course.unit,
             "level": course.level,
             "price": course.price,
             "start_date": course.start_date,
@@ -80,11 +81,13 @@ def get_course_details(course_code):
                     "title": module.title,
                     "description": module.description,
                     "duration": module.duration,
+                    "unit": module.unit,
                     "sequence": module.sequence,
                     "lessons": [
                         {
                             "title": lesson.title,
                             "duration": lesson.duration,
+                            "unit": lesson.unit,
                             "type": lesson.type,
                             "preview_enabled": lesson.preview_enabled,
                             "sequence": lesson.sequence

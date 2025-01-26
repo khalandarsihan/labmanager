@@ -1,17 +1,22 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{course}-MOD-{sequence}",
+ "autoname": "format:{course}-{title}-{sequence}",
  "creation": "2025-01-21 18:12:06.712003",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "course",
   "title",
-  "duration",
   "sequence",
+  "status",
+  "learning_objectives",
   "column_break_wshk",
-  "description"
+  "description",
+  "section_break_hzhp",
+  "duration",
+  "column_break_vnsa",
+  "unit"
  ],
  "fields": [
   {
@@ -29,6 +34,7 @@
   {
    "fieldname": "title",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Module Title",
    "reqd": 1
   },
@@ -40,17 +46,49 @@
   {
    "fieldname": "duration",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Duration"
   },
   {
    "fieldname": "sequence",
    "fieldtype": "Int",
+   "in_list_view": 1,
    "label": "Sequence"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nActive\nInactive"
+  },
+  {
+   "fieldname": "learning_objectives",
+   "fieldtype": "Link",
+   "label": "Learning Objectives",
+   "link_filters": "[[\"Course Learning Objective\",\"course\",\"=\",\"eval:doc.course\"]]",
+   "options": "Course Learning Objective"
+  },
+  {
+   "fieldname": "section_break_hzhp",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_vnsa",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Unit",
+   "options": "Minutes\nHours\nDays\nWeeks"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-21 18:14:30.490465",
+ "modified": "2025-01-25 08:35:04.152709",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Course Module",

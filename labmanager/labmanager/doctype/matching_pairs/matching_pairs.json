@@ -1,0 +1,47 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:MATCH-{#####}",
+ "creation": "2025-01-26 08:29:19.957720",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "left_item",
+  "column_break_nkzs",
+  "right_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "left_item",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Left Item"
+  },
+  {
+   "fieldname": "column_break_nkzs",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "right_item",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Right Item"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-01-26 08:33:42.983161",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Matching Pairs",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

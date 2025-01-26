@@ -1,0 +1,42 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:CODE-{#####}",
+ "creation": "2025-01-26 08:16:08.180596",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "input",
+  "expected_output"
+ ],
+ "fields": [
+  {
+   "fieldname": "input",
+   "fieldtype": "Code",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Input"
+  },
+  {
+   "fieldname": "expected_output",
+   "fieldtype": "Code",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Expected Output"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-01-26 08:23:07.595642",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Code Test Case",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
