@@ -14,7 +14,8 @@
   "url",
   "column_break_lwfj",
   "type",
-  "description"
+  "description",
+  "preview_enabled"
  ],
  "fields": [
   {
@@ -43,9 +44,9 @@
    "options": "PDF\nCode\nVideo\nLink"
   },
   {
-   "depends_on": "eval:doc.type=='Link'",
+   "depends_on": "eval:doc.type=='Link'|| 'Video'",
    "fieldname": "url",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "URL"
   },
   {
@@ -72,11 +73,17 @@
    "fieldtype": "Link",
    "label": "Course",
    "options": "Course"
+  },
+  {
+   "default": "1",
+   "fieldname": "preview_enabled",
+   "fieldtype": "Check",
+   "label": "Preview Enabled"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-26 07:26:56.166229",
+ "modified": "2025-01-27 01:21:36.242607",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Course Resource",

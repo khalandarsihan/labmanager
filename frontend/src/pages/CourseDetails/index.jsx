@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFrappeGetCall } from 'frappe-react-sdk';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,16 +6,56 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Clock, BookOpen, Trophy, Calendar, Users, Target, CheckCircle,
-  ChevronDown, Play
+  ChevronDown, Play, FileText, Code, LinkIcon
 } from 'lucide-react';
+import PreviewSection from './PreviewSection';
+// import SampleLesson from './PreviewSection';
+
 
 const CourseDetails = ({ courseCode }) => {
   const [showEnrollment, setShowEnrollment] = useState(false);
-  
   const { data, error, isLoading } = useFrappeGetCall(
     'labmanager.api.api.get_course_details',
     { course_code: courseCode }
   );
+
+  
+  const { data: quizData } = useFrappeGetCall(
+    'labmanager.api.api.get_lesson_quiz',
+    { course_code: courseCode }
+  );
+
+  const { data: outcomeData } = useFrappeGetCall(
+    'labmanager.api.api.get_course_outcomes',
+    { course_code: courseCode }
+  );
+
+  const { data: resourceData, error: resourceError, mutate } = useFrappeGetCall(
+    'labmanager.api.api.get_lesson_resources',
+    { course_code: courseCode },
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false
+    }
+  );
+
+  // const { data: resourceData, error: resourceError } = useFrappeGetCall(
+  //   'labmanager.api.api.get_lesson_resources',
+  //   { course_code: courseCode }
+  // );
+
+  // const { data: quizData, error: quizError } = useFrappeGetCall(
+  //   'labmanager.api.api.get_lesson_quiz',
+  //   { course_code: courseCode }
+  // );
+
+
+
+  useEffect(() => {
+    console.log('Resource Data:', resourceData);
+    console.log('Resource Error:', resourceError);
+  }, [resourceData, resourceError]);
+
 
   if (isLoading) {
     return (
@@ -31,6 +71,17 @@ const CourseDetails = ({ courseCode }) => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg text-red-500">Error loading course: {error.message}</div>
       </div>
+    );
+  }
+
+  if (resourceError) {
+    console.error('Resource Error:', resourceError);
+    return (
+      <Card>
+        <CardContent>
+          <p className="text-red-500">Error loading resources. Please try again.</p>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -79,7 +130,7 @@ const CourseDetails = ({ courseCode }) => {
               <CardDescription>Includes lifetime access & certificate</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button 
+              <Button
                 className="w-full mb-4"
                 onClick={() => setShowEnrollment(true)}
               >
@@ -99,24 +150,23 @@ const CourseDetails = ({ courseCode }) => {
           </CardHeader>
           <CardContent>
             <div className="flex items-start gap-6">
-                <img
-                src={instructorData.image ? 
-                (() => {
-                  const imagePath = instructorData.image.startsWith('/files/') ? instructorData.image : `/files/${instructorData.image}`;
-                  console.log('Image path:', imagePath);
-                  return imagePath;
-                })() 
-                : "/api/placeholder/96/96"}
+              <img
+                src={instructorData.image ?
+                  (() => {
+                    const imagePath = instructorData.image.startsWith('/files/') ? 
+                      instructorData.image : `/files/${instructorData.image}`;
+                    return imagePath;
+                  })()
+                  : "/api/placeholder/96/96"}
                 alt={instructorData.full_name}
                 className="w-24 h-24 rounded-full"
               />
-
               <div>
                 <h3 className="text-xl font-semibold">{instructorData.full_name}</h3>
                 <p className="text-gray-600">{instructorData.title}</p>
                 <p className="mt-2">{instructorData.experience}</p>
                 {instructorData.bio && (
-                  <div 
+                  <div
                     className="mt-2 text-sm text-gray-600"
                     dangerouslySetInnerHTML={{ __html: instructorData.bio }}
                   />
@@ -128,107 +178,177 @@ const CourseDetails = ({ courseCode }) => {
       )}
 
       {/* Main Content Tabs */}
-      <Tabs defaultValue="overview" className="mb-8">
-        <TabsList className="grid grid-cols-2 w-full">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="curriculum">Curriculum</TabsTrigger>
-        </TabsList>
+      <div className="w-full">
+        <Tabs defaultValue="overview">
+          <TabsList className="w-full grid grid-cols-5 bg-gray-100">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-white">Overview</TabsTrigger>
+            <TabsTrigger value="curriculum" className="data-[state=active]:bg-white">Curriculum</TabsTrigger>
+            <TabsTrigger value="preview" className="data-[state=active]:bg-white">Sample Lesson</TabsTrigger>
+            <TabsTrigger value="outcomes" className="data-[state=active]:bg-white">Outcomes</TabsTrigger>
+            <TabsTrigger value="certificate" className="data-[state=active]:bg-white">Certificate</TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="overview">
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {course.prerequisites?.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Prerequisites</h3>
-                    <ul className="space-y-2">
-                      {course.prerequisites.map((prereq, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4" />
-                          <div dangerouslySetInnerHTML={{ __html: prereq }} />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                
-                {course.learning_objectives?.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Learning Objectives</h3>
-                    <ul className="space-y-2">
-                      {course.learning_objectives.map((objective, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <Target className="w-4 h-4" />
-                          <div dangerouslySetInnerHTML={{ __html: objective }} />
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="curriculum">
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Syllabus</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {course.syllabus?.map((module) => (
-                  <Collapsible key={module.name}>
-                    <CollapsibleTrigger className="w-full">
-                      <Card className="border-2 hover:border-blue-200">
-                        <CardHeader>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <CardTitle className="text-lg">{module.title}</CardTitle>
-                              <CardDescription className="mt-1">
-                              {`${module.duration} ${module.unit}`}
-                              </CardDescription>
-                            </div>
-                            <ChevronDown className="w-5 h-5" />
-                          </div>
-                        </CardHeader>
-                      </Card>
-                    </CollapsibleTrigger>
-                    
-                    <CollapsibleContent>
-                      <div className="mt-4 ml-4">
-                        <div dangerouslySetInnerHTML={{ __html: module.description }} />
-                        {module.lessons?.map((lesson, index) => (
-                          <div 
-                            key={`${module.name}-${index}`} 
-                            className="flex items-center justify-between p-2 mt-2 rounded bg-gray-50"
-                          >
-                            <div className="flex items-center gap-3">
-                              <Play className="w-4 h-4" />
-                              <div>
-                                <p className="font-medium">{lesson.title}</p>
-                                <p className="text-sm text-gray-600">{`${lesson.duration} ${lesson.unit}`}</p>
-                              </div>
-                            </div>
-                            {lesson.preview_enabled && (
-                              <Button variant="outline" size="sm">
-                                Preview
-                              </Button>
-                            )}
-                          </div>
+          <TabsContent value="overview">
+            <Card>
+              <CardHeader>
+                <CardTitle>Course Overview</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {course.prerequisites?.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Prerequisites</h3>
+                      <ul className="space-y-2">
+                        {course.prerequisites.map((prereq, index) => (
+                          <li key={index} className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4" />
+                            <div dangerouslySetInnerHTML={{ __html: prereq }} />
+                          </li>
                         ))}
-                      </div>
-                    </CollapsibleContent>
-                  </Collapsible>
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {course.learning_objectives?.length > 0 && (
+                    <div>
+                      <h3 className="text-lg font-semibold mb-2">Learning Objectives</h3>
+                      <ul className="space-y-2">
+                        {course.learning_objectives.map((objective, index) => (
+                          <li key={index} className="flex items-center gap-2">
+                            <Target className="w-4 h-4" />
+                            <div dangerouslySetInnerHTML={{ __html: objective }} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="curriculum">
+            <Card>
+              <CardHeader>
+                <CardTitle>Course Syllabus</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {course.syllabus?.map((module) => (
+                    <Collapsible key={module.name}>
+                      <CollapsibleTrigger className="w-full">
+                        <Card className="border-2 hover:border-blue-200">
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <CardTitle className="text-lg">{module.title}</CardTitle>
+                                <CardDescription className="mt-1">
+                                  {`${module.duration} ${module.unit}`}
+                                </CardDescription>
+                              </div>
+                              <ChevronDown className="w-5 h-5" />
+                            </div>
+                          </CardHeader>
+                        </Card>
+                      </CollapsibleTrigger>
+                      
+                      <CollapsibleContent>
+                        <div className="mt-4 ml-4">
+                          <div dangerouslySetInnerHTML={{ __html: module.description }} />
+                          {module.lessons?.map((lesson, index) => (
+                            <div
+                              key={`${module.name}-${index}`}
+                              className="flex items-center justify-between p-2 mt-2 rounded bg-gray-50"
+                            >
+                              <div className="flex items-center gap-3">
+                                <Play className="w-4 h-4" />
+                                <div>
+                                  <p className="font-medium">{lesson.title}</p>
+                                  <p className="text-sm text-gray-600">{`${lesson.duration} ${lesson.unit}`}</p>
+                                </div>
+                              </div>
+                              {lesson.preview_enabled && (
+                                <Button variant="outline" size="sm">
+                                  Preview
+                                </Button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="preview">
+  <PreviewSection resourceData={resourceData?.message} />
+</TabsContent>
+
+{/* <TabsContent value="preview">
+  <SampleLesson resourceData={resourceData} quizData={quizData} />
+</TabsContent> */}
+
+          <TabsContent value="outcomes">
+            <Card>
+              <CardHeader>
+                <CardTitle>Career Outcomes</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Potential Roles</h3>
+                    <ul className="space-y-2">
+                      {outcomeData?.outcomes?.map((outcome, index) => (
+                        outcome.roles.map((role, roleIndex) => (
+                          <li key={`${index}-${roleIndex}`} className="flex items-center gap-2">
+                            <Users className="w-4 h-4" />
+                            {role}
+                          </li>
+                        ))
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4">Industry Skills</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {outcomeData?.outcomes?.map((outcome, index) => (
+                        outcome.skills.map((skill, skillIndex) => (
+                          <span key={`${index}-${skillIndex}`}
+                                className="px-3 py-1 bg-blue-100 rounded-full text-sm">
+                            {skill}
+                          </span>
+                        ))
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                {outcomeData?.outcomes?.map((outcome, index) => (
+                  <div key={index} className="mt-6">
+                    <h3 className="text-lg font-semibold mb-2">{outcome.industry}</h3>
+                    <p className="mb-2">{outcome.description}</p>
+                    <p className="text-sm text-gray-600">Salary Range: {outcome.salary_range}</p>
+                  </div>
                 ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="certificate">
+            <Card>
+              <CardHeader>
+                <CardTitle>Course Certificate</CardTitle>
+              </CardHeader>
+              <CardContent>
+                Certificate content here
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 };

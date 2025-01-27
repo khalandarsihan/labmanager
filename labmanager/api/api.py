@@ -109,6 +109,109 @@ def get_course_details(course_code):
     finally:
         frappe.flags.ignore_permissions = False
 
+@frappe.whitelist(allow_guest=True)
+def get_lesson_quiz(course_code):
+    try:
+        # Get sample lesson from course
+        sample_lesson = frappe.get_value("Course Module Lesson", 
+            {"course": course_code, "preview_enabled": 1}, "name")
+        
+        if not sample_lesson:
+            return {"questions": []}
+
+        # Get quiz for the sample lesson
+        quiz = frappe.get_value("Quiz", 
+            {"lesson": sample_lesson}, "name")
+        
+        if not quiz:
+            return {"questions": []}
+
+        # Get quiz questions
+        questions = frappe.get_all("Quiz Question Mapping",
+            filters={"quiz": quiz},
+            fields=["question"],
+            order_by="sequence"
+        )
+
+        question_data = []
+        for q in questions:
+            question_doc = frappe.get_doc("Quiz Question", q.question)
+            
+            # Format question data
+            question_obj = {
+                "question": question_doc.question,
+                "question_type": question_doc.question_type,
+                "options": []
+            }
+            
+            # Get options for MCQ
+            if question_doc.question_type == "MCQ":
+                options = frappe.get_all("Quiz Option",
+                    filters={"parent": question_doc.name},
+                    fields=["option_text", "is_correct"]
+                )
+                question_obj["options"] = options
+
+            question_data.append(question_obj)
+
+        return {"questions": question_data}
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
+
+@frappe.whitelist(allow_guest=True)
+def get_course_outcomes(course_code):
+    try:
+        outcomes = frappe.get_all(
+            "Course Career Outcome",
+            filters={"course": course_code},
+            fields=["description", "industry", "salary_range"]
+        )
+        
+        for outcome in outcomes:
+            # Get roles
+            roles = frappe.get_all(
+                "Roles Child",
+                filters={"parent": outcome.name},
+                fields=["role_title"]
+            )
+            outcome.roles = [role.role_title for role in roles]
+            
+            # Get skills
+            skills = frappe.get_all(
+                "Skills Child",
+                filters={"parent": outcome.name},
+                fields=["skill"]
+            )
+            outcome.skills = [skill.skill for skill in skills]
+            
+        return {"outcomes": outcomes}
+        
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
+    
+@frappe.whitelist(allow_guest=True)
+def get_lesson_resources(course_code):
+    try:
+        resources = frappe.get_all(
+            "Course Resource",
+            filters={"course": course_code, "preview_enabled": 1},
+            fields=["title", "type", "file", "url", "description"]
+        )
+        
+        # Clean and validate URLs
+        for resource in resources:
+            if resource.type == 'Video' and resource.url:
+                resource.url = resource.url.replace('www.youtube-nocookie.com', 'www.youtube.com')
+            elif resource.type == 'PDF' and resource.file:
+                resource.file = frappe.utils.get_url(resource.file)
+                
+        return {"message": {"resources": resources}}
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
 
 @frappe.whitelist(allow_guest=True)
 def enroll_student(course_code, student_data):
