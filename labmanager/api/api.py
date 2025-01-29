@@ -109,56 +109,104 @@ def get_course_details(course_code):
     finally:
         frappe.flags.ignore_permissions = False
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True)   
 def get_lesson_quiz(course_code):
     try:
-        # Get sample lesson from course
-        sample_lesson = frappe.get_value("Course Module Lesson", 
-            {"course": course_code, "preview_enabled": 1}, "name")
-        
-        if not sample_lesson:
+        # First get sample lesson using basic db query
+        lesson_name = frappe.db.sql("""
+            SELECT name 
+            FROM `tabCourse Module Lesson`
+            WHERE course = %s AND preview_enabled = 1
+            LIMIT 1
+        """, (course_code,))
+
+        if not lesson_name or not lesson_name[0]:
             return {"questions": []}
 
-        # Get quiz for the sample lesson
-        quiz = frappe.get_value("Quiz", 
-            {"lesson": sample_lesson}, "name")
-        
-        if not quiz:
+        # Get quiz using basic db query
+        quiz_name = frappe.db.sql("""
+            SELECT name 
+            FROM `tabQuiz`
+            WHERE lesson = %s
+            LIMIT 1
+        """, (lesson_name[0][0],))
+
+        if not quiz_name or not quiz_name[0]:
             return {"questions": []}
 
-        # Get quiz questions
-        questions = frappe.get_all("Quiz Question Mapping",
-            filters={"quiz": quiz},
-            fields=["question"],
-            order_by="sequence"
-        )
+        # Get question mappings
+        question_mappings = frappe.db.sql("""
+            SELECT question, sequence
+            FROM `tabQuiz Question Mapping`
+            WHERE quiz = %s
+            ORDER BY sequence
+        """, (quiz_name[0][0],), as_dict=1)
 
-        question_data = []
-        for q in questions:
-            question_doc = frappe.get_doc("Quiz Question", q.question)
-            
-            # Format question data
-            question_obj = {
-                "question": question_doc.question,
-                "question_type": question_doc.question_type,
-                "options": []
-            }
-            
-            # Get options for MCQ
-            if question_doc.question_type == "MCQ":
-                options = frappe.get_all("Quiz Option",
-                    filters={"parent": question_doc.name},
-                    fields=["option_text", "is_correct"]
-                )
-                question_obj["options"] = options
+        questions = []
+        for mapping in question_mappings:
+            try:
+                # Load each question
+                question = frappe.get_doc("Quiz Question", mapping.question)
+                
+                question_data = {
+                    "id": question.name,
+                    "question": question.question,
+                    "question_type": question.question_type
+                }
 
-            question_data.append(question_obj)
+                # Handle MCQ type
+                if question.question_type == "MCQ":
+                    options = []
+                    for opt in question.options:
+                        options.append({
+                            "option_text": opt.option_text,
+                            "is_correct": opt.is_correct
+                        })
+                    question_data["options"] = options
 
-        return {"questions": question_data}
+                # Handle True/False type
+                elif question.question_type == "True/False":
+                    question_data["correct_answer"] = question.correct_boolean
+
+                # Handle Fill in the Blank type
+                elif question.question_type == "Fill in the Blank":
+                    question_data["correct_answer"] = question.correct_text
+
+                # Handle Matching type
+                elif question.question_type == "Matching":
+                    pairs = []
+                    for pair in question.matching_pairs:
+                        pairs.append({
+                            "left_item": pair.left_item,
+                            "right_item": pair.right_item
+                        })
+                    question_data["matching_pairs"] = pairs
+
+                # Handle Code Assessment type
+                elif question.question_type == "Code Assessment":
+                    question_data["initial_code"] = question.initial_code
+                    test_cases = []
+                    for test in question.test_cases:
+                        test_cases.append({
+                            "input_data": test.input_data,
+                            "expected_output": test.expected_output
+                        })
+                    question_data["test_cases"] = test_cases
+
+                questions.append(question_data)
+            except Exception as qe:
+                frappe.log_error(f"Error processing question {mapping.question}: {str(qe)}")
+                continue
+
+        return {
+            "questions": questions
+        }
 
     except Exception as e:
-        frappe.log_error(frappe.get_traceback())
-        return {"error": str(e)}
+        frappe.log_error(frappe.get_traceback(), "Quiz Fetch Error")
+        return {"error": str(e), "questions": []}
+
+
 
 @frappe.whitelist(allow_guest=True)
 def get_course_outcomes(course_code):

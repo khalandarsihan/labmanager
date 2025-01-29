@@ -9,8 +9,6 @@ import {
   ChevronDown, Play, FileText, Code, LinkIcon
 } from 'lucide-react';
 import PreviewSection from './PreviewSection';
-// import SampleLesson from './PreviewSection';
-
 
 const CourseDetails = ({ courseCode }) => {
   const [showEnrollment, setShowEnrollment] = useState(false);
@@ -19,42 +17,22 @@ const CourseDetails = ({ courseCode }) => {
     { course_code: courseCode }
   );
 
-  
-  const { data: quizData } = useFrappeGetCall(
-    'labmanager.api.api.get_lesson_quiz',
-    { course_code: courseCode }
-  );
 
   const { data: outcomeData } = useFrappeGetCall(
     'labmanager.api.api.get_course_outcomes',
     { course_code: courseCode }
   );
 
-  const { data: resourceData, error: resourceError, mutate } = useFrappeGetCall(
+
+  const { data: resourceData, error: resourceError } = useFrappeGetCall(
     'labmanager.api.api.get_lesson_resources',
-    { course_code: courseCode },
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false
-    }
+    { course_code: courseCode }
   );
 
-  // const { data: resourceData, error: resourceError } = useFrappeGetCall(
-  //   'labmanager.api.api.get_lesson_resources',
-  //   { course_code: courseCode }
-  // );
-
-  // const { data: quizData, error: quizError } = useFrappeGetCall(
-  //   'labmanager.api.api.get_lesson_quiz',
-  //   { course_code: courseCode }
-  // );
-
-
-
-  useEffect(() => {
-    console.log('Resource Data:', resourceData);
-    console.log('Resource Error:', resourceError);
-  }, [resourceData, resourceError]);
+  const { data: quizData, error: quizError } = useFrappeGetCall(
+    'labmanager.api.api.get_lesson_quiz',
+    { course_code: courseCode }
+  );
 
 
   if (isLoading) {
@@ -283,13 +261,14 @@ const CourseDetails = ({ courseCode }) => {
             </Card>
           </TabsContent>
 
-          <TabsContent value="preview">
-  <PreviewSection resourceData={resourceData?.message} />
-</TabsContent>
+<TabsContent value="preview">
+            <PreviewSection
+              resourceData={resourceData}
+              quizData={quizData?.message}
+              onError={(error) => console.error('Preview Section Error:', error)}
+            />
+          </TabsContent>
 
-{/* <TabsContent value="preview">
-  <SampleLesson resourceData={resourceData} quizData={quizData} />
-</TabsContent> */}
 
           <TabsContent value="outcomes">
             <Card>
