@@ -87,6 +87,7 @@ const PreviewSection = ({ resourceData, quizData }) => {
         return (
           <div className="space-y-4">
             <RadioGroup
+              key={`mcq-${index}-${showResults}`}
               value={answers[index]}
               onValueChange={(value) => setAnswers({ ...answers, [index]: value })}
             >
@@ -114,6 +115,7 @@ const PreviewSection = ({ resourceData, quizData }) => {
         return (
           <div className="space-y-4">
             <RadioGroup
+              key={`tf-${index}-${showResults}`}
               value={answers[index]}
               onValueChange={(value) => setAnswers({ ...answers, [index]: value })}
             >
@@ -153,39 +155,43 @@ const PreviewSection = ({ resourceData, quizData }) => {
             )}
           </div>
         );
-
-      case 'Matching':
-        return (
-          <div className="space-y-4">
-            {question.matching_pairs?.map((pair, pairIndex) => (
-              <div key={pairIndex} className="flex items-center gap-4">
-                <span className="min-w-[120px] font-medium">{pair.left_item}</span>
-                <Input
-                  type="text"
-                  placeholder="Match with right item"
-                  value={answers[`${index}-${pairIndex}`] || ''}
-                  onChange={(e) => setAnswers({
-                    ...answers,
-                    [`${index}-${pairIndex}`]: e.target.value
-                  })}
-                  className="max-w-[200px]"
-                />
-                {showResults && answers[`${index}-${pairIndex}`] && (
-                  <span className={
-                    answers[`${index}-${pairIndex}`].toLowerCase() === pair.right_item.toLowerCase()
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }>
-                    {answers[`${index}-${pairIndex}`].toLowerCase() === pair.right_item.toLowerCase()
-                      ? "✓"
-                      : "✗"
-                    }
-                  </span>
-                )}
-              </div>
+case 'Matching':
+  return (
+    <div className="space-y-4">
+      {question.matching_pairs?.map((pair, pairIndex) => (
+        <div key={pairIndex} className="flex items-center gap-4">
+          <span className="min-w-[120px] font-medium">{pair.left_item}</span>
+          <select
+            value={answers[`${index}-${pairIndex}`] || ''}
+            onChange={(e) => setAnswers({
+              ...answers,
+              [`${index}-${pairIndex}`]: e.target.value
+            })}
+            className="w-full max-w-[200px] p-2 border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Match with right item</option>
+            {question.matching_pairs.map((rightPair) => (
+              <option key={rightPair.right_item} value={rightPair.right_item}>
+                {rightPair.right_item}
+              </option>
             ))}
-          </div>
-        );
+          </select>
+          {showResults && answers[`${index}-${pairIndex}`] && (
+            <span className={
+              answers[`${index}-${pairIndex}`].toLowerCase() === pair.right_item.toLowerCase()
+                ? "text-green-600"
+                : "text-red-600"
+            }>
+              {answers[`${index}-${pairIndex}`].toLowerCase() === pair.right_item.toLowerCase()
+                ? "✓"
+                : "✗"
+              }
+            </span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 
       case 'Code Assessment':
         return (
@@ -324,27 +330,41 @@ const PreviewSection = ({ resourceData, quizData }) => {
                   {renderQuestion(question, index)}
                 </div>
               ))}
-              <div className="space-y-4">
-                <Button 
-                  onClick={handleSubmit} 
-                  className="w-full"
-                  disabled={showResults}
-                >
-                  {showResults ? 'Quiz Submitted' : 'Submit Answers'}
-                </Button>
-                {showResults && (
-                  <Button 
-                    onClick={() => {
-                      setShowResults(false);
-                      setFeedback({});
-                    }}
-                    variant="outline" 
-                    className="w-full"
-                  >
-                    Try Again
-                  </Button>
-                )}
-              </div>
+<div className="space-y-4">
+  {!showResults ? (
+    <Button
+      onClick={handleSubmit}
+      className="w-full"
+    >
+      Submit Answers
+    </Button>
+  ) : (
+    <>
+      <Button
+        className="w-full"
+        disabled
+      >
+        Quiz Submitted
+      </Button>
+      <Button
+        onClick={() => {
+          setShowResults(false);
+          setFeedback({});
+          setAnswers({}); // This will clear all answers
+          // For radio buttons specifically
+          const radioInputs = document.querySelectorAll('input[type="radio"]');
+          radioInputs.forEach(input => {
+            input.checked = false;
+          });
+        }}
+        variant="outline"
+        className="w-full"
+      >
+        Try Again
+      </Button>
+    </>
+  )}
+</div>
             </div>
           </CardContent>
         </Card>
