@@ -7,6 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Code, FileText, AlertCircle } from 'lucide-react';
+import CodeAssessment from './CodeAssessment';
+
 
 const PreviewSection = ({ resourceData, quizData }) => {
   const [answers, setAnswers] = useState({});
@@ -193,41 +195,41 @@ case 'Matching':
     </div>
   );
 
-      case 'Code Assessment':
-        return (
-          <div className="space-y-4">
-            {question.initial_code && (
-              <div className="bg-gray-100 p-4 rounded">
-                <pre className="text-sm font-mono">{question.initial_code}</pre>
-              </div>
-            )}
-            <Textarea
-              className="w-full min-h-[200px] font-mono"
-              placeholder="Write your code here..."
-              value={answers[index] || ''}
-              onChange={(e) => setAnswers({ ...answers, [index]: e.target.value })}
-            />
-            {showResults && answers[index] && (
-              <div className="text-blue-600">
-                {feedback[index]}
-              </div>
-            )}
-            {question.test_cases && (
-              <div className="mt-4">
-                <h4 className="font-medium mb-2">Test Cases:</h4>
-                <div className="space-y-2">
-                  {question.test_cases.map((test, testIndex) => (
-                    <div key={testIndex} className="text-sm">
-                      <span className="font-medium">Input:</span> {test.input}
-                      <br />
-                      <span className="font-medium">Expected Output:</span> {test.expected_output}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        );
+    // case 'Code Assessment':
+    // return (
+    //   <CodeAssessment
+    //     question={question.question}
+    //     initialCode={question.initial_code}
+    //     testCases={question.test_cases}
+    //     onSubmit={(code, results) => {
+    //       setAnswers({ ...answers, [index]: code });
+    //       setFeedback({ ...feedback, [index]: 'Code submitted for evaluation' });
+    //     }}
+    //   />
+    // );
+
+    case 'Code Assessment':
+  return (
+    <CodeAssessment
+      key={`code-${index}`}
+      question={{
+        ...question,
+        test_cases: question.test_cases?.map(test => ({
+          input: test.input_data || test.input,
+          expected_output: test.expected_output
+        })) || []
+      }}
+      index={index}
+      answers={answers}
+      setAnswers={setAnswers}
+      onSubmit={(code) => {
+        setFeedback(prev => ({
+          ...prev,
+          [index]: 'Code submitted for evaluation'
+        }));
+      }}
+    />
+  );
 
       default:
         return <div>Unsupported question type: {question.question_type}</div>;

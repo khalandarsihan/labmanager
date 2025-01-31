@@ -112,6 +112,7 @@ def get_course_details(course_code):
 
 @frappe.whitelist(allow_guest=True)   
 def get_lesson_quiz(course_code):
+    frappe.logger().debug(f"Fetching quiz for course: {course_code}")
     try:
         # First get sample lesson using basic db query
         lesson_name = frappe.db.sql("""
@@ -131,6 +132,8 @@ def get_lesson_quiz(course_code):
             WHERE lesson = %s
             LIMIT 1
         """, (lesson_name[0][0],))
+        
+        frappe.logger().debug(f"Found quiz: {quiz_name[0][0] if quiz_name and quiz_name[0] else 'None'}")
 
         if not quiz_name or not quiz_name[0]:
             return {"questions": []}
@@ -186,12 +189,11 @@ def get_lesson_quiz(course_code):
                 # Handle Code Assessment type
                 elif question.question_type == "Code Assessment":
                     question_data["initial_code"] = question.initial_code
-                    test_cases = []
-                    for test in question.test_cases:
-                        test_cases.append({
-                            "input_data": test.input_data,
-                            "expected_output": test.expected_output
-                        })
+                    test_cases = frappe.get_all(
+                        "Code Test Case",
+                        filters={"parent": question.name},
+                        fields=["input", "expected_output"]
+                    )
                     question_data["test_cases"] = test_cases
 
                 questions.append(question_data)
@@ -413,3 +415,17 @@ def enroll_in_moodle_course(user_id, course_id):
     except Exception as e:
         frappe.log_error(f"Moodle Enrollment Error: {str(e)}")
         return None
+
+
+@frappe.whitelist(allow_guest=True)
+def get_featured_courses():
+    try:
+        courses = frappe.get_all(
+            "Course",
+            fields=["course_code", "title", "price", "featured_image", "description"],
+            filters={"status": "Active", "is_featured": 1}
+        )
+        return {"courses": courses}
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
