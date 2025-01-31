@@ -9,6 +9,8 @@ import {
   ChevronDown, Play, FileText, Code, LinkIcon
 } from 'lucide-react';
 import PreviewSection from './PreviewSection';
+import { User } from 'lucide-react';
+
 
 const CourseDetails = ({ courseCode }) => {
   const [showEnrollment, setShowEnrollment] = useState(false);
@@ -65,10 +67,18 @@ const CourseDetails = ({ courseCode }) => {
 
   const course = data?.message || data;
   const instructorData = course?.instructordata || course?.instructor || {};
+  const outcomes = outcomeData?.message?.message || { roles: [], skills: [] };
 
+  
   if (!course) {
     return <div>No course data available</div>;
   }
+
+// Add this before the return statement to debug
+console.log('Course Code:', courseCode);
+console.log('Outcome Data:', outcomeData);
+console.log('Extracted Outcomes:', outcomes);
+
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -271,50 +281,47 @@ const CourseDetails = ({ courseCode }) => {
 
 
           <TabsContent value="outcomes">
-            <Card>
-              <CardHeader>
-                <CardTitle>Career Outcomes</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">Potential Roles</h3>
-                    <ul className="space-y-2">
-                      {outcomeData?.outcomes?.map((outcome, index) => (
-                        outcome.roles.map((role, roleIndex) => (
-                          <li key={`${index}-${roleIndex}`} className="flex items-center gap-2">
-                            <Users className="w-4 h-4" />
-                            {role}
-                          </li>
-                        ))
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4">Industry Skills</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {outcomeData?.outcomes?.map((outcome, index) => (
-                        outcome.skills.map((skill, skillIndex) => (
-                          <span key={`${index}-${skillIndex}`}
-                                className="px-3 py-1 bg-blue-100 rounded-full text-sm">
-                            {skill}
-                          </span>
-                        ))
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                
-                {outcomeData?.outcomes?.map((outcome, index) => (
-                  <div key={index} className="mt-6">
-                    <h3 className="text-lg font-semibold mb-2">{outcome.industry}</h3>
-                    <p className="mb-2">{outcome.description}</p>
-                    <p className="text-sm text-gray-600">Salary Range: {outcome.salary_range}</p>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
+  <Card>
+    <CardHeader>
+      <CardTitle>Career Outcomes</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div className="space-y-8">
+        {/* Potential Roles Section */}
+        <div>
+          <h3 className="text-xl font-semibold mb-4">Potential Roles</h3>
+          <div className="space-y-3">
+            {outcomeData?.message?.message?.roles?.map((role, index) => (
+              <div 
+                key={index}
+                className="flex items-center gap-3 text-gray-700"
+              >
+                <User className="w-5 h-5 text-gray-500" />
+                <span className="text-base">{role}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Industry Skills Section */}
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold mb-4">Industry Skills</h3>
+          <div className="flex flex-wrap gap-2">
+            {outcomeData?.message?.message?.skills?.map((skill, index) => (
+              <span
+                key={index}
+                className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+</TabsContent>
+
 
           <TabsContent value="certificate">
             <Card>

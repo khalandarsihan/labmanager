@@ -207,39 +207,52 @@ def get_lesson_quiz(course_code):
         return {"error": str(e), "questions": []}
 
 
-
 @frappe.whitelist(allow_guest=True)
 def get_course_outcomes(course_code):
     try:
-        outcomes = frappe.get_all(
-            "Course Career Outcome",
+        # Debug log
+        frappe.logger().debug(f"Fetching outcomes for course: {course_code}")
+        
+        # Get all roles for this course
+        roles = frappe.db.get_all(
+            "Roles",
             filters={"course": course_code},
-            fields=["description", "industry", "salary_range"]
+            fields=["role_title"],
+            order_by="role_title"
         )
         
-        for outcome in outcomes:
-            # Get roles
-            roles = frappe.get_all(
-                "Roles Child",
-                filters={"parent": outcome.name},
-                fields=["role_title"]
-            )
-            outcome.roles = [role.role_title for role in roles]
-            
-            # Get skills
-            skills = frappe.get_all(
-                "Skills Child",
-                filters={"parent": outcome.name},
-                fields=["skill"]
-            )
-            outcome.skills = [skill.skill for skill in skills]
-            
-        return {"outcomes": outcomes}
+        # Get all skills for this course
+        skills = frappe.db.get_all(
+            "Skills", 
+            filters={"course": course_code},
+            fields=["skill_name"],
+            order_by="skill_name"
+        )
+        
+        # Debug log
+        frappe.logger().debug(f"Found {len(roles)} roles and {len(skills)} skills")
+        
+        # Format the response
+        response = {
+            "message": {
+                "roles": [role.get("role_title") for role in roles],
+                "skills": [skill.get("skill_name") for skill in skills]
+            }
+        }
+        
+        return response
         
     except Exception as e:
-        frappe.log_error(frappe.get_traceback())
-        return {"error": str(e)}
-    
+        frappe.log_error(frappe.get_traceback(), "Course Outcomes Error")
+        return {
+            "error": str(e),
+            "message": {
+                "roles": [],
+                "skills": []
+            }
+        }
+
+
 @frappe.whitelist(allow_guest=True)
 def get_lesson_resources(course_code):
     try:

@@ -6,19 +6,30 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "course",
   "role_title"
  ],
  "fields": [
   {
    "fieldname": "role_title",
    "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Role Title",
    "unique": 1
+  },
+  {
+   "fieldname": "course",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Course",
+   "options": "Course"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-25 23:27:54.533081",
+ "modified": "2025-01-30 20:06:49.518459",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Roles",
