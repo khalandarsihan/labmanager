@@ -62,6 +62,7 @@ def get_course_details(course_code):
             "price": course.price,
             "start_date": course.start_date,
             "status": course.status,
+            "featured_image": course.featured_image,
             "instructor": {
                 "full_name": instructor.full_name,
                 "title": instructor.title,
