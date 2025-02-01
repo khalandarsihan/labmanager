@@ -8,6 +8,7 @@
  "field_order": [
   "course_code",
   "description",
+  "short_description",
   "total_lessons",
   "total_projects",
   "total_duration",
@@ -21,8 +22,11 @@
   "status",
   "moodle_course_id",
   "featured_image",
+  "featured_image_small",
   "section_break_ppsr",
   "duration",
+  "preview_enabled",
+  "show_in_featured_section",
   "column_break_ntej",
   "unit"
  ],
@@ -97,6 +101,7 @@
    "options": "Course Certification"
   },
   {
+   "description": "Image size (800x400)",
    "fieldname": "featured_image",
    "fieldtype": "Attach Image",
    "label": "Featured Image"
@@ -129,11 +134,34 @@
   {
    "fieldname": "column_break_ntej",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "preview_enabled",
+   "fieldtype": "Check",
+   "label": "Preview Enabled"
+  },
+  {
+   "description": "Image size (400x300)",
+   "fieldname": "featured_image_small",
+   "fieldtype": "Attach Image",
+   "label": "Featured Section Image"
+  },
+  {
+   "fieldname": "short_description",
+   "fieldtype": "Small Text",
+   "label": "Short Description"
+  },
+  {
+   "default": "0",
+   "fieldname": "show_in_featured_section",
+   "fieldtype": "Check",
+   "label": "Show in Featured Section"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-01-25 08:43:23.445589",
+ "modified": "2025-02-01 10:09:41.084341",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Course",

@@ -417,15 +417,17 @@ def enroll_in_moodle_course(user_id, course_id):
         return None
 
 
+  
 @frappe.whitelist(allow_guest=True)
 def get_featured_courses():
     try:
         courses = frappe.get_all(
             "Course",
-            fields=["course_code", "title", "price", "featured_image", "description"],
-            filters={"status": "Active", "is_featured": 1}
+            fields=["course_code", "title", "price", "featured_image_small", "short_description"],
+            filters={"status": "Active", "show_in_featured_section": 1}
         )
-        return {"courses": courses}
+        # Changed to return direct courses array without message wrapper
+        return {"courses": courses} if courses else {"courses": []}
     except Exception as e:
         frappe.log_error(frappe.get_traceback())
         return {"error": str(e)}
