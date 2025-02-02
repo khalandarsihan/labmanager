@@ -431,3 +431,143 @@ def get_featured_courses():
     except Exception as e:
         frappe.log_error(frappe.get_traceback())
         return {"error": str(e)}
+    
+
+# @frappe.whitelist(allow_guest=True)
+# def get_active_announcements():
+#     """Get all active announcements for the homepage."""
+#     try:
+#         current_date = frappe.utils.today()
+#         announcements = frappe.get_all(
+#             "Homepage Announcement",
+#             fields=["title", "content", "custom_css_class"],
+#             filters={
+#                 "is_active": 1,
+#                 "valid_from": ("<=", current_date),
+#                 "valid_till": (">=", current_date)
+#             },
+#             order_by="priority desc, valid_from desc"
+#         )
+#         # Return in same format as featured courses
+#         return {"announcements": announcements} if announcements else {"announcements": []}
+#     except Exception as e:
+#         frappe.log_error(frappe.get_traceback())
+#         return {"error": str(e)}
+    
+    
+@frappe.whitelist(allow_guest=True)
+def get_homepage_faqs():
+    """Get all active FAQs with their categories for the homepage."""
+    try:
+        # Get categories with their sequence
+        categories = frappe.get_all(
+            "FAQ Category",
+            fields=["name", "category_name", "sequence"],
+            order_by="sequence"
+        )
+        
+        # Get FAQs
+        faqs = frappe.get_all(
+            "Homepage FAQ",
+            fields=["question", "answer", "category", "sequence"],
+            filters={"is_active": 1},
+            order_by="category, sequence"
+        )
+        
+        # Return in same format as featured courses
+        return {
+            "categories": categories,
+            "faqs": faqs
+        }
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
+    
+    
+@frappe.whitelist(allow_guest=True)
+def get_homepage_content():
+    """Get both welcome content and active announcements for the homepage."""
+    try:
+        # Get welcome content
+        welcome_content = frappe.get_all(
+            "Website Content",
+            fields=["title", "content"],
+            filters={
+                "section": "Welcome",
+                "is_active": 1
+            },
+            order_by="sequence",
+            limit=1
+        )
+
+        # Use default content if no welcome content is found
+        if not welcome_content:
+            welcome_content = [{
+                "title": "Welcome to TechEthica",
+                "content": """
+                    <p>
+                        TechEthica is a premier educational institution dedicated to empowering learners with 
+                        cutting-edge technical skills and a deep understanding of Islamic values. Our mission 
+                        is to cultivate well-rounded individuals proficient in <strong>Computer Science, Data Science, AI, 
+                        DevOps, Cloud Computing, Full-Stack Development, Frappe, React, Python</strong>, and more, while also 
+                        nurturing their spiritual and ethical growth through <strong>Quran, Hadith, Fiqh, Seerah, Tariqh, 
+                        Tasawwuf, Arabic Language, and Literature</strong>.
+                    </p>
+                    
+                    <p>
+                        TechEthica is a unique platform designed to <strong>equip students with industry-ready skills 
+                        and instill strong moral values</strong>, shaping them into <strong>ethical professionals and responsible 
+                        global citizens</strong>. Our <strong>holistic approach to education</strong> ensures the intellectual, spiritual, and 
+                        professional development of every student, providing them with an environment that is both 
+                        <strong>technologically advanced and spiritually enriching</strong>.
+                    </p>
+                """
+            }]
+
+        # Get active announcements
+        current_date = frappe.utils.today()
+        announcements = frappe.get_all(
+            "Homepage Announcement",
+            fields=["title", "content", "priority", "custom_css_class"],
+            filters={
+                "is_active": 1,
+                "valid_from": ("<=", current_date),
+                "valid_till": (">=", current_date)
+            },
+            order_by="priority desc, valid_from desc"
+        )
+
+        return {
+            "welcome_content": welcome_content[0] if welcome_content else None,
+            "announcements": announcements
+        }
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
+
+@frappe.whitelist(allow_guest=True)
+def get_homepage_faqs():
+    """Get all active FAQs with their categories for the homepage."""
+    try:
+        # Get categories with their sequence
+        categories = frappe.get_all(
+            "FAQ Category",
+            fields=["name", "category_name", "sequence"],
+            order_by="sequence"
+        )
+        
+        # Get FAQs
+        faqs = frappe.get_all(
+            "Homepage FAQ",
+            fields=["question", "answer", "category", "sequence"],
+            filters={"is_active": 1},
+            order_by="category, sequence"
+        )
+        
+        return {
+            "categories": categories,
+            "faqs": faqs
+        }
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
