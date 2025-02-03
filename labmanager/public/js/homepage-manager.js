@@ -149,7 +149,7 @@ class HomepageManager {
 
 		const html = `
             <div class="p-8 h-full relative z-10">
-                <h2 class="text-4xl font-bold text-white mb-8">FREQUENTLY<br/>ASKED QUESTIONS</h2>
+                <h2 class="text-4xl font-bold text-amber-300 mb-8">FREQUENTLY<br/>ASKED QUESTIONS</h2>
                 <div class="space-y-4 overflow-auto max-h-[calc(100vh-16rem)] scrollbar-hide">
                     ${categories
 						.sort((a, b) => a.sequence - b.sequence)
