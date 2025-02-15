@@ -1,0 +1,21 @@
+<!-- labmanager/www/student-registration/new.html -->
+{% extends "templates/layout.html" %}
+{% block title %}New Student Registration - TechEthica{% endblock %}
+{% block head %}
+<!-- Any additional head elements specific to this page -->
+{% endblock %}
+{% block header %}
+{% include "templates/includes/navbar/techethica_navbar.html" %}
+{% endblock %}
+{% block content %}
+<div id="enrollment-root"></div>
+{% endblock %}
+{% block footer %}
+{% include "templates/includes/footer/techethica_footer.html" %}
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+    window.socketPort = "{{ socketPort }}";
+</script>
+<script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
+{% endblock %}

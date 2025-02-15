@@ -1,0 +1,210 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:decoded_registration_id",
+ "creation": "2025-02-12 16:36:22.319344",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "personal_information_section",
+  "first_name",
+  "date_of_birth",
+  "phone",
+  "postal_code",
+  "profile_image",
+  "column_break_ycvv",
+  "middle_name",
+  "gender",
+  "city",
+  "state",
+  "country",
+  "column_break_fijx",
+  "last_name",
+  "email",
+  "address",
+  "academic_details_section",
+  "previous_education",
+  "desired_academic_program",
+  "column_break_osfl",
+  "institution",
+  "islamic_studies_specialization",
+  "column_break_ipjl",
+  "year_of_completion",
+  "registration_id",
+  "decoded_registration_id"
+ ],
+ "fields": [
+  {
+   "fieldname": "personal_information_section",
+   "fieldtype": "Section Break",
+   "label": "Personal Information"
+  },
+  {
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "First Name"
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "column_break_ycvv",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "middle_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Middle Name"
+  },
+  {
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Male\nFemale\nOther"
+  },
+  {
+   "fieldname": "column_break_fijx",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Last Name"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "State"
+  },
+  {
+   "fieldname": "postal_code",
+   "fieldtype": "Data",
+   "label": "Postal Code"
+  },
+  {
+   "fieldname": "profile_image",
+   "fieldtype": "Attach Image",
+   "label": "Profile Image"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Link",
+   "label": "Country",
+   "options": "Country"
+  },
+  {
+   "fieldname": "academic_details_section",
+   "fieldtype": "Section Break",
+   "label": "Academic Details"
+  },
+  {
+   "fieldname": "previous_education",
+   "fieldtype": "Link",
+   "label": "Previous Education",
+   "options": "Previous Education"
+  },
+  {
+   "fieldname": "desired_academic_program",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Desired Academic Program",
+   "options": "Academic Program"
+  },
+  {
+   "fieldname": "column_break_osfl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "institution",
+   "fieldtype": "Data",
+   "label": "Institution"
+  },
+  {
+   "fieldname": "islamic_studies_specialization",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Islamic Studies Specialization",
+   "options": "Islamic Specialization"
+  },
+  {
+   "fieldname": "column_break_ipjl",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "year_of_completion",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Year of Completion"
+  },
+  {
+   "fieldname": "registration_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Registration Id"
+  },
+  {
+   "fieldname": "decoded_registration_id",
+   "fieldtype": "Data",
+   "label": "Decoded Registration Id",
+   "unique": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-15 11:31:48.898686",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Student Registration",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

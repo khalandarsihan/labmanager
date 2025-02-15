@@ -1,15 +1,15 @@
-{% extends "templates/layout.html" %} {% block title %}Course Details - TechEthica{% endblock %} {%
-block head %}
-<link rel="stylesheet" href="/assets/labmanager/css/style.css" />
+<!-- labmanager/www/student-registration/index.html -->
+{% extends "templates/layout.html" %} {% block title %}Student Registrations - TechEthica{%
+endblock %} {% block head %}
+<!-- Any additional head elements specific to this page -->
 {% endblock %} {% block header %} {% include "templates/includes/navbar/techethica_navbar.html" %}
 {% endblock %} {% block content %}
-<div id="react-root">
-	<div id="course-data" data-course="{{ frappe.form_dict.course }}"></div>
+<div id="enrollment-root">
+	<div id="registration-list"></div>
 </div>
 {% endblock %} {% block footer %} {% include "templates/includes/footer/techethica_footer.html" %}
 {% endblock %} {% block scripts %}
 <script type="text/javascript">
-	window.courseCode = document.getElementById("course-data").dataset.course;
 	window.socketPort = "{{ socketPort }}";
 </script>
 <script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>

@@ -268,9 +268,28 @@ whitelisted_methods = {
     "labmanager.labmanager.lab_core.lab_controller.end_lab_session": True,
     "labmanager.labmanager.lab_core.lab_controller.extend_lab_session": True,
     "labmanager.labmanager.lab_core.lab_controller.get_active_session": True,
-    "labmanager.labmanager.api.api.get_course_details": True
+    "labmanager.labmanager.api.api.get_course_details": True,
+    "labmanager.api.api.register_student": True,
+    "labmanager.api.api.get_registration_status": True,
+    "labmanager.api.api.update_registration": True,
+    "labmanager.api.api.get_education_levels": True,
+    "labmanager.api.api.get_academic_programs": True,
+    "labmanager.api.api.get_islamic_specializations": True,
+    "labmanager.api.api.get_registration_details": True,
 }
 
+# Add CORS configuration for your frontend
+cors_allowed_origins = ["*"]  # For development - restrict this in production
+cors_allowed_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+cors_allowed_headers = ["*"]
+cors_expose_headers = [
+    "X-Frappe-CSRF-Token",
+    "Content-Type",
+    "X-Rate-Limit-Limit",
+    "X-Rate-Limit-Remaining",
+    "X-Rate-Limit-Reset"
+]
+cors_allow_credentials = True
 
 # In hooks.py
 web_template = [
@@ -302,17 +321,65 @@ website_context = {
   }
 }
 
+# website_route_rules = [
+#     {"from_route": "/courses/<course>", "to_route": "courses/details"},
+#     {"from_route": "/student/enrollment", "to_route": "www/student/enrollment.html"},
+# ]
+
+# website_route_rules = [
+#     # {"from_route": "/courses/<course>", "to_route": "www/courses/details.html"},
+#     {"from_route": "/courses/<course>", "to_route": "courses/details"},
+#     {"from_route": "/student-registration/<name>", "to_route": "student-registration/details"},
+# ]
+
 website_route_rules = [
     {"from_route": "/courses/<course>", "to_route": "courses/details"},
+    {"from_route": "/student-registration/new", "to_route": "student-registration/new"},
+    {"from_route": "/student-registration/<name>", "to_route": "student-registration/details"},
+    {"from_route": "/student-registration", "to_route": "student-registration/index"},
+    {"from_route": "/student-registration/success", "to_route": "student-registration/success"},
 ]
 
 api_spec = {
     'labmanager.api.get_course_data': {
         'methods': ['GET']
+    },
+        'labmanager.api.api.register_student': {
+        'methods': ['POST'],
+        'auth_required': False
+    },
+    'labmanager.api.api.get_registration_status': {
+        'methods': ['GET'],
+        'auth_required': False
+    },
+    'labmanager.api.api.update_registration': {
+        'methods': ['PUT'],
+        'auth_required': False
+    },
+    'labmanager.api.api.get_education_levels': {
+        'methods': ['GET'],
+        'auth_required': False
+    },
+    'labmanager.api.api.get_academic_programs': {
+        'methods': ['GET'],
+        'auth_required': False
+    },
+    'labmanager.api.api.get_islamic_specializations': {
+        'methods': ['GET'],
+        'auth_required': False
+    },
+    'labmanager.api.api.get_registration_details': {
+        'methods': ['GET'],
+        'auth_required': False
     }
 }
+
 
 override_whitelisted_methods = {
     "your_app.api.get_course_details": "labmanager.api.get_course_details",
     "your_app.api.enroll_student": "labmanager.api.enroll_student"
 }
+
+socketio = True
+
+max_file_size = 10 * 1024 * 1024  # 10MB

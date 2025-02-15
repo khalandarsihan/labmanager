@@ -571,3 +571,283 @@ def get_homepage_faqs():
     except Exception as e:
         frappe.log_error(frappe.get_traceback())
         return {"error": str(e)}
+    
+# Student Registration API
+
+def generate_registration_id(academic_program):
+    try:
+        # Get current year
+        current_year = frappe.utils.today()[:4]
+        
+        # Get program code from Academic Program
+        program_doc = frappe.get_doc("Academic Program", {"program_name": academic_program})
+        program_code = program_doc.code
+
+        # Get the count of registrations for this year and program
+        registration_count = frappe.db.count(
+            "Student Registration",
+            filters={
+                "creation": [">=", f"{current_year}-01-01"],
+                "creation": ["<=", f"{current_year}-12-31"],
+                "desired_academic_program": academic_program
+            }
+        )
+        
+        # Generate sequential decoded ID
+        sequence_number = str(registration_count + 1).zfill(4)
+        decoded_id = f"{current_year}-{program_code}-{sequence_number}"
+        
+        # Generate encoded ID with hash
+        base_number = 1000 + registration_count
+        sequence_hash = frappe.generate_hash(str(base_number), 5)[:4]
+        encoded_id = f"{current_year}-{program_code}-{sequence_hash}"
+        
+        # Ensure uniqueness of encoded ID
+        while frappe.db.exists("Student Registration", encoded_id):
+            base_number += 1
+            sequence_hash = frappe.generate_hash(str(base_number), 5)[:4]
+            encoded_id = f"{current_year}-{program_code}-{sequence_hash}"
+        
+        return {
+            "encoded_id": encoded_id,
+            "decoded_id": decoded_id
+        }
+
+    except Exception as e:
+        frappe.log_error(f"Registration ID generation failed: {str(e)}")
+        fallback_hash = frappe.generate_hash()[:8]
+        return {
+            "encoded_id": f"REG-E-{fallback_hash}",
+            "decoded_id": f"REG-D-{fallback_hash}"
+        }
+
+
+@frappe.whitelist(allow_guest=True)
+def register_student(**kwargs):
+    """API endpoint to register a new student"""
+    try:
+        # Generate both encoded and decoded registration IDs
+        registration_ids = generate_registration_id(kwargs.get('desired_academic_program'))
+        
+        # Validate required fields
+        required_fields = [
+            'first_name', 'email', 'desired_academic_program',
+            'islamic_studies_specialization', 'previous_education'
+        ]
+        
+        missing_fields = [field for field in required_fields if not kwargs.get(field)]
+        if missing_fields:
+            return {
+                "status": "error",
+                "message": f"Missing required fields: {', '.join(missing_fields)}"
+            }
+
+        # Create student registration document
+        doc = frappe.get_doc({
+            "doctype": "Student Registration",
+            "registration_id": registration_ids["encoded_id"],
+            "decoded_registration_id": registration_ids["decoded_id"],
+            "first_name": kwargs.get('first_name'),
+            "middle_name": kwargs.get('middle_name'),
+            "last_name": kwargs.get('last_name'),
+            "date_of_birth": kwargs.get('date_of_birth'),
+            "gender": kwargs.get('gender'),
+            "email": kwargs.get('email'),
+            "phone": kwargs.get('phone'),
+            "address": kwargs.get('address'),
+            "city": kwargs.get('city'),
+            "state": kwargs.get('state'),
+            "country": kwargs.get('country'),
+            "postal_code": kwargs.get('postal_code'),
+            "previous_education": kwargs.get('previous_education'),
+            "desired_academic_program": kwargs.get('desired_academic_program'),
+            "institution": kwargs.get('institution'),
+            "islamic_studies_specialization": kwargs.get('islamic_studies_specialization'),
+            "year_of_completion": kwargs.get('year_of_completion')
+        })
+
+        if kwargs.get('profile_image'):
+            doc.profile_image = kwargs.get('profile_image')
+
+        doc.insert(ignore_permissions=True)
+        
+        # Send confirmation email with the encoded registration ID
+        try:
+            send_registration_confirmation(doc)
+        except Exception as email_error:
+            frappe.logger().error(f"Email sending failed: {str(email_error)}")
+
+        # Return only the encoded ID to the frontend
+        return {
+            "status": "success",
+            "message": "Registration successful",
+            "registration_id": registration_ids["encoded_id"]
+        }
+
+    except Exception as e:
+        frappe.logger().error(f"Registration failed: {str(e)}\n{frappe.get_traceback()}")
+        return {
+            "status": "error",
+            "message": f"Registration failed: {str(e)}"
+        }
+
+def send_registration_confirmation(doc):
+    """Send confirmation email to student"""
+    try:
+        frappe.sendmail(
+            recipients=[doc.email],
+            subject=_("Registration Confirmation - TechEthica"),
+            template="student_registration_confirmation",
+            args={
+                "first_name": doc.first_name,
+                "registration_id": doc.registration_id,  # Using encoded ID in email
+                "program": doc.desired_academic_program,
+                "support_email": frappe.get_value("Education Settings", None, "support_email")
+            }
+        )
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), _("Student Registration Email Failed"))
+
+@frappe.whitelist(allow_guest=True)
+def get_registration_details(registration_id):
+    """Get registration details - Accessible only to staff"""
+    try:
+        if not frappe.has_permission("Student Registration", "read"):
+            frappe.throw(_("Not permitted"))
+            
+        registration = frappe.get_doc("Student Registration", registration_id)
+        
+        return {
+            "registration_id": registration.registration_id,  # Encoded ID
+            "decoded_registration_id": registration.decoded_registration_id,  # Decoded ID (visible only to staff)
+            "first_name": registration.first_name,
+            "middle_name": registration.middle_name,
+            "last_name": registration.last_name,
+            "date_of_birth": registration.date_of_birth,
+            "gender": registration.gender,
+            "email": registration.email,
+            "phone": registration.phone,
+            "address": registration.address,
+            "city": registration.city,
+            "state": registration.state,
+            "country": registration.country,
+            "postal_code": registration.postal_code,
+            "profile_image": registration.profile_image,
+            "previous_education": registration.previous_education,
+            "desired_academic_program": registration.desired_academic_program,
+            "institution": registration.institution,
+            "islamic_studies_specialization": registration.islamic_studies_specialization,
+            "year_of_completion": registration.year_of_completion
+        }
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Error fetching registration details")
+        return {"error": str(e)}
+
+@frappe.whitelist(allow_guest=True)
+def get_registration_status(registration_id):
+    """Get registration details and status"""
+    try:
+        if not registration_id:
+            frappe.throw(_("Registration ID is required"))
+            
+        doc = frappe.get_doc("Student Registration", registration_id)
+        
+        return {
+            "status": "success",
+            "data": {
+                "registration_id": doc.name,
+                "first_name": doc.first_name,
+                "email": doc.email,
+                "program": doc.desired_academic_program,
+                "specialization": doc.islamic_studies_specialization
+            }
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def update_registration(registration_id, **kwargs):
+    """Update registration details"""
+    if not frappe.has_permission("Student Registration", "write"):
+        frappe.throw(_("Not permitted"))
+        
+    try:
+        doc = frappe.get_doc("Student Registration", registration_id)
+        
+        # Update personal information
+        if kwargs.get('first_name'): doc.first_name = kwargs.get('first_name')
+        if kwargs.get('middle_name'): doc.middle_name = kwargs.get('middle_name')
+        if kwargs.get('last_name'): doc.last_name = kwargs.get('last_name')
+        if kwargs.get('date_of_birth'): doc.date_of_birth = kwargs.get('date_of_birth')
+        if kwargs.get('gender'): doc.gender = kwargs.get('gender')
+        if kwargs.get('phone'): doc.phone = kwargs.get('phone')
+        if kwargs.get('address'): doc.address = kwargs.get('address')
+        if kwargs.get('city'): doc.city = kwargs.get('city')
+        if kwargs.get('state'): doc.state = kwargs.get('state')
+        if kwargs.get('country'): doc.country = kwargs.get('country')
+        if kwargs.get('postal_code'): doc.postal_code = kwargs.get('postal_code')
+        
+        # Update academic details
+        if kwargs.get('previous_education'): doc.previous_education = kwargs.get('previous_education')
+        if kwargs.get('desired_academic_program'): doc.desired_academic_program = kwargs.get('desired_academic_program')
+        if kwargs.get('institution'): doc.institution = kwargs.get('institution')
+        if kwargs.get('islamic_studies_specialization'): doc.islamic_studies_specialization = kwargs.get('islamic_studies_specialization')
+        if kwargs.get('year_of_completion'): doc.year_of_completion = kwargs.get('year_of_completion')
+        
+        # Handle profile image update
+        if kwargs.get('profile_image'):
+            doc.profile_image = kwargs.get('profile_image')
+            
+        doc.save()
+        
+        return {
+            "status": "success",
+            "message": _("Registration updated successfully")
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+        
+@frappe.whitelist(allow_guest=True)
+def get_education_levels():
+    try:
+        levels = frappe.get_all("Previous Education", 
+            fields=["education_level"], 
+            order_by="sequence_no asc")
+        return {
+            "status": "success",
+            "education_levels": [l.education_level for l in levels]
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@frappe.whitelist(allow_guest=True)
+def get_academic_programs():
+    try:
+        programs = frappe.get_all("Academic Program", 
+            fields=["program_name"], 
+            order_by="sequence_no asc")
+        return {
+            "status": "success",
+            "programs": [p.program_name for p in programs]
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@frappe.whitelist(allow_guest=True)
+def get_islamic_specializations():
+    try:
+        specs = frappe.get_all("Islamic Specialization",
+            fields=["*"],
+            order_by="sequence_no asc")
+        return {
+            "status": "success",
+            "specializations": [s.specialization_name for s in specs]
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}

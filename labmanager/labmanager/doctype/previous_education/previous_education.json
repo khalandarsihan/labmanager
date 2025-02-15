@@ -1,0 +1,68 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:education_level",
+ "creation": "2025-02-14 10:17:10.025774",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "education_level",
+  "sequence_no",
+  "column_break_jdqc",
+  "code"
+ ],
+ "fields": [
+  {
+   "fieldname": "education_level",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Education Level",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_jdqc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Education Level Code",
+   "unique": 1
+  },
+  {
+   "fieldname": "sequence_no",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Sequence No"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-14 21:45:21.574945",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Previous Education",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

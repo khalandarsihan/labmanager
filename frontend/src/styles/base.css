@@ -161,3 +161,50 @@
 .delay-1000 { animation-delay: 1000ms; }
 .delay-1100 { animation-delay: 1100ms; }
 .delay-1200 { animation-delay: 1200ms; }
+
+
+
+.faq-question:hover .faq-icon {
+  border-color: #fcd34d; /* amber-300 */
+}
+
+/* FAQ Animations */
+.faq-answer {
+  transition: max-height 0.2s ease-out;
+  overflow: hidden;
+}
+
+.faq-icon span {
+  transition: all 0.2s ease-out;
+}
+
+.faq-question:hover .faq-icon {
+  border-color: #fcd34d; /* amber-300 */
+}
+
+.faq-question[aria-expanded="true"] .faq-icon {
+  border-color: #fcd34d;
+}
+
+/* Prose Styles for Announcements/FAQs */
+.prose {
+  color: inherit;
+}
+
+.prose a {
+  color: #fcd34d;
+  text-decoration: underline;
+}
+
+.prose strong {
+  color: #fcd34d;
+  font-weight: 600;
+}
+
+/*full-width sections behave consistently */
+/* .w-screen {
+  width: 100vw;
+  margin-left: 50%;
+
+  transform: translateX(-50%);
+} */
