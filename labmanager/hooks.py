@@ -333,6 +333,7 @@ website_context = {
 # ]
 
 website_route_rules = [
+    {"from_route": "/home-react", "to_route": "home_react"},
     {"from_route": "/courses/<course>", "to_route": "courses/details"},
     {"from_route": "/student-registration/new", "to_route": "student-registration/new"},
     {"from_route": "/student-registration/<name>", "to_route": "student-registration/details"},

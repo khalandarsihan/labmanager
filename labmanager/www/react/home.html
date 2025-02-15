@@ -1,0 +1,13 @@
+{% extends "templates/layout.html" %} {% block title %}Home - TechEthica{% endblock %} {% block
+head %}
+<link rel="stylesheet" href="/assets/labmanager/css/style.css" />
+{% endblock %} {% block content %}
+<div id="react-root">
+	<!-- No additional data attributes needed for home page -->
+</div>
+{% endblock %} {% block scripts %}
+<script type="text/javascript">
+	window.socketPort = "{{ socketPort }}";
+</script>
+<script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
+{% endblock %}

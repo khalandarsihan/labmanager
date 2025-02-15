@@ -1,0 +1,29 @@
+.stat-card {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .stat-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  /* Smooth icon animation */
+  .stat-card i {
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .stat-card:hover i {
+    transform: scale(1.1);
+  }
+  
+  /* Smooth border transition */
+  .stat-card {
+    border: 1px solid rgb(55, 65, 81); /* Tailwind's border-gray-700 */
+    transition: border-color 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  .stat-card:hover {
+    border-color: rgb(251, 191, 36); /* Tailwind's border-amber-300 */
+  }
