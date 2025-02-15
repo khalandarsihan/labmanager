@@ -1,12 +1,10 @@
 {% extends "templates/layout.html" %} {% block title %}Course Details - TechEthica{% endblock %} {%
 block head %}
 <link rel="stylesheet" href="/assets/labmanager/css/style.css" />
-{% endblock %} {% block header %} {% include "templates/includes/navbar/techethica_navbar.html" %}
 {% endblock %} {% block content %}
 <div id="react-root">
 	<div id="course-data" data-course="{{ frappe.form_dict.course }}"></div>
 </div>
-{% endblock %} {% block footer %} {% include "templates/includes/footer/techethica_footer.html" %}
 {% endblock %} {% block scripts %}
 <script type="text/javascript">
 	window.courseCode = document.getElementById("course-data").dataset.course;

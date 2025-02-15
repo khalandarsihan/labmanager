@@ -49,6 +49,12 @@ module.exports = {
 					DEFAULT: "hsl(var(--card))",
 					foreground: "hsl(var(--card-foreground))",
 				},
+				// Custom gradient colors
+				gradient: {
+					from: "#222222",
+					via: "#333333",
+					to: "#444444",
+				},
 			},
 			borderRadius: {
 				lg: "var(--radius)",

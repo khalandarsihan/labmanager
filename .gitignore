@@ -79,7 +79,7 @@ out/
 .nyc_output
 
 # Project specific
-/labmanager/public/css/style.css
+public/css/style.css
 .aider*
 
 # Bundle analysis
@@ -87,5 +87,10 @@ stats.html
 bundle-analysis.html
 
 # Generated files
-labmanager/public/js/react/bundle.js
+public/js/react/bundle.js
 frontend/package-lock.json
+public/js/react/bundle.js.map
+
+# Build outputs
+public/css/
+public/js/react/bundle.js*  
