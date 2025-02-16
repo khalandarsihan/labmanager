@@ -93,4 +93,8 @@ public/js/react/bundle.js.map
 
 # Build outputs
 public/css/
-public/js/react/bundle.js*  
+public/js/react/bundle.js*
+
+labmanager/public/css/style.css
+labmanager/public/js/react/bundle.js
+labmanager/public/js/react/bundle.js.map
