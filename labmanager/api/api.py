@@ -416,7 +416,19 @@ def enroll_in_moodle_course(user_id, course_id):
         frappe.log_error(f"Moodle Enrollment Error: {str(e)}")
         return None
 
-
+@frappe.whitelist(allow_guest=True)
+def get_features():
+    try:
+        features = frappe.get_all(
+            "Feature",
+            fields=["title", "icon", "description", "sequence_no"],
+            order_by="sequence_no"
+        )
+        return {"features": features}
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
+    
   
 @frappe.whitelist(allow_guest=True)
 def get_featured_courses():
