@@ -114,21 +114,27 @@ const BackgroundPattern = () => (
 
     {/* Floating Elements */}
     <div className="absolute inset-0 overflow-hidden">
-      {/* Top Group */}
-      <div className="absolute top-20 left-1/3 w-14 h-14 border-2 border-amber-300/20 rounded-lg backdrop-blur transform rotate-45 animate-float-diagonal delay-300" />
-      <div className="absolute top-24 right-1/3 w-10 h-10 border-2 border-amber-300/30 transform -rotate-12 backdrop-blur animate-float-up delay-700" />
+      {/* Top Left Group */}
+      <div className="absolute top-20 left-1/4 w-12 h-12 border-2 border-amber-300/20 rounded-lg backdrop-blur transform rotate-45 animate-float-diagonal delay-300" />
+      <div className="absolute top-32 left-1/3 w-8 h-8 border-2 border-amber-300/30 transform rotate-12 backdrop-blur animate-float-up delay-700" />
 
-      {/* Left Side Elements */}
-      <div className="absolute top-1/2 left-1/5 w-16 h-16 border-2 border-amber-300/20 rounded-full backdrop-blur animate-float-circle delay-1000" />
-      <div className="absolute bottom-1/3 left-1/4 w-12 h-12 border-2 border-amber-300/30 transform rotate-12 backdrop-blur animate-float-diagonal-reverse delay-500" />
+      {/* Top Right Group */}
+      <div className="absolute top-24 right-1/4 w-16 h-16 border-2 border-amber-300/20 rounded-full backdrop-blur animate-float-circle delay-1000" />
+      <div className="absolute top-36 right-1/3 w-10 h-10 border-2 border-amber-300/30 rounded-lg transform -rotate-12 backdrop-blur animate-float-diagonal-reverse delay-500" />
 
-      {/* Right Side Elements */}
-      <div className="absolute top-1/2 right-1/5 w-12 h-12 border-2 border-amber-300/25 rounded-lg transform rotate-45 backdrop-blur animate-float-up-slow delay-200" />
-      <div className="absolute bottom-1/3 right-1/4 w-14 h-14 border-2 border-amber-300/20 rounded-full backdrop-blur animate-float-side delay-900" />
+      {/* Side Elements */}
+      <div className="absolute top-1/2 left-16 w-14 h-14 border-2 border-amber-300/25 transform rotate-45 backdrop-blur animate-float-up-slow delay-200" />
+      <div className="absolute top-1/2 right-16 w-16 h-16 border-2 border-amber-300/20 rounded-full backdrop-blur animate-float-side delay-900" />
 
-      {/* Additional Elements */}
-      <div className="absolute top-2/3 right-1/6 w-10 h-10 border-2 border-amber-300/25 transform rotate-30 backdrop-blur animate-float-diagonal delay-600" />
-      <div className="absolute bottom-1/4 right-1/5 w-8 h-8 border-2 border-amber-300/30 rounded-lg backdrop-blur animate-float-circle delay-800" />
+      {/* Bottom Elements */}
+      <div className="absolute bottom-12 left-20 w-12 h-12 border-2 border-amber-300/30 rounded-lg transform rotate-45 backdrop-blur animate-float-diagonal delay-400" />
+      <div className="absolute bottom-16 right-24 w-14 h-14 border-2 border-amber-300/25 transform -rotate-12 backdrop-blur animate-float-up delay-800" />
+
+      {/* Additional Corner Elements */}
+      <div className="absolute top-20 left-20 w-6 h-6 border-2 border-amber-300/40 rounded-full backdrop-blur animate-float-circle delay-600" />
+      <div className="absolute bottom-24 right-32 w-8 h-8 border-2 border-amber-300/30 transform rotate-45 backdrop-blur animate-float-diagonal-reverse delay-800" />
+      <div className="absolute top-60 left-1/2 w-10 h-10 border-2 border-amber-300/35 rounded-lg backdrop-blur animate-float-side delay-100" />
+      <div className="absolute top-80 right-80 w-12 h-12 border-2 border-amber-300/25 transform rotate-30 backdrop-blur animate-float-up-slow delay-1100" />
     </div>
   </div>
 );

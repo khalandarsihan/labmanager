@@ -1,60 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import './Carousel.css';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import './Carousel.css';
 
-const Carousel = () => {
+const Carousel = ({ slides = [] }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  const slides = [
-    {
-      id: 1,
-      title: 'Data Science',
-      description: 'Unlock insights with machine learning and AI',
-      image: '/assets/labmanager/images/image1.jpg'
-    },
-    {
-      id: 2,
-      title: 'Cyber Security',
-      description: 'Protect systems and networks from threats',
-      image: '/assets/labmanager/images/image-1.png'
-    },
-    {
-      id: 3,
-      title: 'Web Development',
-      description: 'Build modern and responsive web applications',
-      image: '/assets/labmanager/images/image2.jpg'
-    },
-    {
-      id: 4,
-      title: 'Artificial Intelligence',
-      description: 'Empower solutions with AI and deep learning',
-      image: '/assets/labmanager/images/image3.jpg'
-    },
-    {
-      id: 5,
-      title: 'Cloud Computing',
-      description: 'Scale applications with cloud infrastructure',
-      image: '/assets/labmanager/images/image4.jpg'
-    },
-    {
-      id: 6,
-      title: 'Blockchain Technology',
-      description: 'Secure and decentralized digital transactions',
-      image: '/assets/labmanager/images/image5.jpg'
-    },
-    {
-      id: 7,
-      title: 'Internet of Things (IoT)',
-      description: 'Connect devices for smart automation',
-      image: '/assets/labmanager/images/image6.jpeg'
-    },
-    {
-      id: 8,
-      title: 'Software Engineering',
-      description: 'Develop scalable and efficient software systems',
-      image: '/assets/labmanager/images/image13.jpeg'
-    }
-  ];
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -65,25 +14,25 @@ const Carousel = () => {
   }, [slides.length]);
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000);
+    const interval = setInterval(nextSlide, 2000);
     return () => clearInterval(interval);
   }, [nextSlide]);
 
+  if (!slides || slides.length === 0) return null;
+
   return (
     <section className="relative py-20 overflow-hidden">
-      {/* Background Pattern */}
       <BackgroundPattern />
       
-      <div className="relative z-10 max-w-6xl mx-auto px-4">
-        <div className="relative h-96 overflow-hidden rounded-xl">
-          {/* Slides Container */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4">
+        <div className="relative h-[40rem] overflow-hidden rounded-xl">
           <div 
             className="absolute w-full h-full flex transition-transform duration-500 ease-out"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
             {slides.map((slide) => (
               <div
-                key={slide.id}
+                key={slide.name || slide.id}
                 className="w-full h-full flex-shrink-0"
               >
                 <div className="relative h-full">
@@ -103,37 +52,39 @@ const Carousel = () => {
             ))}
           </div>
 
-          {/* Navigation Controls */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700 p-2 rounded-full border border-amber-300/20 hover:border-amber-300/50 transition-all"
-            aria-label="Previous slide"
-          >
-            <ChevronLeft className="h-6 w-6 text-amber-200" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700 p-2 rounded-full border border-amber-300/20 hover:border-amber-300/50 transition-all"
-            aria-label="Next slide"
-          >
-            <ChevronRight className="h-6 w-6 text-amber-200" />
-          </button>
-
-          {/* Dots Navigation */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-            {slides.map((_, index) => (
+          {slides.length > 1 && (
+            <>
               <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  index === currentSlide
-                    ? 'bg-amber-300 w-4'
-                    : 'bg-gray-400 hover:bg-amber-200'
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-              />
-            ))}
-          </div>
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700 p-2 rounded-full border border-amber-300/20 hover:border-amber-300/50 transition-all"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="h-6 w-6 text-amber-200" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-gray-800/80 hover:bg-gray-700 p-2 rounded-full border border-amber-300/20 hover:border-amber-300/50 transition-all"
+                aria-label="Next slide"
+              >
+                <ChevronRight className="h-6 w-6 text-amber-200" />
+              </button>
+
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {slides.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentSlide
+                        ? 'bg-amber-300 w-4'
+                        : 'bg-gray-400 hover:bg-amber-200'
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>

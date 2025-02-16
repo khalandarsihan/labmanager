@@ -429,6 +429,20 @@ def get_features():
         frappe.log_error(frappe.get_traceback())
         return {"error": str(e)}
     
+    
+@frappe.whitelist(allow_guest=True)
+def get_carousel_slides():
+    try:
+        slides = frappe.get_all(
+            "Carousel",  # Your doctype name
+            fields=["title", "description", "image", "sequence_no"],
+            order_by="sequence_no"
+        )
+        return {"slides": slides}
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback())
+        return {"error": str(e)}
+    
   
 @frappe.whitelist(allow_guest=True)
 def get_featured_courses():
