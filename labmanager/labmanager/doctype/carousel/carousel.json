@@ -28,6 +28,7 @@
    "label": "Sequence No"
   },
   {
+   "description": "Image size 1280x640 px",
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Image"
@@ -46,7 +47,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-16 13:31:04.032259",
+ "modified": "2025-02-16 15:08:03.497833",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Carousel",

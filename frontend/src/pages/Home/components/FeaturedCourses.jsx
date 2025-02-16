@@ -17,6 +17,10 @@ const FeaturedCourses = ({ courses = [] }) => {
     }
   };
 
+  if (!courses.length) {
+    return null;
+  }
+
   return (
     <section className="relative py-20 overflow-hidden">
       <BackgroundPattern />
@@ -37,7 +41,7 @@ const FeaturedCourses = ({ courses = [] }) => {
           </div>
           <div
             ref={scrollContainerRef}
-            className="courses-scroll flex overflow-x-auto scrollbar-hide scroll-smooth gap-4"
+            className="courses-scroll flex overflow-x-auto scrollbar-hide scroll-smooth px-2"
           >
             {courses.map((course) => (
               <CourseCard key={course.course_code} course={course} />
@@ -56,16 +60,16 @@ const FeaturedCourses = ({ courses = [] }) => {
 };
 
 const CourseCard = ({ course }) => (
-  <div className="flex-none w-1/3 min-w-[300px] group">
-    <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:border-amber-300/50 h-full transition-all duration-300 hover:transform hover:scale-[1.02]">
+     
+    <div className="flex-none w-1/3 px-2 py-2" style={{ minWidth: 'calc(33.333% - 1rem)' }}>
+    <Card className="bg-gray-800/50 backdrop-blur-sm border-gray-700/50 hover:border-amber-300/50 h-full transition-all duration-300 hover:transform hover:scale-[1.02] relative">
+     
       <div className="relative h-48 bg-gray-700/50 overflow-hidden rounded-t-lg">
-        {course.image && (
-          <img
-            src={course.image}
-            alt={course.title}
-            className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
-          />
-        )}
+        <img
+          src={course.featured_image_small || "/assets/labmanager/images/course-placeholder.jpg"}
+          alt={course.title}
+          className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
       </div>
       <div className="p-6">
