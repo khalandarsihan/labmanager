@@ -69,6 +69,8 @@
   {
    "fieldname": "price",
    "fieldtype": "Currency",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Price"
   },
   {
@@ -161,7 +163,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-01 10:09:41.084341",
+ "modified": "2025-02-16 15:48:09.263882",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Course",

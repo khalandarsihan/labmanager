@@ -1,80 +1,122 @@
+.featured-courses-container {
+  width: 100%;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.courses-scroll {
+  width: 100%;
+  gap: 20px;
+}
+
+.course-card {
+  flex: none;
+  width: 360px;
+  padding: 4px 8px 12px;
+}
+
+.course-card-image {
+  position: relative;
+  height: 12rem;
+  background-color: rgba(55, 65, 81, 0.5);
+  overflow: hidden;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.course-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform 0.3s;
+}
+
+.course-card:hover .course-card-image img {
+  transform: scale(1.1);
+}
+
 /* Hide scrollbar */
 .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  
-  /* Float animations */
-  @keyframes float-diagonal {
-    0%, 100% { transform: translate(0, 0) rotate(45deg); }
-    50% { transform: translate(10px, -10px) rotate(45deg); }
-  }
-  
-  @keyframes float-up {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
-  }
-  
-  @keyframes float-circle {
-    0%, 100% { transform: translate(0, 0); }
-    50% { transform: translate(5px, -5px); }
-  }
-  
-  @keyframes float-diagonal-reverse {
-    0%, 100% { transform: translate(0, 0) rotate(-12deg); }
-    50% { transform: translate(-10px, -10px) rotate(-12deg); }
-  }
-  
-  @keyframes float-up-slow {
-    0%, 100% { transform: translateY(0) rotate(45deg); }
-    50% { transform: translateY(-20px) rotate(45deg); }
-  }
-  
-  @keyframes float-side {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(15px); }
-  }
-  
-  /* Animation classes */
-  .animate-float-diagonal {
-    animation: float-diagonal 6s ease-in-out infinite;
-  }
-  
-  .animate-float-up {
-    animation: float-up 5s ease-in-out infinite;
-  }
-  
-  .animate-float-circle {
-    animation: float-circle 7s ease-in-out infinite;
-  }
-  
-  .animate-float-diagonal-reverse {
-    animation: float-diagonal-reverse 8s ease-in-out infinite;
-  }
-  
-  .animate-float-up-slow {
-    animation: float-up-slow 9s ease-in-out infinite;
-  }
-  
-  .animate-float-side {
-    animation: float-side 6s ease-in-out infinite;
-  }
-  
-  /* Animation delays */
-  .delay-200 { animation-delay: 200ms; }
-  .delay-300 { animation-delay: 300ms; }
-  .delay-500 { animation-delay: 500ms; }
-  .delay-600 { animation-delay: 600ms; }
-  .delay-700 { animation-delay: 700ms; }
-  .delay-800 { animation-delay: 800ms; }
-  .delay-900 { animation-delay: 900ms; }
-  .delay-1000 { animation-delay: 1000ms; }
-  
-  /* Backdrop blur utility */
-  .backdrop-blur {
-    backdrop-filter: blur(4px);
-  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Float animations */
+@keyframes float-diagonal {
+  0%, 100% { transform: translate(0, 0) rotate(45deg); }
+  50% { transform: translate(10px, -10px) rotate(45deg); }
+}
+
+@keyframes float-up {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes float-circle {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(5px, -5px); }
+}
+
+@keyframes float-diagonal-reverse {
+  0%, 100% { transform: translate(0, 0) rotate(-12deg); }
+  50% { transform: translate(-10px, -10px) rotate(-12deg); }
+}
+
+@keyframes float-up-slow {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(-20px) rotate(45deg); }
+}
+
+@keyframes float-side {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(15px); }
+}
+
+/* Animation classes */
+.animate-float-diagonal {
+  animation: float-diagonal 6s ease-in-out infinite;
+}
+
+.animate-float-up {
+  animation: float-up 5s ease-in-out infinite;
+}
+
+.animate-float-circle {
+  animation: float-circle 7s ease-in-out infinite;
+}
+
+.animate-float-diagonal-reverse {
+  animation: float-diagonal-reverse 8s ease-in-out infinite;
+}
+
+.animate-float-up-slow {
+  animation: float-up-slow 9s ease-in-out infinite;
+}
+
+.animate-float-side {
+  animation: float-side 6s ease-in-out infinite;
+}
+
+/* Animation delays */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+.delay-900 { animation-delay: 900ms; }
+.delay-1000 { animation-delay: 1000ms; }
+.delay-1100 { animation-delay: 1100ms; }
+
+/* Backdrop blur utility */
+.backdrop-blur {
+  backdrop-filter: blur(4px);
+}
