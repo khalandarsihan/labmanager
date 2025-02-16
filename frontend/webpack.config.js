@@ -37,6 +37,7 @@ module.exports = {
 	output: {
 		path: path.resolve(__dirname, "../labmanager/public/js/react"),
 		filename: "bundle.js",
+		publicPath: "/assets/labmanager/js/react/",
 	},
 	module: {
 		rules: [

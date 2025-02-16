@@ -276,6 +276,8 @@ whitelisted_methods = {
     "labmanager.api.api.get_academic_programs": True,
     "labmanager.api.api.get_islamic_specializations": True,
     "labmanager.api.api.get_registration_details": True,
+    "labmanager.api.api.get_course_catalog": True,
+    
 }
 
 # Add CORS configuration for your frontend
@@ -335,6 +337,7 @@ website_context = {
 website_route_rules = [
     {"from_route": "/home-react", "to_route": "home_react"},
     {"from_route": "/courses/<course>", "to_route": "courses/details"},
+    {"from_route": "/courses/catalog", "to_route": "courses/catalog"},
     {"from_route": "/student-registration/new", "to_route": "student-registration/new"},
     {"from_route": "/student-registration/<name>", "to_route": "student-registration/details"},
     {"from_route": "/student-registration", "to_route": "student-registration/index"},
@@ -370,6 +373,10 @@ api_spec = {
         'auth_required': False
     },
     'labmanager.api.api.get_registration_details': {
+        'methods': ['GET'],
+        'auth_required': False
+    },
+        'labmanager.api.api.get_course_catalog': {
         'methods': ['GET'],
         'auth_required': False
     }

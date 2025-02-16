@@ -109,6 +109,84 @@ def get_course_details(course_code):
         frappe.throw(_("Error fetching course details: {0}").format(str(e)))
     finally:
         frappe.flags.ignore_permissions = False
+        
+
+# labmanager/api/api.py
+
+@frappe.whitelist(allow_guest=True)
+def get_course_catalog(filters=None):
+    try:
+        # Parse filters if they're passed as a string
+        if isinstance(filters, str):
+            filters = json.loads(filters)
+        
+        # Base filters - ensure only active courses
+        base_filters = {
+            "status": "Active"
+        }
+        
+        # Debug log
+        frappe.logger().debug(f"Fetching courses with filters: {base_filters}")
+        
+        # Get courses
+        courses = frappe.get_all(
+            "Course",
+            fields=[
+                "name",
+                "course_code",
+                "title",
+                "short_description",
+                "duration",
+                "unit",
+                "level",
+                "price",
+                "total_lessons",
+                "total_projects",
+                "featured_image",
+                "instructor",
+                "show_in_featured_section"
+            ],
+            filters=base_filters
+        )
+        
+        # Debug log
+        frappe.logger().debug(f"Found {len(courses)} courses")
+        
+        # Enhance course data
+        for course in courses:
+            # Get instructor details if available
+            if course.instructor:
+                instructor = frappe.get_doc("Course Instructor", course.instructor)
+                course.instructor = {
+                    "name": instructor.full_name,
+                    "title": instructor.title,
+                    "image": instructor.image
+                }
+            
+            # Get course tags
+            course_features = frappe.get_all(
+                "Course Features",
+                fields=["feature_name"],
+                filters={"course": course.course_code},
+                order_by="sequence"
+            )
+            course.tags = [feature.feature_name for feature in course_features]
+        
+        # Debug log
+        frappe.logger().debug(f"Returning enhanced course data: {courses}")
+        
+        return {
+            "message": {
+                "courses": courses
+            }
+        }
+
+    except Exception as e:
+        frappe.logger().error(f"Course Catalog API Error: {str(e)}\n{frappe.get_traceback()}")
+        return {
+            "error": str(e)
+        }
+
 
 @frappe.whitelist(allow_guest=True)   
 def get_lesson_quiz(course_code):
