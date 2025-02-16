@@ -77,7 +77,7 @@ const Features = ({ features }) => {
 
 const FeatureCard = ({ icon, title, description }) => {
   return (
-    <div className="inline-block w-80 px-3">
+    <div className="inline-block w-80 px-3 my-4">
       <Card className="h-48 p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-amber-300/50 transition-all duration-300 hover:scale-105 rounded-xl">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl" />
         <div className="relative z-10 flex flex-col items-center h-full">
