@@ -1,9 +1,15 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import './Features.css';
 
 const Features = ({ features }) => {
   if (!features) return null;
+
+  // Calculate total width needed for all cards
+  const cardWidth = 320; // w-80 = 320px
+  const cardGap = 24;  // gap-6 = 24px
+  const totalWidth = features.length * (cardWidth + cardGap);
 
   return (
     <section className="relative py-20 overflow-hidden">
@@ -13,30 +19,34 @@ const Features = ({ features }) => {
           Our Features
         </h2>
         
-        <div className="w-full overflow-hidden py-8">
-          <div className="flex animate-scroll">
-            {/* Original set */}
-            <div className="flex gap-6 px-3">
-              {features.map((feature, index) => (
-                <FeatureCard
-                  key={`original-${index}`}
-                  icon={feature.icon}
-                  title={feature.title}
-                  description={feature.description}
-                />
-              ))}
-            </div>
-            {/* Duplicate set */}
-            <div className="flex gap-6 px-3">
-              {features.map((feature, index) => (
-                <FeatureCard
-                  key={`duplicate-${index}`}
-                  icon={feature.icon}
-                  title={feature.title}
-                  description={feature.description}
-                />
-              ))}
-            </div>
+        {/* Outer container with hidden overflow */}
+        <div className="relative w-full overflow-hidden">
+          {/* Scrolling container */}
+          <div 
+            className="flex whitespace-nowrap animate-scroll"
+            style={{
+              width: `${totalWidth * 2}px`, // Double width for two sets
+              gap: `${cardGap}px`
+            }}
+          >
+            {/* First set of cards */}
+            {features.map((feature, index) => (
+              <FeatureCard
+                key={`set1-${index}`}
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+              />
+            ))}
+            {/* Second set of cards for seamless loop */}
+            {features.map((feature, index) => (
+              <FeatureCard
+                key={`set2-${index}`}
+                icon={feature.icon}
+                title={feature.title}
+                description={feature.description}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -44,24 +54,47 @@ const Features = ({ features }) => {
   );
 };
 
-const FeatureCard = ({ icon, title, description }) => (
-  <div className="feature-item w-80 shrink-0 p-3">
-    <Card className="h-48 p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-amber-300/50 transition-all duration-300 hover:scale-105 rounded-xl">
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl" />
-      <div className="relative z-10 flex flex-col items-center">
-        <div className="w-12 h-12 mb-3 bg-amber-300/10 rounded-lg flex items-center justify-center group-hover:bg-amber-300/20 transition-all duration-300">
-          <i className={`fas fa-${icon} text-2xl text-amber-300`}></i>
+// const FeatureCard = ({ icon, title, description }) => {
+//   return (
+//     <div className="inline-block w-80 px-3">
+//       <Card className="h-48 p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-amber-300/50 transition-all duration-300 hover:scale-105 rounded-xl">
+//         <div className="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl" />
+//         <div className="relative z-10 flex flex-col items-center">
+//           <div className="w-12 h-12 mb-3 bg-gray-800/50 rounded-lg flex items-center justify-center">
+//             <span className="text-2xl">{icon}</span>
+//           </div>
+//           <h3 className="text-lg font-bold text-amber-200 mb-2 text-center">
+//             {title}
+//           </h3>
+//           <p className="text-gray-300 text-center text-sm line-clamp-2">
+//             {description}
+//           </p>
+//         </div>
+//       </Card>
+//     </div>
+//   );
+// };
+
+const FeatureCard = ({ icon, title, description }) => {
+  return (
+    <div className="inline-block w-80 px-3">
+      <Card className="h-48 p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-amber-300/50 transition-all duration-300 hover:scale-105 rounded-xl">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-800/50 to-gray-900/50 rounded-xl" />
+        <div className="relative z-10 flex flex-col items-center h-full">
+          <div className="w-12 h-12 mb-2 bg-gray-800/50 rounded-lg flex items-center justify-center">
+            <span className="text-2xl">{icon}</span>
+          </div>
+          <h3 className="text-lg font-bold text-amber-200 mb-1 text-center w-full">
+            {title}
+          </h3>
+          <p className="text-gray-300 text-center text-sm w-full whitespace-normal overflow-hidden line-clamp-2">
+            {description}
+          </p>
         </div>
-        <h3 className="text-lg font-bold text-amber-200 mb-2 text-center">
-          {title}
-        </h3>
-        <p className="text-gray-300 text-center text-sm line-clamp-2">
-          {description}
-        </p>
-      </div>
-    </Card>
-  </div>
-);
+      </Card>
+    </div>
+  );
+};
 
 const BackgroundPattern = () => (
   <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">

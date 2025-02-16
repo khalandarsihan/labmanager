@@ -1,16 +1,21 @@
 @keyframes scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);  /* Move exactly half the total width */
+  }
 }
 
 .animate-scroll {
-  animation: scroll 40s linear infinite;
+  animation: scroll 60s linear infinite;
 }
 
 .animate-scroll:hover {
   animation-play-state: paused;
 }
 
+/* Keep your existing float animations unchanged */
 @keyframes float-diagonal {
   0%, 100% { transform: translate(0, 0) rotate(45deg); }
   50% { transform: translate(10px, -10px) rotate(45deg); }
