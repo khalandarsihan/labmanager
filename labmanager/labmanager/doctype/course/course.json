@@ -23,6 +23,7 @@
   "moodle_course_id",
   "featured_image",
   "featured_image_small",
+  "featured_image_catalog",
   "section_break_ppsr",
   "duration",
   "preview_enabled",
@@ -182,11 +183,17 @@
    "fieldtype": "Float",
    "label": "Average Rating",
    "precision": "1"
+  },
+  {
+   "description": "Image size (270x208) px",
+   "fieldname": "featured_image_catalog",
+   "fieldtype": "Attach Image",
+   "label": "Featured Image Catalog"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-16 20:05:04.415492",
+ "modified": "2025-02-17 11:01:50.422704",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Course",

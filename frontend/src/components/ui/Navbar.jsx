@@ -21,7 +21,7 @@ const Navbar = () => {
           isMenuOpen ? 'absolute top-[60px] left-0 w-full bg-[#333] text-center p-[10px]' : ''
         }`}>
           <li>
-            <a href="/" className="flex items-center no-underline text-white text-base hover:text-amber-300 hover:scale-110 transition-all duration-300 px-3 py-2">
+            <a href="/home_react" className="flex items-center no-underline text-white text-base hover:text-amber-300 hover:scale-110 transition-all duration-300 px-3 py-2">
               <i className="fa fa-home mr-[5px] text-[18px]"></i> Home
             </a>
           </li>
@@ -32,7 +32,7 @@ const Navbar = () => {
             </a>
             <ul className="hidden group-hover:block absolute bg-[#333] p-[10px] rounded min-w-[200px] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <li className="py-[5px]">
-                <a href="#" className="flex items-center no-underline text-white text-sm hover:text-amber-300">
+                <a href="/courses/catalog" className="flex items-center no-underline text-white text-sm hover:text-amber-300">
                   <i className="fa fa-list mr-[5px]"></i> Course Catalog
                 </a>
               </li>

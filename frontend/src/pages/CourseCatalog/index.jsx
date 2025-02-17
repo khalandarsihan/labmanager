@@ -32,7 +32,6 @@ const CourseCatalog = () => {
     return (
         <div className="min-h-screen bg-gray-900">
             <Header />
-            
             <div className="py-12">
                 <SearchAndFilters 
                     viewMode={viewMode}
@@ -40,12 +39,13 @@ const CourseCatalog = () => {
                     onFilterChange={setActiveFilters}
                 />
 
-                <CourseGrid 
+                    <CourseGrid 
                     courses={courses} 
                     viewMode={viewMode}
                     isLoading={isLoading} 
                 />
             </div>
+          
         </div>
     );
 };

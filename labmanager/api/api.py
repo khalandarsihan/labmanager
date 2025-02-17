@@ -142,7 +142,7 @@ def get_course_catalog(filters=None):
                 "price",
                 "total_lessons",
                 "total_projects",
-                "featured_image",
+                "featured_image_catalog",
                 "instructor",
                 "show_in_featured_section"
             ],
