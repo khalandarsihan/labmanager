@@ -106,7 +106,7 @@ const Navbar = () => {
             </a>
             <ul className="hidden group-hover:block absolute bg-[#333] p-[10px] rounded min-w-[160px] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <li className="py-[5px]">
-                <a href="#" className="flex items-center no-underline text-white text-sm hover:text-amber-300">
+                <a href="/student/dashboard" className="flex items-center no-underline text-white text-sm hover:text-amber-300">
                   <i className="fa fa-user-tie mr-[5px]"></i> Parent Dashboard
                 </a>
               </li>

@@ -342,6 +342,7 @@ website_route_rules = [
     {"from_route": "/student-registration/<name>", "to_route": "student-registration/details"},
     {"from_route": "/student-registration", "to_route": "student-registration/index"},
     {"from_route": "/student-registration/success", "to_route": "student-registration/success"},
+    {"from_route": "/student/dashboard", "to_route": "student/dashboard"},
 ]
 
 api_spec = {

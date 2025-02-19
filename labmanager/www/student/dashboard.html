@@ -1,0 +1,9 @@
+{% extends "templates/layout.html" %} {% block title %}Student Dashboard - TechEthica{% endblock %}
+{% block head %} {% endblock %} {% block content %}
+<div id="student-dashboard-app" class="container mx-auto"></div>
+{% endblock %} {% block scripts %}
+<script>
+	window.socketPort = "{{ frappe.socketio_port }}";
+</script>
+<script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
+{% endblock %}
