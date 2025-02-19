@@ -1,8 +1,10 @@
 import React from 'react';
 import CourseCard from './CourseCard';
+import CourseSkeleton from './CourseSkeleton';
 
 const CourseGrid = ({ courses = [], viewMode, isLoading }) => {
-    if (isLoading) {
+    // Show skeletons only on initial load, not during search/filter
+    if (isLoading && courses.length === 0) {
         return (
             <div className="max-w-7xl mx-auto p-8">
                 <div className="flex justify-center">

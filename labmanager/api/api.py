@@ -111,80 +111,123 @@ def get_course_details(course_code):
         frappe.flags.ignore_permissions = False
         
 
-# labmanager/api/api.py
-
-@frappe.whitelist(allow_guest=True)
-def get_course_catalog(filters=None):
-    try:
-        # Parse filters if they're passed as a string
-        if isinstance(filters, str):
-            filters = json.loads(filters)
+@frappe.whitelist(allow_guest=True)  
+def get_course_catalog(filters=None):  
+    try:  
+        frappe.logger().debug(f"Received filters parameter: {filters}")
         
-        # Base filters - ensure only active courses
-        base_filters = {
-            "status": "Active"
-        }
+        # Parse filters if they're passed as a string  
+        if isinstance(filters, str):  
+            try:
+                filters = json.loads(filters)
+                frappe.logger().debug(f"Successfully parsed filters: {filters}")
+            except json.JSONDecodeError as e:
+                frappe.logger().error(f"Error parsing filters JSON: {str(e)}")
+                filters = {}
+        else:
+            filters = filters or {}
         
-        # Debug log
-        frappe.logger().debug(f"Fetching courses with filters: {base_filters}")
+        # Check if there's a search term
+        search_term = None
+        if isinstance(filters, dict) and 'search' in filters:
+            search_term = filters.get('search')
+            if not (isinstance(search_term, str) and search_term.strip()):
+                search_term = None
         
-        # Get courses
-        courses = frappe.get_all(
-            "Course",
-            fields=[
-                "name",
-                "course_code",
-                "title",
-                "short_description",
-                "duration",
-                "unit",
-                "level",
-                "price",
-                "total_lessons",
-                "total_projects",
-                "featured_image_catalog",
-                "instructor",
-                "show_in_featured_section"
-            ],
-            filters=base_filters
-        )
-        
-        # Debug log
-        frappe.logger().debug(f"Found {len(courses)} courses")
-        
-        # Enhance course data
-        for course in courses:
-            # Get instructor details if available
-            if course.instructor:
-                instructor = frappe.get_doc("Course Instructor", course.instructor)
-                course.instructor = {
-                    "name": instructor.full_name,
-                    "title": instructor.title,
-                    "image": instructor.image
-                }
+        if search_term:
+            # Use SQL for more advanced search capabilities with instructor join
+            search_term = f"%{search_term}%"
+            frappe.logger().debug(f"Searching for: '{search_term}'")
             
-            # Get course tags
-            course_features = frappe.get_all(
-                "Course Features",
-                fields=["feature_name"],
-                filters={"course": course.course_code},
-                order_by="sequence"
+            # Get courses with title, description, and instructor matches
+            # Order by relevance: title matches first, then instructor, then description
+            courses = frappe.db.sql("""
+                SELECT 
+                    c.name, c.course_code, c.title, c.short_description, 
+                    c.duration, c.unit, c.level, c.price, 
+                    c.total_lessons, c.total_projects,
+                    c.featured_image_catalog, c.instructor, c.show_in_featured_section,
+                    CASE 
+                        WHEN c.title LIKE %(term)s THEN 1
+                        WHEN i.full_name LIKE %(term)s THEN 2
+                        WHEN c.short_description LIKE %(term)s THEN 3
+                        WHEN c.level LIKE %(term)s THEN 4
+                        ELSE 5
+                    END as relevance
+                FROM `tabCourse` c
+                LEFT JOIN `tabCourse Instructor` i ON c.instructor = i.name
+                WHERE c.status = 'Active'
+                AND (
+                    c.title LIKE %(term)s 
+                    OR c.short_description LIKE %(term)s
+                    OR i.full_name LIKE %(term)s
+                    OR c.level LIKE %(term)s
+                )
+                ORDER BY relevance, c.title
+            """, {"term": search_term}, as_dict=1)
+            
+            frappe.logger().debug(f"Found {len(courses)} courses matching search term")
+        else:
+            # Base filters - ensure only active courses  
+            base_filters = {"status": "Active"}
+            
+            # Apply other filters here...
+            
+            frappe.logger().debug(f"Using standard query filters: {base_filters}")
+            courses = frappe.get_all(
+                "Course",
+                fields=[
+                    "name", "course_code", "title", "short_description", "duration",
+                    "unit", "level", "price", "total_lessons", "total_projects",
+                    "featured_image_catalog", "instructor", "show_in_featured_section"
+                ],
+                filters=base_filters
             )
-            course.tags = [feature.feature_name for feature in course_features]
+            frappe.logger().debug(f"Found {len(courses)} courses")
         
-        # Debug log
-        frappe.logger().debug(f"Returning enhanced course data: {courses}")
+        # Process course data...
+        for course in courses:  
+            # Get instructor details if available  
+            if course.get('instructor'):  
+                try:
+                    instructor = frappe.get_doc("Course Instructor", course.get('instructor'))  
+                    course["instructor"] = {  
+                        "name": instructor.full_name,  
+                        "title": instructor.title,  
+                        "image": instructor.image  
+                    }
+                except Exception as e:
+                    frappe.logger().error(f"Error getting instructor: {str(e)}")
+                    course["instructor"] = {"name": "Unknown"}
+             
+            # Get course tags  
+            try:
+                course_features = frappe.get_all(  
+                    "Course Features",  
+                    fields=["feature_name"],  
+                    filters={"course": course.get('course_code')},  
+                    order_by="sequence"  
+                )  
+                course["tags"] = [feature.get("feature_name") for feature in course_features]
+            except Exception as e:
+                frappe.logger().error(f"Error getting course features: {str(e)}")
+                course["tags"] = []
+            
+            # Remove relevance field if it exists
+            if 'relevance' in course:
+                del course['relevance']
         
-        return {
-            "message": {
-                "courses": courses
-            }
+        frappe.logger().debug(f"Returning {len(courses)} processed courses")
+        return {  
+            "message": {  
+                "courses": courses  
+            }  
         }
 
-    except Exception as e:
-        frappe.logger().error(f"Course Catalog API Error: {str(e)}\n{frappe.get_traceback()}")
-        return {
-            "error": str(e)
+    except Exception as e:  
+        frappe.logger().error(f"Course Catalog API Error: {str(e)}\n{frappe.get_traceback()}")  
+        return {  
+            "error": str(e)  
         }
 
 

@@ -5,40 +5,56 @@ const useCourseCatalog = (filters = {}) => {
 	const [courses, setCourses] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [initialLoadDone, setInitialLoadDone] = useState(false);
+
+	// Always convert filters to a string, even if empty
+	// This ensures consistency in how we handle the API call
+	const filterStr = JSON.stringify(filters);
+
+	// console.log("Filter string being sent:", filterStr);
 
 	const {
 		data,
 		error: apiError,
 		isValidating,
+		mutate,
 	} = useFrappeGetCall(
 		"labmanager.api.api.get_course_catalog",
-		{},
+		{ filters: filterStr },
 		{
-			revalidateIfStale: false,
+			revalidateIfStale: true,
 			revalidateOnFocus: false,
 		}
 	);
 
+	// Handle data loading and course state updates
 	useEffect(() => {
-		console.log("Raw API Response:", data);
+		if (data) {
+			console.log("API Response:", data);
 
-		if (data?.message?.message?.courses) {
-			// Fix: Handle nested message structure
-			console.log("Setting courses:", data.message.message.courses);
-			setCourses(data.message.message.courses);
-			setIsLoading(false);
-		} else if (data?.message?.courses) {
-			// Alternative structure
-			console.log("Setting courses from direct message:", data.message.courses);
-			setCourses(data.message.courses);
-			setIsLoading(false);
-		} else if (data?.error) {
-			console.error("API Error:", data.error);
-			setError(data.error);
+			let newCourses = [];
+
+			if (data?.message?.message?.courses) {
+				newCourses = data.message.message.courses || [];
+			} else if (data?.message?.courses) {
+				newCourses = data.message.courses || [];
+			}
+
+			// Only update courses if we got data back
+			if (newCourses.length > 0 || Object.keys(filters).length > 0) {
+				console.log(`Setting ${newCourses.length} courses`);
+				setCourses(newCourses);
+			}
+
+			if (!initialLoadDone) {
+				setInitialLoadDone(true);
+			}
+
 			setIsLoading(false);
 		}
-	}, [data]);
+	}, [data, filters, initialLoadDone]);
 
+	// Handle API errors
 	useEffect(() => {
 		if (apiError) {
 			console.error("API Error:", apiError);
@@ -47,20 +63,20 @@ const useCourseCatalog = (filters = {}) => {
 		}
 	}, [apiError]);
 
-	// Debug current state
+	// Force refresh on filter changes
 	useEffect(() => {
-		console.log("Current Hook State:", {
-			coursesLength: courses.length,
-			hasData: !!data,
-			isLoading,
-			hasError: !!error,
-		});
-	}, [courses, data, isLoading, error]);
+		// Only refresh if it's not the initial load
+		if (initialLoadDone) {
+			console.log("Refreshing data with filters:", filters);
+			mutate();
+		}
+	}, [filterStr, mutate, initialLoadDone]);
 
 	return {
 		courses,
 		isLoading: isLoading || isValidating,
 		error,
+		refresh: mutate,
 	};
 };
 
