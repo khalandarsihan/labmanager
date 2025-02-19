@@ -1,0 +1,49 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:course_category",
+ "creation": "2025-02-19 10:37:30.144821",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "course_category",
+  "column_break_onnk"
+ ],
+ "fields": [
+  {
+   "fieldname": "course_category",
+   "fieldtype": "Data",
+   "label": "Course Category",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_onnk",
+   "fieldtype": "Column Break"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-02-19 10:39:19.275894",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Course Category",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

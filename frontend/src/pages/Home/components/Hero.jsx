@@ -36,7 +36,7 @@ const Hero = () => {
               Discover a world of knowledge through our innovative online learning platform
             </p>
             <a
-              href="#courses"
+              href="/courses/catalog"
               className="inline-block bg-amber-300 text-gray-900 px-8 py-4 rounded-lg font-bold hover:bg-amber-200 transition-all duration-300 hover:scale-105 hover:shadow-lg"
             >
               Explore Courses
