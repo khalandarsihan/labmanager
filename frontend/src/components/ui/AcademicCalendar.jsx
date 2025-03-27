@@ -14,9 +14,9 @@ const AcademicCalendar = () => {
   // Make events clickable with details overlay
   const [selectedEvent, setSelectedEvent] = useState(null);
   
-  // Mock data for academic events
-  // In a real implementation, you would fetch this from your Frappe backend
-  useEffect(() => {
+  
+    // Replace the existing useEffect block in AcademicCalendar.jsx
+useEffect(() => {
     // Handle keyboard navigation
     const handleKeyDown = (e) => {
       if (e.key === 'ArrowLeft') prevMonth();
@@ -27,120 +27,31 @@ const AcademicCalendar = () => {
     // Add event listener for keyboard navigation
     window.addEventListener('keydown', handleKeyDown);
     
-    // Simulate API call to fetch events
+    // Fetch events from API
     const fetchEvents = async () => {
       try {
         setLoading(true);
         
-        // This would be replaced with an actual API call:
-        // const response = await fetch('/api/method/labmanager.api.api.get_academic_calendar');
-        // const data = await response.json();
+        // Call the Frappe API endpoint
+        const response = await fetch('/api/method/labmanager.api.api.get_academic_calendar');
+        const data = await response.json();
         
-        // Mock data for demonstration
-        const mockEvents = [
-          {
-            id: 1,
-            title: 'Start of Fall Semester',
-            description: 'Beginning of Fall 2025 academic term',
-            start: new Date(2025, 7, 25), // August 25, 2025
-            end: new Date(2025, 7, 25),
-            type: 'academic-term',
-            location: 'All Campuses',
-            color: 'bg-blue-600'
-          },
-          {
-            id: 2,
-            title: 'Islamic Studies Midterm',
-            description: 'Midterm examination for all Islamic Studies courses',
-            start: new Date(2025, 9, 15), // October 15, 2025
-            end: new Date(2025, 9, 16),
-            type: 'exam',
-            location: 'Examination Halls',
-            color: 'bg-red-600'
-          },
-          {
-            id: 3,
-            title: 'Quran Recitation Competition',
-            description: 'Annual Quran recitation competition',
-            start: new Date(2025, 8, 20), // September 20, 2025
-            end: new Date(2025, 8, 20),
-            type: 'event',
-            location: 'Main Auditorium',
-            color: 'bg-green-600'
-          },
-          {
-            id: 4,
-            title: 'Registration Deadline',
-            description: 'Last day to register for Spring 2026 courses',
-            start: new Date(2025, 11, 10), // December 10, 2025
-            end: new Date(2025, 11, 10),
-            type: 'deadline',
-            location: 'Online Portal',
-            color: 'bg-amber-600'
-          },
-          {
-            id: 5,
-            title: 'Winter Break',
-            description: 'No classes during winter break',
-            start: new Date(2025, 11, 20), // December 20, 2025
-            end: new Date(2026, 0, 10), // January 10, 2026
-            type: 'holiday',
-            location: 'All Campuses',
-            color: 'bg-purple-600'
-          },
-          {
-            id: 6,
-            title: 'Faculty Development Day',
-            description: 'Professional development for all faculty members',
-            start: new Date(2025, 7, 20), // August 20, 2025
-            end: new Date(2025, 7, 20),
-            type: 'faculty',
-            location: 'Faculty Center',
-            color: 'bg-indigo-600'
-          },
-          {
-            id: 7,
-            title: 'Eid Holiday',
-            description: 'Campus closed for Eid celebration',
-            start: new Date(2025, 9, 5), // October 5, 2025
-            end: new Date(2025, 9, 7), // October 7, 2025
-            type: 'holiday',
-            location: 'All Campuses',
-            color: 'bg-purple-600'
-          },
-          {
-            id: 8,
-            title: 'Research Symposium',
-            description: 'Annual research presentation day',
-            start: new Date(2025, 10, 15), // November 15, 2025
-            end: new Date(2025, 10, 15),
-            type: 'event',
-            location: 'Research Center',
-            color: 'bg-green-600'
-          },
-          {
-            id: 9,
-            title: 'Scholarship Application Deadline',
-            description: 'Last day to apply for scholarships',
-            start: new Date(2025, 8, 30), // September 30, 2025
-            end: new Date(2025, 8, 30),
-            type: 'deadline',
-            location: 'Online Portal',
-            color: 'bg-amber-600'
-          },
-          {
-            id: 10,
-            title: 'Final Exams',
-            description: 'Fall semester final examinations',
-            start: new Date(2025, 11, 15), // December 15, 2025
-            end: new Date(2025, 11, 19), // December 19, 2025
-            type: 'exam',
-            location: 'Examination Halls',
-            color: 'bg-red-600'
-          }
-        ];
+        if (data.message && data.message.events) {
+          // Process the events to ensure dates are Date objects
+          const processedEvents = data.message.events.map(event => ({
+            ...event,
+            // Convert date strings to Date objects
+            start: new Date(event.start),
+            end: new Date(event.end)
+          }));
+          
+          setEvents(processedEvents);
+        } else if (data.message && data.message.error) {
+          setError(data.message.error);
+        } else {
+          setError('Failed to load calendar events. Please try again later.');
+        }
         
-        setEvents(mockEvents);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching calendar events:', err);
@@ -153,7 +64,7 @@ const AcademicCalendar = () => {
     
     // Cleanup function
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [prevMonth, nextMonth, goToToday]); // Dependencies include navigation functions
+  }, []); // Empty dependency array means this runs once on mount
 
   // Get days in month
   const getDaysInMonth = (date) => {
@@ -286,8 +197,8 @@ const getEventColor = (type) => {
       case 'exam': return 'bg-rose-500/90';
       case 'event': return 'bg-emerald-500/90';
       case 'deadline': return 'bg-amber-500/90';
-      case 'holiday': return 'bg-violet-500/90';
-      case 'faculty': return 'bg-indigo-500/90';
+      case 'holiday': return 'bg-purple-600';
+      case 'faculty': return 'bg-indigo-600';
       default: return 'bg-gray-500/90';
     }
   };
@@ -688,25 +599,30 @@ if (loading) {
           </h3>
           
           {/* Legend */}
-          <div className="bg-white/95 rounded-lg px-4 py-2 shadow-sm flex flex-wrap gap-3">
-            <span className="inline-flex items-center text-xs text-gray-700">
-              <span className="w-3 h-3 rounded-full bg-blue-600 mr-1"></span> Academic Term
-            </span>
-            <span className="inline-flex items-center text-xs text-gray-700">
-              <span className="w-3 h-3 rounded-full bg-red-600 mr-1"></span> Exam
-            </span>
-            <span className="inline-flex items-center text-xs text-gray-700">
-              <span className="w-3 h-3 rounded-full bg-green-600 mr-1"></span> Event
-            </span>
-            <span className="inline-flex items-center text-xs text-gray-700">
-              <span className="w-3 h-3 rounded-full bg-amber-600 mr-1"></span> Deadline
-            </span>
-            <span className="inline-flex items-center text-xs text-gray-700">
-              <span className="w-3 h-3 rounded-full bg-purple-600 mr-1"></span> Holiday
-            </span>
-          </div>
+
+    <div className="bg-white/95 rounded-lg px-4 py-2 shadow-sm flex flex-wrap gap-3">
+        <span className="inline-flex items-center text-xs text-gray-700">
+            <span className="w-3 h-3 rounded-full bg-blue-600 mr-1"></span> Academic Term
+        </span>
+        <span className="inline-flex items-center text-xs text-gray-700">
+            <span className="w-3 h-3 rounded-full bg-red-600 mr-1"></span> Exam
+        </span>
+        <span className="inline-flex items-center text-xs text-gray-700">
+            <span className="w-3 h-3 rounded-full bg-green-600 mr-1"></span> Event
+        </span>
+        <span className="inline-flex items-center text-xs text-gray-700">
+            <span className="w-3 h-3 rounded-full bg-amber-600 mr-1"></span> Deadline
+        </span>
+        <span className="inline-flex items-center text-xs text-gray-700">
+            <span className="w-3 h-3 rounded-full bg-purple-600 mr-1"></span> Holiday
+        </span>
+        <span className="inline-flex items-center text-xs text-gray-700">
+            <span className="w-3 h-3 rounded-full bg-indigo-600 mr-1"></span> Faculty
+        </span>
+    </div>
         </div>
         
+                
         {/* Calendar View Container */}
         <div className="bg-white/95 rounded-lg p-4 shadow-inner">
           {/* Days of Week Header */}

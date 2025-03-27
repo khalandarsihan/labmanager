@@ -1243,3 +1243,78 @@ def get_islamic_specializations():
         }
     except Exception as e:
         return {"status": "error", "message": str(e)}
+    
+    
+@frappe.whitelist(allow_guest=True)
+def get_academic_calendar():
+    try:
+        # Get current date for filtering
+        current_year = frappe.utils.getdate().year
+        start_date = f"{current_year-1}-06-01"  # Include previous year from June
+        end_date = f"{current_year+1}-09-01"    # Include next year until September
+        
+        # Fetch active calendar events within date range
+        events = frappe.get_all(
+            "Academic Calendar Event",
+            fields=["name", "title", "description", "start_date", 
+                   "end_date", "type", "location"],
+            filters={
+                "is_active": 1,
+                "start_date": [">=", start_date],
+                "end_date": ["<=", end_date]
+            },
+            order_by="start_date asc"
+        )
+        
+        # Map event types to ensure consistency with frontend expectations
+        type_mapping = {
+            "academic term": "academic-term",
+            "academicterm": "academic-term",
+            "academic-term": "academic-term",
+            "exam": "exam",
+            "event": "event",
+            "deadline": "deadline",
+            "holiday": "holiday",
+            "faculty": "faculty"
+        }
+        
+        # Color mapping based on event type - matches the frontend color scheme
+        color_mapping = {
+            "academic-term": "bg-blue-500/90",
+            "exam": "bg-rose-500/90",
+            "event": "bg-emerald-500/90",
+            "deadline": "bg-amber-500/90",
+            "holiday": "bg-purple-600",
+            "faculty": "bg-indigo-600"
+        }
+        
+        # Format dates and prepare response
+        formatted_events = []
+        for event in events:
+            # Convert the event type to a standardized format
+            event_type = (event.type or "").lower().strip()
+            standardized_type = type_mapping.get(event_type, event_type)
+            
+            # Get the color for this event type
+            color = color_mapping.get(standardized_type, "bg-gray-500/90")
+            
+            formatted_events.append({
+                "id": event.name,
+                "title": event.title,
+                "description": event.description,
+                "start": event.start_date,
+                "end": event.end_date,
+                "type": standardized_type,
+                "location": event.location,
+                "color": color  # Explicitly add color property expected by frontend
+            })
+            
+        # Log for debugging
+        frappe.logger().debug(f"Returning {len(formatted_events)} academic calendar events")
+        frappe.logger().debug(f"Sample event: {formatted_events[0] if formatted_events else 'None'}")
+            
+        return {"events": formatted_events}
+    
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Academic Calendar API Error")
+        return {"error": str(e), "events": []}
