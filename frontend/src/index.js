@@ -293,6 +293,7 @@ import RegistrationDetails from "./pages/StudentEnrollment/RegistrationDetails";
 import StudentDashboardPage from "./pages/StudentDashboard";
 import HomePage from "./pages/Home";
 import CourseCatalog from "./pages/CourseCatalog";
+import AcademicCalendarPage from "./pages/AcademicCalendar"; // Import the new page
 import AppWrapper from "./components/AppWrapper";
 
 // Function to render with FrappeProvider wrapper
@@ -330,6 +331,12 @@ if (courseContainer) {
 	} else {
 		renderWithProvider(<CourseDetails courseCode={courseCode} />, courseContainer);
 	}
+}
+
+// Academic Calendar Page
+const academicCalendarContainer = document.getElementById("academic-calendar-root");
+if (academicCalendarContainer) {
+	renderWithProvider(<AcademicCalendarPage />, academicCalendarContainer);
 }
 
 // Student Enrollment Page (New Registration)

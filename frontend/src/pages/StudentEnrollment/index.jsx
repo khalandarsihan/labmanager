@@ -16,6 +16,7 @@ import AddressInfoForm from './AddressInfoForm';
 import AcademicInfoForm from './AcademicInfoForm';
 import Toast from './Toast';
 import RegistrationConfirmation from './RegistrationConfirmation';
+import BackgroundPattern from '@/components/ui/BackgroundPattern'; 
 
 const StudentEnrollment = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -206,24 +207,10 @@ const StudentEnrollment = () => {
       return <RegistrationConfirmation registrationId={registrationId} />;
     }
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 py-12 px-4 relative overflow-hidden">
-      {/* Abstract Lines */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute h-full w-px bg-amber-300/60 left-1/4 transform -skew-x-12"></div>
-        <div className="absolute h-full w-px bg-amber-300/50 left-1/2 transform skew-x-12"></div>
-        <div className="absolute h-full w-px bg-amber-300/60 left-3/4 transform -skew-x-12"></div>
-        <div className="absolute w-full h-px bg-amber-300/50 top-1/4 transform -skew-y-12"></div>
-        <div className="absolute w-full h-px bg-amber-300/60 top-1/2 transform skew-y-12"></div>
-        <div className="absolute w-full h-px bg-amber-300/50 top-3/4 transform -skew-y-12"></div>
-      </div>
 
-      {/* Floating Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-16 w-20 h-20 border-2 border-amber-300/20 rounded-lg backdrop-blur transform rotate-45 animate-float-diagonal delay-300"></div>
-        <div className="absolute top-40 right-24 w-16 h-16 border-2 border-amber-300/30 transform rotate-12 backdrop-blur animate-float-up delay-700"></div>
-        <div className="absolute bottom-40 left-20 w-20 h-20 border-2 border-amber-300/20 rounded-lg transform -rotate-12 backdrop-blur animate-float-diagonal delay-600"></div>
-        <div className="absolute bottom-60 right-32 w-16 h-16 border-2 border-amber-300/30 transform rotate-30 backdrop-blur animate-float-up delay-1200"></div>
-      </div>
+    <div className="relative">
+    {/* BackgroundPattern is positioned behind everything */}
+    <BackgroundPattern />
 
       <div className="max-w-4xl mx-auto relative z-10">
         <Card className="border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">

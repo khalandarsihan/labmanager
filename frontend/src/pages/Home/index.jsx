@@ -117,6 +117,7 @@ import FeaturedCourses from './components/FeaturedCourses';
 import Stats from './components/Stats';
 import AnnouncementsAndFAQs from './components/AnnouncementsAndFAQs';
 import { useHomepageData } from '@/hooks/useHomepageData';
+import BackgroundPattern from '@/components/ui/BackgroundPattern'; 
 
 const HomePage = () => {
   const { 
@@ -133,6 +134,9 @@ const HomePage = () => {
   if (error) return <div>Error loading content</div>;
 
   return (
+            <div className="relative">
+            {/* BackgroundPattern is positioned behind everything */}
+            <BackgroundPattern />
     <div className="min-h-screen bg-gray-900">
       <Hero />
       <Welcome content={homepageContent?.welcome_content} />
@@ -145,6 +149,7 @@ const HomePage = () => {
       <Carousel slides={carouselSlides} /> {/* Pass carousel slides as props */}
       <FeaturedCourses courses={featuredCourses} />
       <Stats />
+    </div>
     </div>
   );
 };

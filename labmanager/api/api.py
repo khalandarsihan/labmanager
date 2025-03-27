@@ -111,125 +111,370 @@ def get_course_details(course_code):
         frappe.flags.ignore_permissions = False
         
 
-@frappe.whitelist(allow_guest=True)  
-def get_course_catalog(filters=None):  
-    try:  
-        frappe.logger().debug(f"Received filters parameter: {filters}")
+# @frappe.whitelist(allow_guest=True)  
+# def get_course_catalog(filters=None):  
+#     try:  
+#         frappe.logger().debug(f"Received filters parameter: {filters}")
         
-        # Parse filters if they're passed as a string  
-        if isinstance(filters, str):  
-            try:
-                filters = json.loads(filters)
-                frappe.logger().debug(f"Successfully parsed filters: {filters}")
-            except json.JSONDecodeError as e:
-                frappe.logger().error(f"Error parsing filters JSON: {str(e)}")
-                filters = {}
-        else:
-            filters = filters or {}
+#         # Parse filters if they're passed as a string  
+#         if isinstance(filters, str):  
+#             try:
+#                 filters = json.loads(filters)
+#                 frappe.logger().debug(f"Successfully parsed filters: {filters}")
+#             except json.JSONDecodeError as e:
+#                 frappe.logger().error(f"Error parsing filters JSON: {str(e)}")
+#                 filters = {}
+#         else:
+#             filters = filters or {}
         
-        # Check if there's a search term
-        search_term = None
-        if isinstance(filters, dict) and 'search' in filters:
-            search_term = filters.get('search')
-            if not (isinstance(search_term, str) and search_term.strip()):
-                search_term = None
+#         # Check if there's a search term
+#         search_term = None
+#         if isinstance(filters, dict) and 'search' in filters:
+#             search_term = filters.get('search')
+#             if not (isinstance(search_term, str) and search_term.strip()):
+#                 search_term = None
         
-        if search_term:
-            # Use SQL for more advanced search capabilities with instructor join
-            search_term = f"%{search_term}%"
-            frappe.logger().debug(f"Searching for: '{search_term}'")
+#         if search_term:
+#             # Use SQL for more advanced search capabilities with instructor join
+#             search_term = f"%{search_term}%"
+#             frappe.logger().debug(f"Searching for: '{search_term}'")
             
-            # Get courses with title, description, and instructor matches
-            # Order by relevance: title matches first, then instructor, then description
-            courses = frappe.db.sql("""
-                SELECT 
-                    c.name, c.course_code, c.title, c.short_description, 
-                    c.duration, c.unit, c.level, c.price, 
-                    c.total_lessons, c.total_projects,
-                    c.featured_image_catalog, c.instructor, c.show_in_featured_section,
-                    CASE 
-                        WHEN c.title LIKE %(term)s THEN 1
-                        WHEN i.full_name LIKE %(term)s THEN 2
-                        WHEN c.short_description LIKE %(term)s THEN 3
-                        WHEN c.level LIKE %(term)s THEN 4
-                        ELSE 5
-                    END as relevance
-                FROM `tabCourse` c
-                LEFT JOIN `tabCourse Instructor` i ON c.instructor = i.name
-                WHERE c.status = 'Active'
-                AND (
-                    c.title LIKE %(term)s 
-                    OR c.short_description LIKE %(term)s
-                    OR i.full_name LIKE %(term)s
-                    OR c.level LIKE %(term)s
-                )
-                ORDER BY relevance, c.title
-            """, {"term": search_term}, as_dict=1)
+#             # Get courses with title, description, and instructor matches
+#             # Order by relevance: title matches first, then instructor, then description
+#             courses = frappe.db.sql("""
+#                 SELECT 
+#                     c.name, c.course_code, c.title, c.short_description, 
+#                     c.duration, c.unit, c.level, c.price, 
+#                     c.total_lessons, c.total_projects,
+#                     c.featured_image_catalog, c.instructor, c.show_in_featured_section,
+#                     CASE 
+#                         WHEN c.title LIKE %(term)s THEN 1
+#                         WHEN i.full_name LIKE %(term)s THEN 2
+#                         WHEN c.short_description LIKE %(term)s THEN 3
+#                         WHEN c.level LIKE %(term)s THEN 4
+#                         ELSE 5
+#                     END as relevance
+#                 FROM `tabCourse` c
+#                 LEFT JOIN `tabCourse Instructor` i ON c.instructor = i.name
+#                 WHERE c.status = 'Active'
+#                 AND (
+#                     c.title LIKE %(term)s 
+#                     OR c.short_description LIKE %(term)s
+#                     OR i.full_name LIKE %(term)s
+#                     OR c.level LIKE %(term)s
+#                 )
+#                 ORDER BY relevance, c.title
+#             """, {"term": search_term}, as_dict=1)
             
-            frappe.logger().debug(f"Found {len(courses)} courses matching search term")
-        else:
-            # Base filters - ensure only active courses  
-            base_filters = {"status": "Active"}
+#             frappe.logger().debug(f"Found {len(courses)} courses matching search term")
+#         else:
+#             # Base filters - ensure only active courses  
+#             base_filters = {"status": "Active"}
             
-            # Apply other filters here...
+#             # Apply other filters here...
             
-            frappe.logger().debug(f"Using standard query filters: {base_filters}")
-            courses = frappe.get_all(
-                "Course",
-                fields=[
-                    "name", "course_code", "title", "short_description", "duration",
-                    "unit", "level", "price", "total_lessons", "total_projects",
-                    "featured_image_catalog", "instructor", "show_in_featured_section"
-                ],
-                filters=base_filters
-            )
-            frappe.logger().debug(f"Found {len(courses)} courses")
+#             frappe.logger().debug(f"Using standard query filters: {base_filters}")
+#             courses = frappe.get_all(
+#                 "Course",
+#                 fields=[
+#                     "name", "course_code", "title", "short_description", "duration",
+#                     "unit", "level", "price", "total_lessons", "total_projects",
+#                     "featured_image_catalog", "instructor", "show_in_featured_section"
+#                 ],
+#                 filters=base_filters
+#             )
+#             frappe.logger().debug(f"Found {len(courses)} courses")
         
-        # Process course data...
-        for course in courses:  
-            # Get instructor details if available  
-            if course.get('instructor'):  
-                try:
-                    instructor = frappe.get_doc("Course Instructor", course.get('instructor'))  
-                    course["instructor"] = {  
-                        "name": instructor.full_name,  
-                        "title": instructor.title,  
-                        "image": instructor.image  
-                    }
-                except Exception as e:
-                    frappe.logger().error(f"Error getting instructor: {str(e)}")
-                    course["instructor"] = {"name": "Unknown"}
+#         # Process course data...
+#         for course in courses:  
+#             # Get instructor details if available  
+#             if course.get('instructor'):  
+#                 try:
+#                     instructor = frappe.get_doc("Course Instructor", course.get('instructor'))  
+#                     course["instructor"] = {  
+#                         "name": instructor.full_name,  
+#                         "title": instructor.title,  
+#                         "image": instructor.image  
+#                     }
+#                 except Exception as e:
+#                     frappe.logger().error(f"Error getting instructor: {str(e)}")
+#                     course["instructor"] = {"name": "Unknown"}
              
-            # Get course tags  
-            try:
-                course_features = frappe.get_all(  
-                    "Course Features",  
-                    fields=["feature_name"],  
-                    filters={"course": course.get('course_code')},  
-                    order_by="sequence"  
-                )  
-                course["tags"] = [feature.get("feature_name") for feature in course_features]
-            except Exception as e:
-                frappe.logger().error(f"Error getting course features: {str(e)}")
-                course["tags"] = []
+#             # Get course tags  
+#             try:
+#                 course_features = frappe.get_all(  
+#                     "Course Features",  
+#                     fields=["feature_name"],  
+#                     filters={"course": course.get('course_code')},  
+#                     order_by="sequence"  
+#                 )  
+#                 course["tags"] = [feature.get("feature_name") for feature in course_features]
+#             except Exception as e:
+#                 frappe.logger().error(f"Error getting course features: {str(e)}")
+#                 course["tags"] = []
             
-            # Remove relevance field if it exists
-            if 'relevance' in course:
-                del course['relevance']
+#             # Remove relevance field if it exists
+#             if 'relevance' in course:
+#                 del course['relevance']
         
-        frappe.logger().debug(f"Returning {len(courses)} processed courses")
-        return {  
-            "message": {  
-                "courses": courses  
-            }  
-        }
+#         frappe.logger().debug(f"Returning {len(courses)} processed courses")
+#         return {  
+#             "message": {  
+#                 "courses": courses  
+#             }  
+#         }
 
-    except Exception as e:  
-        frappe.logger().error(f"Course Catalog API Error: {str(e)}\n{frappe.get_traceback()}")  
-        return {  
-            "error": str(e)  
-        }
+#     except Exception as e:  
+#         frappe.logger().error(f"Course Catalog API Error: {str(e)}\n{frappe.get_traceback()}")  
+#         return {  
+#             "error": str(e)  
+#         }
 
+@frappe.whitelist(allow_guest=True)    
+def get_course_catalog(filters=None):    
+   try:    
+       frappe.logger().debug(f"Received filters parameter: {filters}")   
+         
+       # Parse filters if they're passed as a string    
+       if isinstance(filters, str):    
+           try:   
+               filters = json.loads(filters)   
+               frappe.logger().debug(f"Successfully parsed filters: {filters}")   
+           except json.JSONDecodeError as e:   
+               frappe.logger().error(f"Error parsing filters JSON: {str(e)}")   
+               filters = {}   
+       else:   
+           filters = filters or {}   
+         
+       # Check if there's a search term   
+       search_term = None   
+       if isinstance(filters, dict) and 'search' in filters:   
+           search_term = filters.get('search')   
+           if not (isinstance(search_term, str) and search_term.strip()):   
+               search_term = None   
+        
+       # Extract level filter if it exists
+       level_filter = None
+       if isinstance(filters, dict) and 'level' in filters:
+           if isinstance(filters['level'], dict) and 'level' in filters['level']:
+               level_value = filters['level']['level']
+               if isinstance(level_value, str) and level_value.strip():
+                   level_filter = level_value
+                   frappe.logger().debug(f"Extracted level filter: {level_filter}")
+
+       # Extract price filter if it exists  
+       price_filter = None  
+       if isinstance(filters, dict) and 'price' in filters:  
+           if isinstance(filters['price'], dict) and 'price' in filters['price']:  
+               price_value = filters['price']['price']  
+               # Handle numeric price (for Free courses or exact price)  
+               if isinstance(price_value, (int, float)):  
+                   price_filter = {'operator': '=', 'value': price_value}  
+                   frappe.logger().debug(f"Extracted exact price filter: {price_value}")  
+               # Handle price range/comparison as list  
+               elif isinstance(price_value, list) and len(price_value) >= 2:  
+                   operator = price_value[0]  
+                   if operator == "between" and len(price_value) >= 3:  
+                       price_filter = {  
+                           'operator': 'between',  
+                           'min_value': price_value[1],  
+                           'max_value': price_value[2]  
+                       }  
+                   else:  
+                       price_filter = {  
+                           'operator': operator,  
+                           'value': price_value[1]  
+                       }  
+                   frappe.logger().debug(f"Extracted price range filter: {price_filter}")
+
+       frappe.logger().debug(f"Final extracted price filter: {price_filter}")  
+         
+       if search_term:   
+           # Use SQL for more advanced search capabilities with instructor join   
+           search_term = f"%{search_term}%"   
+           frappe.logger().debug(f"Searching for: '{search_term}'")   
+             
+           # Get courses with title, description, and instructor matches   
+           # Order by relevance: title matches first, then instructor, then description  
+           query_params = {"term": search_term}
+           
+           # Add level parameter if level filter exists
+           if level_filter:
+               query_params["level"] = level_filter
+               frappe.logger().debug(f"Added level parameter to search query: {level_filter}")
+            
+           # Base query building  
+           query = """   
+               SELECT   
+                   c.name, c.course_code, c.title, c.short_description,   
+                   c.duration, c.unit, c.level, c.price,   
+                   c.total_lessons, c.total_projects,   
+                   c.featured_image_catalog, c.instructor, c.show_in_featured_section,   
+                   CASE   
+                       WHEN c.title LIKE %(term)s THEN 1   
+                       WHEN i.full_name LIKE %(term)s THEN 2   
+                       WHEN c.short_description LIKE %(term)s THEN 3   
+                       WHEN c.level LIKE %(term)s THEN 4   
+                       ELSE 5   
+                   END as relevance   
+               FROM `tabCourse` c   
+               LEFT JOIN `tabCourse Instructor` i ON c.instructor = i.name   
+               WHERE c.status = 'Active'   
+               AND (   
+                   c.title LIKE %(term)s   
+                   OR c.short_description LIKE %(term)s   
+                   OR i.full_name LIKE %(term)s   
+                   OR c.level LIKE %(term)s   
+               )  
+           """  
+            
+           # Add level filter if it exists
+           if level_filter:
+               query += " AND c.level = %(level)s"
+               frappe.logger().debug(f"Added level filter to query: {level_filter}")
+           
+           # Add price filter if it exists  
+           if price_filter:  
+               if price_filter['operator'] == '=':  
+                   query += " AND c.price = %(price_value)s"  
+                   query_params["price_value"] = price_filter['value']  
+               elif price_filter['operator'] == '<':  
+                   query += " AND c.price < %(price_value)s"  
+                   query_params["price_value"] = price_filter['value']  
+               elif price_filter['operator'] == '>':  
+                   query += " AND c.price > %(price_value)s"  
+                   query_params["price_value"] = price_filter['value']  
+               elif price_filter['operator'] == 'between':  
+                   query += " AND c.price BETWEEN %(price_min)s AND %(price_max)s"  
+                   query_params["price_min"] = price_filter['min_value']  
+                   query_params["price_max"] = price_filter['max_value']  
+                
+               frappe.logger().debug(f"Added price filter to query: {price_filter}")  
+               frappe.logger().debug(f"Query parameters: {query_params}")  
+            
+           # Add sorting  
+           query += " ORDER BY relevance, c.title"  
+            
+           # Execute the query  
+           courses = frappe.db.sql(query, query_params, as_dict=1)  
+           frappe.logger().debug(f"Found {len(courses)} courses matching search term")  
+       else:   
+           # Base filters - ensure only active courses    
+           base_filters = {"status": "Active"} 
+           
+           # Apply level filter if it exists
+           if level_filter:
+               base_filters["level"] = level_filter
+               frappe.logger().debug(f"Added level filter to base filters: {level_filter}")
+            
+           # Apply price filter to the base filters if it exists  
+           if price_filter:  
+               if price_filter['operator'] == '=':  
+                   base_filters["price"] = price_filter['value']  
+               elif price_filter['operator'] == '<':  
+                   base_filters["price"] = ["<", price_filter['value']]  
+               elif price_filter['operator'] == '>':  
+                   base_filters["price"] = [">", price_filter['value']]  
+               elif price_filter['operator'] == 'between':  
+                   # Fix: Use Frappe's correct filter syntax for range queries
+                   min_value = float(price_filter['min_value'])
+                   max_value = float(price_filter['max_value'])
+                   
+                   # Create a complex filter condition
+                   # First: remove the automatic "price" filter 
+                   # We'll use a custom filter list instead
+                   if "price" in base_filters:
+                       del base_filters["price"]
+                       
+                   frappe.logger().debug(f"Using corrected price range filter with min={min_value}, max={max_value}")
+                
+               frappe.logger().debug(f"Added price filter to base filters: {base_filters}")  
+             
+           frappe.logger().debug(f"Using standard query filters: {base_filters}")
+           
+           # Special handling for between price filter
+           if price_filter and price_filter['operator'] == 'between':
+               min_value = float(price_filter['min_value'])
+               max_value = float(price_filter['max_value'])
+               
+               # Build the query with level filter if applicable
+               query = """
+                   SELECT
+                       name, course_code, title, short_description, duration,
+                       unit, level, price, total_lessons, total_projects,
+                       featured_image_catalog, instructor, show_in_featured_section
+                   FROM `tabCourse`
+                   WHERE status = 'Active'
+                   AND price BETWEEN %s AND %s
+               """
+               
+               params = [min_value, max_value]
+               
+               # Add level condition if level filter exists
+               if level_filter:
+                   query += " AND level = %s"
+                   params.append(level_filter)
+                   frappe.logger().debug(f"Added level filter '{level_filter}' to between price query")
+               
+               courses = frappe.db.sql(query, params, as_dict=1)
+               frappe.logger().debug(f"Used direct SQL query for between price filter: {min_value}-{max_value}")
+           else:
+               # Standard get_all for other filters
+               courses = frappe.get_all(   
+                   "Course",   
+                   fields=[   
+                       "name", "course_code", "title", "short_description", "duration",   
+                       "unit", "level", "price", "total_lessons", "total_projects",   
+                       "featured_image_catalog", "instructor", "show_in_featured_section"   
+                   ],   
+                   filters=base_filters   
+               )
+           frappe.logger().debug(f"Found {len(courses)} courses")   
+         
+       # Process course data...   
+       for course in courses:    
+           # Get instructor details if available    
+           if course.get('instructor'):    
+               try:   
+                   instructor = frappe.get_doc("Course Instructor", course.get('instructor'))    
+                   course["instructor"] = {    
+                       "name": instructor.full_name,    
+                       "title": instructor.title,    
+                       "image": instructor.image    
+                   }   
+               except Exception as e:   
+                   frappe.logger().error(f"Error getting instructor: {str(e)}")   
+                   course["instructor"] = {"name": "Unknown"}   
+              
+           # Get course tags    
+           try:   
+               course_features = frappe.get_all(    
+                   "Course Features",    
+                   fields=["feature_name"],    
+                   filters={"course": course.get('course_code')},    
+                   order_by="sequence"    
+               )    
+               course["tags"] = [feature.get("feature_name") for feature in course_features]   
+           except Exception as e:   
+               frappe.logger().error(f"Error getting course features: {str(e)}")   
+               course["tags"] = []   
+             
+           # Remove relevance field if it exists   
+           if 'relevance' in course:   
+               del course['relevance']   
+         
+       frappe.logger().debug(f"Returning {len(courses)} processed courses")   
+       return {    
+           "message": {    
+               "courses": courses    
+           }    
+       }
+
+   except Exception as e:    
+       frappe.logger().error(f"Course Catalog API Error: {str(e)}\n{frappe.get_traceback()}")    
+       return {    
+           "error": str(e)    
+       }
 
 @frappe.whitelist(allow_guest=True)   
 def get_lesson_quiz(course_code):

@@ -3,6 +3,7 @@ import useCourseCatalog from '../../hooks/useCourseCatalog';
 import Header from './components/Header';
 import SearchAndFilters from './components/SearchAndFilters';
 import CourseGrid from './components/CourseGrid';
+import BackgroundPattern from '@/components/ui/BackgroundPattern'; 
 
 const CourseCatalog = () => {
     const [viewMode, setViewMode] = useState('grid');
@@ -40,6 +41,9 @@ const CourseCatalog = () => {
     ), [viewMode, handleFilterChange, isLoading]);
 
     return (
+        <div className="relative">
+        {/* BackgroundPattern is positioned behind everything */}
+        <BackgroundPattern />
         <div className="min-h-screen bg-gray-900 text-white pb-20">
             {headerComponent}
             {searchComponent}
@@ -48,6 +52,7 @@ const CourseCatalog = () => {
                 viewMode={viewMode} 
                 isLoading={isLoading} 
             />
+        </div>
         </div>
     );
 };

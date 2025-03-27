@@ -27,7 +27,7 @@ const SearchAndFilters = ({
         // Set a new timer to delay the search
         debounceTimerRef.current = setTimeout(() => {
             // Always trigger filter change, even for empty values
-            // console.log("Search value changed:", value);
+            console.log("Search value changed:", value);
             onFilterChange({ search: value });
             setIsDebouncing(false);
         }, 400); // 400ms delay

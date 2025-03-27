@@ -11,7 +11,7 @@ const useCourseCatalog = (filters = {}) => {
 	// This ensures consistency in how we handle the API call
 	const filterStr = JSON.stringify(filters);
 
-	// console.log("Filter string being sent:", filterStr);
+	console.log("Filter string being sent:", filterStr);
 
 	const {
 		data,
