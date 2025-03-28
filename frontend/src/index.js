@@ -293,7 +293,8 @@ import RegistrationDetails from "./pages/StudentEnrollment/RegistrationDetails";
 import StudentDashboardPage from "./pages/StudentDashboard";
 import HomePage from "./pages/Home";
 import CourseCatalog from "./pages/CourseCatalog";
-import AcademicCalendarPage from "./pages/AcademicCalendar"; // Import the new page
+import AcademicCalendarPage from "./pages/AcademicCalendar";
+import ClassSchedulePage from "./pages/ClassSchedule";
 import AppWrapper from "./components/AppWrapper";
 
 // Function to render with FrappeProvider wrapper
@@ -337,6 +338,12 @@ if (courseContainer) {
 const academicCalendarContainer = document.getElementById("academic-calendar-root");
 if (academicCalendarContainer) {
 	renderWithProvider(<AcademicCalendarPage />, academicCalendarContainer);
+}
+
+// Class Schedule Page
+const classScheduleContainer = document.getElementById("class-schedule-root");
+if (classScheduleContainer) {
+	renderWithProvider(<ClassSchedulePage />, classScheduleContainer);
 }
 
 // Student Enrollment Page (New Registration)

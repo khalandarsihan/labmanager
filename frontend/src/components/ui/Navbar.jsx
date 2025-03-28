@@ -65,7 +65,7 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="py-[5px]">
-                <a href="#" className="flex items-center no-underline text-white text-sm hover:text-amber-300">
+                <a href="/class-schedule" className="flex items-center no-underline text-white text-sm hover:text-amber-300">
                   <i className="fa fa-clock mr-[5px]"></i> Class Schedule
                 </a>
               </li>
