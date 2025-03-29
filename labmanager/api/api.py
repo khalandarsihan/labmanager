@@ -1324,13 +1324,20 @@ def get_academic_calendar():
 def get_class_schedule(grade=None, section=None, academic_year=None):
     """Get class schedule for a specific grade and section."""
     try:
+        # Debug request parameters
+        frappe.logger().debug(f"Request params: grade='{grade}', section='{section}', academic_year='{academic_year}'")
+        
         filters = {"is_active": 1}
         
         # Add optional filters
         if grade:
-            filters["grade"] = grade
+            filters["grade"] = grade.strip() if isinstance(grade, str) else grade
         if section:
-            filters["section"] = section
+            # If section contains "Section " prefix, extract just the letter
+            if isinstance(section, str) and section.startswith("Section "):
+                section = section.replace("Section ", "")
+            filters["section"] = section.strip() if isinstance(section, str) else section
+        
         if academic_year:
             filters["academic_year"] = academic_year
         else:
@@ -1345,18 +1352,39 @@ def get_class_schedule(grade=None, section=None, academic_year=None):
             if current_year:
                 filters["academic_year"] = current_year[0].name
         
-        # Get the schedule
-        schedule_doc = frappe.get_all(
-            "Class Schedule",
-            filters=filters,
-            fields=["name", "grade", "section", "academic_year", "term"],
-            limit=1
-        )
+        frappe.logger().debug(f"Searching for schedule with filters: {filters}")
+        
+        # Use a direct SQL query for more control and debugging
+        conditions = ["is_active = 1"]
+        params = []
+        
+        if "grade" in filters:
+            conditions.append("grade = %s")
+            params.append(filters["grade"])
+        
+        if "section" in filters:
+            conditions.append("section = %s")
+            params.append(filters["section"])
+            
+        if "academic_year" in filters:
+            conditions.append("academic_year = %s")
+            params.append(filters["academic_year"])
+            
+        # Build and execute the query
+        query = f"""
+            SELECT name, grade, section, academic_year, term
+            FROM `tabClass Schedule`
+            WHERE {" AND ".join(conditions)}
+            LIMIT 1
+        """
+        
+        frappe.logger().debug(f"Executing query: {query} with params: {params}")
+        schedule_doc = frappe.db.sql(query, params, as_dict=1)
+        frappe.logger().debug(f"Found schedule: {schedule_doc}")
         
         if not schedule_doc:
-            # If no specific schedule found, try to get any active schedule
-            if grade or section:
-                return get_class_schedule(None, None, academic_year)
+            # If no specific schedule found, provide default data
+            frappe.logger().debug(f"No schedule found for the specified criteria. Creating default response.")
             
             # Create default schedule data structure if no schedule exists
             days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Saturday", "Sunday"]
@@ -1384,8 +1412,10 @@ def get_class_schedule(grade=None, section=None, academic_year=None):
 
             # Return default data
             return {
-                "status": "default",
-                "message": "No schedule found for the specified criteria. Using default data.",
+                "status": "not_found",
+                "message": f"No schedule found for {grade or 'any grade'} {section or 'any section'}.",
+                "requested_grade": grade,
+                "requested_section": section,
                 "grade": None,
                 "grade_name": None,
                 "section": None,
@@ -1398,10 +1428,18 @@ def get_class_schedule(grade=None, section=None, academic_year=None):
                 },
                 "subjects": get_all_subjects(),
                 "teachers": get_all_teachers(),
-                "rooms": get_all_classrooms()
+                "rooms": get_all_classrooms(),
+                "sections": get_all_sections().get("message", [])
             }
         
-        schedule = schedule_doc[0]
+        schedule = frappe.get_doc("Class Schedule", schedule_doc[0].name)
+        frappe.logger().debug(f"Retrieved schedule: {schedule.name}, Grade: {schedule.grade}, Section: {schedule.section}")
+        
+        # Verify the schedule matches the requested grade and section
+        if grade and schedule.grade != grade:
+            frappe.logger().warning(f"Retrieved schedule grade '{schedule.grade}' doesn't match requested grade '{grade}'")
+        if section and schedule.section != section:
+            frappe.logger().warning(f"Retrieved schedule section '{schedule.section}' doesn't match requested section '{section}'")
         
         # Get grade info
         grade_info = None
@@ -1435,6 +1473,7 @@ def get_class_schedule(grade=None, section=None, academic_year=None):
             filters={"class_schedule": schedule.name},
             fields=["day", "time_slot", "subject", "teacher", "classroom"]
         )
+        frappe.logger().debug(f"Found {len(class_sessions)} class sessions for schedule {schedule.name}")
         
         # Organize sessions by day
         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Saturday", "Sunday"]
@@ -1455,7 +1494,7 @@ def get_class_schedule(grade=None, section=None, academic_year=None):
                         "timeSlotId": time_slot_id,
                         "subject": session.subject,
                         "teacher": session.teacher,
-                        "classroom": session.room
+                        "classroom": session.classroom
                     })
         
         # Create response structure expected by frontend
@@ -1477,8 +1516,20 @@ def get_class_schedule(grade=None, section=None, academic_year=None):
             "schedule_data": schedule_data,
             "subjects": get_all_subjects(),
             "teachers": get_all_teachers(),
-            "rooms": get_all_classrooms()
+            "rooms": get_all_classrooms(),
         }
+        
+        # Add sections data
+        sections_data = get_all_sections()
+        if sections_data.get("status") == "success":
+            response["sections"] = sections_data.get("message")
+        else:
+            # Fallback to default if API fails
+            response["sections"] = [
+                {"id": "A", "name": "A"},
+                {"id": "B", "name": "B"},
+                {"id": "C", "name": "C"}
+            ]
         
         return response
 
@@ -1689,4 +1740,29 @@ def get_all_grades():
         }
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Get All Grades API Error")
+        return {"error": str(e), "status": "error"}
+    
+@frappe.whitelist(allow_guest=True)
+def get_all_sections():
+    """Get all active class sections available in the system"""
+    try:
+        sections = frappe.get_all(
+            "Class Section",
+            fields=["name", "section_name", "sequence_no"],
+            filters={"is_active": 1},
+            order_by="sequence_no"
+        )
+        
+        return {
+            "status": "success",
+            "message": [
+                {
+                    "id": section.name,
+                    "name": section.section_name
+                }
+                for section in sections
+            ]
+        }
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Get All Sections API Error")
         return {"error": str(e), "status": "error"}

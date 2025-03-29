@@ -4,8 +4,8 @@ import BackgroundPattern from './BackgroundPattern';
 
 const ClassSchedule = () => {
   // State for UI and data
-  const [currentGrade, setCurrentGrade] = useState('');
-  const [currentSection, setCurrentSection] = useState('A');  // Default to section A
+  const [currentGrade, setCurrentGrade] = useState('Plus One');
+  const [currentSection, setCurrentSection] = useState('Section A');  // Default to section A
   const [selectedDay, setSelectedDay] = useState('Monday');
   const [selectedTimeBlock, setSelectedTimeBlock] = useState('all');
   const [scheduleData, setScheduleData] = useState({
@@ -13,8 +13,10 @@ const ClassSchedule = () => {
     time_slots: [],
     classes: {}
   });
+  const [hasValidSelection, setHasValidSelection] = useState(true);  
   const [gradesList, setGradesList] = useState([]);
-  const [sectionsList, setSectionsList] = useState(['A', 'B', 'C']);
+//   const [sectionsList, setSectionsList] = useState(['A', 'B', 'C']);
+const [sectionsList, setSectionsList] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [rooms, setRooms] = useState([]);
@@ -34,6 +36,31 @@ const ClassSchedule = () => {
     { id: 'night', name: 'Night (9:00 - 10:00 PM)' },
   ];
 
+ 
+useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const response = await fetch('/api/method/labmanager.api.api.get_all_sections', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data && data.message && Array.isArray(data.message)) {
+        //   setSectionsList(data.message.map(section => section.name));
+            setSectionsList(data.message);
+        }
+      } catch (err) {
+        console.error("Error fetching sections:", err);
+      }
+    };
+    
+    fetchSections();
+  }, []);
+
   // Initialize grades and fetch data on component mount
   useEffect(() => {
     const fetchGrades = async () => {
@@ -49,7 +76,7 @@ const ClassSchedule = () => {
         });
         
         const data = await response.json();
-        console.log('Grades API Response:', data);
+        // console.log('Grades API Response:', data);
         
         // Check for nested message structure
         if (data && data.message) {
@@ -83,10 +110,35 @@ const ClassSchedule = () => {
 
   // Load schedule when grade/section changes
   useEffect(() => {
-    if (currentGrade) {  // Only load if grade is selected
+    // Only load if both grade and section are selected (not on "Select" options)
+    if (currentGrade && currentGrade !== 'Select Grade' && 
+        currentSection && currentSection !== 'Select Section') {
+      setHasValidSelection(true);
       loadScheduleData();
+    } else {
+      setHasValidSelection(false);
+      // Clear schedule data when no valid selection
+      setScheduleData({
+        days: [],
+        time_slots: [],
+        classes: {}
+      });
     }
   }, [currentGrade, currentSection]);
+
+  const handleGradeChange = (e) => {
+    const newGrade = e.target.value;
+    setCurrentGrade(newGrade);
+    
+    // If selection is reset to "Select Grade", clear section too for consistency
+    if (newGrade === 'Select Grade') {
+      setCurrentSection('Select Section');
+    }
+  };
+  
+  const handleSectionChange = (e) => {
+    setCurrentSection(e.target.value);
+  };
 
   // Load schedule data from API
   const loadScheduleData = async () => {
@@ -98,10 +150,10 @@ const ClassSchedule = () => {
       const gradeParam = currentGrade || "";
       const sectionParam = currentSection || "A";
       
-      console.log("Requesting schedule for:", {
-        grade: gradeParam,
-        section: sectionParam
-      });
+    //   console.log("Requesting schedule for:", {
+    //     grade: gradeParam,
+    //     section: sectionParam
+    //   });
       
       // Call the backend API with grade and section if available
       const response = await fetch('/api/method/labmanager.api.api.get_class_schedule', {
@@ -116,7 +168,7 @@ const ClassSchedule = () => {
       });
         
       const responseData = await response.json();
-      console.log('API Response:', responseData);
+    //   console.log('API Response:', responseData);
       
       // The data is nested inside message
       if (responseData && responseData.message) {
@@ -130,12 +182,12 @@ const ClassSchedule = () => {
         
         // Extract schedule data
         if (data.schedule_data) {
-          console.log('Schedule Data Structure:', {
-            days: data.schedule_data.days?.length || 0,
-            time_slots: data.schedule_data.time_slots?.length || 0,
-            classes: Object.keys(data.schedule_data.classes || {}).map(day =>
-              `${day}: ${(data.schedule_data.classes[day] || []).length} sessions`)
-          });
+        //   console.log('Schedule Data Structure:', {
+        //     days: data.schedule_data.days?.length || 0,
+        //     time_slots: data.schedule_data.time_slots?.length || 0,
+        //     classes: Object.keys(data.schedule_data.classes || {}).map(day =>
+        //       `${day}: ${(data.schedule_data.classes[day] || []).length} sessions`)
+        //   });
           
           setScheduleData(data.schedule_data);
         } else {
@@ -171,7 +223,7 @@ const ClassSchedule = () => {
             };
           });
           setRooms(processedRooms);
-          console.log("Processed rooms:", processedRooms);
+        //   console.log("Processed rooms:", processedRooms);
         }
         
         // Set subjects and teachers
@@ -185,6 +237,11 @@ const ClassSchedule = () => {
         }
         
         if (data.teachers) setTeachers(data.teachers);
+
+          // Set sections from response
+        if (data.sections && Array.isArray(data.sections)) {
+            setSectionsList(data.sections);
+  }
       } else if (responseData.error) {
         setError(responseData.error || 'Failed to load schedule data');
       } else {
@@ -226,7 +283,7 @@ const ClassSchedule = () => {
       if (!classInfo) return null;
       
       // Log what we found for debugging
-      console.log(`Found class for ${day} slot ${timeSlotId}:`, classInfo);
+    //   console.log(`Found class for ${day} slot ${timeSlotId}:`, classInfo);
       
       // Get the corresponding objects from subjects, teachers, and rooms arrays
       const subject = subjects.find(s => s.id === classInfo.subject);
@@ -440,27 +497,27 @@ const ClassSchedule = () => {
           <div className="flex flex-wrap gap-3">
             {/* Grade and Section Selection */}
             <div className="flex space-x-2">
-              <select
-                className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-1 outline-none focus:ring-2 focus:ring-amber-300"
-                value={currentGrade}
-                onChange={(e) => setCurrentGrade(e.target.value)}
-              >
-                <option value="">Select Grade</option>
-                {gradesList.map(grade => (
-                  <option key={grade.id} value={grade.id}>{grade.name}</option>
-                ))}
-              </select>
-                
-              <select
-                className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-1 outline-none focus:ring-2 focus:ring-amber-300"
-                value={currentSection}
-                onChange={(e) => setCurrentSection(e.target.value)}
-              >
-                <option value="">Select Section</option>
-                {sectionsList.map(section => (
-                  <option key={section} value={section}>Section {section}</option>
-                ))}
-              </select>
+            <select
+            className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-1 outline-none focus:ring-2 focus:ring-amber-300"
+            value={currentGrade}
+            onChange={handleGradeChange}
+            >
+            <option value="Select Grade">Select Grade</option>
+            {gradesList.map(grade => (
+                <option key={grade.id} value={grade.id}>{grade.name}</option>
+            ))}
+            </select>
+
+            <select
+            className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-1 outline-none focus:ring-2 focus:ring-amber-300"
+            value={currentSection}
+            onChange={handleSectionChange}
+            >
+            <option value="Select Section">Select Section</option>
+            {sectionsList.map(section => (
+                <option key={section.id} value={section.id}>{section.name}</option>
+            ))}
+            </select>
                 
               <button
                 className="bg-gray-700 text-gray-200 p-1 rounded-md border border-gray-600 hover:bg-amber-300 hover:text-gray-900 transition-colors duration-200 flex items-center"
@@ -591,30 +648,42 @@ const ClassSchedule = () => {
           </div>
         </div>
           
-        {/* Schedule View Container */}
-        <div className="transition-all duration-300 ease-in-out">
-          {/* View mode switcher */}
-          <div className="flex justify-end mb-4">
-            <div className="flex border border-gray-700 rounded-md overflow-hidden">
-              <button
-                className={`px-3 py-1 text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
-                onClick={() => setViewMode('daily')}
-              >
-                Daily View
-              </button>
-              <button
-                className={`px-3 py-1 text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
-                onClick={() => setViewMode('weekly')}
-              >
-                Weekly View
-              </button>
+            {/* Schedule View Container */}
+            <div className="transition-all duration-300 ease-in-out">
+            {/* View mode switcher */}
+            <div className="flex justify-end mb-4">
+                <div className="flex border border-gray-700 rounded-md overflow-hidden">
+                <button
+                    className={`px-3 py-1 text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                    onClick={() => setViewMode('daily')}
+                >
+                    Daily View
+                </button>
+                <button
+                    className={`px-3 py-1 text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                    onClick={() => setViewMode('weekly')}
+                >
+                    Weekly View
+                </button>
+                </div>
             </div>
-          </div>
            
-          {/* Schedule Content */}
-          {viewMode === 'daily' ? renderDailySchedule() : renderWeeklySchedule()}
-           
+            {/* Schedule Content */}
+            {hasValidSelection ? (
+                viewMode === 'daily' ? renderDailySchedule() : renderWeeklySchedule()
+            ) : (
+                <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
+                <div className="text-lg text-gray-500 text-center">
+                    <p>Please select both Grade and Section to view schedule</p>
+                </div>
+                </div>
+            )}
+
           {/* Subject Legend */}
+            {/* Subject Legend - only show when valid selection */}
+  {hasValidSelection && (
+    <div className="bg-white/95 rounded-lg p-4 mt-4 shadow-inner">
+
           <div className="bg-white/95 rounded-lg p-4 mt-4 shadow-inner">
             <h3 className="text-lg font-medium text-gray-800 mb-3">
               Subject Legend
@@ -633,6 +702,9 @@ const ClassSchedule = () => {
             </div>
           </div>
         </div>
+        
+    )}
+    </div>
       </div>
     </div>
   );
