@@ -20,6 +20,7 @@
   "column_break_hhha",
   "exam_date",
   "end_time",
+  "proctor",
   "section_break_wqcr",
   "classroom",
   "notes",
@@ -139,11 +140,17 @@
    "in_standard_filter": 1,
    "label": "Subject",
    "options": "Subject"
+  },
+  {
+   "fieldname": "proctor",
+   "fieldtype": "Link",
+   "label": "Proctor",
+   "options": "Teacher"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-29 13:49:46.847111",
+ "modified": "2025-03-29 14:39:44.674385",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Exam Schedule",

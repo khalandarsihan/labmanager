@@ -1,12 +1,93 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, Info, BookOpen, Clock, MapPin, Users, Filter, Printer, Search, X } from 'lucide-react';
+import { Calendar, List, ChevronLeft, ChevronRight, Info, BookOpen, Clock, MapPin, Users, Filter, Printer, Search, X } from 'lucide-react';
 import BackgroundPattern from './BackgroundPattern';
 
+// Debug panel component to show state
+const DebugPanel = ({ show, exams, selectedMonth, selectedYear }) => {
+  if (!show) return null;
+  
+  return (
+    <div className="bg-gray-900 text-gray-200 p-4 rounded-md mb-4 text-xs overflow-auto max-h-40">
+      <h4 className="font-bold mb-2">Debug Info</h4>
+      <div className="mb-2">
+        <strong>Month/Year:</strong> {selectedMonth + 1}/{selectedYear}
+      </div>
+      <div className="mb-2">
+        <strong>Exams Count:</strong> {exams.length}
+      </div>
+      {exams.length > 0 && (
+        <div>
+          <strong>First Exam:</strong>
+          <pre className="text-xs mt-1 bg-gray-800 p-2 rounded">
+            {JSON.stringify({
+              name: exams[0].name,
+              exam_date: exams[0].exam_date,
+              date: exams[0].date?.toString(),
+              date_obj: {
+                month: exams[0].date?.getMonth(),
+                day: exams[0].date?.getDate(),
+                year: exams[0].date?.getFullYear()
+              }
+            }, null, 2)}
+          </pre>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Month/Year dropdown selector component
+const MonthYearSelector = ({ selectedMonth, selectedYear, onSelect }) => {
+  // Generate months for dropdown
+  const monthOptions = [
+    { value: 0, label: "January" },
+    { value: 1, label: "February" },
+    { value: 2, label: "March" },
+    { value: 3, label: "April" },
+    { value: 4, label: "May" },
+    { value: 5, label: "June" },
+    { value: 6, label: "July" },
+    { value: 7, label: "August" },
+    { value: 8, label: "September" },
+    { value: 9, label: "October" },
+    { value: 10, label: "November" },
+    { value: 11, label: "December" }
+  ];
+  
+  // Generate years (current year plus next 2 years)
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 3 }, (_, i) => currentYear + i);
+  
+  return (
+    <div className="flex ml-2 border border-gray-700 rounded-md overflow-hidden">
+      <select
+        className="bg-gray-700 text-gray-200 rounded-l-md border-r border-gray-600 py-1 px-2 outline-none focus:ring-2 focus:ring-amber-300"
+        value={selectedMonth}
+        onChange={(e) => onSelect(parseInt(e.target.value), selectedYear)}
+      >
+        {monthOptions.map(month => (
+          <option key={month.value} value={month.value}>{month.label}</option>
+        ))}
+      </select>
+      
+      <select
+        className="bg-gray-700 text-gray-200 rounded-r-md py-1 px-2 outline-none focus:ring-2 focus:ring-amber-300"
+        value={selectedYear}
+        onChange={(e) => onSelect(selectedMonth, parseInt(e.target.value))}
+      >
+        {yearOptions.map(year => (
+          <option key={year} value={year}>{year}</option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
 const ExamDates = () => {
-  const [loading, setLoading] = useState(false);  
+  const [loading, setLoading] = useState(false);
   // State management
   const [currentGrade, setCurrentGrade] = useState('');
-  const [currentSection, setCurrentSection] = useState('');
+  const [currentSection, setCurrentSection] = useState('Section A');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedExamType, setSelectedExamType] = useState('all');
@@ -17,8 +98,11 @@ const ExamDates = () => {
   const [examTypes, setExamTypes] = useState([]);
   const [examDates, setExamDates] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
-  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showDebug, setShowDebug] = useState(false);
+  const [isYearView, setIsYearView] = useState(false);
+  const [yearViewExams, setYearViewExams] = useState([]);
+  const [loadingYearData, setLoadingYearData] = useState(false);
   
   // Month names for display
   const monthNames = ["January", "February", "March", "April", "May", "June", 
@@ -33,6 +117,69 @@ const ExamDates = () => {
     { id: 'project', name: 'Projects', color: 'bg-purple-500' },
     { id: 'other', name: 'Other Assessments', color: 'bg-gray-500' }
   ];
+
+  // Add a keyboard listener to toggle the debug panel
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Ctrl+Shift+D to toggle debug panel
+      if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+        setShowDebug(prev => !prev);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Process exams data to ensure dates are properly parsed
+  const processExamDates = (exams) => {
+    if (!exams || !Array.isArray(exams)) return [];
+    
+    return exams.map(exam => {
+      // Create a new object to avoid mutating the original
+      const processedExam = { ...exam };
+      
+      // Parse the exam_date string into a proper Date object
+      if (typeof exam.exam_date === 'string') {
+        console.log(`Processing exam date: ${exam.exam_date}`);
+        
+        try {
+          // Handle yyyy-mm-dd format
+          if (exam.exam_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            processedExam.date = new Date(exam.exam_date);
+          } 
+          // Handle dd-mm-yyyy format (common in India)
+          else if (exam.exam_date.match(/^\d{2}-\d{2}-\d{4}$/)) {
+            const [day, month, year] = exam.exam_date.split('-').map(Number);
+            processedExam.date = new Date(year, month - 1, day);
+          } else {
+            // Fallback to whatever format is provided
+            processedExam.date = new Date(exam.exam_date);
+          }
+          
+          console.log(`Date parsed as: ${processedExam.date.toISOString()}`);
+        } catch (error) {
+          console.error(`Error parsing date ${exam.exam_date}:`, error);
+          // Fallback to current date if parsing fails
+          processedExam.date = new Date();
+        }
+      } else if (exam.date instanceof Date) {
+        // Date is already processed, keep it as is
+        processedExam.date = exam.date;
+      } else {
+        // No valid date information, fallback to current date
+        console.warn('No valid date found in exam:', exam);
+        processedExam.date = new Date();
+      }
+      
+      // Add color based on exam type if not already present
+      if (!processedExam.color) {
+        processedExam.color = getExamTypeColor(exam.exam_type);
+      }
+      
+      return processedExam;
+    });
+  };
 
   // Only trigger loading when actually fetching data
   useEffect(() => {
@@ -126,6 +273,86 @@ const ExamDates = () => {
     }
   }, [currentGrade, currentSection, selectedMonth, selectedYear, selectedExamType]);
 
+  // Load year view data
+  const loadYearViewData = async () => {
+    if (yearViewExams.length > 0) {
+      // Already loaded, just show the data
+      setIsYearView(true);
+      return;
+    }
+    
+    setLoadingYearData(true);
+    
+    try {
+      // Calculate date range (current month to 12 months ahead)
+      const today = new Date();
+      const startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      const endDate = new Date(today.getFullYear() + 1, today.getMonth(), 0);
+      
+      const startDateStr = startDate.toISOString().split('T')[0];
+      const endDateStr = endDate.toISOString().split('T')[0];
+      
+      // Call API for each month in the range
+      const allExams = [];
+      
+      // Current year
+      const currYear = today.getFullYear();
+      for (let month = today.getMonth(); month < 12; month++) {
+        const monthExams = await fetchExamsForMonth(month + 1, currYear);
+        if (monthExams.length > 0) {
+          allExams.push(...monthExams);
+        }
+      }
+      
+      // Next year
+      for (let month = 0; month < today.getMonth(); month++) {
+        const monthExams = await fetchExamsForMonth(month + 1, currYear + 1);
+        if (monthExams.length > 0) {
+          allExams.push(...monthExams);
+        }
+      }
+      
+      // Process all the exams
+      const processedExams = processExamDates(allExams);
+      setYearViewExams(processedExams);
+      
+    } catch (e) {
+      console.error("Error in year view data load:", e);
+      setError("Failed to load year data: " + e.message);
+    } finally {
+      setLoadingYearData(false);
+      setIsYearView(true);
+    }
+  };
+  
+  // Helper function to fetch exams for a specific month
+  const fetchExamsForMonth = async (month, year) => {
+    try {
+      const response = await fetch('/api/method/labmanager.api.api.get_exam_dates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          grade: currentGrade,
+          section: currentSection,
+          month: month,
+          year: year,
+          exam_type: selectedExamType
+        })
+      });
+      
+      const data = await response.json();
+      if (data.message && data.message.success) {
+        return data.message.exams || [];
+      }
+      return [];
+    } catch (err) {
+      console.error(`Error fetching exams for ${month}/${year}:`, err);
+      return [];
+    }
+  };
+
   // Load exam data from API
   const loadExamData = async () => {
     console.log('Loading exam data with params:', {
@@ -161,12 +388,6 @@ const ExamDates = () => {
 
       console.log('API response:', responseData);
       console.log('Extracted data:', data);
-
-      
-      console.log('Setting grades:', data.grades);
-      console.log('Setting sections:', data.sections);
-      console.log('Setting exams:', data.exams);
-      console.log('Setting exam types:', data.exam_types);
       
       if (data.success) {
         // Set grades and sections if provided in the response
@@ -186,8 +407,10 @@ const ExamDates = () => {
           }
         }
         
-        // Set exams and exam types
-        setExamDates(data.exams || []);
+        // Process and set exams with proper date parsing
+        const processedExams = processExamDates(data.exams || []);
+        setExamDates(processedExams);
+        
         setExamTypes(data.exam_types || []);
         setLoading(false);
       } else {
@@ -200,7 +423,6 @@ const ExamDates = () => {
       setLoading(false);
     }
   };
-
 
   // Handle grade change
   const handleGradeChange = (e) => {
@@ -259,11 +481,12 @@ const ExamDates = () => {
     if (!searchQuery) return true;
     
     const query = searchQuery.toLowerCase();
+    
     return (
-      exam.subject.name.toLowerCase().includes(query) ||
-      exam.subject.code.toLowerCase().includes(query) ||
-      exam.location.toLowerCase().includes(query) ||
-      exam.exam_type.toLowerCase().includes(query)
+      (exam.subject?.name?.toLowerCase().includes(query) || false) ||
+      (exam.subject?.code?.toLowerCase().includes(query) || false) ||
+      (exam.location?.toLowerCase().includes(query) || false) ||
+      (exam.exam_type?.toLowerCase().includes(query) || false)
     );
   });
 
@@ -309,12 +532,20 @@ const ExamDates = () => {
   // Get exams for a specific date
   const getExamsForDate = (date) => {
     return filteredExams.filter(exam => {
-      return (
+      if (!exam.date || !(exam.date instanceof Date)) {
+        console.warn('Exam has invalid date format:', exam);
+        return false;
+      }
+      
+      // Compare year, month, and day separately to avoid time issues
+      const sameDay = 
         exam.date.getDate() === date.getDate() &&
         exam.date.getMonth() === date.getMonth() &&
-        exam.date.getFullYear() === date.getFullYear() &&
-        (selectedExamType === 'all' || exam.exam_type === selectedExamType)
-      );
+        exam.date.getFullYear() === date.getFullYear();
+        
+      const matchesExamType = selectedExamType === 'all' || exam.exam_type === selectedExamType;
+      
+      return sameDay && matchesExamType;
     });
   };
 
@@ -343,6 +574,113 @@ const ExamDates = () => {
     const displayHours = hours % 12 || 12; // Convert 0 to 12 for 12 AM
     
     return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  };
+
+  // Year view rendering
+  const renderYearView = () => {
+    // Group exams by month
+    const groupedExams = {};
+    
+    yearViewExams.forEach(exam => {
+      if (!exam.date) return;
+      
+      const year = exam.date.getFullYear();
+      const month = exam.date.getMonth();
+      const key = `${year}-${month}`;
+      
+      if (!groupedExams[key]) {
+        groupedExams[key] = {
+          year,
+          month,
+          label: new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+          exams: []
+        };
+      }
+      
+      groupedExams[key].exams.push(exam);
+    });
+    
+    // Sort by date (chronologically)
+    const sortedMonths = Object.values(groupedExams).sort((a, b) => {
+      if (a.year === b.year) {
+        return a.month - b.month;
+      }
+      return a.year - b.year;
+    });
+    
+    return (
+      <div className="bg-white/95 rounded-lg p-4 shadow-inner">
+        {sortedMonths.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            No exams found for the next 12 months
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {sortedMonths.map(monthGroup => (
+              <div key={`${monthGroup.year}-${monthGroup.month}`}>
+                <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+                  {monthGroup.label}
+                </h3>
+                
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-full border-collapse">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="p-3 text-left font-medium text-gray-500">Date & Time</th>
+                        <th className="p-3 text-left font-medium text-gray-500">Subject</th>
+                        <th className="p-3 text-left font-medium text-gray-500">Exam Type</th>
+                        <th className="p-3 text-left font-medium text-gray-500">Location</th>
+                        <th className="p-3 text-left font-medium text-gray-500">Duration</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {monthGroup.exams.map((exam, index) => (
+                        <tr
+                          key={index}
+                          className="border-t hover:bg-gray-50 cursor-pointer"
+                          onClick={() => setSelectedExam(exam)}
+                        >
+                          <td className="p-3">
+                            <div className="font-medium">{exam.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                            <div className="text-sm text-gray-500">{formatTime(exam.start_time)} - {formatTime(exam.end_time)}</div>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center">
+                              <div className={`w-2 h-8 ${exam.color} rounded-full mr-2`}></div>
+                              <div>
+                                <div className="font-medium">{exam.subject?.name || 'Unknown'}</div>
+                                <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject?.code || 'N/A'}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <span className={`px-2 py-1 rounded-full text-sm text-white ${exam.color}`}>
+                              {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center">
+                              <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+                              <span>{exam.location || 'N/A'}</span>
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center">
+                              <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                              <span>{exam.duration || '0'} mins</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Calendar view rendering
@@ -393,9 +731,9 @@ const ExamDates = () => {
                       key={idx}
                       className={`text-xs p-1 rounded truncate ${exam.color} text-white cursor-pointer hover:opacity-90 shadow-sm`}
                       onClick={() => setSelectedExam(exam)}
-                      title={`${exam.subject.name} - ${formatTime(exam.start_time)}`}
+                      title={`${exam.subject?.name || 'Unknown'} - ${formatTime(exam.start_time)}`}
                     >
-                      {exam.subject.code} - {formatTime(exam.start_time)}
+                      {exam.subject?.code || 'Unknown'} - {formatTime(exam.start_time)}
                     </div>
                   ))}
                   {dayExams.length > 3 && (
@@ -425,7 +763,12 @@ const ExamDates = () => {
 
   // List view rendering
   const renderListView = () => {
-    const sortedExams = [...filteredExams].sort((a, b) => a.date - b.date);
+    const sortedExams = [...filteredExams].sort((a, b) => {
+      if (a.date instanceof Date && b.date instanceof Date) {
+        return a.date - b.date;
+      }
+      return 0;
+    });
     
     if (sortedExams.length === 0) {
       return (
@@ -465,26 +808,26 @@ const ExamDates = () => {
                     <div className="flex items-center">
                       <div className={`w-2 h-8 ${exam.color} rounded-full mr-2`}></div>
                       <div>
-                        <div className="font-medium">{exam.subject.name}</div>
-                        <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject.code}</div>
+                        <div className="font-medium">{exam.subject?.name || 'Unknown'}</div>
+                        <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject?.code || 'N/A'}</div>
                       </div>
                     </div>
                   </td>
                   <td className="p-3">
                     <span className={`px-2 py-1 rounded-full text-sm text-white ${exam.color}`}>
-                      {exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1)}
+                      {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
                     </span>
                   </td>
                   <td className="p-3">
                     <div className="flex items-center">
                       <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-                      <span>{exam.location}</span>
+                      <span>{exam.location || 'N/A'}</span>
                     </div>
                   </td>
                   <td className="p-3">
                     <div className="flex items-center">
                       <Clock className="w-4 h-4 mr-2 text-gray-500" />
-                      <span>{exam.duration} mins</span>
+                      <span>{exam.duration || '0'} mins</span>
                     </div>
                   </td>
                 </tr>
@@ -523,6 +866,14 @@ const ExamDates = () => {
   return (
     <div className="relative">
       <BackgroundPattern />
+      
+      {/* Debug Panel - Press Ctrl+Shift+D to toggle */}
+      <DebugPanel 
+        show={showDebug} 
+        exams={examDates} 
+        selectedMonth={selectedMonth}
+        selectedYear={selectedYear}
+      />
       
       <div className="relative z-10 bg-gray-800/80 backdrop-blur-sm border border-gray-600 rounded-lg p-6 shadow-xl">
         {/* Header section */}
@@ -571,28 +922,36 @@ const ExamDates = () => {
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           {/* Month navigation */}
-          <div className="flex items-center border border-gray-700 rounded-md overflow-hidden">
-            <button
-              className="p-2 bg-gray-700 text-gray-200 hover:bg-amber-300 hover:text-gray-900 transition-colors duration-200"
-              onClick={prevMonth}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <div className="px-4 py-1 bg-gray-700 text-gray-200 border-l border-r border-gray-600">
-              {monthNames[selectedMonth]} {selectedYear}
-            </div>
-            <button
-              className="p-2 bg-gray-700 text-gray-200 hover:bg-amber-300 hover:text-gray-900 transition-colors duration-200"
-              onClick={nextMonth}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-            <button
-              className="px-3 py-1 text-sm bg-gray-700 text-gray-200 hover:bg-gray-600 border-l border-gray-600"
-              onClick={goToCurrentMonth}
-            >
-              Today
-            </button>
+          <div className="flex items-center">
+        <div className="flex border border-gray-700 rounded-md overflow-hidden">
+          <select
+            className="bg-gray-700 text-gray-200 rounded-l-md py-1 px-3 outline-none focus:ring-2 focus:ring-amber-300"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+          >
+            {monthNames.map((name, index) => (
+              <option key={index} value={index}>{name}</option>
+            ))}
+          </select>
+          
+          <select
+            className="bg-gray-700 text-gray-200 border-l border-gray-600 py-1 px-3 outline-none focus:ring-2 focus:ring-amber-300"
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+          >
+            {Array.from({ length: 3 }, (_, i) => new Date().getFullYear() + i).map(year => (
+              <option key={year} value={year}>{year}</option>
+            ))}
+          </select>
+          
+          <button
+            className="px-3 py-1 bg-gray-700 text-gray-200 hover:bg-amber-300 hover:text-gray-900 border-l border-gray-600 transition-colors"
+            onClick={goToCurrentMonth}
+          >
+            Today
+          </button>
+        </div>
+                 
           </div>
           
           {/* Search bar */}
@@ -639,26 +998,54 @@ const ExamDates = () => {
         </div>
         
         {/* View mode switcher */}
-        <div className="flex justify-end mb-4">
-          <div className="flex border border-gray-700 rounded-md overflow-hidden">
-            <button
-              className={`px-3 py-1 text-sm ${viewMode === 'calendar' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
-              onClick={() => setViewMode('calendar')}
-            >
-              Calendar View
-            </button>
-            <button
-              className={`px-3 py-1 text-sm ${viewMode === 'list' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
-              onClick={() => setViewMode('list')}
-            >
-              List View
-            </button>
-          </div>
-        </div>
+        {/* View mode switcher */}
+<div className="flex justify-end mb-4">
+  <div className="flex border border-gray-700 rounded-md overflow-hidden">
+    <button
+      className={`px-4 py-2 text-sm font-medium ${viewMode === 'calendar' && !isYearView ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+      onClick={() => {
+        setViewMode('calendar');
+        setIsYearView(false);
+      }}
+    >
+      <Calendar className="w-4 h-4 inline-block mr-1" />
+      Calendar
+    </button>
+    <button
+      className={`px-4 py-2 text-sm font-medium ${viewMode === 'list' && !isYearView ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+      onClick={() => {
+        setViewMode('list');
+        setIsYearView(false);
+      }}
+    >
+      <List className="w-4 h-4 inline-block mr-1" />
+      List
+    </button>
+    <button
+      className={`px-4 py-2 text-sm font-medium ${isYearView ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+      onClick={loadYearViewData}
+    >
+      <Calendar className="w-4 h-4 inline-block mr-1" />
+      Year
+    </button>
+  </div>
+</div>
         
         {/* Render appropriate view */}
         {currentGrade && currentSection ? (
-          viewMode === 'calendar' ? renderCalendarView() : renderListView()
+          isYearView ? (
+            loadingYearData ? (
+              <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
+                <div className="text-lg text-gray-500 text-center">
+                  <p>Loading year view data...</p>
+                </div>
+              </div>
+            ) : (
+              renderYearView()
+            )
+          ) : (
+            viewMode === 'calendar' ? renderCalendarView() : renderListView()
+          )
         ) : (
           <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
             <div className="text-lg text-gray-500 text-center">
@@ -708,8 +1095,8 @@ const ExamDates = () => {
                   <div className="space-y-4 max-h-96 overflow-y-auto">
                     {selectedExam.allExams.map((exam, idx) => (
                       <div key={idx} className="border-b border-gray-700 pb-3 mb-3 last:border-0">
-                        <h4 className="text-lg font-medium text-white">{exam.subject.name}</h4>
-                        <p className="text-sm text-gray-300">{exam.subject.code}</p>
+                        <h4 className="text-lg font-medium text-white">{exam.subject?.name || 'Unknown'}</h4>
+                        <p className="text-sm text-gray-300">{exam.subject?.code || 'N/A'}</p>
                         
                         <div className="mt-2 grid grid-cols-2 gap-2 text-sm">
                           <div className="flex items-center gap-2">
@@ -719,17 +1106,19 @@ const ExamDates = () => {
                           
                           <div className="flex items-center gap-2">
                             <MapPin className="w-4 h-4 text-amber-300" />
-                            <span className="text-gray-200">{exam.location}</span>
+                            <span className="text-gray-200">{exam.location || 'N/A'}</span>
                           </div>
                           
                           <div className="flex items-center gap-2">
                             <Info className="w-4 h-4 text-amber-300" />
-                            <span className="text-gray-200">{exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1)}</span>
+                            <span className="text-gray-200">
+                              {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
+                            </span>
                           </div>
                           
                           <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4 text-amber-300" />
-                            <span className="text-gray-200">{exam.duration} minutes</span>
+                            <span className="text-gray-200">{exam.duration || '0'} minutes</span>
                           </div>
                         </div>
                       </div>
@@ -738,9 +1127,15 @@ const ExamDates = () => {
                 </>
               ) : (
                 <>
-                  <h3 className="text-xl font-semibold text-amber-300 mb-2">{selectedExam.subject.name}</h3>
+                  <h3 className="text-xl font-semibold text-amber-300 mb-2">{selectedExam.subject?.name || 'Unknown'}</h3>
                   <p className="text-gray-200 mb-4">
-                    Course Code: <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded">{selectedExam.subject.code}</span>
+                    Course Code: <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded">{selectedExam.subject?.code || 'N/A'}</span>
+                    <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded">
+                      Grade: {selectedExam.grade || 'N/A'}
+                    </span>
+                    <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded">
+                      Section: {selectedExam.section || 'N/A'}
+                    </span>
                   </p>
                   
                   <div className="flex flex-col gap-3 text-sm">
@@ -754,20 +1149,20 @@ const ExamDates = () => {
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-amber-300" />
                       <span className="text-gray-200">
-                        Time: {formatTime(selectedExam.start_time)} - {formatTime(selectedExam.end_time)} ({selectedExam.duration} minutes)
+                        Time: {formatTime(selectedExam.start_time)} - {formatTime(selectedExam.end_time)} ({selectedExam.duration || '0'} minutes)
                       </span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-amber-300" />
-                      <span className="text-gray-200">Location: {selectedExam.location}</span>
+                      <span className="text-gray-200">Location: {selectedExam.location || 'N/A'}</span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <Info className="w-4 h-4 text-amber-300" />
                       <span className="text-gray-200">
                         Exam Type: <span className={`px-2 py-0.5 rounded text-xs text-white ${selectedExam.color} ml-1`}>
-                          {selectedExam.exam_type.charAt(0).toUpperCase() + selectedExam.exam_type.slice(1)}
+                          {selectedExam.exam_type ? selectedExam.exam_type.charAt(0).toUpperCase() + selectedExam.exam_type.slice(1) : 'Unknown'}
                         </span>
                       </span>
                     </div>

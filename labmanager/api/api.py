@@ -1847,7 +1847,11 @@ def get_exam_dates(**kwargs):
         # Further filter by month and year
         filtered_exams = []
         for exam in exam_schedules:
+            
+            
             exam_date = frappe.utils.getdate(exam.exam_date)
+
+            
             if exam_date.month == month and exam_date.year == year:
                 # Get classroom details
                 if exam.classroom:

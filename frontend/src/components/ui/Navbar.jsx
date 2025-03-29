@@ -70,7 +70,7 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="py-[5px]">
-                <a href="#" className="flex items-center no-underline text-white text-sm hover:text-amber-300">
+                <a href="/exam-dates" className="flex items-center no-underline text-white text-sm hover:text-amber-300">
                   <i className="fa fa-file-alt mr-[5px]"></i> Exam Dates
                 </a>
               </li>
