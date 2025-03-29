@@ -1,0 +1,11 @@
+{% extends "templates/layout.html" %} {% block title %}Exam Dates - TechEthica{% endblock %} {%
+block head %}
+<!-- Any additional head elements specific to this page -->
+{% endblock %} {% block content %}
+<div id="exam-dates-root"></div>
+{% endblock %} {% block scripts %}
+<script type="text/javascript">
+	window.socketPort = "{{ socketPort }}";
+</script>
+<script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
+{% endblock %}

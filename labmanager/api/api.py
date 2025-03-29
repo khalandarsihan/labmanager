@@ -1766,3 +1766,135 @@ def get_all_sections():
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Get All Sections API Error")
         return {"error": str(e), "status": "error"}
+
+@frappe.whitelist(allow_guest=True)
+def get_exam_dates(**kwargs):
+    """
+    Get exam dates for a specific grade and section
+    
+    Args:
+        grade (str): The grade ID
+        section (str): The section ID
+        month (int, optional): Month number (1-12)
+        year (int, optional): Year number
+        exam_type (str, optional): Type of exam to filter by, defaults to 'all'
+        
+    Returns:
+        dict: Dictionary containing exam dates and related information
+    """
+    try:
+        grade = kwargs.get('grade')
+        section = kwargs.get('section')
+        month = int(kwargs.get('month', datetime.now().month))
+        year = int(kwargs.get('year', datetime.now().year))
+        exam_type = kwargs.get('exam_type', 'all')
+        
+        # If grade or section is missing, return available options instead of an error
+        if not grade or not section:
+            # Get available grades for dropdown
+            grades = frappe.get_all("School Grade", 
+                                   fields=["name as id", "grade_name as name"],
+                                #    filters={"is_active": 1},
+                                   order_by="sequence_no")
+            
+            # Get available sections for dropdown
+            sections = frappe.get_all("Class Section",
+                                    fields=["name as id", "section_name as name"],
+                                    filters={"is_active": 1},
+                                    order_by="sequence_no")
+            
+            # Get exam types for dropdown
+            exam_types = [
+                {"id": "all", "name": "All Exams"},
+                {"id": "quiz", "name": "Quizzes"},
+                {"id": "midterm", "name": "Midterms"},
+                {"id": "final", "name": "Finals"},
+                {"id": "project", "name": "Projects"},
+                {"id": "other", "name": "Other Assessments"}
+            ]
+            
+            return {
+                "success": True,
+                "exams": [],
+                "grades": grades,
+                "sections": sections,
+                "exam_types": exam_types
+            }
+        
+        # Original code for when grade and section are provided
+        # Build filters for the query
+        filters = {
+            "grade": grade,
+            "section": section,
+            "is_active": 1
+        }
+        
+        # Add exam type filter if not 'all'
+        if exam_type != 'all':
+            filters["exam_type"] = exam_type
+        
+        # Get all matching exams
+        exam_schedules = frappe.get_all(
+            "Exam Schedule",
+            filters=filters,
+            fields=[
+                "name", "grade", "section", "academic_year", "term", 
+                "exam_type", "exam_date", "start_time", "end_time", 
+                "duration", "classroom", "proctor", "subject", "notes"
+            ]
+        )
+        
+        # Further filter by month and year
+        filtered_exams = []
+        for exam in exam_schedules:
+            exam_date = frappe.utils.getdate(exam.exam_date)
+            if exam_date.month == month and exam_date.year == year:
+                # Get classroom details
+                if exam.classroom:
+                    classroom = frappe.get_doc("Classroom", exam.classroom)
+                    exam["location"] = f"{classroom.room_name} ({classroom.building}, Floor {classroom.floor})"
+                else:
+                    exam["location"] = "TBD"
+                
+                # Get subject details
+                if exam.subject:
+                    subject = frappe.get_doc("Subject", exam.subject)
+                    exam["subject"] = {
+                        "id": subject.name,
+                        "name": subject.subject_name,
+                        "code": subject.subject_code,
+                        "category": subject.category
+                    }
+                
+                # Get teacher/proctor details
+                if exam.proctor:
+                    teacher = frappe.get_doc("Teacher", exam.proctor)
+                    exam["teacher"] = {
+                        "id": teacher.name,
+                        "name": teacher.teacher_name
+                    }
+                
+                filtered_exams.append(exam)
+        
+        # Get available exam types for the dropdown
+        exam_types = [
+            {"id": "all", "name": "All Exams"},
+            {"id": "quiz", "name": "Quizzes"},
+            {"id": "midterm", "name": "Midterms"},
+            {"id": "final", "name": "Finals"},
+            {"id": "project", "name": "Projects"},
+            {"id": "other", "name": "Other Assessments"}
+        ]
+        
+        return {
+            "success": True,
+            "exams": filtered_exams,
+            "exam_types": exam_types
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Error in get_exam_dates: {str(e)}", "Exam Dates API Error")
+        return {
+            "success": False,
+            "error": str(e)
+        }

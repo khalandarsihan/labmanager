@@ -277,6 +277,7 @@ whitelisted_methods = {
     "labmanager.api.api.get_islamic_specializations": True,
     "labmanager.api.api.get_registration_details": True,
     "labmanager.api.api.get_course_catalog": True,
+    "labmanager.api.api.get_exam_dates": True,
     
 }
 
@@ -345,6 +346,7 @@ website_route_rules = [
     {"from_route": "/student/dashboard", "to_route": "student/dashboard"},
     {"from_route": "/academic-calendar", "to_route": "academic-calendar"},
     {"from_route": "/class-schedule", "to_route": "class-schedule"},
+    {"from_route": "/exam-dates", "to_route": "exam-dates"},
 ]
 
 api_spec = {
@@ -382,7 +384,11 @@ api_spec = {
         'labmanager.api.api.get_course_catalog': {
         'methods': ['GET'],
         'auth_required': False
-    }
+    },
+    'labmanager.api.api.get_exam_dates': {
+        'methods': ['POST'],
+        'auth_required': False
+},
 }
 
 

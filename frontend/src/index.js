@@ -295,6 +295,7 @@ import HomePage from "./pages/Home";
 import CourseCatalog from "./pages/CourseCatalog";
 import AcademicCalendarPage from "./pages/AcademicCalendar";
 import ClassSchedulePage from "./pages/ClassSchedule";
+import ExamDatesPage from "./pages/ExamDates";
 import AppWrapper from "./components/AppWrapper";
 
 // Function to render with FrappeProvider wrapper
@@ -344,6 +345,14 @@ if (academicCalendarContainer) {
 const classScheduleContainer = document.getElementById("class-schedule-root");
 if (classScheduleContainer) {
 	renderWithProvider(<ClassSchedulePage />, classScheduleContainer);
+}
+
+// Exam Dates Page
+const examDatesContainer = document.getElementById("exam-dates-root");
+console.log("Looking for exam-dates-root element:", examDatesContainer);
+if (examDatesContainer) {
+	console.log("Mounting ExamDatesPage component");
+	renderWithProvider(<ExamDatesPage />, examDatesContainer);
 }
 
 // Student Enrollment Page (New Registration)
