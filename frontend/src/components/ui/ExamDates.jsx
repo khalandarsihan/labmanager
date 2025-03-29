@@ -97,6 +97,7 @@ const ExamDates = () => {
   const [sectionsList, setSectionsList] = useState([]);
   const [examTypes, setExamTypes] = useState([]);
   const [examDates, setExamDates] = useState([]);
+  const [examTypeFilteredData, setExamTypeFilteredData] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
   const [error, setError] = useState(null);
   const [showDebug, setShowDebug] = useState(false);
@@ -126,7 +127,7 @@ const ExamDates = () => {
         setShowDebug(prev => !prev);
       }
     };
-    
+  
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
@@ -181,6 +182,13 @@ const ExamDates = () => {
     });
   };
 
+  // Initialize examTypeFilteredData with all exams on first render
+  useEffect(() => {
+    if (examDates.length > 0 && examTypeFilteredData.length === 0) {
+      setExamTypeFilteredData(examDates);
+    }
+  }, [examDates]);
+
   // Only trigger loading when actually fetching data
   useEffect(() => {
     if (currentGrade && currentSection) {
@@ -189,7 +197,21 @@ const ExamDates = () => {
       // Just fetch the available options without going into loading state
       fetchOptions();
     }
-  }, [currentGrade, currentSection, selectedMonth, selectedYear, selectedExamType]);
+  }, [currentGrade, currentSection, selectedMonth, selectedYear]);
+  
+  // Handler for exam type changes - client-side filtering
+  const handleExamTypeChange = (examType) => {
+    setSelectedExamType(examType);
+    
+    // Apply the filter client-side
+    if (examDates.length > 0) {
+      const filteredData = examType === 'all' 
+        ? examDates 
+        : examDates.filter(exam => exam.exam_type === examType);
+      
+      setExamTypeFilteredData(filteredData);
+    }
+  };
   
   const fetchOptions = async () => {
     try {
@@ -265,14 +287,6 @@ const ExamDates = () => {
     fetchSections();
   }, []);
 
-  // Fetch exam data when grade/section changes
-  useEffect(() => {
-    // Only load if both grade and section are selected
-    if (currentGrade && currentSection) {
-      loadExamData();
-    }
-  }, [currentGrade, currentSection, selectedMonth, selectedYear, selectedExamType]);
-
   // Load year view data
   const loadYearViewData = async () => {
     if (yearViewExams.length > 0) {
@@ -338,7 +352,7 @@ const ExamDates = () => {
           section: currentSection,
           month: month,
           year: year,
-          exam_type: selectedExamType
+          exam_type: 'all' // Always fetch all exams
         })
       });
       
@@ -360,7 +374,7 @@ const ExamDates = () => {
       section: currentSection,
       month: selectedMonth + 1,
       year: selectedYear,
-      exam_type: selectedExamType
+      exam_type: 'all' // Always fetch all exam types
     });
 
     try {
@@ -377,7 +391,7 @@ const ExamDates = () => {
           section: currentSection,
           month: selectedMonth + 1,
           year: selectedYear,
-          exam_type: selectedExamType
+          exam_type: 'all' // Always fetch all exam types
         })
       });
       
@@ -410,6 +424,13 @@ const ExamDates = () => {
         // Process and set exams with proper date parsing
         const processedExams = processExamDates(data.exams || []);
         setExamDates(processedExams);
+        
+        // Apply current filter to the loaded data
+        const filteredData = selectedExamType === 'all' 
+          ? processedExams 
+          : processedExams.filter(exam => exam.exam_type === selectedExamType);
+        
+        setExamTypeFilteredData(filteredData);
         
         setExamTypes(data.exam_types || []);
         setLoading(false);
@@ -476,8 +497,8 @@ const ExamDates = () => {
     setSearchQuery('');
   };
 
-  // Filter exams by search query
-  const filteredExams = examDates.filter(exam => {
+  // Filter exams by search query (applied to exam type filtered data)
+  const filteredExams = examTypeFilteredData.filter(exam => {
     if (!searchQuery) return true;
     
     const query = searchQuery.toLowerCase();
@@ -542,10 +563,9 @@ const ExamDates = () => {
         exam.date.getDate() === date.getDate() &&
         exam.date.getMonth() === date.getMonth() &&
         exam.date.getFullYear() === date.getFullYear();
-        
-      const matchesExamType = selectedExamType === 'all' || exam.exam_type === selectedExamType;
       
-      return sameDay && matchesExamType;
+      // No need to filter by exam type here, it's already filtered
+      return sameDay;
     });
   };
 
