@@ -6,7 +6,7 @@ const ClassSchedule = () => {
   // State for UI and data
   const [currentGrade, setCurrentGrade] = useState('Plus One');
   const [currentSection, setCurrentSection] = useState('Section A');  // Default to section A
-  const [selectedDay, setSelectedDay] = useState('Monday');
+  const [selectedDay, setSelectedDay] = useState('');
   const [selectedTimeBlock, setSelectedTimeBlock] = useState('all');
   const [scheduleData, setScheduleData] = useState({
     days: [],
@@ -15,8 +15,7 @@ const ClassSchedule = () => {
   });
   const [hasValidSelection, setHasValidSelection] = useState(true);  
   const [gradesList, setGradesList] = useState([]);
-//   const [sectionsList, setSectionsList] = useState(['A', 'B', 'C']);
-const [sectionsList, setSectionsList] = useState([]);
+  const [sectionsList, setSectionsList] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [rooms, setRooms] = useState([]);
@@ -50,7 +49,6 @@ useEffect(() => {
         const data = await response.json();
         
         if (data && data.message && Array.isArray(data.message)) {
-        //   setSectionsList(data.message.map(section => section.name));
             setSectionsList(data.message);
         }
       } catch (err) {
@@ -76,7 +74,6 @@ useEffect(() => {
         });
         
         const data = await response.json();
-        // console.log('Grades API Response:', data);
         
         // Check for nested message structure
         if (data && data.message) {
@@ -107,6 +104,47 @@ useEffect(() => {
     
     fetchGrades();
   }, []);
+
+  // Find the current day of the week and set it as the default selected day
+  useEffect(() => {
+    if (scheduleData.days && scheduleData.days.length > 0) {
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      const currentDayIndex = new Date().getDay();
+      const currentDay = daysOfWeek[currentDayIndex];
+      
+      // Check if the current day exists in the schedule days
+      if (scheduleData.days.includes(currentDay)) {
+        setSelectedDay(currentDay);
+      } else {
+        // Find the next available day
+        const nextAvailableDay = findNextAvailableDay(scheduleData.days, currentDayIndex);
+        setSelectedDay(nextAvailableDay);
+      }
+    } else if (scheduleData.days && scheduleData.days.length === 0) {
+      // Default to Monday if no days are available
+      setSelectedDay('Monday');
+    }
+  }, [scheduleData.days]);
+
+  // Helper function to find the next available day in the schedule
+  const findNextAvailableDay = (availableDays, currentDayIndex) => {
+    if (!availableDays || availableDays.length === 0) return 'Monday';
+    
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    
+    // Try the next 7 days (full week) starting from current day
+    for (let i = 1; i <= 7; i++) {
+      const nextDayIndex = (currentDayIndex + i) % 7;
+      const nextDay = daysOfWeek[nextDayIndex];
+      
+      if (availableDays.includes(nextDay)) {
+        return nextDay;
+      }
+    }
+    
+    // If no day is found, return the first available day in the schedule
+    return availableDays[0];
+  };
 
   // Load schedule when grade/section changes
   useEffect(() => {
@@ -150,11 +188,6 @@ useEffect(() => {
       const gradeParam = currentGrade || "";
       const sectionParam = currentSection || "A";
       
-    //   console.log("Requesting schedule for:", {
-    //     grade: gradeParam,
-    //     section: sectionParam
-    //   });
-      
       // Call the backend API with grade and section if available
       const response = await fetch('/api/method/labmanager.api.api.get_class_schedule', {
         method: 'POST',
@@ -168,7 +201,6 @@ useEffect(() => {
       });
         
       const responseData = await response.json();
-    //   console.log('API Response:', responseData);
       
       // The data is nested inside message
       if (responseData && responseData.message) {
@@ -182,13 +214,6 @@ useEffect(() => {
         
         // Extract schedule data
         if (data.schedule_data) {
-        //   console.log('Schedule Data Structure:', {
-        //     days: data.schedule_data.days?.length || 0,
-        //     time_slots: data.schedule_data.time_slots?.length || 0,
-        //     classes: Object.keys(data.schedule_data.classes || {}).map(day =>
-        //       `${day}: ${(data.schedule_data.classes[day] || []).length} sessions`)
-        //   });
-          
           setScheduleData(data.schedule_data);
         } else {
           console.error('Missing schedule_data in response');
@@ -223,7 +248,6 @@ useEffect(() => {
             };
           });
           setRooms(processedRooms);
-        //   console.log("Processed rooms:", processedRooms);
         }
         
         // Set subjects and teachers
@@ -238,10 +262,10 @@ useEffect(() => {
         
         if (data.teachers) setTeachers(data.teachers);
 
-          // Set sections from response
+        // Set sections from response
         if (data.sections && Array.isArray(data.sections)) {
-            setSectionsList(data.sections);
-  }
+          setSectionsList(data.sections);
+        }
       } else if (responseData.error) {
         setError(responseData.error || 'Failed to load schedule data');
       } else {
@@ -281,9 +305,6 @@ useEffect(() => {
         Number(item.timeSlotId) === slotId);
       
       if (!classInfo) return null;
-      
-      // Log what we found for debugging
-    //   console.log(`Found class for ${day} slot ${timeSlotId}:`, classInfo);
       
       // Get the corresponding objects from subjects, teachers, and rooms arrays
       const subject = subjects.find(s => s.id === classInfo.subject);
