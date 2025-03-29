@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 import requests
 import json
-
+from datetime import datetime
 
 @frappe.whitelist(allow_guest=True)
 def get_course_details(course_code):
@@ -1318,3 +1318,375 @@ def get_academic_calendar():
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Academic Calendar API Error")
         return {"error": str(e), "events": []}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_class_schedule(grade=None, section=None, academic_year=None):
+    """Get class schedule for a specific grade and section."""
+    try:
+        filters = {"is_active": 1}
+        
+        # Add optional filters
+        if grade:
+            filters["grade"] = grade
+        if section:
+            filters["section"] = section
+        if academic_year:
+            filters["academic_year"] = academic_year
+        else:
+            # Get current academic year if not specified
+            current_year = frappe.get_all(
+                "Academic Year",
+                filters={"is_active": 1},
+                fields=["name"],
+                order_by="start_date desc",
+                limit=1
+            )
+            if current_year:
+                filters["academic_year"] = current_year[0].name
+        
+        # Get the schedule
+        schedule_doc = frappe.get_all(
+            "Class Schedule",
+            filters=filters,
+            fields=["name", "grade", "section", "academic_year", "term"],
+            limit=1
+        )
+        
+        if not schedule_doc:
+            # If no specific schedule found, try to get any active schedule
+            if grade or section:
+                return get_class_schedule(None, None, academic_year)
+            
+            # Create default schedule data structure if no schedule exists
+            days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Saturday", "Sunday"]
+            time_slots = frappe.get_all(
+                "Time Slot",
+                fields=["name", "start_time", "end_time", "block"],
+                order_by="start_time"
+            )
+
+            # Format time slots
+            formatted_time_slots = []
+            for i, slot in enumerate(time_slots):
+                formatted_time_slots.append({
+                    "id": i + 1,
+                    "start": slot.start_time.strftime("%H:%M") if hasattr(slot.start_time, "strftime") else slot.start_time,
+                    "end": slot.end_time.strftime("%H:%M") if hasattr(slot.end_time, "strftime") else slot.end_time,
+                    "block": slot.block,
+                    "name": slot.name
+                })
+
+            # Create empty classes structure
+            classes = {}
+            for day in days:
+                classes[day] = []
+
+            # Return default data
+            return {
+                "status": "default",
+                "message": "No schedule found for the specified criteria. Using default data.",
+                "grade": None,
+                "grade_name": None,
+                "section": None,
+                "academic_year": None,
+                "term": None,
+                "schedule_data": {
+                    "days": days,
+                    "time_slots": formatted_time_slots,
+                    "classes": classes
+                },
+                "subjects": get_all_subjects(),
+                "teachers": get_all_teachers(),
+                "rooms": get_all_classrooms()
+            }
+        
+        schedule = schedule_doc[0]
+        
+        # Get grade info
+        grade_info = None
+        if schedule.grade:
+            try:
+                grade_info = frappe.get_doc("School Grade", schedule.grade)
+            except frappe.DoesNotExistError:
+                frappe.log_error(f"Grade {schedule.grade} not found", "Class Schedule Error")
+        
+        # Get all time slots
+        time_slots = frappe.get_all(
+            "Time Slot",
+            fields=["name", "start_time", "end_time", "block"],
+            order_by="start_time"
+        )
+        
+        # Format time slots
+        formatted_time_slots = []
+        for i, slot in enumerate(time_slots):
+            formatted_time_slots.append({
+                "id": i + 1,  # Use sequential ID for frontend
+                "start": slot.start_time.strftime("%H:%M") if hasattr(slot.start_time, "strftime") else slot.start_time,
+                "end": slot.end_time.strftime("%H:%M") if hasattr(slot.end_time, "strftime") else slot.end_time,
+                "block": slot.block,
+                "name": slot.name  # Store actual doctype name for reference
+            })
+        
+        # Get class sessions for this schedule
+        class_sessions = frappe.get_all(
+            "Class Session",
+            filters={"class_schedule": schedule.name},
+            fields=["day", "time_slot", "subject", "teacher", "classroom"]
+        )
+        
+        # Organize sessions by day
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Saturday", "Sunday"]
+        classes = {}
+        
+        for day in days:
+            classes[day] = []
+        
+        # Map time slot names to IDs
+        time_slot_map = {slot["name"]: i + 1 for i, slot in enumerate(formatted_time_slots)}
+        
+        # Add class sessions
+        for session in class_sessions:
+            if session.day in classes:
+                time_slot_id = time_slot_map.get(session.time_slot)
+                if time_slot_id:
+                    classes[session.day].append({
+                        "timeSlotId": time_slot_id,
+                        "subject": session.subject,
+                        "teacher": session.teacher,
+                        "classroom": session.room
+                    })
+        
+        # Create response structure expected by frontend
+        schedule_data = {
+            "days": days,
+            "time_slots": formatted_time_slots,
+            "classes": classes
+        }
+        
+        # Prepare response
+        response = {
+            "status": "success",
+            "schedule_id": schedule.name,
+            "grade": schedule.grade,
+            "grade_name": grade_info.grade_name if grade_info else schedule.grade,
+            "section": schedule.section,
+            "academic_year": schedule.academic_year,
+            "term": schedule.term,
+            "schedule_data": schedule_data,
+            "subjects": get_all_subjects(),
+            "teachers": get_all_teachers(),
+            "rooms": get_all_classrooms()
+        }
+        
+        return response
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Class Schedule API Error")
+        return {"error": str(e), "status": "error"}
+
+def get_all_subjects():
+    """Get all subjects with their details"""
+    subjects = frappe.get_all(
+        "Subject", 
+        fields=["name", "subject_name", "subject_code", "category", "color"]
+    )
+    
+    return [
+        {
+            "id": subject.name,
+            "name": subject.subject_name,
+            "code": subject.subject_code,
+            "category": subject.category,
+            "color": subject.color or get_default_subject_color(subject.category)
+        }
+        for subject in subjects
+    ]
+
+def get_all_teachers():
+    """Get all teachers with their details"""
+    teachers = frappe.get_all(
+        "Teacher", 
+        fields=["name", "teacher_name", "title"]
+    )
+    
+    return [
+        {
+            "id": teacher.name,
+            "name": teacher.teacher_name,
+            "title": teacher.title
+        }
+        for teacher in teachers
+    ]
+
+def get_all_classrooms():
+    """Get all classrooms with their details"""
+    classrooms = frappe.get_all(
+        "Classroom", 
+        fields=["name", "room_name", "room_number", "room_type"]
+    )
+    
+    return [
+        {
+            "id": room.name,
+            "name": room.room_name,
+            "number": room.room_number,
+            "type": room.room_type
+        }
+        for room in classrooms
+    ]
+
+def get_default_subject_color(category):
+    """Return default color based on subject category"""
+    color_map = {
+        "Core": "bg-blue-500/90",
+        "Islamic": "bg-emerald-500/90",
+        "Elective": "bg-purple-600",
+        "Specialization": "bg-indigo-600"
+    }
+    return color_map.get(category, "bg-gray-500/90")
+
+@frappe.whitelist(allow_guest=True)
+def create_class_schedule(grade, section, academic_year=None, term=None):
+    """Create a new class schedule"""
+    try:
+        # Validate required fields
+        if not grade or not section:
+            frappe.throw("Grade and Section are required")
+            
+        # Get current academic year if not specified
+        if not academic_year:
+            current_year = frappe.get_all(
+                "Academic Year",
+                filters={"is_active": 1},
+                fields=["name"],
+                order_by="start_date desc",
+                limit=1
+            )
+            if current_year:
+                academic_year = current_year[0].name
+            else:
+                frappe.throw("No active academic year found")
+        
+        # Check if a schedule already exists for this criteria
+        existing_schedule = frappe.get_all(
+            "Class Schedule",
+            filters={
+                "grade": grade,
+                "section": section,
+                "academic_year": academic_year,
+                "is_active": 1
+            },
+            limit=1
+        )
+        
+        if existing_schedule:
+            return {
+                "status": "exists",
+                "message": "A schedule already exists for this grade and section",
+                "schedule_id": existing_schedule[0].name
+            }
+            
+        # Create a new schedule
+        schedule_doc = frappe.get_doc({
+            "doctype": "Class Schedule",
+            "grade": grade,
+            "section": section,
+            "academic_year": academic_year,
+            "term": term,
+            "is_active": 1
+        })
+        
+        schedule_doc.insert()
+        
+        return {
+            "status": "success",
+            "message": "Schedule created successfully",
+            "schedule_id": schedule_doc.name
+        }
+        
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Class Schedule Creation Error")
+        return {"error": str(e), "status": "error"}
+
+@frappe.whitelist()
+def update_class_session(schedule_id, day, time_slot_id, subject=None, teacher=None, room=None):    
+    """Update or create a class session."""
+    try:
+        # Get the actual time slot name from ID
+        time_slots = frappe.get_all(
+            "Time Slot",
+            fields=["name"],
+            order_by="start_time"
+        )
+        
+        if not time_slots or len(time_slots) < time_slot_id:
+            frappe.throw(f"Time slot with ID {time_slot_id} not found")
+            
+        time_slot = time_slots[time_slot_id - 1].name
+        
+        # Check if session already exists
+        existing = frappe.get_all(
+            "Class Session",
+            filters={
+                "class_schedule": schedule_id,
+                "day": day,
+                "time_slot": time_slot
+            },
+            fields=["name"]
+        )
+        
+        if existing:
+            # Update existing session
+            doc = frappe.get_doc("Class Session", existing[0].name)
+            doc.subject = subject
+            doc.teacher = teacher
+            doc.room = room
+            doc.save()
+        else:
+            # Create new session
+            doc = frappe.get_doc({
+                "doctype": "Class Session",
+                "class_schedule": schedule_id,
+                "day": day,
+                "time_slot": time_slot,
+                "subject": subject,
+                "teacher": teacher,
+                "room": room
+            })
+            doc.insert()
+            
+        return {
+            "status": "success",
+            "message": "Class session updated"
+        }
+        
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Class Session Update Error")
+        return {"error": str(e), "status": "error"}
+    
+    
+@frappe.whitelist(allow_guest=True)
+def get_all_grades():
+    """Get all grades available in the system"""
+    try:
+        grades = frappe.get_all(
+            "School Grade",
+            fields=["name", "grade_name", "sequence_no"],
+            order_by="sequence_no"
+        )
+        
+        return {
+            "status": "success",
+            "message": [
+                {
+                    "id": grade.name,
+                    "name": grade.grade_name
+                }
+                for grade in grades
+            ]
+        }
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Get All Grades API Error")
+        return {"error": str(e), "status": "error"}

@@ -1,0 +1,70 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:time_slot_name",
+ "creation": "2025-03-28 17:48:45.572338",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "time_slot_name",
+  "start_time",
+  "end_time",
+  "block"
+ ],
+ "fields": [
+  {
+   "fieldname": "time_slot_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "start_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Start Time"
+  },
+  {
+   "fieldname": "end_time",
+   "fieldtype": "Time",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "End Time"
+  },
+  {
+   "fieldname": "block",
+   "fieldtype": "Select",
+   "label": "Block",
+   "options": "morning\nnoon\nafternoon\nevening\nnight"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-03-29 00:21:03.950289",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Time Slot",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

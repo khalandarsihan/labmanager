@@ -1,0 +1,92 @@
+{
+ "actions": [],
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "field:teacher_name",
+ "creation": "2025-03-28 17:29:17.635128",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "teacher_name",
+  "title",
+  "user",
+  "is_active",
+  "profile_image",
+  "column_break_gqwi",
+  "experience",
+  "qualifications"
+ ],
+ "fields": [
+  {
+   "fieldname": "teacher_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Teacher Name",
+   "unique": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Title"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "profile_image",
+   "fieldtype": "Attach Image",
+   "label": "Profile Image"
+  },
+  {
+   "fieldname": "column_break_gqwi",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "experience",
+   "fieldtype": "Small Text",
+   "label": "Experience"
+  },
+  {
+   "fieldname": "qualifications",
+   "fieldtype": "Small Text",
+   "label": "Qualifications"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-03-29 00:28:23.798446",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Teacher",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}
