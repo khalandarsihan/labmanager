@@ -112,6 +112,13 @@ const StudentEnrollment = () => {
           // Store in localStorage
           localStorage.setItem('registration_id', registrationId);
           
+          // Store form data in localStorage for potential retrieval later
+          localStorage.setItem('registration_form_data', JSON.stringify({
+            personal: formData.personal,
+            address: formData.address,
+            academic: formData.academic
+          }));
+          
           // Update state
           setRegistrationId(registrationId);
           setIsSubmitted(true);
@@ -122,10 +129,6 @@ const StudentEnrollment = () => {
             message: `Registration successful! Your registration ID is ${registrationId}`
           });
 
-          // Navigate after delay
-          // setTimeout(() => {
-          //   window.location.href = `/student-registration/confirmation?id=${registrationId}`;
-          // }, 2000);
         } else {
           setToast({
             type: 'error',
@@ -183,34 +186,24 @@ const StudentEnrollment = () => {
     }
   };
 
-  // if (isSubmitted) {
-  //   return <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 py-12 px-4">
-  //     <div className="max-w-4xl mx-auto">
-  //       <Card className="border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
-  //         <CardContent className="flex flex-col items-center justify-center py-12">
-  //           <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-  //           <h2 className="text-2xl font-bold text-white mb-2">Registration Successful!</h2>
-  //           <p className="text-gray-300 text-center mb-4">
-  //             Your registration ID is: <span className="font-mono font-bold text-amber-300">{registrationId}</span>
-  //           </p>
-  //           <p className="text-gray-400 text-center mb-6">
-  //             Please save this ID for future reference. You will be redirected to the confirmation page shortly...
-  //           </p>
-  //         </CardContent>
-  //       </Card>
-  //     </div>
-  //   </div>;
-  // }
-
-
-    if (isSubmitted) {
-      return <RegistrationConfirmation registrationId={registrationId} />;
-    }
+  if (isSubmitted) {
+    // Create a flattened student data object for the confirmation component
+    const studentData = {
+      ...formData.personal,
+      ...formData.address,
+      ...formData.academic
+    };
+    
+    return <RegistrationConfirmation 
+      registrationId={registrationId} 
+      studentData={studentData}
+    />;
+  }
+  
   return (
-
     <div className="relative">
-    {/* BackgroundPattern is positioned behind everything */}
-    <BackgroundPattern />
+      {/* BackgroundPattern is positioned behind everything */}
+      <BackgroundPattern />
 
       <div className="max-w-4xl mx-auto relative z-10">
         <Card className="border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
