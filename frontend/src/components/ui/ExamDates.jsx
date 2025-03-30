@@ -376,8 +376,6 @@ const ExamDates = () => {
       
       // Parse the exam_date string into a proper Date object
       if (typeof exam.exam_date === 'string') {
-        // console.log(`Processing exam date: ${exam.exam_date}`);
-        
         try {
           // Handle yyyy-mm-dd format
           if (exam.exam_date.match(/^\d{4}-\d{2}-\d{2}$/)) {
@@ -391,8 +389,6 @@ const ExamDates = () => {
             // Fallback to whatever format is provided
             processedExam.date = new Date(exam.exam_date);
           }
-          
-          // console.log(`Date parsed as: ${processedExam.date.toISOString()}`);
         } catch (error) {
           console.error(`Error parsing date ${exam.exam_date}:`, error);
           // Fallback to current date if parsing fails
@@ -410,6 +406,11 @@ const ExamDates = () => {
       // Add color based on exam type if not already present
       if (!processedExam.color) {
         processedExam.color = getExamTypeColor(exam.exam_type);
+      }
+      
+      // Make sure exam_type is preserved from the original data
+      if (!processedExam.exam_type && exam.exam_type) {
+        processedExam.exam_type = exam.exam_type;
       }
       
       return processedExam;
@@ -441,7 +442,6 @@ const ExamDates = () => {
   
   // Handler for exam type changes - client-side filtering
   const handleExamTypeChange = useCallback((examType) => {
-    // Don't need to set loading state since we're not making API calls
     setSelectedExamType(examType);
     
     // Apply the filter client-side without any loading state
@@ -671,7 +671,8 @@ const ExamDates = () => {
           section: currentSection,
           month: selectedMonth + 1,
           year: selectedYear,
-          exam_type: selectedExamType // Always fetch all exam types
+          exam_type: 'all'
+          // exam_type: selectedExamType // Always fetch all exam types
         })
       });
       
@@ -811,6 +812,7 @@ const ExamDates = () => {
 
   // Get exams for a specific date
   const getExamsForDate = (date) => {
+    // Make sure we're using filteredSearchData which has both exam type and search filters applied
     return filteredSearchData.filter(exam => {
       if (!exam.date || !(exam.date instanceof Date)) {
         console.warn('Exam has invalid date format:', exam);
@@ -826,6 +828,21 @@ const ExamDates = () => {
       return sameDay;
     });
   };
+
+// Add a useEffect to ensure exam type filter is applied after data loads
+useEffect(() => {
+  // When new exam data is loaded, we need to reapply the current filter
+  if (examDates.length > 0) {
+    const filteredData = selectedExamType === 'all' 
+      ? examDates 
+      : examDates.filter(exam => exam.exam_type === selectedExamType);
+    
+    setExamTypeFilteredData(filteredData);
+    
+    // Also apply any existing search
+    applySearchFilter(filteredData, searchQuery);
+  }
+}, [examDates, selectedExamType, searchQuery]);
 
   // Check if a date is today
   const isToday = (date) => {
