@@ -9,101 +9,44 @@ import Toast from './Toast';
 const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
   // Toast state
   const [toast, setToast] = useState(null);
-  const [localStudentData, setLocalStudentData] = useState({});
-  
-  // Debug the props we receive
-  useEffect(() => {
-    console.log("Initial props received:", { registrationId, studentData });
-  }, []);
+  const [localStudentData, setLocalStudentData] = useState(studentData || {});
 
   // Try to load data from localStorage if not provided via props
   useEffect(() => {
-    console.log("Effect running to set local data");
-    
-    // First attempt to use direct props
-    if (studentData && Object.keys(studentData).length > 0) {
-      console.log("Using student data from props:", studentData);
-      setLocalStudentData(studentData);
-      return;
-    }
-    
-    try {
-      // Try to load from localStorage
-      const savedFormData = localStorage.getItem('registration_form_data');
-      
-      if (savedFormData) {
-        console.log("Found form data in localStorage");
-        const parsedFormData = JSON.parse(savedFormData);
-        
-        // Check if this is nested data
-        if (parsedFormData.personal || parsedFormData.address || parsedFormData.academic) {
-          console.log("Found nested form data structure");
+    if (Object.keys(studentData).length === 0) {
+      try {
+        const savedData = localStorage.getItem('registration_form_data');
+        if (savedData) {
+          const parsedData = JSON.parse(savedData);
           // Combine all sections into one flat object
           const flattenedData = {
-            ...parsedFormData.personal,
-            ...parsedFormData.address,
-            ...parsedFormData.academic
+            ...parsedData.personal,
+            ...parsedData.address,
+            ...parsedData.academic
           };
-          console.log("Setting flattened data:", flattenedData);
           setLocalStudentData(flattenedData);
-        } else {
-          // Already flat data
-          console.log("Setting local storage data:", parsedFormData);
-          setLocalStudentData(parsedFormData);
+          console.log("Loaded student data from localStorage:", flattenedData);
         }
-      } else {
-        console.log("No form data found in localStorage");
-        
-        // FALLBACK OPTION: Insert hardcoded data for testing if in development
-        if (process.env.NODE_ENV === 'development') {
-          console.log("Setting fallback test data in development mode");
-          const fallbackData = {
-            first_name: "Muhammad",
-            middle_name: "Sinana",
-            last_name: "K",
-            email: "sinank@gmail.com",
-            phone: "9876543210",
-            date_of_birth: "1999-06-15",
-            gender: "Male",
-            address: "Building 42B, Floor 7, Room 13, West Wing, Tech Park Phase 5, Sector 9",
-            city: "Thrissur",
-            state: "Kerala",
-            country: "India",
-            previous_education: "Plus Two",
-            year_of_completion: "2023",
-            institution: "Markaz Knowledge City",
-            desired_academic_program: "BS - Data Analytics",
-            islamic_studies_specialization: "Arabic Language & Literature"
-          };
-          setLocalStudentData(fallbackData);
-        }
+      } catch (error) {
+        console.error("Error loading student data from localStorage:", error);
       }
-    } catch (error) {
-      console.error("Error loading student data from localStorage:", error);
     }
   }, [studentData]);
 
-  // Debug what's in state before rendering
-  useEffect(() => {
-    console.log("Current local student data:", localStudentData);
-  }, [localStudentData]);
-
   const handleDownloadConfirmation = async () => {
     try {
-      console.log("Starting PDF generation with data:", localStudentData);
-      
       // Create a new PDF document
       const pdfDoc = await PDFDocument.create();
       
       // Add a new page
       const page = pdfDoc.addPage([595.28, 841.89]); // A4 size
       
-      // Get fonts - use only Helvetica to avoid issues
+      // Get the standard font
       const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       
       // Set basic properties
-      const textSize = 10;
+      const textSize = 11;
       const titleSize = 18;
       const headerSize = 14;
       const margin = 50;
@@ -160,7 +103,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         x: margin,
         y: refNumberY + 10,
         size: textSize,
-        font: helveticaBold,
+        font: helveticaFont,
         color: rgb(0.3, 0.3, 0.3),
       });
       
@@ -203,16 +146,12 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         localStudentData.country || ''
       ].filter(Boolean).join(', ') || 'Not provided';
       
-      console.log("Prepared display values:", { fullName, cityStateCountry });
-      
-      // Advanced text wrapping function
+      // Function to handle potential text wrapping for long values
       const wrapText = (text, maxWidth, fontSize, font) => {
         if (!text) return [''];
-        if (!font) return [text]; // Safeguard against undefined font
         
-        // Standard word-based wrapping
-        const lines = [];
         const words = text.split(' ');
+        const lines = [];
         let currentLine = '';
         
         for (const word of words) {
@@ -234,11 +173,10 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         return lines;
       };
       
-      // Calculate row height based on content with extra padding for multiline text
+      // Function to calculate row height based on content
       const calculateRowHeight = (value, colWidth, fontSize, font) => {
-        if (!font) return 24; // Default height if font is undefined
         const lines = wrapText(value, colWidth - 20, fontSize, font); // 20px padding
-        return Math.max(24, lines.length * (fontSize + 6)); // minimum 24px, or adjusted for lines
+        return Math.max(24, lines.length * (fontSize + 4)); // minimum 24px, or increase based on lines
       };
       
       // Reorganized table data in logical groups
@@ -264,18 +202,14 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         { label: 'Islamic Studies Specialization:', value: localStudentData.islamic_studies_specialization || 'Not provided' }
       ];
       
-      console.log("Table data prepared:", tableData);
-      
       // Calculate dynamic row heights and total table height
-      const labelColWidth = 160; // Narrower label column
+      const labelColWidth = 170; // Reduced label column width
       const valueColWidth = page.getWidth() - tableMargin * 2 - labelColWidth;
       
-      // Pre-calculate heights with extra padding for address
-      const rowHeights = tableData.map(row => {
-        // Extra space for potentially long content like address
-        const extraPadding = row.label.includes('Address') ? 15 : 0;
-        return calculateRowHeight(row.value, valueColWidth, textSize, helveticaFont) + extraPadding;
-      });
+      // Pre-calculate heights
+      const rowHeights = tableData.map(row => 
+        calculateRowHeight(row.value, valueColWidth, textSize, helveticaFont)
+      );
       
       // Calculate cumulative row positions
       const rowPositions = [];
@@ -295,8 +229,8 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         y: tableStartY - tableHeight,
         width: tableWidth,
         height: tableHeight,
-        borderColor: rgb(0.7, 0.7, 0.7),
-        borderWidth: 0.7,
+        borderColor: rgb(0.8, 0.8, 0.8),
+        borderWidth: 0.5,
         color: rgb(1, 1, 1, 0), // Transparent fill
       });
       
@@ -305,9 +239,6 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         const rowHeight = rowHeights[index];
         const rowY = tableStartY - rowPositions[index];
         const isEvenRow = index % 2 === 0;
-        
-        // Debug row rendering
-        console.log(`Drawing row ${index}: ${row.label} = ${row.value} at Y=${rowY}`);
         
         // Draw row background for even rows
         if (isEvenRow) {
@@ -326,7 +257,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
             start: { x: tableMargin, y: rowY - rowHeight },
             end: { x: tableMargin + tableWidth, y: rowY - rowHeight },
             thickness: 0.5,
-            color: rgb(0.7, 0.7, 0.7),
+            color: rgb(0.8, 0.8, 0.8),
           });
         }
         
@@ -335,28 +266,25 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
           start: { x: tableMargin + labelColWidth, y: rowY },
           end: { x: tableMargin + labelColWidth, y: rowY - rowHeight },
           thickness: 0.5,
-          color: rgb(0.7, 0.7, 0.7),
+          color: rgb(0.8, 0.8, 0.8),
         });
         
-        // Draw label text (left column) - left aligned
+        // Draw label text (left column)
         page.drawText(row.label, {
-          x: tableMargin + 10, // Left padding
-          y: rowY - textSize - 8, // Position at top with padding
+          x: tableMargin + 10, // Add padding
+          y: rowY - textSize - 8, // Position at top of cell with padding
           size: textSize,
           font: helveticaBold,
           color: rgb(0.3, 0.3, 0.3),
         });
         
-        // Draw value text with enhanced wrapping for long text
+        // Draw value text with potential wrapping (right column)
         const wrappedLines = wrapText(row.value, valueColWidth - 20, textSize, helveticaFont);
         wrappedLines.forEach((line, lineIndex) => {
-          // Calculate vertical position with better line spacing
-          const lineY = rowY - textSize - 8 - (lineIndex * (textSize + 5));
-          
-          // Ensure we don't render outside the row
-          if (lineY > rowY - rowHeight + 6) {
+          const lineY = rowY - textSize - 8 - (lineIndex * (textSize + 4));
+          if (lineY > rowY - rowHeight + 4) { // Ensure text stays within row
             page.drawText(line, {
-              x: tableMargin + labelColWidth + 10, // Left padding
+              x: tableMargin + labelColWidth + 10, // Add padding
               y: lineY,
               size: textSize,
               font: helveticaFont,
@@ -458,13 +386,6 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
     }
   };
 
-  // If data is loading or unavailable, show the student info anyway from what we have
-  const displayName = [
-    localStudentData.first_name, 
-    localStudentData.middle_name, 
-    localStudentData.last_name
-  ].filter(Boolean).join(' ') || 'Not available';
-
   return (
     <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 py-12 px-4 relative overflow-hidden">
       {/* Background elements */}
@@ -500,19 +421,19 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
                 <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-200">
                   <div>
                     <dt className="text-gray-400 text-sm">Full Name</dt>
-                    <dd>{displayName}</dd>
+                    <dd>{[localStudentData.first_name, localStudentData.middle_name, localStudentData.last_name].filter(Boolean).join(' ') || 'Not provided'}</dd>
                   </div>
                   <div>
                     <dt className="text-gray-400 text-sm">Email</dt>
-                    <dd>{localStudentData.email || 'Not available'}</dd>
+                    <dd>{localStudentData.email || 'Not provided'}</dd>
                   </div>
                   <div>
                     <dt className="text-gray-400 text-sm">Program</dt>
-                    <dd>{localStudentData.desired_academic_program || 'Not available'}</dd>
+                    <dd>{localStudentData.desired_academic_program || 'Not provided'}</dd>
                   </div>
                   <div>
                     <dt className="text-gray-400 text-sm">Specialization</dt>
-                    <dd>{localStudentData.islamic_studies_specialization || 'Not available'}</dd>
+                    <dd>{localStudentData.islamic_studies_specialization || 'Not provided'}</dd>
                   </div>
                 </dl>
               </div>
