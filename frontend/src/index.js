@@ -296,6 +296,7 @@ import CourseCatalog from "./pages/CourseCatalog";
 import AcademicCalendarPage from "./pages/AcademicCalendar";
 import ClassSchedulePage from "./pages/ClassSchedule";
 import ExamDatesPage from "./pages/ExamDates";
+import TrackApplication from "./pages/TrackApplication";
 import AppWrapper from "./components/AppWrapper";
 
 // Function to render with FrappeProvider wrapper
@@ -309,6 +310,19 @@ const renderWithProvider = (component, container) => {
 		</React.StrictMode>
 	);
 };
+
+// Track Application Page
+const trackApplicationContainer = document.getElementById("track-application-root");
+if (trackApplicationContainer) {
+	// Extract registrationId from URL if present
+	const urlParams = new URLSearchParams(window.location.search);
+	const registrationId = urlParams.get("id");
+
+	renderWithProvider(
+		<TrackApplication initialRegistrationId={registrationId} />,
+		trackApplicationContainer
+	);
+}
 
 // Home Page
 const homeContainer = document.getElementById("home-root");

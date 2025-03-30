@@ -4,11 +4,13 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, FileText, Mail, Phone, Download } from 'lucide-react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { saveAs } from 'file-saver';
-import Toast from './Toast';
+// import Toast from './Toast';
+import { useToast } from '@/components/ui/toast';
 
 const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
   // Toast state
-  const [toast, setToast] = useState(null);
+  // const [toast, setToast] = useState(null);
+  const { toast, Toaster } = useToast();
   const [localStudentData, setLocalStudentData] = useState(studentData || {});
 
   // Try to load data from localStorage if not provided via props
@@ -372,18 +374,30 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       saveAs(blob, `TechEthica_Application_${registrationId}.pdf`);
       
       // Show success toast
-      setToast({
-        type: 'success',
-        message: 'Confirmation PDF downloaded successfully'
+      // setToast({
+      //   type: 'success',
+      //   message: 'Confirmation PDF downloaded successfully'
+      // });
+      toast({
+        title: 'Success',
+        description: 'Confirmation PDF downloaded successfully'
       });
       
     } catch (error) {
       console.error('Error generating PDF:', error);
-      setToast({
-        type: 'error',
-        message: 'Failed to generate PDF confirmation'
+
+  //     setToast({
+  //       type: 'error',
+  //       message: 'Failed to generate PDF confirmation'
+  //     });
+
+
+      toast({
+        title: 'Error',
+        description: 'Failed to generate PDF confirmation',
+        variant: 'destructive'
       });
-    }
+      }
   };
 
   return (
@@ -460,11 +474,11 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
               {/* Action Buttons */}
               <div className="flex flex-wrap justify-center gap-4 mt-8">
                 <Button 
-                  onClick={() => window.location.href = '/track-application'}
-                  className="bg-amber-300 text-gray-900 hover:bg-amber-400 transition-all duration-200"
-                >
-                  Track Your Application
-                </Button>
+                onClick={() => window.location.href = `/track-application?id=${registrationId}`}
+                className="bg-amber-300 text-gray-900 hover:bg-amber-400 transition-all duration-200"
+              >
+                Track Your Application
+              </Button>
                 <Button 
                   onClick={handleDownloadConfirmation}
                   className="bg-amber-300 text-gray-900 hover:bg-amber-400 transition-all duration-200"
@@ -492,7 +506,8 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       </div>
 
       {/* Toast notifications */}
-      <Toast toast={toast} setToast={setToast} />
+      {/* <Toast toast={toast} setToast={setToast} /> */}
+      <Toaster />
     </div>
   );
 };

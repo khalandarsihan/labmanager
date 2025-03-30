@@ -278,6 +278,7 @@ whitelisted_methods = {
     "labmanager.api.api.get_registration_details": True,
     "labmanager.api.api.get_course_catalog": True,
     "labmanager.api.api.get_exam_dates": True,
+    "labmanager.api.api.get_application_status": True,
     
 }
 
@@ -347,6 +348,7 @@ website_route_rules = [
     {"from_route": "/academic-calendar", "to_route": "academic-calendar"},
     {"from_route": "/class-schedule", "to_route": "class-schedule"},
     {"from_route": "/exam-dates", "to_route": "exam-dates"},
+    {"from_route": "/track-application", "to_route": "track-application"},
 ]
 
 api_spec = {
@@ -389,6 +391,11 @@ api_spec = {
         'methods': ['POST'],
         'auth_required': False
 },
+    'labmanager.api.api.get_application_status': {
+        'methods': ['GET'],
+        'auth_required': False
+    },
+
 }
 
 

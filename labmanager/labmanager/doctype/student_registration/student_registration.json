@@ -6,6 +6,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "status",
   "personal_information_section",
   "first_name",
   "date_of_birth",
@@ -31,7 +32,11 @@
   "column_break_ipjl",
   "year_of_completion",
   "registration_id",
-  "decoded_registration_id"
+  "decoded_registration_id",
+  "section_break_yndw",
+  "next_steps",
+  "column_break_bqja",
+  "feedback"
  ],
  "fields": [
   {
@@ -180,11 +185,36 @@
    "fieldtype": "Data",
    "label": "Decoded Registration Id",
    "unique": 1
+  },
+  {
+   "default": "Submitted",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Submitted\nUnder Review\nDocuments Requested\nInterview Scheduled\nAccepted\nWaitlisted\nRejected"
+  },
+  {
+   "fieldname": "section_break_yndw",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "next_steps",
+   "fieldtype": "Text",
+   "label": "Next Steps"
+  },
+  {
+   "fieldname": "column_break_bqja",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "feedback",
+   "fieldtype": "Text",
+   "label": "Feedback"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-02-15 11:31:48.898686",
+ "modified": "2025-03-30 15:16:56.605585",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Student Registration",

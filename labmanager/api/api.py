@@ -1902,3 +1902,152 @@ def get_exam_dates(**kwargs):
             "success": False,
             "error": str(e)
         }
+        
+# Get Application Status
+# Update the get_application_status function in labmanager/api/api.py
+
+@frappe.whitelist(allow_guest=True)
+def get_application_status(registration_id=None):
+    """Get detailed status of a student registration application"""
+    try:
+        # Add logging to debug
+        frappe.logger().debug(f"get_application_status called with registration_id: {registration_id}")
+        
+        if not registration_id:
+            frappe.logger().debug("No registration ID provided")
+            return {
+                "status": "error",
+                "message": "Registration ID is required"
+            }
+            
+        # Try to get the registration document by the encrypted registration_id field
+        # not by document name
+        registrations = frappe.get_all(
+            "Student Registration",
+            filters={"registration_id": registration_id},
+            fields=["name"],
+            limit=1
+        )
+        
+        if not registrations:
+            frappe.logger().debug(f"Registration with ID {registration_id} not found")
+            return {
+                "status": "error",
+                "message": f"Application with ID {registration_id} not found"
+            }
+            
+        # Get the actual document using the name we found
+        doc = frappe.get_doc("Student Registration", registrations[0].name)
+        frappe.logger().debug(f"Found student registration with name: {doc.name}")
+        
+        # If status field doesn't exist yet, we'll treat it as "Submitted"
+        current_status = getattr(doc, "status", "Submitted")
+        frappe.logger().debug(f"Application status: {current_status}")
+        
+        # Create a manual timeline for now
+        timeline_entries = [
+            {
+                "date": str(doc.creation),
+                "status": "Submitted",
+                "description": "Application submitted successfully",
+                "created_by": "System"
+            }
+        ]
+        
+        # Mock up document requirements based on the program
+        documents = []
+        if doc.previous_education == "High School":
+            documents.append({
+                "document_type": "High School Transcript",
+                "status": "Requested",
+                "submitted_date": None,
+                "notes": "Please submit your complete high school transcript"
+            })
+            documents.append({
+                "document_type": "High School Diploma",
+                "status": "Requested",
+                "submitted_date": None,
+                "notes": "Please submit a copy of your high school diploma"
+            })
+        elif doc.previous_education in ["Bachelor's Degree", "Master's Degree"]:
+            documents.append({
+                "document_type": "College/University Transcript",
+                "status": "Requested",
+                "submitted_date": None,
+                "notes": "Please submit your complete college/university transcript"
+            })
+            documents.append({
+                "document_type": "Degree Certificate",
+                "status": "Requested",
+                "submitted_date": None,
+                "notes": f"Please submit a copy of your {doc.previous_education}"
+            })
+            
+        # All applicants need these documents
+        documents.append({
+            "document_type": "Identity Document (Passport/National ID)",
+            "status": "Requested",
+            "submitted_date": None,
+            "notes": "Please submit a valid government-issued ID"
+        })
+        documents.append({
+            "document_type": "Recent Passport Photo",
+            "status": "Requested",
+            "submitted_date": None,
+            "notes": "Please submit a recent passport-sized photo (taken within the last 6 months)"
+        })
+        
+        # Mock interview schedule (if applicable)
+        interviews = []
+        if doc.desired_academic_program == "Bachelor of Computer Application (BCA)":
+            # Mock interview for BCA program (future date)
+            import datetime
+            interview_date = datetime.datetime.now() + datetime.timedelta(days=14)
+            interviews.append({
+                "date": interview_date.strftime('%Y-%m-%d'),
+                "time": "10:00:00",
+                "interviewer": "Dr. Ahmad Al-Farsi",
+                "location": "Online (Zoom)",
+                "status": "Scheduled",
+                "notes": "Please prepare to discuss your programming experience and academic goals"
+            })
+        
+        # Next steps guidance
+        next_steps = f"""
+1. Please submit all requested documents through the student portal.
+2. Complete your application fee payment of $50 USD.
+3. Prepare for your admission interview (if scheduled).
+4. Check back regularly for updates on your application status.
+
+For any questions, please contact admissions@techethica.edu
+        """
+        
+        # Format the data for the response
+        response_data = {
+            "application_id": doc.name,
+            "registration_id": doc.registration_id,
+            "student_name": f"{doc.first_name} {doc.middle_name or ''} {doc.last_name or ''}".strip(),
+            "email": doc.email,
+            "program": doc.desired_academic_program,
+            "specialization": doc.islamic_studies_specialization,
+            "current_status": current_status,
+            "submission_date": str(doc.creation),
+            "timeline": timeline_entries,
+            "documents": documents,
+            "interviews": interviews,
+            "next_steps": next_steps,
+            "feedback": "" # No feedback yet
+        }
+        
+        frappe.logger().debug(f"Returning response data: {response_data}")
+        return {
+            "status": "success",
+            "data": response_data
+        }
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Application Status API Error")
+        frappe.logger().debug(f"Error in get_application_status: {str(e)}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
