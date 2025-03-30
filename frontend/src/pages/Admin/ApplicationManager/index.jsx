@@ -1,4 +1,5 @@
-// frontend/src/pages/Admin/ApplicationManager/index.jsx
+// Updated ApplicationManager with Status Controls
+
 import React, { useState, useEffect } from 'react';
 import { useFrappeGetCall, useFrappePostCall } from 'frappe-react-sdk';
 import { 
@@ -9,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { 
   Search, FileText, Calendar, MessageSquare, Clock, 
   CheckCircle, AlertCircle, User, BookOpen, Plus, 
-  Download, UploadCloud, Trash2
+  Download, UploadCloud, Trash2, Video, MapPin
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -17,9 +18,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { toast, Toaster } from '@/components/ui/toast';
+import { useToast } from '@/components/ui/toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { DataTable } from '@/components/ui/data-table';
 
 const ApplicationManager = () => {
   const [applications, setApplications] = useState([]);
@@ -29,6 +29,7 @@ const ApplicationManager = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [programFilter, setProgramFilter] = useState('All');
   const [availablePrograms, setAvailablePrograms] = useState([]);
+  const { toast, Toaster } = useToast();
 
   // Status update form state
   const [statusUpdateData, setStatusUpdateData] = useState({
@@ -88,7 +89,8 @@ const ApplicationManager = () => {
         description: 'Failed to load applications',
         variant: 'destructive'
       });
-    } finally {
+    } finally{
+    // ApplicationManager component (continued)
       setLoading(false);
     }
   };
@@ -101,6 +103,14 @@ const ApplicationManager = () => {
       const response = await getApplicationDetails({registration_id: registrationId});
       if (response?.status === 'success') {
         setSelectedApplication(response.data);
+        
+        // Initialize the status update form with the current status
+        setStatusUpdateData({
+          status: response.data.current_status,
+          description: '',
+          next_steps: response.data.next_steps || '',
+          feedback: response.data.feedback || ''
+        });
       } else {
         toast({
           title: 'Error',
@@ -160,9 +170,16 @@ const ApplicationManager = () => {
         // Refresh application details
         loadApplicationDetails(selectedApplication.registration_id);
         
+        // Update the application in the list
+        setApplications(apps => apps.map(app => 
+          app.registration_id === selectedApplication.registration_id 
+            ? {...app, status: statusUpdateData.status} 
+            : app
+        ));
+        
         // Reset form
         setStatusUpdateData({
-          status: '',
+          status: selectedApplication.current_status,
           description: '',
           next_steps: '',
           feedback: ''
@@ -211,6 +228,15 @@ const ApplicationManager = () => {
         // Refresh application details
         loadApplicationDetails(selectedApplication.registration_id);
         
+        // Update the application status in the list if it was changed
+        if (selectedApplication.current_status !== 'Documents Requested') {
+          setApplications(apps => apps.map(app => 
+            app.registration_id === selectedApplication.registration_id 
+              ? {...app, status: 'Documents Requested'} 
+              : app
+          ));
+        }
+        
         // Reset form
         setDocumentRequestData({
           document_type: '',
@@ -258,6 +284,13 @@ const ApplicationManager = () => {
         
         // Refresh application details
         loadApplicationDetails(selectedApplication.registration_id);
+        
+        // Update the application status in the list
+        setApplications(apps => apps.map(app => 
+          app.registration_id === selectedApplication.registration_id 
+            ? {...app, status: 'Interview Scheduled'} 
+            : app
+        ));
         
         // Reset form
         setInterviewData({
@@ -729,6 +762,7 @@ const ApplicationManager = () => {
                                 <TableHead className="text-gray-300">Status</TableHead>
                                 <TableHead className="text-gray-300">Submitted Date</TableHead>
                                 <TableHead className="text-gray-300">Notes</TableHead>
+                                <TableHead className="text-gray-300">Actions</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -750,6 +784,25 @@ const ApplicationManager = () => {
                                   </TableCell>
                                   <TableCell className="text-gray-300">{formatDate(doc.submitted_date)}</TableCell>
                                   <TableCell className="text-gray-300">{doc.notes || 'N/A'}</TableCell>
+                                  <TableCell>
+                                    <div className="flex space-x-2">
+                                      {doc.status === 'Submitted' && (
+                                        <>
+                                          <Button variant="outline" size="sm" className="h-8 text-emerald-400 border-emerald-400">
+                                            Approve
+                                          </Button>
+                                          <Button variant="outline" size="sm" className="h-8 text-red-400 border-red-400">
+                                            Reject
+                                          </Button>
+                                        </>
+                                      )}
+                                      {doc.status === 'Requested' && (
+                                        <Button variant="outline" size="sm" className="h-8 text-amber-400 border-amber-400">
+                                          Send Reminder
+                                        </Button>
+                                      )}
+                                    </div>
+                                  </TableCell>
                                 </TableRow>
                               ))}
                             </TableBody>

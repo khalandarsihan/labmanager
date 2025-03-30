@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:RD-{registration_id}",
+ "autoname": "format:UPLOAD-{registration_id}-{####}",
  "creation": "2025-03-30 15:21:23.841327",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -10,8 +10,12 @@
   "document_type",
   "status",
   "submitted_date",
+  "document_file",
+  "upload_date",
+  "reviewer",
   "column_break_jcli",
-  "notes"
+  "notes",
+  "rejection_reason"
  ],
  "fields": [
   {
@@ -29,7 +33,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Requested\nSubmitted\nRejected\nPending"
+   "options": "Submitted\nApproved\nRejected"
   },
   {
    "fieldname": "submitted_date",
@@ -44,11 +48,34 @@
    "fieldname": "notes",
    "fieldtype": "Text",
    "label": "Notes"
+  },
+  {
+   "fieldname": "document_file",
+   "fieldtype": "Attach",
+   "label": "Document File"
+  },
+  {
+   "default": "now",
+   "fieldname": "upload_date",
+   "fieldtype": "Datetime",
+   "label": "Upload Date"
+  },
+  {
+   "fieldname": "reviewer",
+   "fieldtype": "Link",
+   "label": "Reviewed By",
+   "options": "User"
+  },
+  {
+   "depends_on": "eval:doc.status=='Rejected'",
+   "fieldname": "rejection_reason",
+   "fieldtype": "Small Text",
+   "label": "Rejection Reason"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-30 15:23:59.469309",
+ "modified": "2025-03-30 17:36:58.442834",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Required Document",

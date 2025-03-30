@@ -10,15 +10,20 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Search, FileText, Calendar, MessageSquare, 
-  Clock, CheckCircle, AlertCircle, User, BookOpen, MapPin 
+  Clock, CheckCircle, AlertCircle, User, BookOpen, MapPin, Video, Link
 } from 'lucide-react';
 import BackgroundPattern from '@/components/ui/BackgroundPattern';
+import DocumentUpload from './DocumentUpload';
+import { useToast } from '@/components/ui/toast';
 
 const TrackApplication = ({ initialRegistrationId }) => {
   const [registrationId, setRegistrationId] = useState(initialRegistrationId || '');
   const [statusData, setStatusData] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('timeline');
+  const { toast, Toaster } = useToast();
+  
   
   // Check for registration ID in localStorage (for newly registered students)
   useEffect(() => {
@@ -58,6 +63,15 @@ const TrackApplication = ({ initialRegistrationId }) => {
       
       if (data.message && data.message.status === 'success') {
         setStatusData(data.message.data);
+        
+        // Set active tab based on status
+        if (data.message.data.current_status === 'Documents Requested') {
+          setActiveTab('documents');
+        } else if (data.message.data.current_status === 'Interview Scheduled') {
+          setActiveTab('interviews');
+        } else {
+          setActiveTab('timeline');
+        }
       } else {
         setError(data.message?.message || 'Failed to retrieve application status');
       }
@@ -73,19 +87,14 @@ const TrackApplication = ({ initialRegistrationId }) => {
     fetchData(registrationId);
   };
   
-  // Function to render status badge with appropriate color
-  const renderStatusBadge = (status) => {
-    let variant = 
-      status === 'Submitted' ? 'info' : 
-      status === 'Under Review' ? 'warning' :
-      status === 'Documents Requested' ? 'secondary' :
-      status === 'Interview Scheduled' ? 'info' :
-      status === 'Accepted' ? 'success' :
-      status === 'Waitlisted' ? 'warning' :
-      status === 'Rejected' ? 'destructive' :
-      'default';
-      
-    return <Badge variant={variant}>{status}</Badge>;
+  const handleDocumentUpload = async (documentType) => {
+    // Reload the data after document upload
+    await fetchData(registrationId);
+    
+    toast({
+      title: "Document Uploaded",
+      description: `${documentType} was uploaded successfully`,
+    });
   };
   
   // Format date for display
@@ -110,6 +119,88 @@ const TrackApplication = ({ initialRegistrationId }) => {
     return `${hour > 12 ? hour - 12 : hour}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`;
   };
   
+  // Function to render status badge with appropriate color
+  const renderStatusBadge = (status) => {
+    let className = '';
+    
+    switch(status) {
+      case 'Submitted':
+        className = 'bg-blue-600';
+        break;
+      case 'Under Review':
+        className = 'bg-amber-600';
+        break;
+      case 'Documents Requested':
+        className = 'bg-purple-600';
+        break;
+      case 'Interview Scheduled':
+        className = 'bg-indigo-600';
+        break;
+      case 'Accepted':
+        className = 'bg-emerald-600';
+        break;
+      case 'Waitlisted':
+        className = 'bg-orange-600';
+        break;
+      case 'Rejected':
+        className = 'bg-red-600';
+        break;
+      default:
+        className = 'bg-gray-600';
+    }
+    
+    return (
+      <Badge className={`${className} text-white`}>
+        {status}
+      </Badge>
+    );
+  };
+  
+  // Render progress indicator based on status
+  const renderProgressIndicator = () => {
+    const statuses = [
+      'Submitted',
+      'Under Review',
+      'Documents Requested',
+      'Interview Scheduled',
+      'Accepted',
+      'Waitlisted',
+      'Rejected'
+    ];
+    
+    const currentStatusIndex = statusData ? 
+      statuses.indexOf(statusData.current_status) : 0;
+    
+    // Don't render progress for rejected or waitlisted applications
+    if (statusData && (statusData.current_status === 'Rejected' || statusData.current_status === 'Waitlisted')) {
+      return null;
+    }
+    
+    return (
+      <div className="w-full mb-6">
+        <div className="flex justify-between mb-2">
+          {statuses.slice(0, 5).map((status, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center 
+                ${index <= currentStatusIndex ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-400'}`}>
+                {index + 1}
+              </div>
+              <div className="text-xs mt-1 text-center max-w-[70px]">
+                {status}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="relative h-1 bg-gray-700 mt-2">
+          <div 
+            className="absolute h-1 bg-amber-300" 
+            style={{ width: `${Math.min(100, (currentStatusIndex / 4) * 100)}%` }}
+          ></div>
+        </div>
+      </div>
+    );
+  };
+  
   // Render document status with icon
   const renderDocumentStatus = (status) => {
     switch(status) {
@@ -123,9 +214,95 @@ const TrackApplication = ({ initialRegistrationId }) => {
         return <div className="flex items-center"><Clock className="w-4 h-4 text-gray-500 mr-2" />Pending</div>;
     }
   };
+
+  // Render content based on application status
+  const renderStatusSpecificContent = () => {
+    if (!statusData) return null;
+    
+    switch(statusData.current_status) {
+      case 'Documents Requested':
+        return (
+          <div className="bg-purple-900/30 border border-purple-700/50 p-4 rounded-lg mb-6">
+            <div className="flex items-start">
+              <AlertCircle className="w-5 h-5 text-purple-400 mt-0.5 mr-2 flex-shrink-0" />
+              <div>
+                <h3 className="text-purple-300 font-medium mb-1">Document Request</h3>
+                <p className="text-purple-200 text-sm">
+                  Please upload the requested documents as soon as possible to proceed with your application.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'Interview Scheduled':
+        return (
+          <div className="bg-indigo-900/30 border border-indigo-700/50 p-4 rounded-lg mb-6">
+            <div className="flex items-start">
+              <Calendar className="w-5 h-5 text-indigo-400 mt-0.5 mr-2 flex-shrink-0" />
+              <div>
+                <h3 className="text-indigo-300 font-medium mb-1">Interview Scheduled</h3>
+                <p className="text-indigo-200 text-sm">
+                  You have an upcoming interview scheduled. Please check the Interviews tab for details.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'Accepted':
+        return (
+          <div className="bg-emerald-900/30 border border-emerald-700/50 p-4 rounded-lg mb-6">
+            <div className="flex items-start">
+              <CheckCircle className="w-5 h-5 text-emerald-400 mt-0.5 mr-2 flex-shrink-0" />
+              <div>
+                <h3 className="text-emerald-300 font-medium mb-1">Congratulations!</h3>
+                <p className="text-emerald-200 text-sm">
+                  Your application has been accepted. Please complete the enrollment process as outlined in the Next Steps tab.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'Waitlisted':
+        return (
+          <div className="bg-orange-900/30 border border-orange-700/50 p-4 rounded-lg mb-6">
+            <div className="flex items-start">
+              <Clock className="w-5 h-5 text-orange-400 mt-0.5 mr-2 flex-shrink-0" />
+              <div>
+                <h3 className="text-orange-300 font-medium mb-1">Application Waitlisted</h3>
+                <p className="text-orange-200 text-sm">
+                  Your application has been waitlisted. We will notify you if a spot becomes available.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+        
+      case 'Rejected':
+        return (
+          <div className="bg-red-900/30 border border-red-700/50 p-4 rounded-lg mb-6">
+            <div className="flex items-start">
+              <AlertCircle className="w-5 h-5 text-red-400 mt-0.5 mr-2 flex-shrink-0" />
+              <div>
+                <h3 className="text-red-300 font-medium mb-1">Application Not Approved</h3>
+                <p className="text-red-200 text-sm">
+                  We regret to inform you that your application was not successful at this time. Please check the feedback section for more details.
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+        
+      default:
+        return null;
+    }
+  };
   
   return (
     <div className="relative">
+      <Toaster />
       <BackgroundPattern />
       
       <div className="max-w-4xl mx-auto py-12 px-4 relative z-10">
@@ -204,8 +381,14 @@ const TrackApplication = ({ initialRegistrationId }) => {
                   </dl>
                 </div>
                 
+                {/* Progress Indicator */}
+                {renderProgressIndicator()}
+                
+                {/* Status-specific content */}
+                {renderStatusSpecificContent()}
+                
                 {/* Detailed Information Tabs */}
-                <Tabs defaultValue="timeline" className="w-full">
+                <Tabs defaultValue={activeTab} value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="w-full bg-gray-800 border-gray-700">
                     <TabsTrigger value="timeline" className="text-amber-100 data-[state=active]:bg-amber-300 data-[state=active]:text-gray-900">
                       Timeline
@@ -265,23 +448,14 @@ const TrackApplication = ({ initialRegistrationId }) => {
                     <Card className="bg-gray-700/30 border-gray-700/50">
                       <CardContent className="p-6">
                         {statusData.documents && statusData.documents.length > 0 ? (
-                          <div className="divide-y divide-gray-700">
+                          <div className="space-y-4">
                             {statusData.documents.map((doc, index) => (
-                              <div key={index} className="py-4 first:pt-0 last:pb-0">
-                                <div className="flex justify-between items-center mb-2">
-                                  <h4 className="font-medium text-amber-100">{doc.document_type}</h4>
-                                  {renderDocumentStatus(doc.status)}
-                                </div>
-                                {doc.status === 'Submitted' && (
-                                  <div className="text-sm text-gray-400">Submitted on: {formatDate(doc.submitted_date)}</div>
-                                )}
-                                {doc.notes && (
-                                  <div className="mt-2 text-sm text-gray-300 bg-gray-800/50 p-3 rounded-md border border-gray-700/50">
-                                    <MessageSquare className="w-4 h-4 inline-block mr-2 text-amber-300" />
-                                    {doc.notes}
-                                  </div>
-                                )}
-                              </div>
+                              <DocumentUpload 
+                                key={index}
+                                document={doc}
+                                registrationId={statusData.registration_id}
+                                onUploadSuccess={handleDocumentUpload}
+                              />
                             ))}
                           </div>
                         ) : (
@@ -339,6 +513,17 @@ const TrackApplication = ({ initialRegistrationId }) => {
                                     {interview.notes}
                                   </div>
                                 )}
+                                
+                                {/* Join interview button (only shown if online and within 15 minutes of start time) */}
+                                {interview.status === 'Scheduled' && 
+                                 interview.location.toLowerCase().includes('online') && (
+                                  <div className="mt-4">
+                                    <Button className="bg-amber-300 text-gray-900 hover:bg-amber-400">
+                                      <Video className="w-4 h-4 mr-2" />
+                                      Join Interview
+                                    </Button>
+                                  </div>
+                                )}
                               </div>
                             ))}
                           </div>
@@ -369,6 +554,18 @@ const TrackApplication = ({ initialRegistrationId }) => {
                                 <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50 text-gray-300 whitespace-pre-line">
                                   {statusData.feedback}
                                 </div>
+                              </div>
+                            )}
+                            
+                            {/* Show enrollment button for accepted applications */}
+                            {statusData.current_status === 'Accepted' && (
+                              <div className="mt-6 text-center">
+                                <Button 
+                                  className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                                  onClick={() => window.location.href = '/enroll?id=' + statusData.registration_id}
+                                >
+                                  Complete Enrollment
+                                </Button>
                               </div>
                             )}
                           </div>
