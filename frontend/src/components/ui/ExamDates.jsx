@@ -83,12 +83,18 @@ const MonthYearSelector = ({ selectedMonth, selectedYear, onSelect }) => {
   );
 };
 
+
 // Improved Search Component (based on CourseCatalog's SearchAndFilters)
-const ExamSearch = ({ onSearch, isSearching }) => {
-  const [searchValue, setSearchValue] = useState('');
+const ExamSearch = ({ onSearch, isSearching, currentQuery = '' }) => {
+  const [searchValue, setSearchValue] = useState(currentQuery);
   const searchInputRef = useRef(null);
   const debounceTimerRef = useRef(null);
   const [isDebouncing, setIsDebouncing] = useState(false);
+  
+  // Update internal state when currentQuery from parent changes
+  useEffect(() => {
+    setSearchValue(currentQuery);
+  }, [currentQuery]);
   
   const handleSearchChange = (e) => {
     const value = e.target.value;
@@ -682,124 +688,6 @@ const ExamDates = () => {
     return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
   };
 
-  // Year view rendering
-  // const renderYearView = () => {
-  //   // Apply search filter to year view exams
-  //   const filteredYearViewExams = searchQuery ? yearViewExams.filter(exam => {
-  //     const query = searchQuery.toLowerCase();
-  //     return (
-  //       (exam.subject?.name?.toLowerCase().includes(query) || false) ||
-  //       (exam.subject?.code?.toLowerCase().includes(query) || false) ||
-  //       (exam.location?.toLowerCase().includes(query) || false) ||
-  //       (exam.exam_type?.toLowerCase().includes(query) || false) ||
-  //       (exam.teacher?.name?.toLowerCase().includes(query) || false)
-  //     );
-  //   }) : yearViewExams;
-    
-  //   // Group exams by month
-  //   const groupedExams = {};
-    
-  //   filteredYearViewExams.forEach(exam => {
-  //     if (!exam.date) return;
-      
-  //     const year = exam.date.getFullYear();
-  //     const month = exam.date.getMonth();
-  //     const key = `${year}-${month}`;
-      
-  //     if (!groupedExams[key]) {
-  //       groupedExams[key] = {
-  //         year,
-  //         month,
-  //         label: new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-  //         exams: []
-  //       };
-  //     }
-      
-  //     groupedExams[key].exams.push(exam);
-  //   });
-    
-  //   // Sort by date (chronologically)
-  //   const sortedMonths = Object.values(groupedExams).sort((a, b) => {
-  //     if (a.year === b.year) {
-  //       return a.month - b.month;
-  //     }
-  //     return a.year - b.year;
-  //   });
-    
-  //   return (
-  //     <div className="bg-white/95 rounded-lg p-4 shadow-inner">
-  //       {sortedMonths.length === 0 ? (
-  //         <div className="p-8 text-center text-gray-500">
-  //           No exams found for the next 12 months
-  //         </div>
-  //       ) : (
-  //         <div className="space-y-8">
-  //           {sortedMonths.map(monthGroup => (
-  //             <div key={`${monthGroup.year}-${monthGroup.month}`}>
-  //               <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
-  //                 {monthGroup.label}
-  //               </h3>
-                
-  //               <div className="overflow-x-auto">
-  //                 <table className="w-full min-w-full border-collapse">
-  //                   <thead className="bg-gray-100">
-  //                     <tr>
-  //                       <th className="p-3 text-left font-medium text-gray-500">Date & Time</th>
-  //                       <th className="p-3 text-left font-medium text-gray-500">Subject</th>
-  //                       <th className="p-3 text-left font-medium text-gray-500">Exam Type</th>
-  //                       <th className="p-3 text-left font-medium text-gray-500">Location</th>
-  //                       <th className="p-3 text-left font-medium text-gray-500">Duration</th>
-  //                     </tr>
-  //                   </thead>
-  //                   <tbody>
-  //                     {monthGroup.exams.map((exam, index) => (
-  //                       <tr
-  //                         key={index}
-  //                         className="border-t hover:bg-gray-50 cursor-pointer"
-  //                         onClick={() => setSelectedExam(exam)}
-  //                       >
-  //                         <td className="p-3">
-  //                           <div className="font-medium">{exam.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
-  //                           <div className="text-sm text-gray-500">{formatTime(exam.start_time)} - {formatTime(exam.end_time)}</div>
-  //                         </td>
-  //                         <td className="p-3">
-  //                           <div className="flex items-center">
-  //                             <div className={`w-2 h-8 ${exam.color} rounded-full mr-2`}></div>
-  //                             <div>
-  //                               <div className="font-medium">{exam.subject?.name || 'Unknown'}</div>
-  //                               <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject?.code || 'N/A'}</div>
-  //                             </div>
-  //                           </div>
-  //                         </td>
-  //                         <td className="p-3">
-  //                           <span className={`px-2 py-1 rounded-full text-sm text-white ${exam.color}`}>
-  //                             {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
-  //                           </span>
-  //                         </td>
-  //                         <td className="p-3">
-  //                           <div className="flex items-center">
-  //                             <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-  //                             <span>{exam.location || 'N/A'}</span>
-  //                           </div>
-  //                         </td>
-  //                         <td className="p-3">
-  //                           <div className="flex items-center">
-  //                             <Clock className="w-4 h-4 mr-2 text-gray-500" />
-  //                             <span>{exam.duration || '0'} mins</span>
-  //                           </div>
-  //                         </td>
-  //                       </tr>
-  //                     ))}
-  //                   </tbody>
-  //                 </table>
-  //               </div>
-  //             </div>
-  //           ))}
-  //         </div>
-  //       )}
-  //     </div>
-  //   );
-  // };
 
   // Year view rendering
 const renderYearView = () => {
@@ -1204,6 +1092,7 @@ const renderYearView = () => {
           <ExamSearch 
             onSearch={handleSearch}
             isSearching={isSearching}
+            currentQuery={searchQuery}
           />
         </div>
         
