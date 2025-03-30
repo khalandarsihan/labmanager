@@ -267,7 +267,7 @@ const ExamDates = () => {
       // Just fetch the available options without going into loading state
       fetchOptions();
     }
-  }, [currentGrade, currentSection, selectedMonth, selectedYear]);
+  }, [currentGrade, currentSection, selectedMonth, selectedYear, selectedExamType]);
   
   // Handler for exam type changes - client-side filtering
   const handleExamTypeChange = (examType) => {
@@ -482,7 +482,7 @@ const ExamDates = () => {
       section: currentSection,
       month: selectedMonth + 1,
       year: selectedYear,
-      exam_type: 'all' // Always fetch all exam types
+      exam_type: selectedExamType // Always fetch all exam types
     });
 
     try {
@@ -499,7 +499,7 @@ const ExamDates = () => {
           section: currentSection,
           month: selectedMonth + 1,
           year: selectedYear,
-          exam_type: 'all' // Always fetch all exam types
+          exam_type: selectedExamType // Always fetch all exam types
         })
       });
       
