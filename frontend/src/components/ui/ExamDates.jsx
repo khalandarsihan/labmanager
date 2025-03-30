@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Calendar, List, ChevronLeft, ChevronRight, Info, BookOpen, Clock, MapPin, Users, Filter, Printer, Search, X } from 'lucide-react';
 import BackgroundPattern from './BackgroundPattern';
 
@@ -155,6 +155,165 @@ const ExamSearch = ({ onSearch, isSearching, currentQuery = '' }) => {
   );
 };
 
+// to use React.memo for child components
+
+// Optimized ExamTypeFilter component
+const ExamTypeFilter = React.memo(({ examTypeCategories, selectedExamType, onSelectExamType }) => {
+  return (
+    <div className="flex flex-wrap gap-2 mb-6">
+      {examTypeCategories.map(type => (
+        <button
+          key={type.id}
+          className={`px-3 py-1 text-sm rounded-md transition-colors ${
+            selectedExamType === type.id
+              ? 'bg-amber-300 text-gray-900'
+              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+          }`}
+          onClick={() => onSelectExamType(type.id)}
+        >
+          <div className="flex items-center">
+            <div className={`w-2 h-2 rounded-full ${type.color} mr-2`}></div>
+            {type.name}
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+});
+
+// Optimized Calendar View component
+const CalendarView = React.memo(({ days, getExamsForDate, isToday, getExamTypeColor, formatTime, setSelectedExam }) => {
+  return (
+    <div className="grid grid-cols-7 gap-1">
+      {days.map((day, index) => {
+        const dayExams = getExamsForDate(day.date);
+        const isCurrentDay = isToday(day.date);
+        
+        return (
+          <div
+            key={index}
+            className={`min-h-[100px] p-2 rounded-md border ${
+              day.isCurrentMonth ? 'bg-white border-gray-200' : 'bg-gray-100 border-gray-200 text-gray-400'
+            } ${isCurrentDay ? 'border-amber-500' : ''}`}
+          >
+            <div className="flex justify-between items-center">
+              <span className={`text-sm font-medium ${
+                isCurrentDay ? 'bg-amber-400 text-white rounded-full w-6 h-6 flex items-center justify-center' : 'text-gray-700'
+              }`}>
+                {day.date.getDate()}
+              </span>
+              {dayExams.length > 0 && (
+                <span className="text-xs bg-gray-200 text-gray-700 rounded-full px-2 py-0.5">
+                  {dayExams.length}
+                </span>
+              )}
+            </div>
+            
+            <div className="space-y-1 mt-1 overflow-hidden">
+              {dayExams.slice(0, 3).map((exam, idx) => (
+                <div
+                  key={idx}
+                  className={`text-xs p-1 rounded truncate ${exam.color} text-white cursor-pointer hover:opacity-90 shadow-sm`}
+                  onClick={() => setSelectedExam(exam)}
+                  title={`${exam.subject?.name || 'Unknown'} - ${formatTime(exam.start_time)}`}
+                >
+                  {exam.subject?.code || 'Unknown'} - {formatTime(exam.start_time)}
+                </div>
+              ))}
+              {dayExams.length > 3 && (
+                <div
+                  className="text-xs text-center text-blue-600 cursor-pointer hover:underline"
+                  onClick={() => {
+                    const firstExam = dayExams[0];
+                    setSelectedExam({
+                      ...firstExam,
+                      allExams: dayExams,
+                      isMultipleExams: true
+                    });
+                  }}
+                >
+                  +{dayExams.length - 3} more
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+});
+
+// Optimized List View component
+const ListView = React.memo(({ sortedExams, formatTime, setSelectedExam }) => {
+  if (sortedExams.length === 0) {
+    return (
+      <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
+        <div className="text-lg text-gray-500 text-center">
+          <p>No exams found for the selected criteria</p>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="bg-white/95 rounded-lg p-4 shadow-inner">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-full border-collapse">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-3 text-left font-medium text-gray-500">Date & Time</th>
+              <th className="p-3 text-left font-medium text-gray-500">Subject</th>
+              <th className="p-3 text-left font-medium text-gray-500">Exam Type</th>
+              <th className="p-3 text-left font-medium text-gray-500">Location</th>
+              <th className="p-3 text-left font-medium text-gray-500">Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedExams.map((exam, index) => (
+              <tr
+                key={index}
+                className="border-t hover:bg-gray-50 cursor-pointer"
+                onClick={() => setSelectedExam(exam)}
+              >
+                <td className="p-3">
+                  <div className="font-medium">{exam.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                  <div className="text-sm text-gray-500">{formatTime(exam.start_time)} - {formatTime(exam.end_time)}</div>
+                </td>
+                <td className="p-3">
+                  <div className="flex items-center">
+                    <div className={`w-2 h-8 ${exam.color} rounded-full mr-2`}></div>
+                    <div>
+                      <div className="font-medium">{exam.subject?.name || 'Unknown'}</div>
+                      <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject?.code || 'N/A'}</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="p-3">
+                  <span className={`px-2 py-1 rounded-full text-sm text-white ${exam.color}`}>
+                    {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
+                  </span>
+                </td>
+                <td className="p-3">
+                  <div className="flex items-center">
+                    <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+                    <span>{exam.location || 'N/A'}</span>
+                  </div>
+                </td>
+                <td className="p-3">
+                  <div className="flex items-center">
+                    <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                    <span>{exam.duration || '0'} mins</span>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+});
+
 const ExamDates = () => {
   const [loading, setLoading] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -217,7 +376,7 @@ const ExamDates = () => {
       
       // Parse the exam_date string into a proper Date object
       if (typeof exam.exam_date === 'string') {
-        console.log(`Processing exam date: ${exam.exam_date}`);
+        // console.log(`Processing exam date: ${exam.exam_date}`);
         
         try {
           // Handle yyyy-mm-dd format
@@ -233,7 +392,7 @@ const ExamDates = () => {
             processedExam.date = new Date(exam.exam_date);
           }
           
-          console.log(`Date parsed as: ${processedExam.date.toISOString()}`);
+          // console.log(`Date parsed as: ${processedExam.date.toISOString()}`);
         } catch (error) {
           console.error(`Error parsing date ${exam.exam_date}:`, error);
           // Fallback to current date if parsing fails
@@ -273,13 +432,19 @@ const ExamDates = () => {
       // Just fetch the available options without going into loading state
       fetchOptions();
     }
-  }, [currentGrade, currentSection, selectedMonth, selectedYear, selectedExamType]);
+  }, [currentGrade, currentSection, selectedMonth, selectedYear]); 
+
+  // useEffect(() => {
+  //   console.log(`Selected exam type changed to: ${selectedExamType}`);
+  //   console.log(`Filtered count: ${examTypeFilteredData.length}`);
+  // }, [selectedExamType, examTypeFilteredData.length]);
   
   // Handler for exam type changes - client-side filtering
-  const handleExamTypeChange = (examType) => {
+  const handleExamTypeChange = useCallback((examType) => {
+    // Don't need to set loading state since we're not making API calls
     setSelectedExamType(examType);
     
-    // Apply the filter client-side
+    // Apply the filter client-side without any loading state
     if (examDates.length > 0) {
       const filteredData = examType === 'all' 
         ? examDates 
@@ -290,7 +455,8 @@ const ExamDates = () => {
       // Also apply any existing search filter to the new exam type filtered data
       applySearchFilter(filteredData, searchQuery);
     }
-  };
+  }, [examDates, searchQuery]);
+
   
   // New function to handle search functionality
   const handleSearch = (query) => {
@@ -483,13 +649,13 @@ const ExamDates = () => {
 
   // Load exam data from API
   const loadExamData = async () => {
-    console.log('Loading exam data with params:', {
-      grade: currentGrade,
-      section: currentSection,
-      month: selectedMonth + 1,
-      year: selectedYear,
-      exam_type: selectedExamType // Always fetch all exam types
-    });
+    // console.log('Loading exam data with params:', {
+    //   grade: currentGrade,
+    //   section: currentSection,
+    //   month: selectedMonth + 1,
+    //   year: selectedYear,
+    //   exam_type: selectedExamType // Always fetch all exam types
+    // });
 
     try {
       setLoading(true);
@@ -514,8 +680,8 @@ const ExamDates = () => {
       // Extract the data from the message wrapper
       const data = responseData.message;
 
-      console.log('API response:', responseData);
-      console.log('Extracted data:', data);
+      // console.log('API response:', responseData);
+      // console.log('Extracted data:', data);
       
       if (data.success) {
         // Set grades and sections if provided in the response
@@ -831,64 +997,15 @@ const renderYearView = () => {
           ))}
         </div>
         
-        {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-1">
-          {days.map((day, index) => {
-            const dayExams = getExamsForDate(day.date);
-            const isCurrentDay = isToday(day.date);
-            
-            return (
-              <div
-                key={index}
-                className={`min-h-[100px] p-2 rounded-md border ${
-                  day.isCurrentMonth ? 'bg-white border-gray-200' : 'bg-gray-100 border-gray-200 text-gray-400'
-                } ${isCurrentDay ? 'border-amber-500' : ''}`}
-              >
-                <div className="flex justify-between items-center">
-                  <span className={`text-sm font-medium ${
-                    isCurrentDay ? 'bg-amber-400 text-white rounded-full w-6 h-6 flex items-center justify-center' : 'text-gray-700'
-                  }`}>
-                    {day.date.getDate()}
-                  </span>
-                  {dayExams.length > 0 && (
-                    <span className="text-xs bg-gray-200 text-gray-700 rounded-full px-2 py-0.5">
-                      {dayExams.length}
-                    </span>
-                  )}
-                </div>
-                
-                <div className="space-y-1 mt-1 overflow-hidden">
-                  {dayExams.slice(0, 3).map((exam, idx) => (
-                    <div
-                      key={idx}
-                      className={`text-xs p-1 rounded truncate ${exam.color} text-white cursor-pointer hover:opacity-90 shadow-sm`}
-                      onClick={() => setSelectedExam(exam)}
-                      title={`${exam.subject?.name || 'Unknown'} - ${formatTime(exam.start_time)}`}
-                    >
-                      {exam.subject?.code || 'Unknown'} - {formatTime(exam.start_time)}
-                    </div>
-                  ))}
-                  {dayExams.length > 3 && (
-                    <div
-                      className="text-xs text-center text-blue-600 cursor-pointer hover:underline"
-                      onClick={() => {
-                        // Could show a modal with all exams for the day
-                        const firstExam = dayExams[0];
-                        setSelectedExam({
-                          ...firstExam,
-                          allExams: dayExams,
-                          isMultipleExams: true
-                        });
-                      }}
-                    >
-                      +{dayExams.length - 3} more
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        {/* Calendar grid - now using the memoized component */}
+        <CalendarView 
+          days={days}
+          getExamsForDate={getExamsForDate}
+          isToday={isToday}
+          getExamTypeColor={getExamTypeColor}
+          formatTime={formatTime}
+          setSelectedExam={setSelectedExam}
+        />
       </div>
     );
   };
@@ -903,73 +1020,7 @@ const renderYearView = () => {
       return 0;
     });
     
-    if (sortedExams.length === 0) {
-      return (
-        <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
-          <div className="text-lg text-gray-500 text-center">
-            <p>No exams found for the selected criteria</p>
-          </div>
-        </div>
-      );
-    }
-    
-    return (
-      <div className="bg-white/95 rounded-lg p-4 shadow-inner">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-full border-collapse">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="p-3 text-left font-medium text-gray-500">Date & Time</th>
-                <th className="p-3 text-left font-medium text-gray-500">Subject</th>
-                <th className="p-3 text-left font-medium text-gray-500">Exam Type</th>
-                <th className="p-3 text-left font-medium text-gray-500">Location</th>
-                <th className="p-3 text-left font-medium text-gray-500">Duration</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedExams.map((exam, index) => (
-                <tr
-                  key={index}
-                  className="border-t hover:bg-gray-50 cursor-pointer"
-                  onClick={() => setSelectedExam(exam)}
-                >
-                  <td className="p-3">
-                    <div className="font-medium">{exam.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
-                    <div className="text-sm text-gray-500">{formatTime(exam.start_time)} - {formatTime(exam.end_time)}</div>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center">
-                      <div className={`w-2 h-8 ${exam.color} rounded-full mr-2`}></div>
-                      <div>
-                        <div className="font-medium">{exam.subject?.name || 'Unknown'}</div>
-                        <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject?.code || 'N/A'}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <span className={`px-2 py-1 rounded-full text-sm text-white ${exam.color}`}>
-                      {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
-                    </span>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center">
-                      <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-                      <span>{exam.location || 'N/A'}</span>
-                    </div>
-                  </td>
-                  <td className="p-3">
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-2 text-gray-500" />
-                      <span>{exam.duration || '0'} mins</span>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    );
+    return <ListView sortedExams={sortedExams} formatTime={formatTime} setSelectedExam={setSelectedExam} />;
   };
 
 
@@ -1096,25 +1147,13 @@ const renderYearView = () => {
           />
         </div>
         
-        {/* Exam Type Filter */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {examTypeCategories.map(type => (
-            <button
-              key={type.id}
-              className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                selectedExamType === type.id
-                  ? 'bg-amber-300 text-gray-900'
-                  : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-              }`}
-              onClick={() => setSelectedExamType(type.id)}
-            >
-              <div className="flex items-center">
-                <div className={`w-2 h-2 rounded-full ${type.color} mr-2`}></div>
-                {type.name}
-              </div>
-            </button>
-          ))}
-        </div>
+        
+          {/* Exam Type Filter */}
+          <ExamTypeFilter 
+            examTypeCategories={examTypeCategories}
+            selectedExamType={selectedExamType}
+            onSelectExamType={handleExamTypeChange}
+          />
         
         {/* View mode switcher */}
         {/* View mode switcher */}
