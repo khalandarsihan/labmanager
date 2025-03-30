@@ -683,123 +683,249 @@ const ExamDates = () => {
   };
 
   // Year view rendering
-  const renderYearView = () => {
-    // Apply search filter to year view exams
-    const filteredYearViewExams = searchQuery ? yearViewExams.filter(exam => {
-      const query = searchQuery.toLowerCase();
-      return (
-        (exam.subject?.name?.toLowerCase().includes(query) || false) ||
-        (exam.subject?.code?.toLowerCase().includes(query) || false) ||
-        (exam.location?.toLowerCase().includes(query) || false) ||
-        (exam.exam_type?.toLowerCase().includes(query) || false) ||
-        (exam.teacher?.name?.toLowerCase().includes(query) || false)
-      );
-    }) : yearViewExams;
+  // const renderYearView = () => {
+  //   // Apply search filter to year view exams
+  //   const filteredYearViewExams = searchQuery ? yearViewExams.filter(exam => {
+  //     const query = searchQuery.toLowerCase();
+  //     return (
+  //       (exam.subject?.name?.toLowerCase().includes(query) || false) ||
+  //       (exam.subject?.code?.toLowerCase().includes(query) || false) ||
+  //       (exam.location?.toLowerCase().includes(query) || false) ||
+  //       (exam.exam_type?.toLowerCase().includes(query) || false) ||
+  //       (exam.teacher?.name?.toLowerCase().includes(query) || false)
+  //     );
+  //   }) : yearViewExams;
     
-    // Group exams by month
-    const groupedExams = {};
+  //   // Group exams by month
+  //   const groupedExams = {};
     
-    filteredYearViewExams.forEach(exam => {
-      if (!exam.date) return;
+  //   filteredYearViewExams.forEach(exam => {
+  //     if (!exam.date) return;
       
-      const year = exam.date.getFullYear();
-      const month = exam.date.getMonth();
-      const key = `${year}-${month}`;
+  //     const year = exam.date.getFullYear();
+  //     const month = exam.date.getMonth();
+  //     const key = `${year}-${month}`;
       
-      if (!groupedExams[key]) {
-        groupedExams[key] = {
-          year,
-          month,
-          label: new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-          exams: []
-        };
-      }
+  //     if (!groupedExams[key]) {
+  //       groupedExams[key] = {
+  //         year,
+  //         month,
+  //         label: new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+  //         exams: []
+  //       };
+  //     }
       
-      groupedExams[key].exams.push(exam);
-    });
+  //     groupedExams[key].exams.push(exam);
+  //   });
     
-    // Sort by date (chronologically)
-    const sortedMonths = Object.values(groupedExams).sort((a, b) => {
-      if (a.year === b.year) {
-        return a.month - b.month;
-      }
-      return a.year - b.year;
-    });
+  //   // Sort by date (chronologically)
+  //   const sortedMonths = Object.values(groupedExams).sort((a, b) => {
+  //     if (a.year === b.year) {
+  //       return a.month - b.month;
+  //     }
+  //     return a.year - b.year;
+  //   });
     
-    return (
-      <div className="bg-white/95 rounded-lg p-4 shadow-inner">
-        {sortedMonths.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            No exams found for the next 12 months
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {sortedMonths.map(monthGroup => (
-              <div key={`${monthGroup.year}-${monthGroup.month}`}>
-                <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
-                  {monthGroup.label}
-                </h3>
+  //   return (
+  //     <div className="bg-white/95 rounded-lg p-4 shadow-inner">
+  //       {sortedMonths.length === 0 ? (
+  //         <div className="p-8 text-center text-gray-500">
+  //           No exams found for the next 12 months
+  //         </div>
+  //       ) : (
+  //         <div className="space-y-8">
+  //           {sortedMonths.map(monthGroup => (
+  //             <div key={`${monthGroup.year}-${monthGroup.month}`}>
+  //               <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+  //                 {monthGroup.label}
+  //               </h3>
                 
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-full border-collapse">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="p-3 text-left font-medium text-gray-500">Date & Time</th>
-                        <th className="p-3 text-left font-medium text-gray-500">Subject</th>
-                        <th className="p-3 text-left font-medium text-gray-500">Exam Type</th>
-                        <th className="p-3 text-left font-medium text-gray-500">Location</th>
-                        <th className="p-3 text-left font-medium text-gray-500">Duration</th>
+  //               <div className="overflow-x-auto">
+  //                 <table className="w-full min-w-full border-collapse">
+  //                   <thead className="bg-gray-100">
+  //                     <tr>
+  //                       <th className="p-3 text-left font-medium text-gray-500">Date & Time</th>
+  //                       <th className="p-3 text-left font-medium text-gray-500">Subject</th>
+  //                       <th className="p-3 text-left font-medium text-gray-500">Exam Type</th>
+  //                       <th className="p-3 text-left font-medium text-gray-500">Location</th>
+  //                       <th className="p-3 text-left font-medium text-gray-500">Duration</th>
+  //                     </tr>
+  //                   </thead>
+  //                   <tbody>
+  //                     {monthGroup.exams.map((exam, index) => (
+  //                       <tr
+  //                         key={index}
+  //                         className="border-t hover:bg-gray-50 cursor-pointer"
+  //                         onClick={() => setSelectedExam(exam)}
+  //                       >
+  //                         <td className="p-3">
+  //                           <div className="font-medium">{exam.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+  //                           <div className="text-sm text-gray-500">{formatTime(exam.start_time)} - {formatTime(exam.end_time)}</div>
+  //                         </td>
+  //                         <td className="p-3">
+  //                           <div className="flex items-center">
+  //                             <div className={`w-2 h-8 ${exam.color} rounded-full mr-2`}></div>
+  //                             <div>
+  //                               <div className="font-medium">{exam.subject?.name || 'Unknown'}</div>
+  //                               <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject?.code || 'N/A'}</div>
+  //                             </div>
+  //                           </div>
+  //                         </td>
+  //                         <td className="p-3">
+  //                           <span className={`px-2 py-1 rounded-full text-sm text-white ${exam.color}`}>
+  //                             {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
+  //                           </span>
+  //                         </td>
+  //                         <td className="p-3">
+  //                           <div className="flex items-center">
+  //                             <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+  //                             <span>{exam.location || 'N/A'}</span>
+  //                           </div>
+  //                         </td>
+  //                         <td className="p-3">
+  //                           <div className="flex items-center">
+  //                             <Clock className="w-4 h-4 mr-2 text-gray-500" />
+  //                             <span>{exam.duration || '0'} mins</span>
+  //                           </div>
+  //                         </td>
+  //                       </tr>
+  //                     ))}
+  //                   </tbody>
+  //                 </table>
+  //               </div>
+  //             </div>
+  //           ))}
+  //         </div>
+  //       )}
+  //     </div>
+  //   );
+  // };
+
+  // Year view rendering
+const renderYearView = () => {
+  // First apply exam type filter
+  const examTypeFilteredYearViewExams = selectedExamType === 'all' 
+    ? yearViewExams 
+    : yearViewExams.filter(exam => exam.exam_type === selectedExamType);
+  
+  // Then apply search filter to the type-filtered exams
+  const filteredYearViewExams = searchQuery 
+    ? examTypeFilteredYearViewExams.filter(exam => {
+        const query = searchQuery.toLowerCase();
+        return (
+          (exam.subject?.name?.toLowerCase().includes(query) || false) ||
+          (exam.subject?.code?.toLowerCase().includes(query) || false) ||
+          (exam.location?.toLowerCase().includes(query) || false) ||
+          (exam.exam_type?.toLowerCase().includes(query) || false) ||
+          (exam.teacher?.name?.toLowerCase().includes(query) || false)
+        );
+      }) 
+    : examTypeFilteredYearViewExams;
+  
+  // Group exams by month
+  const groupedExams = {};
+  
+  filteredYearViewExams.forEach(exam => {
+    if (!exam.date) return;
+    
+    const year = exam.date.getFullYear();
+    const month = exam.date.getMonth();
+    const key = `${year}-${month}`;
+    
+    if (!groupedExams[key]) {
+      groupedExams[key] = {
+        year,
+        month,
+        label: new Date(year, month, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+        exams: []
+      };
+    }
+    
+    groupedExams[key].exams.push(exam);
+  });
+  
+  // Sort by date (chronologically)
+  const sortedMonths = Object.values(groupedExams).sort((a, b) => {
+    if (a.year === b.year) {
+      return a.month - b.month;
+    }
+    return a.year - b.year;
+  });
+  
+  return (
+    <div className="bg-white/95 rounded-lg p-4 shadow-inner">
+      {sortedMonths.length === 0 ? (
+        <div className="p-8 text-center text-gray-500">
+          No exams found for the next 12 months
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {sortedMonths.map(monthGroup => (
+            <div key={`${monthGroup.year}-${monthGroup.month}`}>
+              <h3 className="text-xl font-semibold text-gray-800 border-b border-gray-200 pb-2 mb-4">
+                {monthGroup.label}
+              </h3>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-full border-collapse">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="p-3 text-left font-medium text-gray-500">Date & Time</th>
+                      <th className="p-3 text-left font-medium text-gray-500">Subject</th>
+                      <th className="p-3 text-left font-medium text-gray-500">Exam Type</th>
+                      <th className="p-3 text-left font-medium text-gray-500">Location</th>
+                      <th className="p-3 text-left font-medium text-gray-500">Duration</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {monthGroup.exams.map((exam, index) => (
+                      <tr
+                        key={index}
+                        className="border-t hover:bg-gray-50 cursor-pointer"
+                        onClick={() => setSelectedExam(exam)}
+                      >
+                        <td className="p-3">
+                          <div className="font-medium">{exam.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
+                          <div className="text-sm text-gray-500">{formatTime(exam.start_time)} - {formatTime(exam.end_time)}</div>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center">
+                            <div className={`w-2 h-8 ${exam.color} rounded-full mr-2`}></div>
+                            <div>
+                              <div className="font-medium">{exam.subject?.name || 'Unknown'}</div>
+                              <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject?.code || 'N/A'}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="p-3">
+                          <span className={`px-2 py-1 rounded-full text-sm text-white ${exam.color}`}>
+                            {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
+                          </span>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center">
+                            <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+                            <span>{exam.location || 'N/A'}</span>
+                          </div>
+                        </td>
+                        <td className="p-3">
+                          <div className="flex items-center">
+                            <Clock className="w-4 h-4 mr-2 text-gray-500" />
+                            <span>{exam.duration || '0'} mins</span>
+                          </div>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {monthGroup.exams.map((exam, index) => (
-                        <tr
-                          key={index}
-                          className="border-t hover:bg-gray-50 cursor-pointer"
-                          onClick={() => setSelectedExam(exam)}
-                        >
-                          <td className="p-3">
-                            <div className="font-medium">{exam.date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</div>
-                            <div className="text-sm text-gray-500">{formatTime(exam.start_time)} - {formatTime(exam.end_time)}</div>
-                          </td>
-                          <td className="p-3">
-                            <div className="flex items-center">
-                              <div className={`w-2 h-8 ${exam.color} rounded-full mr-2`}></div>
-                              <div>
-                                <div className="font-medium">{exam.subject?.name || 'Unknown'}</div>
-                                <div className="text-xs bg-gray-200 inline-block px-2 py-0.5 rounded">{exam.subject?.code || 'N/A'}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            <span className={`px-2 py-1 rounded-full text-sm text-white ${exam.color}`}>
-                              {exam.exam_type ? exam.exam_type.charAt(0).toUpperCase() + exam.exam_type.slice(1) : 'Unknown'}
-                            </span>
-                          </td>
-                          <td className="p-3">
-                            <div className="flex items-center">
-                              <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-                              <span>{exam.location || 'N/A'}</span>
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            <div className="flex items-center">
-                              <Clock className="w-4 h-4 mr-2 text-gray-500" />
-                              <span>{exam.duration || '0'} mins</span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
   
    // Calendar view rendering
    const renderCalendarView = () => {
