@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, List, ChevronLeft, ChevronRight, Info, BookOpen, Clock, MapPin, Users, Filter, Printer, Search, X } from 'lucide-react';
 import BackgroundPattern from './BackgroundPattern';
 
@@ -83,8 +83,76 @@ const MonthYearSelector = ({ selectedMonth, selectedYear, onSelect }) => {
   );
 };
 
+// Improved Search Component (based on CourseCatalog's SearchAndFilters)
+const ExamSearch = ({ onSearch, isSearching }) => {
+  const [searchValue, setSearchValue] = useState('');
+  const searchInputRef = useRef(null);
+  const debounceTimerRef = useRef(null);
+  const [isDebouncing, setIsDebouncing] = useState(false);
+  
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchValue(value);
+    setIsDebouncing(true);
+    
+    // Clear any existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    // Set a new timer to delay the search
+    debounceTimerRef.current = setTimeout(() => {
+      console.log("Search value changed:", value);
+      onSearch(value);
+      setIsDebouncing(false);
+    }, 400); // 400ms delay
+  };
+  
+  // Clean up timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div className="relative flex-grow max-w-md">
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        {isSearching || isDebouncing ? (
+          <div className="w-4 h-4 border-t-2 border-amber-300 rounded-full animate-spin"></div>
+        ) : (
+          <Search className="h-4 w-4 text-gray-400" />
+        )}
+      </div>
+      <input
+        ref={searchInputRef}
+        type="text"
+        className="bg-gray-700 text-gray-200 w-full pl-10 pr-10 py-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-amber-300 focus:outline-none"
+        placeholder="Search exams..."
+        value={searchValue}
+        onChange={handleSearchChange}
+      />
+      {searchValue && (
+        <button
+          className="absolute inset-y-0 right-0 pr-3 flex items-center"
+          onClick={() => {
+            setSearchValue('');
+            onSearch('');
+          }}
+        >
+          <X className="h-4 w-4 text-gray-400 hover:text-white" />
+        </button>
+      )}
+    </div>
+  );
+};
+
 const ExamDates = () => {
   const [loading, setLoading] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  
   // State management
   const [currentGrade, setCurrentGrade] = useState('');
   const [currentSection, setCurrentSection] = useState('Section A');
@@ -98,6 +166,7 @@ const ExamDates = () => {
   const [examTypes, setExamTypes] = useState([]);
   const [examDates, setExamDates] = useState([]);
   const [examTypeFilteredData, setExamTypeFilteredData] = useState([]);
+  const [filteredSearchData, setFilteredSearchData] = useState([]); // New state for search filtered data
   const [selectedExam, setSelectedExam] = useState(null);
   const [error, setError] = useState(null);
   const [showDebug, setShowDebug] = useState(false);
@@ -186,6 +255,7 @@ const ExamDates = () => {
   useEffect(() => {
     if (examDates.length > 0 && examTypeFilteredData.length === 0) {
       setExamTypeFilteredData(examDates);
+      setFilteredSearchData(examDates); // Also initialize search filtered data
     }
   }, [examDates]);
 
@@ -210,7 +280,45 @@ const ExamDates = () => {
         : examDates.filter(exam => exam.exam_type === examType);
       
       setExamTypeFilteredData(filteredData);
+      
+      // Also apply any existing search filter to the new exam type filtered data
+      applySearchFilter(filteredData, searchQuery);
     }
+  };
+  
+  // New function to handle search functionality
+  const handleSearch = (query) => {
+    setIsSearching(true);
+    setSearchQuery(query);
+    
+    // Apply search filter to the current exam type filtered data
+    applySearchFilter(examTypeFilteredData, query);
+    
+    setTimeout(() => {
+      setIsSearching(false);
+    }, 300); // Simulate a slight delay for search operation
+  };
+  
+  // Helper function to apply search filter
+  const applySearchFilter = (exams, query) => {
+    if (!query) {
+      setFilteredSearchData(exams);
+      return;
+    }
+    
+    const lowercaseQuery = query.toLowerCase();
+    
+    const filtered = exams.filter(exam => {
+      return (
+        (exam.subject?.name?.toLowerCase().includes(lowercaseQuery) || false) ||
+        (exam.subject?.code?.toLowerCase().includes(lowercaseQuery) || false) ||
+        (exam.location?.toLowerCase().includes(lowercaseQuery) || false) ||
+        (exam.exam_type?.toLowerCase().includes(lowercaseQuery) || false) ||
+        (exam.teacher?.name?.toLowerCase().includes(lowercaseQuery) || false)
+      );
+    });
+    
+    setFilteredSearchData(filtered);
   };
   
   const fetchOptions = async () => {
@@ -432,6 +540,9 @@ const ExamDates = () => {
         
         setExamTypeFilteredData(filteredData);
         
+        // Apply any existing search query to the filtered data
+        applySearchFilter(filteredData, searchQuery);
+        
         setExamTypes(data.exam_types || []);
         setLoading(false);
       } else {
@@ -487,30 +598,6 @@ const ExamDates = () => {
     window.print();
   };
 
-  // Handle search input
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  // Clear search
-  const clearSearch = () => {
-    setSearchQuery('');
-  };
-
-  // Filter exams by search query (applied to exam type filtered data)
-  const filteredExams = examTypeFilteredData.filter(exam => {
-    if (!searchQuery) return true;
-    
-    const query = searchQuery.toLowerCase();
-    
-    return (
-      (exam.subject?.name?.toLowerCase().includes(query) || false) ||
-      (exam.subject?.code?.toLowerCase().includes(query) || false) ||
-      (exam.location?.toLowerCase().includes(query) || false) ||
-      (exam.exam_type?.toLowerCase().includes(query) || false)
-    );
-  });
-
   // Get days in current month for the calendar view
   const getDaysInMonth = (month, year) => {
     const date = new Date(year, month, 1);
@@ -552,7 +639,7 @@ const ExamDates = () => {
 
   // Get exams for a specific date
   const getExamsForDate = (date) => {
-    return filteredExams.filter(exam => {
+    return filteredSearchData.filter(exam => {
       if (!exam.date || !(exam.date instanceof Date)) {
         console.warn('Exam has invalid date format:', exam);
         return false;
@@ -564,7 +651,6 @@ const ExamDates = () => {
         exam.date.getMonth() === date.getMonth() &&
         exam.date.getFullYear() === date.getFullYear();
       
-      // No need to filter by exam type here, it's already filtered
       return sameDay;
     });
   };
@@ -598,10 +684,22 @@ const ExamDates = () => {
 
   // Year view rendering
   const renderYearView = () => {
+    // Apply search filter to year view exams
+    const filteredYearViewExams = searchQuery ? yearViewExams.filter(exam => {
+      const query = searchQuery.toLowerCase();
+      return (
+        (exam.subject?.name?.toLowerCase().includes(query) || false) ||
+        (exam.subject?.code?.toLowerCase().includes(query) || false) ||
+        (exam.location?.toLowerCase().includes(query) || false) ||
+        (exam.exam_type?.toLowerCase().includes(query) || false) ||
+        (exam.teacher?.name?.toLowerCase().includes(query) || false)
+      );
+    }) : yearViewExams;
+    
     // Group exams by month
     const groupedExams = {};
     
-    yearViewExams.forEach(exam => {
+    filteredYearViewExams.forEach(exam => {
       if (!exam.date) return;
       
       const year = exam.date.getFullYear();
@@ -702,9 +800,9 @@ const ExamDates = () => {
       </div>
     );
   };
-
-  // Calendar view rendering
-  const renderCalendarView = () => {
+  
+   // Calendar view rendering
+   const renderCalendarView = () => {
     const days = getDaysInMonth(selectedMonth, selectedYear);
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     
@@ -781,9 +879,10 @@ const ExamDates = () => {
     );
   };
 
-  // List view rendering
+
+
   const renderListView = () => {
-    const sortedExams = [...filteredExams].sort((a, b) => {
+    const sortedExams = [...filteredSearchData].sort((a, b) => {
       if (a.date instanceof Date && b.date instanceof Date) {
         return a.date - b.date;
       }
@@ -858,6 +957,7 @@ const ExamDates = () => {
       </div>
     );
   };
+
 
   // For loading state
   if (loading) {
@@ -975,26 +1075,10 @@ const ExamDates = () => {
           </div>
           
           {/* Search bar */}
-          <div className="relative flex-grow max-w-md">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              className="bg-gray-700 text-gray-200 w-full pl-10 pr-10 py-2 rounded-md border border-gray-600 focus:ring-2 focus:ring-amber-300 focus:outline-none"
-              placeholder="Search exams..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-            {searchQuery && (
-              <button
-                className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                onClick={clearSearch}
-              >
-                <X className="h-4 w-4 text-gray-400 hover:text-white" />
-              </button>
-            )}
-          </div>
+          <ExamSearch 
+            onSearch={handleSearch}
+            isSearching={isSearching}
+          />
         </div>
         
         {/* Exam Type Filter */}
