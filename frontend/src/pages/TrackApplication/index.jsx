@@ -41,54 +41,72 @@ const TrackApplication = ({ initialRegistrationId }) => {
   }, [initialRegistrationId]);
   
   // Use a direct fetch instead of useFrappeGetCall to have more control
-  const fetchData = async (id) => {
-    if (!id) {
-      setError('Please enter a registration ID');
-      return;
-    }
+ // Modified fetchData function for TrackApplication
+const fetchData = async (id) => {
+  if (!id) {
+    setError('Please enter a registration ID');
+    return;
+  }
+  
+  setIsSearching(true);
+  setError(null);
+  
+  try {
+    console.log('Fetching data for ID:', id);
     
-    setIsSearching(true);
-    setError(null);
+    // Use a direct fetch call
+    const response = await fetch(`/api/method/labmanager.api.api.get_application_status?registration_id=${id}`);
+    const data = await response.json();
     
-    try {
-      console.log('Fetching data for ID:', id);
-      
-      // Use a direct fetch call
-      const response = await fetch(`/api/method/labmanager.api.api.get_application_status?registration_id=${id}`);
-      const data = await response.json();
-      
-      console.log('API response:', data);
-      
-      // Frappe wraps the response in a message property
-      if (data && data.message) {
-        // If API returns an error field, it's an error response
-        if (data.message.status === "error") {
-          setError(data.message.message || 'Failed to retrieve application status');
-        } 
-        // Otherwise, it's the successful data response
-        else {
-          // Set the data directly 
-          setStatusData(data.message);
-          
-          // Set active tab based on status
-          if (data.message.current_status === 'Documents Requested') {
-            setActiveTab('documents');
-          } else if (data.message.current_status === 'Interview Scheduled') {
-            setActiveTab('interviews');
-          } else {
-            setActiveTab('timeline');
-          }
+    console.log('API response:', data);
+    
+    // Frappe wraps the response in a message property
+    if (data && data.message) {
+      // Check if the API returns an explicit error status
+      if (data.message.status === "error") {
+        setError(data.message.message || 'Failed to retrieve application status');
+      } 
+      // If response contains success status and data property (new format)
+      else if (data.message.status === "success" && data.message.data) {
+        // Set the data from the nested data property
+        setStatusData(data.message.data);
+        
+        // Set active tab based on status
+        if (data.message.data.current_status === 'Documents Requested') {
+          setActiveTab('documents');
+        } else if (data.message.data.current_status === 'Interview Scheduled') {
+          setActiveTab('interviews');
+        } else {
+          setActiveTab('timeline');
         }
-      } else {
+      }
+      // Handle legacy format where all data is at the top level of message
+      else if (data.message.registration_id) {
+        // Set the data directly
+        setStatusData(data.message);
+        
+        // Set active tab based on status
+        if (data.message.current_status === 'Documents Requested') {
+          setActiveTab('documents');
+        } else if (data.message.current_status === 'Interview Scheduled') {
+          setActiveTab('interviews');
+        } else {
+          setActiveTab('timeline');
+        }
+      }
+      else {
         setError('Failed to retrieve application status. Invalid response format.');
       }
-    } catch (err) {
-      console.error('Error fetching application status:', err);
-      setError('An error occurred while retrieving your application status');
-    } finally {
-      setIsSearching(false);
+    } else {
+      setError('Failed to retrieve application status. Invalid response format.');
     }
-  };
+  } catch (err) {
+    console.error('Error fetching application status:', err);
+    setError('An error occurred while retrieving your application status');
+  } finally {
+    setIsSearching(false);
+  }
+};
   
   const handleSearch = () => {
     fetchData(registrationId);

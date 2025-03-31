@@ -1954,24 +1954,39 @@ def get_application_status(registration_id=None):
         
         # If no timeline entries exist, create the initial submission entry
         if not timeline:
-            # Create the initial submission entry in the timeline
-            timeline_doc = frappe.get_doc({
-                "doctype": "Application Timeline",
-                "registration_id": doc.name,
-                "date": doc.creation,
-                "status": "Submitted",
-                "description": "Application submitted successfully",
-                "created_by": "System"
-            })
-            timeline_doc.insert(ignore_permissions=True)
-            
-            # Add to our response
-            timeline = [{
-                "date": doc.creation,
-                "status": "Submitted",
-                "description": "Application submitted successfully",
-                "created_by": "System"
-            }]
+            try:
+                # Create the initial submission entry in the timeline
+                # Use the current user or Administrator instead of System
+                current_user = frappe.session.user
+                if not current_user or current_user == "Guest":
+                    current_user = "Administrator"  # Fallback to Administrator which should exist
+                
+                timeline_doc = frappe.get_doc({
+                    "doctype": "Application Timeline",
+                    "registration_id": doc.name,
+                    "date": doc.creation,
+                    "status": "Submitted",
+                    "description": "Application submitted successfully",
+                    "created_by": current_user
+                })
+                timeline_doc.insert(ignore_permissions=True)
+                
+                # Add to our response
+                timeline = [{
+                    "date": doc.creation,
+                    "status": "Submitted",
+                    "description": "Application submitted successfully",
+                    "created_by": current_user
+                }]
+            except Exception as timeline_error:
+                frappe.logger().error(f"Error creating timeline entry: {str(timeline_error)}")
+                # Even if timeline creation fails, we should continue rather than failing the entire request
+                timeline = [{
+                    "date": doc.creation,
+                    "status": "Submitted",
+                    "description": "Application submitted successfully",
+                    "created_by": "Unknown"
+                }]
         
         # Get document requirements
         documents = frappe.get_all(
@@ -1983,15 +1998,20 @@ def get_application_status(registration_id=None):
         
         # If no documents are defined yet, create default document requirements
         if not documents:
-            create_default_document_requirements(doc)
-            
-            # Fetch the newly created documents
-            documents = frappe.get_all(
-                "Required Document",
-                filters={"registration_id": doc.name},
-                fields=["document_type", "status", "submitted_date", "notes"],
-                order_by="creation"
-            )
+            try:
+                create_default_document_requirements(doc)
+                
+                # Fetch the newly created documents
+                documents = frappe.get_all(
+                    "Required Document",
+                    filters={"registration_id": doc.name},
+                    fields=["document_type", "status", "submitted_date", "notes"],
+                    order_by="creation"
+                )
+            except Exception as doc_error:
+                frappe.logger().error(f"Error creating default documents: {str(doc_error)}")
+                # Continue even if document creation fails
+                documents = []
         
         # Get scheduled interviews
         interviews = frappe.get_all(
@@ -2005,29 +2025,33 @@ def get_application_status(registration_id=None):
         student_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
         
         response_data = {
-            "application_id": doc.name,
-            "registration_id": registration_id,
-            "student_name": student_name,
-            "email": doc.email,
-            "program": doc.desired_academic_program,
-            "specialization": doc.islamic_studies_specialization,
-            "current_status": current_status,
-            "submission_date": str(doc.creation),
-            "timeline": timeline,
-            "documents": documents,
-            "interviews": interviews,
-            "next_steps": doc.next_steps or get_default_next_steps(current_status),
-            "feedback": doc.feedback or ""
+            "status": "success",  # Add explicit success status
+            "data": {
+                "application_id": doc.name,
+                "registration_id": registration_id,
+                "student_name": student_name,
+                "email": doc.email,
+                "program": doc.desired_academic_program,
+                "specialization": doc.islamic_studies_specialization,
+                "current_status": current_status,
+                "submission_date": str(doc.creation),
+                "timeline": timeline,
+                "documents": documents,
+                "interviews": interviews,
+                "next_steps": doc.next_steps or get_default_next_steps(current_status),
+                "feedback": doc.feedback or ""
+            }
         }
         
         frappe.logger().debug(f"Returning response data for application status")
-        # Return the data directly without wrapping in status/data
-        # Frappe will automatically wrap it in a message property
         return response_data
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Application Status API Error")
         frappe.logger().debug(f"Error in get_application_status: {str(e)}")
-        frappe.throw(str(e))
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 
 def create_default_document_requirements(registration_doc):
