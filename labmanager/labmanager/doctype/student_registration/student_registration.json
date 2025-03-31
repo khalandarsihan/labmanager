@@ -213,8 +213,17 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-03-30 15:16:56.605585",
+ "links": [
+  {
+   "link_doctype": "Required Document",
+   "link_fieldname": "registration_id"
+  },
+  {
+   "link_doctype": "Interview Schedule",
+   "link_fieldname": "registration_id"
+  }
+ ],
+ "modified": "2025-03-31 11:59:11.206935",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Student Registration",

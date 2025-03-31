@@ -74,8 +74,13 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
- "modified": "2025-03-30 17:36:58.442834",
+ "links": [
+  {
+   "link_doctype": "Student Registration",
+   "link_fieldname": "registration_id"
+  }
+ ],
+ "modified": "2025-03-31 11:19:35.290621",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Required Document",
