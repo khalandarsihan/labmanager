@@ -1,6 +1,5 @@
 // frontend/src/pages/TrackApplication/index.jsx
 import React, { useState, useEffect } from 'react';
-import { useFrappeGetCall } from 'frappe-react-sdk';
 import { 
   Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter 
 } from '@/components/ui/card';
@@ -10,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Search, FileText, Calendar, MessageSquare, 
-  Clock, CheckCircle, AlertCircle, User, BookOpen, MapPin, Video, Link
+  Clock, CheckCircle, AlertCircle, User, BookOpen, MapPin, Video
 } from 'lucide-react';
 import BackgroundPattern from '@/components/ui/BackgroundPattern';
 import DocumentUpload from './DocumentUpload';
@@ -23,7 +22,6 @@ const TrackApplication = ({ initialRegistrationId }) => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('timeline');
   const { toast, Toaster } = useToast();
-  
   
   // Check for registration ID in localStorage (for newly registered students)
   useEffect(() => {
@@ -61,19 +59,28 @@ const TrackApplication = ({ initialRegistrationId }) => {
       
       console.log('API response:', data);
       
-      if (data.message && data.message.status === 'success') {
-        setStatusData(data.message.data);
-        
-        // Set active tab based on status
-        if (data.message.data.current_status === 'Documents Requested') {
-          setActiveTab('documents');
-        } else if (data.message.data.current_status === 'Interview Scheduled') {
-          setActiveTab('interviews');
-        } else {
-          setActiveTab('timeline');
+      // Frappe wraps the response in a message property
+      if (data && data.message) {
+        // If API returns an error field, it's an error response
+        if (data.message.status === "error") {
+          setError(data.message.message || 'Failed to retrieve application status');
+        } 
+        // Otherwise, it's the successful data response
+        else {
+          // Set the data directly 
+          setStatusData(data.message);
+          
+          // Set active tab based on status
+          if (data.message.current_status === 'Documents Requested') {
+            setActiveTab('documents');
+          } else if (data.message.current_status === 'Interview Scheduled') {
+            setActiveTab('interviews');
+          } else {
+            setActiveTab('timeline');
+          }
         }
       } else {
-        setError(data.message?.message || 'Failed to retrieve application status');
+        setError('Failed to retrieve application status. Invalid response format.');
       }
     } catch (err) {
       console.error('Error fetching application status:', err);
@@ -201,20 +208,6 @@ const TrackApplication = ({ initialRegistrationId }) => {
     );
   };
   
-  // Render document status with icon
-  const renderDocumentStatus = (status) => {
-    switch(status) {
-      case 'Submitted':
-        return <div className="flex items-center"><CheckCircle className="w-4 h-4 text-emerald-500 mr-2" />Submitted</div>;
-      case 'Requested':
-        return <div className="flex items-center"><AlertCircle className="w-4 h-4 text-amber-500 mr-2" />Requested</div>;
-      case 'Rejected':
-        return <div className="flex items-center"><AlertCircle className="w-4 h-4 text-red-500 mr-2" />Rejected</div>;
-      default:
-        return <div className="flex items-center"><Clock className="w-4 h-4 text-gray-500 mr-2" />Pending</div>;
-    }
-  };
-
   // Render content based on application status
   const renderStatusSpecificContent = () => {
     if (!statusData) return null;
@@ -478,11 +471,11 @@ const TrackApplication = ({ initialRegistrationId }) => {
                               <div key={index} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
                                 <div className="flex justify-between items-start mb-3">
                                   <h4 className="font-medium text-amber-300">Interview {index + 1}</h4>
-                                  <Badge variant={
-                                    interview.status === 'Scheduled' ? 'info' :
-                                    interview.status === 'Completed' ? 'success' :
-                                    interview.status === 'Missed' ? 'destructive' :
-                                    'default'
+                                  <Badge className={
+                                    interview.status === 'Scheduled' ? 'bg-blue-600' :
+                                    interview.status === 'Completed' ? 'bg-emerald-600' :
+                                    interview.status === 'Missed' ? 'bg-red-600' :
+                                    'bg-gray-600'
                                   }>
                                     {interview.status}
                                   </Badge>
@@ -516,7 +509,7 @@ const TrackApplication = ({ initialRegistrationId }) => {
                                 
                                 {/* Join interview button (only shown if online and within 15 minutes of start time) */}
                                 {interview.status === 'Scheduled' && 
-                                 interview.location.toLowerCase().includes('online') && (
+                                 interview.location && interview.location.toLowerCase().includes('online') && (
                                   <div className="mt-4">
                                     <Button className="bg-amber-300 text-gray-900 hover:bg-amber-400">
                                       <Video className="w-4 h-4 mr-2" />

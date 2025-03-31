@@ -1903,154 +1903,6 @@ def get_exam_dates(**kwargs):
             "error": str(e)
         }
         
-# Get Application Status
-# Update the get_application_status function in labmanager/api/api.py
-
-# @frappe.whitelist(allow_guest=True)
-# def get_application_status(registration_id=None):
-#     """Get detailed status of a student registration application"""
-#     try:
-#         # Add logging to debug
-#         frappe.logger().debug(f"get_application_status called with registration_id: {registration_id}")
-        
-#         if not registration_id:
-#             frappe.logger().debug("No registration ID provided")
-#             return {
-#                 "status": "error",
-#                 "message": "Registration ID is required"
-#             }
-            
-#         # Try to get the registration document by the encrypted registration_id field
-#         # not by document name
-#         registrations = frappe.get_all(
-#             "Student Registration",
-#             filters={"registration_id": registration_id},
-#             fields=["name"],
-#             limit=1
-#         )
-        
-#         if not registrations:
-#             frappe.logger().debug(f"Registration with ID {registration_id} not found")
-#             return {
-#                 "status": "error",
-#                 "message": f"Application with ID {registration_id} not found"
-#             }
-            
-#         # Get the actual document using the name we found
-#         doc = frappe.get_doc("Student Registration", registrations[0].name)
-#         frappe.logger().debug(f"Found student registration with name: {doc.name}")
-        
-#         # If status field doesn't exist yet, we'll treat it as "Submitted"
-#         current_status = getattr(doc, "status", "Submitted")
-#         frappe.logger().debug(f"Application status: {current_status}")
-        
-#         # Create a manual timeline for now
-#         timeline_entries = [
-#             {
-#                 "date": str(doc.creation),
-#                 "status": "Submitted",
-#                 "description": "Application submitted successfully",
-#                 "created_by": "System"
-#             }
-#         ]
-        
-#         # Mock up document requirements based on the program
-#         documents = []
-#         if doc.previous_education == "High School":
-#             documents.append({
-#                 "document_type": "High School Transcript",
-#                 "status": "Requested",
-#                 "submitted_date": None,
-#                 "notes": "Please submit your complete high school transcript"
-#             })
-#             documents.append({
-#                 "document_type": "High School Diploma",
-#                 "status": "Requested",
-#                 "submitted_date": None,
-#                 "notes": "Please submit a copy of your high school diploma"
-#             })
-#         elif doc.previous_education in ["Bachelor's Degree", "Master's Degree"]:
-#             documents.append({
-#                 "document_type": "College/University Transcript",
-#                 "status": "Requested",
-#                 "submitted_date": None,
-#                 "notes": "Please submit your complete college/university transcript"
-#             })
-#             documents.append({
-#                 "document_type": "Degree Certificate",
-#                 "status": "Requested",
-#                 "submitted_date": None,
-#                 "notes": f"Please submit a copy of your {doc.previous_education}"
-#             })
-            
-#         # All applicants need these documents
-#         documents.append({
-#             "document_type": "Identity Document (Passport/National ID)",
-#             "status": "Requested",
-#             "submitted_date": None,
-#             "notes": "Please submit a valid government-issued ID"
-#         })
-#         documents.append({
-#             "document_type": "Recent Passport Photo",
-#             "status": "Requested",
-#             "submitted_date": None,
-#             "notes": "Please submit a recent passport-sized photo (taken within the last 6 months)"
-#         })
-        
-#         # Mock interview schedule (if applicable)
-#         interviews = []
-#         if doc.desired_academic_program == "Bachelor of Computer Application (BCA)":
-#             # Mock interview for BCA program (future date)
-#             import datetime
-#             interview_date = datetime.datetime.now() + datetime.timedelta(days=14)
-#             interviews.append({
-#                 "date": interview_date.strftime('%Y-%m-%d'),
-#                 "time": "10:00:00",
-#                 "interviewer": "Dr. Ahmad Al-Farsi",
-#                 "location": "Online (Zoom)",
-#                 "status": "Scheduled",
-#                 "notes": "Please prepare to discuss your programming experience and academic goals"
-#             })
-        
-#         # Next steps guidance
-#         next_steps = f"""
-# 1. Please submit all requested documents through the student portal.
-# 2. Complete your application fee payment of $50 USD.
-# 3. Prepare for your admission interview (if scheduled).
-# 4. Check back regularly for updates on your application status.
-
-# For any questions, please contact admissions@techethica.edu
-#         """
-        
-#         # Format the data for the response
-#         response_data = {
-#             "application_id": doc.name,
-#             "registration_id": doc.registration_id,
-#             "student_name": f"{doc.first_name} {doc.middle_name or ''} {doc.last_name or ''}".strip(),
-#             "email": doc.email,
-#             "program": doc.desired_academic_program,
-#             "specialization": doc.islamic_studies_specialization,
-#             "current_status": current_status,
-#             "submission_date": str(doc.creation),
-#             "timeline": timeline_entries,
-#             "documents": documents,
-#             "interviews": interviews,
-#             "next_steps": next_steps,
-#             "feedback": "" # No feedback yet
-#         }
-        
-#         frappe.logger().debug(f"Returning response data: {response_data}")
-#         return {
-#             "status": "success",
-#             "data": response_data
-#         }
-#     except Exception as e:
-#         frappe.log_error(frappe.get_traceback(), "Application Status API Error")
-#         frappe.logger().debug(f"Error in get_application_status: {str(e)}")
-#         return {
-#             "status": "error",
-#             "message": str(e)
-#         }
 
 @frappe.whitelist(allow_guest=True)
 def get_application_status(registration_id=None):
@@ -2169,17 +2021,14 @@ def get_application_status(registration_id=None):
         }
         
         frappe.logger().debug(f"Returning response data for application status")
-        return {
-            "status": "success",
-            "data": response_data
-        }
+        # Return the data directly without wrapping in status/data
+        # Frappe will automatically wrap it in a message property
+        return response_data
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Application Status API Error")
         frappe.logger().debug(f"Error in get_application_status: {str(e)}")
-        return {
-            "status": "error",
-            "message": str(e)
-        }
+        frappe.throw(str(e))
+
 
 def create_default_document_requirements(registration_doc):
     """Create default document requirements based on the program and education level"""
@@ -2519,11 +2368,12 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
 def upload_application_document(registration_id, document_type, file_data):
     """Upload a document for a student application"""
     try:
+        # Add detailed logging
+        frappe.logger().debug(f"upload_application_document called for registration_id: {registration_id}, document_type: {document_type}")
+        
         if not registration_id or not document_type or not file_data:
-            return {
-                "status": "error",
-                "message": "Registration ID, document type, and file are required"
-            }
+            frappe.logger().debug("Missing required parameters")
+            return "Registration ID, document type, and file are required"
             
         # Find the registration by registration_id
         registrations = frappe.get_all(
@@ -2534,38 +2384,33 @@ def upload_application_document(registration_id, document_type, file_data):
         )
         
         if not registrations:
-            return {
-                "status": "error",
-                "message": f"Application with ID {registration_id} not found"
-            }
+            frappe.logger().debug(f"Registration with ID {registration_id} not found")
+            return f"Application with ID {registration_id} not found"
             
-        # Process the file upload
-        # This is a simplified version. In reality, you would handle the file upload
-        # using frappe's file API
-        file_url = frappe.get_doc({
-            "doctype": "File",
-            "file_name": f"{document_type.replace(' ', '_')}_{registration_id}.pdf",
-            "attached_to_doctype": "Student Registration",
-            "attached_to_name": registrations[0].name,
-            "content": file_data
-        }).insert().file_url
+        # Get the actual document using the name we found
+        doc_name = registrations[0].name
+        frappe.logger().debug(f"Found registration with name: {doc_name}")
         
-        # Create document upload record
-        upload_doc = frappe.get_doc({
-            "doctype": "Application Document Upload",
-            "registration_id": registrations[0].name,
-            "document_type": document_type,
-            "document_file": file_url,
-            "upload_date": frappe.utils.now_datetime(),
-            "status": "Submitted"
-        })
-        upload_doc.insert(ignore_permissions=True)
+        # Process the file upload using frappe's file API
+        try:
+            # Create a file with the uploaded content
+            file_doc = frappe.new_doc("File")
+            file_doc.file_name = f"{document_type.replace(' ', '_')}_{registration_id}.pdf"
+            file_doc.attached_to_doctype = "Student Registration"
+            file_doc.attached_to_name = doc_name
+            file_doc.content = file_data
+            file_doc.insert(ignore_permissions=True)
+            file_url = file_doc.file_url
+            frappe.logger().debug(f"File uploaded successfully: {file_url}")
+        except Exception as file_error:
+            frappe.logger().error(f"File upload error: {str(file_error)}")
+            return f"File upload failed: {str(file_error)}"
         
-        # Update required document status
+        # Find required document record
         required_docs = frappe.get_all(
             "Required Document",
             filters={
-                "registration_id": registrations[0].name,
+                "registration_id": doc_name,
                 "document_type": document_type
             },
             fields=["name"],
@@ -2573,31 +2418,56 @@ def upload_application_document(registration_id, document_type, file_data):
         )
         
         if required_docs:
-            req_doc = frappe.get_doc("Required Document", required_docs[0].name)
-            req_doc.status = "Submitted"
-            req_doc.submitted_date = frappe.utils.today()
-            req_doc.save()
-            
-        # Create a timeline entry
-        timeline_doc = frappe.get_doc({
-            "doctype": "Application Timeline",
-            "registration_id": registrations[0].name,
-            "date": frappe.utils.now_datetime(),
-            "status": frappe.get_doc("Student Registration", registrations[0].name).status,
-            "description": f"Document uploaded: {document_type}",
-            "created_by": frappe.session.user or "Student"
-        })
-        timeline_doc.insert(ignore_permissions=True)
+            # Update required document status
+            try:
+                req_doc = frappe.get_doc("Required Document", required_docs[0].name)
+                req_doc.status = "Submitted"
+                req_doc.submitted_date = frappe.utils.today()
+                req_doc.document_file = file_url  # Link to the uploaded file
+                req_doc.save(ignore_permissions=True)
+                frappe.db.commit()
+                frappe.logger().debug(f"Updated required document: {req_doc.name}")
+            except Exception as doc_error:
+                frappe.logger().error(f"Error updating document status: {str(doc_error)}")
+        else:
+            frappe.logger().debug(f"No required document found for {document_type}, creating new one")
+            # Create a new required document record if it doesn't exist
+            try:
+                req_doc = frappe.new_doc("Required Document")
+                req_doc.registration_id = doc_name
+                req_doc.document_type = document_type
+                req_doc.status = "Submitted"
+                req_doc.submitted_date = frappe.utils.today()
+                req_doc.document_file = file_url
+                req_doc.insert(ignore_permissions=True)
+                frappe.db.commit()
+                frappe.logger().debug(f"Created new required document: {req_doc.name}")
+            except Exception as new_doc_error:
+                frappe.logger().error(f"Error creating document record: {str(new_doc_error)}")
         
-        return {
-            "status": "success",
-            "message": "Document uploaded successfully",
-            "file_url": file_url
-        }
+        # Create a timeline entry
+        try:
+            timeline_doc = frappe.new_doc("Application Timeline")
+            timeline_doc.registration_id = doc_name
+            timeline_doc.date = frappe.utils.now_datetime()
+            
+            # Get current status from registration
+            reg_doc = frappe.get_doc("Student Registration", doc_name)
+            timeline_doc.status = reg_doc.status or "Submitted"
+            
+            timeline_doc.description = f"Document uploaded: {document_type}"
+            timeline_doc.created_by = frappe.session.user or "Student"
+            timeline_doc.insert(ignore_permissions=True)
+            frappe.db.commit()
+            frappe.logger().debug(f"Created timeline entry: {timeline_doc.name}")
+        except Exception as timeline_error:
+            frappe.logger().error(f"Error creating timeline entry: {str(timeline_error)}")
+        
+        # Return success response - NOTE: We return a simple response without nesting
+        # Frappe will automatically wrap this in a message property
+        return "Document uploaded successfully"
         
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Document Upload Error")
-        return {
-            "status": "error",
-            "message": str(e)
-        }
+        frappe.logger().error(f"Upload error: {str(e)}")
+        return str(e)

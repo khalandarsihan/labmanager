@@ -45,19 +45,36 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
           const base64String = e.target.result.split(',')[1]; // Remove data URL part
 
           // Call API to upload document with base64 encoded file
+          console.log('Uploading document:', {
+            registration_id: registrationId,
+            document_type: document.document_type
+          });
+          
           const response = await uploadDocument({
             registration_id: registrationId,
             document_type: document.document_type,
             file_data: base64String
           });
           
-          // Check for response success
-          if (response && response.status === "success") {
-            onUploadSuccess(document.document_type);
+          console.log('Upload response:', response);
+          
+          // Check for response success - Frappe wraps responses in message property
+          if (response && response.message) {
+            // The message itself could be an object with status or a string
+            if (typeof response.message === 'object' && response.message.status === "success") {
+              onUploadSuccess(document.document_type);
+            } else if (typeof response.message === 'string' && response.message.includes('success')) {
+              onUploadSuccess(document.document_type);
+            } else {
+              // Handle error from API response
+              const errorMessage = 
+                (typeof response.message === 'object' && response.message.message)
+                ? response.message.message 
+                : (typeof response.message === 'string' ? response.message : 'Upload failed');
+              setError(errorMessage);
+            }
           } else {
-            // Handle error from API response
-            const errorMessage = response?.message || 'Upload failed';
-            setError(errorMessage);
+            setError('Invalid response from server');
           }
         } catch (error) {
           console.error('Document upload error:', error);
