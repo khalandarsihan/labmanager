@@ -112,15 +112,25 @@ const fetchData = async (id) => {
     fetchData(registrationId);
   };
   
-  const handleDocumentUpload = async (documentType) => {
-    // Reload the data after document upload
-    await fetchData(registrationId);
-    
+
+const handleDocumentUpload = async (documentType, preventTabSwitch = false) => {
+  // Keep track of the current tab
+  const currentTab = activeTab;
+  
+  // Reload the data after document upload
+  await fetchData(registrationId);
+  
+  // Only switch tabs if not prevented (for replacements)
+  if (!preventTabSwitch) {
     toast({
       title: "Document Uploaded",
       description: `${documentType} was uploaded successfully`,
     });
-  };
+  } else {
+    // For document replacement, keep the current tab
+    setActiveTab(currentTab);
+  }
+};
   
   // Format date for display
   const formatDate = (dateString) => {

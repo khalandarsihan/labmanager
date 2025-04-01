@@ -221,9 +221,13 @@
   {
    "link_doctype": "Interview Schedule",
    "link_fieldname": "registration_id"
+  },
+  {
+   "link_doctype": "Application Timeline",
+   "link_fieldname": "registration_id"
   }
  ],
- "modified": "2025-04-01 15:24:24.087995",
+ "modified": "2025-04-01 17:16:58.618081",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Student Registration",

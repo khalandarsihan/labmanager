@@ -2388,15 +2388,14 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
             "message": str(e)
         }
 
+
 @frappe.whitelist(allow_guest=True)
-def upload_application_document(registration_id, document_type, file_data):
+def upload_application_document(registration_id, document_type, file_data, filename=None):
     """Upload a document for a student application"""
     try:
-        # Add detailed logging
-        frappe.logger().debug(f"upload_application_document called for registration_id: {registration_id}, document_type: {document_type}")
+        frappe.logger().debug(f"Upload called with: registration_id={registration_id}, document_type={document_type}, filename={filename}")
         
         if not registration_id or not document_type or not file_data:
-            frappe.logger().debug("Missing required parameters")
             return "Registration ID, document type, and file are required"
             
         # Find the registration by registration_id
@@ -2408,26 +2407,72 @@ def upload_application_document(registration_id, document_type, file_data):
         )
         
         if not registrations:
-            frappe.logger().debug(f"Registration with ID {registration_id} not found")
             return f"Application with ID {registration_id} not found"
             
         # Get the actual document using the name we found
         doc_name = registrations[0].name
-        frappe.logger().debug(f"Found registration with name: {doc_name}")
         
-        # Process the file upload using frappe's file API
+        # Process the file upload
         try:
-            # Create a file with the uploaded content
+            # Determine file extension from the content type or filename
+            file_ext = None
+            
+            # First try to extract from MIME type in data URL
+            if isinstance(file_data, str) and file_data.startswith('data:'):
+                mime_type = file_data.split(';')[0].replace('data:', '')
+                frappe.logger().debug(f"Detected MIME type: {mime_type}")
+                
+                # Map MIME types to extensions
+                mime_map = {
+                    'image/png': '.png',
+                    'image/jpeg': '.jpg',
+                    'image/jpg': '.jpg',
+                    'application/pdf': '.pdf',
+                    'application/msword': '.doc',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx'
+                }
+                file_ext = mime_map.get(mime_type)
+                
+                # Split the base64 data from the content type
+                if ';base64,' in file_data:
+                    file_data = file_data.split(';base64,')[1]
+            
+            # If no extension determined yet, try to get it from filename
+            if not file_ext and filename:
+                if '.' in filename:
+                    file_ext = '.' + filename.split('.')[-1].lower()
+            
+            # Default to .pdf if still no extension
+            if not file_ext:
+                file_ext = '.pdf'
+                
+            frappe.logger().debug(f"Using file extension: {file_ext}")
+            
+            # Generate file name
+            if filename:
+                # Remove any extension from the original filename
+                base_name = filename.split('.')[0] if '.' in filename else filename
+                final_filename = f"{base_name}{file_ext}"
+            else:
+                # Create a unique name if no filename provided
+                unique_suffix = frappe.utils.random_string(8)
+                final_filename = f"{document_type.replace(' ', '_')}_{unique_suffix}{file_ext}"
+                
+            frappe.logger().debug(f"Final filename: {final_filename}")
+                
+            # Create the file document
             file_doc = frappe.new_doc("File")
-            file_doc.file_name = f"{document_type.replace(' ', '_')}_{registration_id}.pdf"
+            file_doc.file_name = final_filename
             file_doc.attached_to_doctype = "Student Registration"
             file_doc.attached_to_name = doc_name
             file_doc.content = file_data
             file_doc.insert(ignore_permissions=True)
+            
             file_url = file_doc.file_url
-            frappe.logger().debug(f"File uploaded successfully: {file_url}")
+            frappe.logger().debug(f"File uploaded successfully with URL: {file_url}")
+            
         except Exception as file_error:
-            frappe.logger().error(f"File upload error: {str(file_error)}")
+            frappe.logger().error(f"File upload error: {str(file_error)}\n{frappe.get_traceback()}")
             return f"File upload failed: {str(file_error)}"
         
         # Find required document record
@@ -2487,11 +2532,132 @@ def upload_application_document(registration_id, document_type, file_data):
         except Exception as timeline_error:
             frappe.logger().error(f"Error creating timeline entry: {str(timeline_error)}")
         
-        # Return success response - NOTE: We return a simple response without nesting
-        # Frappe will automatically wrap this in a message property
+        # Return success response
         return "Document uploaded successfully"
         
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Document Upload Error")
         frappe.logger().error(f"Upload error: {str(e)}")
         return str(e)
+
+
+
+@frappe.whitelist(allow_guest=True)
+def delete_application_document(registration_id, document_type):
+    """Delete a document for a student application to allow replacement"""
+    try:
+        frappe.logger().debug(f"Deleting document: {document_type} for registration: {registration_id}")
+        
+        # Find the registration by registration_id
+        registrations = frappe.get_all(
+            "Student Registration",
+            filters={"registration_id": registration_id},
+            fields=["name"],
+            limit=1
+        )
+        
+        if not registrations:
+            frappe.logger().debug(f"Registration with ID {registration_id} not found")
+            return {
+                "status": "error",
+                "message": f"Application with ID {registration_id} not found"
+            }
+            
+        # Get the actual document using the name we found
+        doc_name = registrations[0].name
+        frappe.logger().debug(f"Found registration with name: {doc_name}")
+        
+        # Find required document record
+        required_docs = frappe.get_all(
+            "Required Document",
+            filters={
+                "registration_id": doc_name,
+                "document_type": document_type
+            },
+            fields=["name", "document_file"],
+            limit=1
+        )
+        
+        if required_docs:
+            frappe.logger().debug(f"Found document record: {required_docs[0].name}")
+            
+            # Get the document file URL and save it for deletion
+            file_url = required_docs[0].get("document_file")
+            
+            # Update required document status
+            req_doc = frappe.get_doc("Required Document", required_docs[0].name)
+            
+            # First, delete the file associations to ensure clean replacement
+            # This is important to prevent reattachment of the old file
+            if file_url:
+                try:
+                    # Find all File documents with this URL
+                    files = frappe.get_all(
+                        "File",
+                        filters={"file_url": file_url},
+                        fields=["name"]
+                    )
+                    
+                    # Delete each file document
+                    for file_doc_data in files:
+                        file_doc = frappe.get_doc("File", file_doc_data.name)
+                        # Physically delete the file from disk
+                        if hasattr(file_doc, 'delete_file_from_filesystem'):
+                            file_doc.delete_file_from_filesystem()
+                        # Delete the file document
+                        frappe.delete_doc("File", file_doc.name, ignore_permissions=True, force=True)
+                        frappe.logger().debug(f"Deleted file: {file_doc.name}")
+                        
+                    # Clear file references
+                    req_doc.document_file = None
+                    frappe.db.commit()  # Commit to ensure file references are cleared
+                except Exception as file_error:
+                    frappe.logger().error(f"Error deleting file: {str(file_error)}")
+            
+            # Now update the document status
+            req_doc.status = "Approved"  # Use "Approved" as you mentioned this works for upload
+            req_doc.submitted_date = None
+            req_doc.save(ignore_permissions=True)
+            frappe.logger().debug(f"Updated document status to Approved")
+            
+            # Create a timeline entry
+            try:
+                timeline_doc = frappe.get_doc({
+                    "doctype": "Application Timeline",
+                    "registration_id": doc_name,
+                    "date": frappe.utils.now_datetime(),
+                    "status": "Documents Requested",
+                    "description": f"Document deletion requested for replacement: {document_type}",
+                    "created_by": frappe.session.user or "Student"
+                })
+                timeline_doc.insert(ignore_permissions=True)
+                frappe.logger().debug(f"Created timeline entry for document replacement")
+            except Exception as timeline_error:
+                frappe.logger().error(f"Error creating timeline entry: {str(timeline_error)}")
+            
+            frappe.db.commit()
+            
+            return {
+                "message": {
+                    "status": "success",
+                    "description": "Document deleted successfully and ready for replacement"
+                }
+            }
+        else:
+            frappe.logger().debug(f"No document record found for {document_type}")
+            return {
+                "message": {
+                    "status": "error",
+                    "error": f"Document record not found for {document_type}"
+                }
+            }
+            
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Document Deletion Error")
+        frappe.logger().error(f"Error deleting document: {str(e)}")
+        return {
+            "message": {
+                "status": "error",
+                "error": str(e)
+            }
+        }

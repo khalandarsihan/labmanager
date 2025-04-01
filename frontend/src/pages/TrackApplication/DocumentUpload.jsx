@@ -11,6 +11,7 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
   const [error, setError] = useState(null);
   const [file, setFile] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [viewMode, setViewMode] = useState(document.status === 'Submitted' ? 'view' : 'upload');
   
   const { call: uploadDocument } = useFrappePostCall('labmanager.api.api.upload_application_document');
   
@@ -47,13 +48,15 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
           // Call API to upload document with base64 encoded file
           console.log('Uploading document:', {
             registration_id: registrationId,
-            document_type: document.document_type
+            document_type: document.document_type,
+            filename: file.name
           });
           
           const response = await uploadDocument({
             registration_id: registrationId,
             document_type: document.document_type,
-            file_data: base64String
+            file_data: base64String,
+            filename: file.name
           });
           
           console.log('Upload response:', response);
@@ -62,8 +65,24 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
           if (response && response.message) {
             // The message itself could be an object with status or a string
             if (typeof response.message === 'object' && response.message.status === "success") {
+              // Update local view mode immediately
+              setViewMode('view');
+              
+              // Update local document status and date
+              document.status = 'Submitted';
+              document.submitted_date = new Date().toISOString().split('T')[0];
+              
+              // Notify parent component
               onUploadSuccess(document.document_type);
             } else if (typeof response.message === 'string' && response.message.includes('success')) {
+              // Update local view mode immediately
+              setViewMode('view');
+              
+              // Update local document status and date
+              document.status = 'Submitted';
+              document.submitted_date = new Date().toISOString().split('T')[0];
+              
+              // Notify parent component
               onUploadSuccess(document.document_type);
             } else {
               // Handle error from API response
@@ -99,6 +118,46 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
     }
   };
   
+  const handleReplace = async () => {
+    try {
+      setError(null);
+      console.log('Replacing document:', document.document_type);
+      
+      // Call the API to delete the current document
+      const response = await fetch(`/api/method/labmanager.api.api.delete_application_document`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          registration_id: registrationId,
+          document_type: document.document_type
+        })
+      });
+      
+      const result = await response.json();
+      console.log('Replace response:', result);
+      
+      if (result.message) {
+        // Update local state to show the upload form immediately
+        setViewMode('upload');
+        
+        // Reset file state
+        setFile(null);
+        
+        // Keep the current tab selected when calling parent callback
+        if (onUploadSuccess) {
+          onUploadSuccess(document.document_type, true);
+        }
+      } else {
+        setError('Failed to delete the document');
+      }
+    } catch (error) {
+      console.error('Error replacing document:', error);
+      setError('An error occurred while trying to replace the document');
+    }
+  };
+  
   // Render different UI based on document status
   const renderStatusBadge = () => {
     switch(document.status) {
@@ -114,17 +173,11 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
   };
   
   return (
-    // <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50 mb-4">
-      // <div className="bg-white rounded-lg p-4 border border-gray-300 shadow-sm mb-4">
-        <div className="bg-sky-100 rounded-lg p-4 border border-sky-200 shadow-md mb-4">
+    <div className="bg-sky-100 rounded-lg p-4 border border-sky-200 shadow-md mb-4">
       <div className="flex justify-between items-center mb-2">
-        {/* <h4 className="font-medium text-amber-100">{document.document_type}</h4> */}
         <h4 className="font-medium text-gray-800">{document.document_type}</h4>
         {renderStatusBadge()}
       </div>
-      
-      {/* <p className="text-sm text-gray-400 mb-3">{document.notes || `Please upload your ${document.document_type.toLowerCase()}`}</p> */}
-      <p className="text-sm text-gray-800 mb-3">{document.notes || `Please upload your ${document.document_type.toLowerCase()}`}</p>
       
       {document.status === 'Rejected' && (
         <div className="bg-red-900/20 text-red-300 p-3 rounded-md mb-3 text-sm">
@@ -133,32 +186,26 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
         </div>
       )}
       
-      {document.status === 'Submitted' ? (
-
-<div className="bg-sky-100 rounded-lg p-4 border border-sky-200 shadow-md mb-4">
-  <div className="flex justify-between items-center mb-2">
-    <h4 className="font-medium text-gray-800">{document.document_type}</h4>
-    <Badge className="bg-emerald-600 text-white">Submitted</Badge>
-  </div>
-  <p className="text-sm text-gray-600 mb-3">{document.notes}</p>
-  
-  {/* <div className="bg-gray-200/50 p-3 rounded-md text-sm flex justify-between items-center"> */}
-  <div className="bg-sky-100/50 p-3 rounded-md border border-sky-200 shadow-md text-sm flex justify-between items-center">
-    <div className="flex items-center">
-      <FileText className="w-4 h-4 mr-2 text-amber-500" />
-      <span className="text-gray-700">Document submitted on {document.submitted_date}</span>
-    </div>
-    <Button 
-      size="sm" 
-      variant="outline" 
-      className="h-8 border-amber-300 text-amber-700 bg-white"
-    >
-      <RotateCw className="w-3 h-3 mr-1" /> Replace
-    </Button>
-  </div>
-</div>
+      {viewMode === 'view' ? (
+        // View mode for submitted documents
+        <div className="bg-sky-100/50 p-3 rounded-md border border-sky-200 shadow-md text-sm flex justify-between items-center">
+          <div className="flex items-center">
+            <FileText className="w-4 h-4 mr-2 text-amber-500" />
+            <span className="text-gray-700">Document submitted on {document.submitted_date}</span>
+          </div>
+          <Button 
+            size="sm" 
+            variant="outline" 
+            className="h-8 border-amber-300 text-amber-700 bg-white"
+            onClick={handleReplace}
+          >
+            <RotateCw className="w-3 h-3 mr-1" /> Replace
+          </Button>
+        </div>
       ) : (
+        // Upload mode
         <>
+          <p className="text-sm text-gray-800 mb-3">{document.notes || `Please upload your ${document.document_type.toLowerCase()}`}</p>
           <div className="flex gap-2 mt-2">
             <Input 
               type="file" 
