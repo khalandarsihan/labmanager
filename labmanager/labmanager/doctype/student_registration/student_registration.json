@@ -199,7 +199,7 @@
   },
   {
    "fieldname": "next_steps",
-   "fieldtype": "Text",
+   "fieldtype": "Text Editor",
    "label": "Next Steps"
   },
   {
@@ -208,7 +208,7 @@
   },
   {
    "fieldname": "feedback",
-   "fieldtype": "Text",
+   "fieldtype": "Text Editor",
    "label": "Feedback"
   }
  ],
@@ -223,7 +223,7 @@
    "link_fieldname": "registration_id"
   }
  ],
- "modified": "2025-03-31 11:59:11.206935",
+ "modified": "2025-04-01 15:24:24.087995",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Student Registration",

@@ -114,13 +114,17 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
   };
   
   return (
-    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50 mb-4">
+    // <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50 mb-4">
+      // <div className="bg-white rounded-lg p-4 border border-gray-300 shadow-sm mb-4">
+        <div className="bg-sky-100 rounded-lg p-4 border border-sky-200 shadow-md mb-4">
       <div className="flex justify-between items-center mb-2">
-        <h4 className="font-medium text-amber-100">{document.document_type}</h4>
+        {/* <h4 className="font-medium text-amber-100">{document.document_type}</h4> */}
+        <h4 className="font-medium text-gray-800">{document.document_type}</h4>
         {renderStatusBadge()}
       </div>
       
-      <p className="text-sm text-gray-400 mb-3">{document.notes || `Please upload your ${document.document_type.toLowerCase()}`}</p>
+      {/* <p className="text-sm text-gray-400 mb-3">{document.notes || `Please upload your ${document.document_type.toLowerCase()}`}</p> */}
+      <p className="text-sm text-gray-800 mb-3">{document.notes || `Please upload your ${document.document_type.toLowerCase()}`}</p>
       
       {document.status === 'Rejected' && (
         <div className="bg-red-900/20 text-red-300 p-3 rounded-md mb-3 text-sm">
@@ -130,34 +134,29 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
       )}
       
       {document.status === 'Submitted' ? (
-        <div className="bg-gray-700/30 p-3 rounded-md text-sm flex justify-between items-center">
-          <div className="flex items-center">
-            <FileText className="w-4 h-4 mr-2 text-amber-300" />
-            <span className="text-gray-300">Document submitted on {document.submitted_date}</span>
-          </div>
-          <div className="flex gap-2">
-            {document.file_url && (
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="h-8 border-amber-300/50 text-amber-300"
-                onClick={() => setShowPreview(true)}
-              >
-                <Eye className="w-3 h-3 mr-1" /> View
-              </Button>
-            )}
-            {document.status !== 'Approved' && (
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="h-8 border-amber-300/50 text-amber-300"
-                onClick={() => document.status = 'Requested'} // Reset status to allow re-upload
-              >
-                <RotateCw className="w-3 h-3 mr-1" /> Replace
-              </Button>
-            )}
-          </div>
-        </div>
+
+<div className="bg-sky-100 rounded-lg p-4 border border-sky-200 shadow-md mb-4">
+  <div className="flex justify-between items-center mb-2">
+    <h4 className="font-medium text-gray-800">{document.document_type}</h4>
+    <Badge className="bg-emerald-600 text-white">Submitted</Badge>
+  </div>
+  <p className="text-sm text-gray-600 mb-3">{document.notes}</p>
+  
+  {/* <div className="bg-gray-200/50 p-3 rounded-md text-sm flex justify-between items-center"> */}
+  <div className="bg-sky-100/50 p-3 rounded-md border border-sky-200 shadow-md text-sm flex justify-between items-center">
+    <div className="flex items-center">
+      <FileText className="w-4 h-4 mr-2 text-amber-500" />
+      <span className="text-gray-700">Document submitted on {document.submitted_date}</span>
+    </div>
+    <Button 
+      size="sm" 
+      variant="outline" 
+      className="h-8 border-amber-300 text-amber-700 bg-white"
+    >
+      <RotateCw className="w-3 h-3 mr-1" /> Replace
+    </Button>
+  </div>
+</div>
       ) : (
         <>
           <div className="flex gap-2 mt-2">
@@ -188,7 +187,7 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
           </div>
           
           {file && (
-            <div className="mt-2 text-sm text-amber-100">
+            <div className="mt-2 text-sm text-grey-800">
               Selected: {file.name} ({Math.round(file.size / 1024)} KB)
             </div>
           )}
