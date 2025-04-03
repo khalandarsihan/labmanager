@@ -803,37 +803,39 @@ const handleDocumentUpload = async (documentType, preventTabSwitch = false) => {
                 <TabsContent value="timeline" className="border-none p-0 mt-4">
                   <div className="bg-white border border-gray-200 rounded-lg">
                     <div className="p-6">
-                      {statusData.timeline && statusData.timeline.length > 0 ? (
-                        <div className="relative">
-                          {/* Timeline line */}
-                          <div className="absolute left-3.5 top-0 bottom-0 w-px bg-gray-300"></div>
-                          
-                          <div className="space-y-6">
-                            {statusData.timeline.map((event, index) => (
-                              <div key={index} className="relative pl-10">
-                                {/* Timeline dot */}
-                                <div className="absolute left-0 top-1.5 w-8 h-8 rounded-full bg-white border-2 border-amber-400 flex items-center justify-center">
-                                  <Clock className="w-4 h-4 text-amber-400" />
-                                </div>
-                                
-                                <div className="bg-sky-100 rounded-lg p-4 border border-sky-200 shadow-md">
-                                  <div className="flex flex-col md:flex-row justify-between md:items-center mb-2">
-                                    <h4 className="font-medium text-gray-800">{event.status}</h4>
-                                    <span className="text-sm text-gray-500">{formatDate(event.date)}</span>
-                                  </div>
-                                  <p className="text-gray-700 text-sm">{event.description}</p>
-                                  <div className="text-xs text-gray-500 mt-2">Updated by: {event.created_by}</div>
-                                </div>
+                    {statusData.timeline && statusData.timeline.length > 0 ? (
+                    <div className="relative">
+                      {/* Timeline line */}
+                      <div className="absolute left-3.5 top-0 bottom-0 w-px bg-gray-300"></div>
+                      
+                      <div className="space-y-6">
+                        {statusData.timeline.map((event, index) => (
+                          <div key={index} className="relative pl-10">
+                            {/* Timeline dot */}
+                            <div className="absolute left-0 top-1.5 w-8 h-8 rounded-full bg-white border-2 border-amber-400 flex items-center justify-center">
+                              <Clock className="w-4 h-4 text-amber-400" />
+                            </div>
+                            
+                            <div className="bg-sky-100 rounded-lg p-4 border border-sky-200 shadow-md">
+                              <div className="flex flex-col md:flex-row justify-between md:items-center mb-2">
+                                <h4 className="font-medium text-gray-800">{event.status}</h4>
+                                <span className="text-sm text-gray-500">{formatDate(event.date)}</span>
                               </div>
-                            ))}
+                              <p className="text-gray-700 text-sm">{event.description}</p>
+                              <div className="text-xs text-gray-500 mt-2">
+                              Updated by: {event.created_by === "Guest" || event.created_by === "Student" ? statusData.student_name : event.created_by}
+                            </div>
+                            </div>
                           </div>
-                        </div>
-                      ) : (
-                        <div className="text-center py-8 text-gray-500">
-                          <Clock className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                          <p>No timeline events yet. Check back later for updates.</p>
-                        </div>
-                      )}
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <Clock className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                      <p>No timeline events yet. Check back later for updates.</p>
+                    </div>
+                  )}
                     </div>
                   </div>
                 </TabsContent>
