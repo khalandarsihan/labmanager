@@ -2155,8 +2155,8 @@ def request_document(registration_id, document_type, notes=None):
         if existing_docs:
             # Update existing document request
             doc = frappe.get_doc("Required Document", existing_docs[0].name)
-            status_changed = doc.status != "Requested"
-            doc.status = "Requested"
+            status_changed = doc.status != "Approved"
+            doc.status = "Approved"
             if notes:
                 doc.notes = notes
             doc.save()
@@ -2166,7 +2166,7 @@ def request_document(registration_id, document_type, notes=None):
                 "doctype": "Required Document",
                 "registration_id": registrations[0].name,
                 "document_type": document_type,
-                "status": "Requested",
+                "status": "Approved",
                 "notes": notes or f"Please submit your {document_type}"
             })
             doc.insert(ignore_permissions=True)
@@ -2534,7 +2534,7 @@ def delete_application_document(registration_id, document_type):
                     }
             
             # Now update the document status
-            req_doc.status = "Requested"  # Change to "Requested" to prompt re-upload
+            req_doc.status = "Approved"  # Change to "Approved" to prompt re-upload
             req_doc.submitted_date = None
             req_doc.save(ignore_permissions=True)
             

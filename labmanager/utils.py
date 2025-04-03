@@ -9,12 +9,12 @@ def create_default_document_requirements(registration_doc):
             documents = [
                 {
                     "document_type": "High School Transcript",
-                    "status": "Requested",
+                    "status": "Approved",
                     "notes": "Please submit your complete high school transcript"
                 },
                 {
                     "document_type": "High School Diploma",
-                    "status": "Requested",
+                    "status": "Approved",
                     "notes": "Please submit a copy of your high school diploma"
                 }
             ]
@@ -22,12 +22,12 @@ def create_default_document_requirements(registration_doc):
             documents = [
                 {
                     "document_type": "College/University Transcript",
-                    "status": "Requested",
+                    "status": "Approved",
                     "notes": "Please submit your complete college/university transcript"
                 },
                 {
                     "document_type": "Degree Certificate",
-                    "status": "Requested",
+                    "status": "Approved",
                     "notes": f"Please submit a copy of your {registration_doc.previous_education}"
                 }
             ]
@@ -38,12 +38,12 @@ def create_default_document_requirements(registration_doc):
         common_documents = [
             {
                 "document_type": "Identity Document (Passport/National ID)",
-                "status": "Requested",
+                "status": "Approved",
                 "notes": "Please submit a valid government-issued ID"
             },
             {
                 "document_type": "Recent Passport Photo",
-                "status": "Requested",
+                "status": "Approved",
                 "notes": "Please submit a recent passport-sized photo (taken within the last 6 months)"
             }
         ]
