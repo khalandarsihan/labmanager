@@ -3,6 +3,8 @@ from frappe import _
 import requests
 import json
 from datetime import datetime
+from labmanager.timeline_service import create_timeline_entry, get_application_timeline, ensure_initial_timeline_entry
+from labmanager.utils import create_default_document_requirements, get_default_next_steps
 
 @frappe.whitelist(allow_guest=True)
 def get_course_details(course_code):
@@ -1055,13 +1057,26 @@ def register_student(**kwargs):
             "desired_academic_program": kwargs.get('desired_academic_program'),
             "institution": kwargs.get('institution'),
             "islamic_studies_specialization": kwargs.get('islamic_studies_specialization'),
-            "year_of_completion": kwargs.get('year_of_completion')
+            "year_of_completion": kwargs.get('year_of_completion'),
+            "status": "Submitted",
+            "next_steps": get_default_next_steps("Submitted")
         })
 
         if kwargs.get('profile_image'):
             doc.profile_image = kwargs.get('profile_image')
 
         doc.insert(ignore_permissions=True)
+        
+        # Create initial timeline entry
+        create_timeline_entry(
+            doc.name, 
+            "Submitted", 
+            "Application submitted successfully",
+            "Administrator"  # Use administrator to ensure it works
+        )
+        
+        # Create default document requirements
+        create_default_document_requirements(doc)
         
         # Send confirmation email with the encoded registration ID
         try:
@@ -1082,6 +1097,7 @@ def register_student(**kwargs):
             "status": "error",
             "message": f"Registration failed: {str(e)}"
         }
+
 
 def send_registration_confirmation(doc):
     """Send confirmation email to student"""
@@ -1919,7 +1935,6 @@ def get_application_status(registration_id=None):
             }
             
         # Try to get the registration document by the registration_id field
-        # not by document name
         registrations = frappe.get_all(
             "Student Registration",
             filters={"registration_id": registration_id},
@@ -1944,40 +1959,22 @@ def get_application_status(registration_id=None):
         current_status = doc.get("status") or "Submitted"
         frappe.logger().debug(f"Application status: {current_status}")
         
-        # Get timeline entries
-        timeline = frappe.get_all(
-            "Application Timeline",
-            filters={"registration_id": doc.name},
-            fields=["date", "status", "description", "created_by"],
-            order_by="date desc"
-        )
+        # Get timeline entries using the service
+        timeline = get_application_timeline(doc.name)
         
         # If no timeline entries exist, create the initial submission entry
         if not timeline:
             try:
                 # Create the initial submission entry in the timeline
-                # Use the current user or Administrator instead of System
-                current_user = frappe.session.user
-                if not current_user or current_user == "Guest":
-                    current_user = "Administrator"  # Fallback to Administrator which should exist
+                create_timeline_entry(
+                    doc.name,
+                    "Submitted",
+                    "Application submitted successfully",
+                    "Administrator"  # Use Administrator which should exist
+                )
                 
-                timeline_doc = frappe.get_doc({
-                    "doctype": "Application Timeline",
-                    "registration_id": doc.name,
-                    "date": doc.creation,
-                    "status": "Submitted",
-                    "description": "Application submitted successfully",
-                    "created_by": current_user
-                })
-                timeline_doc.insert(ignore_permissions=True)
-                
-                # Add to our response
-                timeline = [{
-                    "date": doc.creation,
-                    "status": "Submitted",
-                    "description": "Application submitted successfully",
-                    "created_by": current_user
-                }]
+                # Fetch the timeline again
+                timeline = get_application_timeline(doc.name)
             except Exception as timeline_error:
                 frappe.logger().error(f"Error creating timeline entry: {str(timeline_error)}")
                 # Even if timeline creation fails, we should continue rather than failing the entire request
@@ -1992,7 +1989,7 @@ def get_application_status(registration_id=None):
         documents = frappe.get_all(
             "Required Document",
             filters={"registration_id": doc.name},
-            fields=["document_type", "status", "submitted_date", "notes"],
+            fields=["document_type", "status", "submitted_date", "notes", "document_file", "rejection_reason"],
             order_by="creation"
         )
         
@@ -2005,7 +2002,7 @@ def get_application_status(registration_id=None):
                 documents = frappe.get_all(
                     "Required Document",
                     filters={"registration_id": doc.name},
-                    fields=["document_type", "status", "submitted_date", "notes"],
+                    fields=["document_type", "status", "submitted_date", "notes", "document_file", "rejection_reason"],
                     order_by="creation"
                 )
             except Exception as doc_error:
@@ -2054,127 +2051,6 @@ def get_application_status(registration_id=None):
         }
 
 
-def create_default_document_requirements(registration_doc):
-    """Create default document requirements based on the program and education level"""
-    try:
-        # Different document requirements based on education level
-        if registration_doc.previous_education == "High School":
-            documents = [
-                {
-                    "document_type": "High School Transcript",
-                    "status": "Requested",
-                    "notes": "Please submit your complete high school transcript"
-                },
-                {
-                    "document_type": "High School Diploma",
-                    "status": "Requested",
-                    "notes": "Please submit a copy of your high school diploma"
-                }
-            ]
-        elif registration_doc.previous_education in ["Bachelor's Degree", "Master's Degree"]:
-            documents = [
-                {
-                    "document_type": "College/University Transcript",
-                    "status": "Requested",
-                    "notes": "Please submit your complete college/university transcript"
-                },
-                {
-                    "document_type": "Degree Certificate",
-                    "status": "Requested",
-                    "notes": f"Please submit a copy of your {registration_doc.previous_education}"
-                }
-            ]
-        else:
-            documents = []
-            
-        # Common documents for all applicants
-        common_documents = [
-            {
-                "document_type": "Identity Document (Passport/National ID)",
-                "status": "Requested",
-                "notes": "Please submit a valid government-issued ID"
-            },
-            {
-                "document_type": "Recent Passport Photo",
-                "status": "Requested",
-                "notes": "Please submit a recent passport-sized photo (taken within the last 6 months)"
-            }
-        ]
-        
-        documents.extend(common_documents)
-        
-        # Create the document requirements
-        for doc in documents:
-            req_doc = frappe.get_doc({
-                "doctype": "Required Document",
-                "registration_id": registration_doc.name,
-                "document_type": doc["document_type"],
-                "status": doc["status"],
-                "notes": doc["notes"]
-            })
-            req_doc.insert(ignore_permissions=True)
-            
-        frappe.db.commit()
-        
-    except Exception as e:
-        frappe.log_error(f"Error creating document requirements: {str(e)}")
-        
-def get_default_next_steps(status):
-    """Get default next steps text based on application status"""
-    
-    next_steps = {
-        "Submitted": """
-1. Please check back regularly for updates on your application status.
-2. Our admissions team will review your application within 5-7 business days.
-3. You may be requested to provide additional documents or attend an interview.
-4. For any questions, please contact admissions@techethica.edu
-        """,
-        
-        "Under Review": """
-1. Your application is currently being reviewed by our admissions committee.
-2. This process typically takes 5-7 business days.
-3. You will be notified of any additional requirements or next steps.
-4. Please check back regularly for updates.
-        """,
-        
-        "Documents Requested": """
-1. Please upload the requested documents as soon as possible.
-2. Make sure all documents are clear, complete, and in PDF format.
-3. Your application will continue to be processed once all documents are received.
-4. If you have any questions about the required documents, please contact admissions@techethica.edu
-        """,
-        
-        "Interview Scheduled": """
-1. Please prepare for your scheduled interview.
-2. Make sure to attend the interview at the scheduled time.
-3. Have your ID ready for verification.
-4. Test your internet connection and equipment if it's an online interview.
-        """,
-        
-        "Accepted": """
-1. Congratulations on your acceptance!
-2. Please complete the enrollment process within the next 2 weeks.
-3. Submit any pending documents.
-4. Pay the enrollment fee to secure your place.
-5. Attend the orientation session (details will be provided via email).
-        """,
-        
-        "Waitlisted": """
-1. Your application has been waitlisted.
-2. We will notify you if a spot becomes available.
-3. This usually happens within 4-6 weeks from now.
-4. You may consider applying to alternative programs in the meantime.
-        """,
-        
-        "Rejected": """
-1. We regret to inform you that your application was not successful at this time.
-2. You may apply again for the next academic term.
-3. Consider improving areas mentioned in the feedback.
-4. Contact admissions@techethica.edu for more detailed feedback.
-        """
-    }
-    
-    return next_steps.get(status, next_steps["Submitted"])
 
 @frappe.whitelist()
 def update_application_status(registration_id, status, description=None, next_steps=None, feedback=None):
@@ -2190,7 +2066,7 @@ def update_application_status(registration_id, status, description=None, next_st
         registrations = frappe.get_all(
             "Student Registration",
             filters={"registration_id": registration_id},
-            fields=["name"],
+            fields=["name", "status"],
             limit=1
         )
         
@@ -2202,6 +2078,9 @@ def update_application_status(registration_id, status, description=None, next_st
             
         # Get the document
         doc = frappe.get_doc("Student Registration", registrations[0].name)
+        
+        # Only create timeline if status has changed
+        status_changed = doc.status != status
         
         # Update status and other fields
         doc.status = status
@@ -2216,16 +2095,10 @@ def update_application_status(registration_id, status, description=None, next_st
             
         doc.save()
         
-        # Create a timeline entry
-        timeline_doc = frappe.get_doc({
-            "doctype": "Application Timeline",
-            "registration_id": doc.name,
-            "date": frappe.utils.now_datetime(),
-            "status": status,
-            "description": description or f"Application status updated to {status}",
-            "created_by": frappe.session.user
-        })
-        timeline_doc.insert(ignore_permissions=True)
+        # Create a timeline entry if status changed
+        if status_changed:
+            timeline_description = description or f"Application status updated to {status}"
+            create_timeline_entry(doc.name, status, timeline_description, frappe.session.user)
         
         return {
             "status": "success",
@@ -2238,6 +2111,7 @@ def update_application_status(registration_id, status, description=None, next_st
             "status": "error",
             "message": str(e)
         }
+
 
 @frappe.whitelist()
 def request_document(registration_id, document_type, notes=None):
@@ -2270,13 +2144,18 @@ def request_document(registration_id, document_type, notes=None):
                 "registration_id": registrations[0].name,
                 "document_type": document_type
             },
-            fields=["name"],
+            fields=["name", "status"],
             limit=1
         )
+        
+        # Track if this is a new request or update
+        is_new_request = not existing_docs
+        status_changed = False
         
         if existing_docs:
             # Update existing document request
             doc = frappe.get_doc("Required Document", existing_docs[0].name)
+            status_changed = doc.status != "Requested"
             doc.status = "Requested"
             if notes:
                 doc.notes = notes
@@ -2294,21 +2173,33 @@ def request_document(registration_id, document_type, notes=None):
             
         # Update application status if needed
         registration_doc = frappe.get_doc("Student Registration", registrations[0].name)
+        status_updated = False
+        
         if registration_doc.status != "Documents Requested":
             registration_doc.status = "Documents Requested"
             registration_doc.next_steps = get_default_next_steps("Documents Requested")
             registration_doc.save()
+            status_updated = True
             
-            # Create a timeline entry
-            timeline_doc = frappe.get_doc({
-                "doctype": "Application Timeline",
-                "registration_id": registration_doc.name,
-                "date": frappe.utils.now_datetime(),
-                "status": "Documents Requested",
-                "description": f"Document requested: {document_type}",
-                "created_by": frappe.session.user
-            })
-            timeline_doc.insert(ignore_permissions=True)
+        # Create timeline entries as needed
+        if is_new_request or status_changed:
+            timeline_description = f"Document requested: {document_type}"
+            create_timeline_entry(
+                registration_doc.name, 
+                "Documents Requested", 
+                timeline_description, 
+                frappe.session.user
+            )
+        
+        # Add separate timeline entry if application status was changed
+        if status_updated:
+            status_description = "Application status updated to Documents Requested"
+            create_timeline_entry(
+                registration_doc.name, 
+                "Documents Requested", 
+                status_description, 
+                frappe.session.user
+            )
             
         return {
             "status": "success",
@@ -2321,6 +2212,7 @@ def request_document(registration_id, document_type, notes=None):
             "status": "error",
             "message": str(e)
         }
+
 
 @frappe.whitelist()
 def schedule_interview(registration_id, date, time, interviewer=None, location=None, notes=None):
@@ -2361,20 +2253,31 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
         
         # Update application status
         registration_doc = frappe.get_doc("Student Registration", registrations[0].name)
-        registration_doc.status = "Interview Scheduled"
-        registration_doc.next_steps = get_default_next_steps("Interview Scheduled")
-        registration_doc.save()
+        status_updated = False
         
-        # Create a timeline entry
-        timeline_doc = frappe.get_doc({
-            "doctype": "Application Timeline",
-            "registration_id": registration_doc.name,
-            "date": frappe.utils.now_datetime(),
-            "status": "Interview Scheduled",
-            "description": f"Interview scheduled for {date} at {time}",
-            "created_by": frappe.session.user
-        })
-        timeline_doc.insert(ignore_permissions=True)
+        if registration_doc.status != "Interview Scheduled":
+            registration_doc.status = "Interview Scheduled"
+            registration_doc.next_steps = get_default_next_steps("Interview Scheduled")
+            registration_doc.save()
+            status_updated = True
+        
+        # Create timeline entry for interview scheduling
+        create_timeline_entry(
+            registration_doc.name,
+            "Interview Scheduled",
+            f"Interview scheduled for {date} at {time}",
+            frappe.session.user
+        )
+        
+        # Add separate timeline entry if application status was changed
+        if status_updated:
+            status_description = "Application status updated to Interview Scheduled"
+            create_timeline_entry(
+                registration_doc.name,
+                "Interview Scheduled",
+                status_description,
+                frappe.session.user
+            )
         
         return {
             "status": "success",
@@ -2389,6 +2292,7 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
         }
 
 
+
 @frappe.whitelist(allow_guest=True)
 def upload_application_document(registration_id, document_type, file_data, filename=None):
     """Upload a document for a student application"""
@@ -2396,7 +2300,10 @@ def upload_application_document(registration_id, document_type, file_data, filen
         frappe.logger().debug(f"Upload called with: registration_id={registration_id}, document_type={document_type}, filename={filename}")
         
         if not registration_id or not document_type or not file_data:
-            return "Registration ID, document type, and file are required"
+            return {
+                "status": "error",
+                "message": "Registration ID, document type, and file are required"
+            }
             
         # Find the registration by registration_id
         registrations = frappe.get_all(
@@ -2407,10 +2314,15 @@ def upload_application_document(registration_id, document_type, file_data, filen
         )
         
         if not registrations:
-            return f"Application with ID {registration_id} not found"
+            frappe.logger().debug(f"Registration with ID {registration_id} not found")
+            return {
+                "status": "error", 
+                "message": f"Application with ID {registration_id} not found"
+            }
             
         # Get the actual document using the name we found
         doc_name = registrations[0].name
+        frappe.logger().debug(f"Found registration with name: {doc_name}")
         
         # Process the file upload
         try:
@@ -2469,15 +2381,16 @@ def upload_application_document(registration_id, document_type, file_data, filen
             file_doc.content = file_data
             file_doc.insert(ignore_permissions=True)
             
-                        
             file_url = file_doc.file_url
             
-            frappe.logger().debug(f"File uploaded with properties: URL={file_url}, is_private={file_doc.is_private}, public_url={file_doc.get_full_url() if hasattr(file_doc, 'get_full_url') else 'N/A'}")
             frappe.logger().debug(f"File uploaded successfully with URL: {file_url}")
             
         except Exception as file_error:
             frappe.logger().error(f"File upload error: {str(file_error)}\n{frappe.get_traceback()}")
-            return f"File upload failed: {str(file_error)}"
+            return {
+                "status": "error",
+                "message": f"File upload failed: {str(file_error)}"
+            }
         
         # Find required document record
         required_docs = frappe.get_all(
@@ -2502,6 +2415,10 @@ def upload_application_document(registration_id, document_type, file_data, filen
                 frappe.logger().debug(f"Updated required document: {req_doc.name}")
             except Exception as doc_error:
                 frappe.logger().error(f"Error updating document status: {str(doc_error)}")
+                return {
+                    "status": "error",
+                    "message": f"Error updating document status: {str(doc_error)}"
+                }
         else:
             frappe.logger().debug(f"No required document found for {document_type}, creating new one")
             # Create a new required document record if it doesn't exist
@@ -2517,33 +2434,32 @@ def upload_application_document(registration_id, document_type, file_data, filen
                 frappe.logger().debug(f"Created new required document: {req_doc.name}")
             except Exception as new_doc_error:
                 frappe.logger().error(f"Error creating document record: {str(new_doc_error)}")
+                return {
+                    "status": "error",
+                    "message": f"Error creating document record: {str(new_doc_error)}"
+                }
         
         # Create a timeline entry
-        try:
-            timeline_doc = frappe.new_doc("Application Timeline")
-            timeline_doc.registration_id = doc_name
-            timeline_doc.date = frappe.utils.now_datetime()
-            
-            # Get current status from registration
-            reg_doc = frappe.get_doc("Student Registration", doc_name)
-            timeline_doc.status = reg_doc.status or "Submitted"
-            
-            timeline_doc.description = f"Document uploaded: {document_type}"
-            timeline_doc.created_by = frappe.session.user or "Student"
-            timeline_doc.insert(ignore_permissions=True)
-            frappe.db.commit()
-            frappe.logger().debug(f"Created timeline entry: {timeline_doc.name}")
-        except Exception as timeline_error:
-            frappe.logger().error(f"Error creating timeline entry: {str(timeline_error)}")
+        create_timeline_entry(
+            doc_name,
+            "Documents Requested",
+            f"Document uploaded: {document_type}",
+            frappe.session.user or "Student"
+        )
         
         # Return success response
-        return "Document uploaded successfully"
+        return {
+            "status": "success",
+            "message": "Document uploaded successfully"
+        }
         
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Document Upload Error")
         frappe.logger().error(f"Upload error: {str(e)}")
-        return str(e)
-
+        return {
+            "status": "error",
+            "message": str(e)
+        }
 
 
 @frappe.whitelist(allow_guest=True)
@@ -2569,7 +2485,6 @@ def delete_application_document(registration_id, document_type):
             
         # Get the actual document using the name we found
         doc_name = registrations[0].name
-        frappe.logger().debug(f"Found registration with name: {doc_name}")
         
         # Find required document record
         required_docs = frappe.get_all(
@@ -2583,8 +2498,6 @@ def delete_application_document(registration_id, document_type):
         )
         
         if required_docs:
-            frappe.logger().debug(f"Found document record: {required_docs[0].name}")
-            
             # Get the document file URL and save it for deletion
             file_url = required_docs[0].get("document_file")
             
@@ -2592,7 +2505,6 @@ def delete_application_document(registration_id, document_type):
             req_doc = frappe.get_doc("Required Document", required_docs[0].name)
             
             # First, delete the file associations to ensure clean replacement
-            # This is important to prevent reattachment of the old file
             if file_url:
                 try:
                     # Find all File documents with this URL
@@ -2610,58 +2522,117 @@ def delete_application_document(registration_id, document_type):
                             file_doc.delete_file_from_filesystem()
                         # Delete the file document
                         frappe.delete_doc("File", file_doc.name, ignore_permissions=True, force=True)
-                        frappe.logger().debug(f"Deleted file: {file_doc.name}")
                         
                     # Clear file references
                     req_doc.document_file = None
                     frappe.db.commit()  # Commit to ensure file references are cleared
                 except Exception as file_error:
                     frappe.logger().error(f"Error deleting file: {str(file_error)}")
+                    return {
+                        "status": "error",
+                        "message": f"Error deleting file: {str(file_error)}"
+                    }
             
             # Now update the document status
-            req_doc.status = "Approved"  # Use "Approved" as you mentioned this works for upload
+            req_doc.status = "Requested"  # Change to "Requested" to prompt re-upload
             req_doc.submitted_date = None
             req_doc.save(ignore_permissions=True)
-            frappe.logger().debug(f"Updated document status to Approved")
             
             # Create a timeline entry
-            try:
-                timeline_doc = frappe.get_doc({
-                    "doctype": "Application Timeline",
-                    "registration_id": doc_name,
-                    "date": frappe.utils.now_datetime(),
-                    "status": "Documents Requested",
-                    "description": f"Document deletion requested for replacement: {document_type}",
-                    "created_by": frappe.session.user or "Student"
-                })
-                timeline_doc.insert(ignore_permissions=True)
-                frappe.logger().debug(f"Created timeline entry for document replacement")
-            except Exception as timeline_error:
-                frappe.logger().error(f"Error creating timeline entry: {str(timeline_error)}")
-            
-            frappe.db.commit()
+            create_timeline_entry(
+                doc_name,
+                "Documents Requested",
+                f"Document deleted for replacement: {document_type}",
+                frappe.session.user or "Student"
+            )
             
             return {
-                "message": {
-                    "status": "success",
-                    "description": "Document deleted successfully and ready for replacement"
-                }
+                "status": "success",
+                "message": "Document deleted successfully and ready for replacement"
             }
         else:
-            frappe.logger().debug(f"No document record found for {document_type}")
             return {
-                "message": {
-                    "status": "error",
-                    "error": f"Document record not found for {document_type}"
-                }
+                "status": "error",
+                "message": f"Document record not found for {document_type}"
             }
             
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Document Deletion Error")
-        frappe.logger().error(f"Error deleting document: {str(e)}")
         return {
-            "message": {
+            "status": "error",
+            "message": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_timeline_entries(registration_id):
+    """API endpoint to get timeline entries for a specific registration"""
+    try:
+        if not registration_id:
+            return {
                 "status": "error",
-                "error": str(e)
+                "message": "Registration ID is required"
             }
+            
+        # Find the registration by registration_id
+        registrations = frappe.get_all(
+            "Student Registration",
+            filters={"registration_id": registration_id},
+            fields=["name", "creation"],
+            limit=1
+        )
+        
+        if not registrations:
+            return {
+                "status": "error",
+                "message": f"Application with ID {registration_id} not found"
+            }
+            
+        # Get the actual document name
+        doc_name = registrations[0].name
+        
+        # Get timeline entries
+        timeline = frappe.get_all(
+            "Application Timeline",
+            filters={"registration_id": doc_name},
+            fields=["name", "date", "status", "description", "created_by"],
+            order_by="date desc"
+        )
+        
+        # If no timeline entries exist, create a default one
+        if not timeline:
+            try:
+                # Create the initial submission entry
+                timeline_doc = frappe.get_doc({
+                    "doctype": "Application Timeline",
+                    "registration_id": doc_name,
+                    "date": registrations[0].creation,
+                    "status": "Submitted",
+                    "description": "Application submitted successfully",
+                    "created_by": "Administrator"
+                })
+                timeline_doc.insert(ignore_permissions=True)
+                
+                # Add to response
+                timeline = [{
+                    "name": timeline_doc.name,
+                    "date": registrations[0].creation,
+                    "status": "Submitted",
+                    "description": "Application submitted successfully",
+                    "created_by": "Administrator"
+                }]
+            except Exception as e:
+                frappe.logger().error(f"Error creating default timeline entry: {str(e)}")
+                # Return empty list on error
+                timeline = []
+        
+        return {
+            "status": "success",
+            "timeline": timeline
+        }
+        
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Timeline API Error")
+        return {
+            "status": "error",
+            "message": str(e)
         }

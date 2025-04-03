@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:AT-{registration_id}",
+ "autoname": "format:AT-{registration_id}-{###}",
  "creation": "2025-03-30 15:17:28.096556",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -18,22 +18,29 @@
    "fieldname": "registration_id",
    "fieldtype": "Link",
    "label": "Registration ID",
-   "options": "Student Registration"
+   "options": "Student Registration",
+   "search_index": 1
   },
   {
    "fieldname": "date",
    "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Date"
   },
   {
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Status",
-   "options": "Submitted\nUnder Review\nDocuments Requested\nInterview Scheduled\nAccepted\nWaitlisted\nRejected"
+   "options": "Submitted\nUnder Review\nDocuments Requested\nDocuments Uploaded\nInterview Scheduled\nAccepted\nWaitlisted\nRejected"
   },
   {
    "fieldname": "created_by",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Created By",
    "options": "User"
   },
@@ -49,7 +56,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-30 15:21:02.953207",
+ "modified": "2025-04-03 08:08:20.432322",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Application Timeline",

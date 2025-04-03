@@ -140,9 +140,12 @@ const handleDocumentUpload = async (documentType, preventTabSwitch = false) => {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
   };
+  
   
   // Format time for display
   const formatTime = (timeString) => {
