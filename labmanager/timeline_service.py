@@ -21,15 +21,20 @@ def create_timeline_entry(registration_id, status, description, created_by=None)
             # Try to find by registration_id field
             regs = frappe.get_all("Student Registration", 
                                  filters={"registration_id": registration_id},
-                                 fields=["name"],
+                                 fields=["name", "first_name", "last_name"],
                                  limit=1)
             if regs:
                 registration_id = regs[0].name
+                student_name = f"{regs[0].first_name} {regs[0].last_name}".strip()
             else:
                 frappe.logger().error(f"Invalid registration ID: {registration_id}")
                 return None
+        else:
+            # Get student name if we have a valid registration ID
+            student = frappe.get_doc("Student Registration", registration_id)
+            student_name = f"{student.first_name} {student.last_name}".strip()
             
-            # Skip redundant status changes
+        # Skip redundant status changes
         if "changed from" in description:
             old_status = description.split("changed from ")[1].split(" to ")[0]
             new_status = description.split(" to ")[1]
@@ -40,8 +45,10 @@ def create_timeline_entry(registration_id, status, description, created_by=None)
         # Set default user if not provided
         if not created_by:
             created_by = frappe.session.user
-            if not created_by or created_by == "Guest":
-                created_by = "Administrator"
+            
+        # Special handling for Guest users - use student name instead of Administrator
+        if created_by == "Guest" or created_by == "Student":
+            created_by = student_name
         
         # Create timeline entry with error handling
         timeline_doc = frappe.get_doc({
@@ -122,12 +129,13 @@ def ensure_initial_timeline_entry(registration_doc):
         )
         
         if not existing:
-            # Create initial submission entry
+            # Create initial submission entry with student name instead of Administrator
+            student_name = f"{registration_doc.first_name} {registration_doc.last_name}".strip()
             create_timeline_entry(
                 registration_doc.name,
                 "Submitted",
                 "Application submitted successfully",
-                "Administrator"  # Use administrator to ensure it works
+                student_name
             )
             
         return True

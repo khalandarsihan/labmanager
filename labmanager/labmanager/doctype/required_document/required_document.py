@@ -16,6 +16,18 @@ class RequiredDocument(Document):
 	def on_update(self):
 		# Track document status changes
 		if self.has_value_changed("status"):
+			# Get the creator - use someone meaningful 
+			created_by = frappe.session.user
+			if not created_by or created_by == "Guest":
+				created_by = "Admissions Team"
+			
+			# If document is being submitted, use the student name
+			if self.status == "Submitted":
+				# Get student information
+				student = frappe.get_doc("Student Registration", self.registration_id)
+				if student:
+					created_by = f"{student.first_name} {student.last_name}".strip()
+			
 			# Create timeline entry for document status change
 			old_status = self.get_db_value("status") or "Pending"
 			
@@ -35,5 +47,5 @@ class RequiredDocument(Document):
 				self.registration_id,
 				status="Documents Requested",
 				description=description,
-				created_by=frappe.session.user
+				created_by=created_by
 			)

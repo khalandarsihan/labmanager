@@ -823,8 +823,9 @@ const handleDocumentUpload = async (documentType, preventTabSwitch = false) => {
                               </div>
                               <p className="text-gray-700 text-sm">{event.description}</p>
                               <div className="text-xs text-gray-500 mt-2">
-                              Updated by: {event.created_by === "Guest" || event.created_by === "Student" ? statusData.student_name : event.created_by}
-                            </div>
+                                {/* Display the user directly without conditional logic that might cause confusion */}
+                                Updated by: {event.created_by}
+                              </div>
                             </div>
                           </div>
                         ))}

@@ -1,5 +1,6 @@
 # labmanager/utils.py
 import frappe
+from labmanager.timeline_service import create_timeline_entry
 
 def create_default_document_requirements(registration_doc):
     """Create default document requirements based on the program and education level"""
@@ -50,6 +51,15 @@ def create_default_document_requirements(registration_doc):
         
         documents.extend(common_documents)
         
+        # Get the admissions staff user who requested the documents
+        # Use a default if session user is not available or is Guest
+        created_by = frappe.session.user
+        if not created_by or created_by == "Guest":
+            created_by = "Admissions Team"
+        
+        # Get student name for display
+        student_name = f"{registration_doc.first_name} {registration_doc.last_name}".strip()
+        
         # Create the document requirements
         for doc in documents:
             req_doc = frappe.get_doc({
@@ -61,7 +71,29 @@ def create_default_document_requirements(registration_doc):
             })
             req_doc.insert(ignore_permissions=True)
             
+            # Create timeline entry for each document request with the proper creator
+            create_timeline_entry(
+                registration_doc.name,
+                "Documents Requested",
+                f"Document requested: {doc['document_type']}",
+                created_by  # Use the admissions staff who requested it
+            )
+            
         frappe.db.commit()
+        
+        # If this is the first set of document requests, update the application status
+        if registration_doc.status != "Documents Requested":
+            registration_doc.status = "Documents Requested"
+            registration_doc.next_steps = get_default_next_steps("Documents Requested")
+            registration_doc.save()
+            
+            # Create a timeline entry for the status change
+            create_timeline_entry(
+                registration_doc.name,
+                "Documents Requested",
+                "Application status updated to Documents Requested",
+                created_by
+            )
         
         return True
     except Exception as e:

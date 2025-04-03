@@ -1919,7 +1919,6 @@ def get_exam_dates(**kwargs):
             "error": str(e)
         }
         
-
 @frappe.whitelist(allow_guest=True)
 def get_application_status(registration_id=None):
     """Get detailed status of a student registration application"""
@@ -1959,18 +1958,31 @@ def get_application_status(registration_id=None):
         current_status = doc.get("status") or "Submitted"
         frappe.logger().debug(f"Application status: {current_status}")
         
+        # Get student's full name
+        student_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
+        
         # Get timeline entries using the service
         timeline = get_application_timeline(doc.name)
+        
+        # Process timeline entries to handle user names correctly
+        for entry in timeline:
+            # If the created_by is Administrator for events that should be from the student
+            if entry.get("created_by") == "Administrator" and any(text in entry.get("description", "").lower() for text in ["submitted", "uploaded"]):
+                entry["created_by"] = student_name
+            
+            # If created_by is the same as student email or contains Guest
+            if entry.get("created_by") == doc.email or entry.get("created_by") == "Guest" or entry.get("created_by") == "Student":
+                entry["created_by"] = student_name
         
         # If no timeline entries exist, create the initial submission entry
         if not timeline:
             try:
-                # Create the initial submission entry in the timeline
+                # Create the initial submission entry in the timeline with the student's name
                 create_timeline_entry(
                     doc.name,
                     "Submitted",
                     "Application submitted successfully",
-                    "Administrator"  # Use Administrator which should exist
+                    student_name  # Use student name instead of Administrator
                 )
                 
                 # Fetch the timeline again
@@ -1982,7 +1994,7 @@ def get_application_status(registration_id=None):
                     "date": doc.creation,
                     "status": "Submitted",
                     "description": "Application submitted successfully",
-                    "created_by": "Unknown"
+                    "created_by": student_name
                 }]
         
         # Get document requirements
@@ -2019,8 +2031,6 @@ def get_application_status(registration_id=None):
         )
         
         # Format the data for the response
-        student_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
-        
         response_data = {
             "status": "success",  # Add explicit success status
             "data": {
@@ -2049,8 +2059,6 @@ def get_application_status(registration_id=None):
             "status": "error",
             "message": str(e)
         }
-
-
 
 @frappe.whitelist()
 def update_application_status(registration_id, status, description=None, next_steps=None, feedback=None):
@@ -2292,7 +2300,6 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
         }
 
 
-
 @frappe.whitelist(allow_guest=True)
 def upload_application_document(registration_id, document_type, file_data, filename=None):
     """Upload a document for a student application"""
@@ -2309,7 +2316,7 @@ def upload_application_document(registration_id, document_type, file_data, filen
         registrations = frappe.get_all(
             "Student Registration",
             filters={"registration_id": registration_id},
-            fields=["name"],
+            fields=["name", "first_name", "last_name"],
             limit=1
         )
         
@@ -2322,6 +2329,7 @@ def upload_application_document(registration_id, document_type, file_data, filen
             
         # Get the actual document using the name we found
         doc_name = registrations[0].name
+        student_name = f"{registrations[0].first_name} {registrations[0].last_name}".strip()
         frappe.logger().debug(f"Found registration with name: {doc_name}")
         
         # Process the file upload
@@ -2439,12 +2447,12 @@ def upload_application_document(registration_id, document_type, file_data, filen
                     "message": f"Error creating document record: {str(new_doc_error)}"
                 }
         
-        # Create a timeline entry
+        # Create a timeline entry with student name
         create_timeline_entry(
             doc_name,
             "Documents Requested",
             f"Document uploaded: {document_type}",
-            frappe.session.user or "Student"
+            student_name  # Use student name directly
         )
         
         # Return success response
@@ -2460,7 +2468,6 @@ def upload_application_document(registration_id, document_type, file_data, filen
             "status": "error",
             "message": str(e)
         }
-
 
 @frappe.whitelist(allow_guest=True)
 def delete_application_document(registration_id, document_type):
