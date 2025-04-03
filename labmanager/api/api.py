@@ -2465,10 +2465,14 @@ def upload_application_document(registration_id, document_type, file_data, filen
             file_doc.file_name = final_filename
             file_doc.attached_to_doctype = "Student Registration"
             file_doc.attached_to_name = doc_name
+            file_doc.is_private = 0
             file_doc.content = file_data
             file_doc.insert(ignore_permissions=True)
             
+                        
             file_url = file_doc.file_url
+            
+            frappe.logger().debug(f"File uploaded with properties: URL={file_url}, is_private={file_doc.is_private}, public_url={file_doc.get_full_url() if hasattr(file_doc, 'get_full_url') else 'N/A'}")
             frappe.logger().debug(f"File uploaded successfully with URL: {file_url}")
             
         except Exception as file_error:
