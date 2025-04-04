@@ -5,9 +5,19 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import { useTheme } from '../../../components/ui/ThemeContext';
 
 const FilterPanel = ({ onFilterChange }) => {
+    const { useLightTheme } = useTheme();
+    
+    // Define theme specific styles
+    const borderColor = useLightTheme ? "border-amber-200" : "border-gray-700";
+    const labelColor = useLightTheme ? "text-gray-700" : "text-gray-300";
+    const selectBg = useLightTheme 
+        ? "bg-white/90 border-amber-200 text-gray-700" 
+        : "bg-gray-900/50 border-gray-700 text-gray-200";
+    
     const priceRanges = [
         { label: 'All Prices', value: 'all' },
         { label: 'Free', value: 'free' },
@@ -80,11 +90,11 @@ const FilterPanel = ({ onFilterChange }) => {
     };
 
     return (
-        <div className="mt-6 pt-6 border-t border-gray-700 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className={`mt-6 pt-6 border-t ${borderColor} grid grid-cols-1 md:grid-cols-3 gap-4`}>
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Price Range</label>
+                <label className={`block text-sm font-medium ${labelColor} mb-2`}>Price Range</label>
                 <Select onValueChange={handlePriceChange} defaultValue="all">
-                    <SelectTrigger className="bg-gray-900/50 border-gray-700 text-gray-200">
+                    <SelectTrigger className={selectBg}>
                         <SelectValue placeholder="Select price range" />
                     </SelectTrigger>
                     <SelectContent>
@@ -98,9 +108,9 @@ const FilterPanel = ({ onFilterChange }) => {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Duration</label>
+                <label className={`block text-sm font-medium ${labelColor} mb-2`}>Duration</label>
                 <Select onValueChange={handleDurationChange} defaultValue="all">
-                    <SelectTrigger className="bg-gray-900/50 border-gray-700 text-gray-200">
+                    <SelectTrigger className={selectBg}>
                         <SelectValue placeholder="Select duration" />
                     </SelectTrigger>
                     <SelectContent>
@@ -114,9 +124,9 @@ const FilterPanel = ({ onFilterChange }) => {
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Skill Level</label>
+                <label className={`block text-sm font-medium ${labelColor} mb-2`}>Skill Level</label>
                 <Select onValueChange={handleLevelChange} defaultValue="all">
-                    <SelectTrigger className="bg-gray-900/50 border-gray-700 text-gray-200">
+                    <SelectTrigger className={selectBg}>
                         <SelectValue placeholder="Select skill level" />
                     </SelectTrigger>
                     <SelectContent>

@@ -3,9 +3,12 @@ import useCourseCatalog from '../../hooks/useCourseCatalog';
 import Header from './components/Header';
 import SearchAndFilters from './components/SearchAndFilters';
 import CourseGrid from './components/CourseGrid';
-import BackgroundPattern from '@/components/ui/BackgroundPattern'; 
+import BackgroundPattern from '@/components/ui/BackgroundPattern';
+import { useTheme } from '../../components/ui/ThemeContext';
+
 
 const CourseCatalog = () => {
+    const { useLightTheme, toggleTheme, themeStyles } = useTheme();
     const [viewMode, setViewMode] = useState('grid');
     const [activeFilters, setActiveFilters] = useState({});
     
@@ -45,7 +48,10 @@ const CourseCatalog = () => {
         <div className="relative">
         {/* BackgroundPattern is positioned behind everything */}
         <BackgroundPattern />
-        <div className="min-h-screen bg-gray-900 text-white pb-20">
+        {/* <div className="min-h-screen bg-gray-900 text-white pb-20"> */}
+        <div className={`min-h-screen ${themeStyles.background} pb-20`}>
+
+        
             {headerComponent}
             {searchComponent}
             <CourseGrid 
