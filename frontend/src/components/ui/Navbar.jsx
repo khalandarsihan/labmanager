@@ -9,7 +9,7 @@ const Navbar = () => {
 
   return (
     <nav className="bg-gradient-to-r from-[#222] to-[#444] py-[15px] px-5 w-full relative top-[1px] z-[1000] -mt-[1px]">
-      <div className="flex justify-between items-center max-w-[1200px] mx-auto">
+      <div className="flex justify-between items-center max-w-[1300px] mx-auto">
         {/* Logo */}
         <a href="#" className="flex items-center text-2xl font-bold text-amber-300 no-underline hover:text-amber-200 transform hover:scale-110 transition-all duration-300">
           <i className="fa fa-graduation-cap mr-2 text-[28px]"></i>
@@ -17,7 +17,7 @@ const Navbar = () => {
         </a>
 
         {/* Navbar Menu */}
-        <ul className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row items-center list-none md:ml-20 gap-5 ${
+        <ul className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row items-center list-none md:ml-8 gap-5 ${
           isMenuOpen ? 'absolute top-[60px] left-0 w-full bg-[#333] text-center p-[10px]' : ''
         }`}>
           <li>
@@ -26,6 +26,13 @@ const Navbar = () => {
             </a>
           </li>
           
+          {/* Add About Us link here */}
+          <li>
+            <a href="/about-us" className="flex items-center no-underline text-white text-base hover:text-amber-300 hover:scale-110 transition-all duration-300 px-3 py-2">
+              <i className="fa fa-university mr-[5px] text-[18px]"></i> About
+            </a>
+          </li>
+
           <li className="relative group whitespace-nowrap">
             <a href="#" className="flex items-center no-underline text-white text-base hover:text-amber-300 hover:scale-110 transition-all duration-300 px-3 py-2">
               <i className="fa fa-book mr-[5px] text-[18px]"></i> Courses
@@ -138,7 +145,7 @@ const Navbar = () => {
         {/* CTA Button */}
         <a
           href="/student-registration/new"
-          className="hidden md:flex items-center justify-center bg-amber-300 text-[#333] px-6 py-3 no-underline rounded font-bold hover:bg-amber-200 transform hover:scale-110 transition-all duration-300 min-w-[200px] whitespace-nowrap ml-20"
+          className="hidden md:flex items-center justify-center bg-amber-300 text-[#333] px-6 py-3 no-underline rounded font-bold hover:bg-amber-200 transform hover:scale-110 transition-all duration-300 min-w-[200px] whitespace-nowrap ml-8"
         >
           <i className="fa fa-rocket mr-2 transform group-hover:scale-110 transition-transform duration-300"></i>
           Start Learning Today

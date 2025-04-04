@@ -10,7 +10,7 @@ const Footer = () => {
             <h3 className="text-lg font-bold text-amber-400 mb-3">TechEthica</h3>
             <p className="text-gray-200 text-sm mb-3">Empowering learning through technology and faith.</p>
             <div className="flex flex-col space-y-2">
-              <a href="/about" className="text-gray-200 text-sm hover:text-amber-400 transition-all duration-200 hover:translate-x-1">About Us</a>
+              <a href="/about-us" className="text-gray-200 text-sm hover:text-amber-400 transition-all duration-200 hover:translate-x-1">About Us</a>
               <a href="/careers" className="text-gray-200 text-sm hover:text-amber-400 transition-all duration-200 hover:translate-x-1">Careers</a>
               <a href="/privacy" className="text-gray-200 text-sm hover:text-amber-400 transition-all duration-200 hover:translate-x-1">Privacy Policy</a>
             </div>

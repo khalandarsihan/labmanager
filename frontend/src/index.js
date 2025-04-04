@@ -287,6 +287,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { FrappeProvider } from "frappe-react-sdk";
+import AboutUsPage from "./pages/AboutUs";
 import CourseDetails from "./pages/CourseDetails";
 import StudentEnrollment from "./pages/StudentEnrollment";
 import RegistrationDetails from "./pages/StudentEnrollment/RegistrationDetails";
@@ -328,6 +329,12 @@ if (trackApplicationContainer) {
 const homeContainer = document.getElementById("home-root");
 if (homeContainer) {
 	renderWithProvider(<HomePage />, homeContainer);
+}
+
+// About Us Page
+const aboutUsContainer = document.getElementById("about-us-root");
+if (aboutUsContainer) {
+	renderWithProvider(<AboutUsPage />, aboutUsContainer);
 }
 
 // Course Catalog Page

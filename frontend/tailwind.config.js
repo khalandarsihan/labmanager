@@ -56,6 +56,11 @@ module.exports = {
 					to: "#444444",
 				},
 			},
+			fontFamily: {
+				'arabic': ['Amiri', 'Scheherazade New', 'serif'],
+				'serif': ['Playfair Display', 'serif'],
+				'sans': ['Inter', 'system-ui', 'sans-serif'],
+			},
 			borderRadius: {
 				lg: "var(--radius)",
 				md: "calc(var(--radius) - 2px)",
@@ -63,16 +68,22 @@ module.exports = {
 			},
 			animation: {
 				"float-up": "floatUp 4s ease-in-out infinite",
-				"float-up-slow": "floatUp 6s ease-in-out infinite",
+				"float-up-slow": "floatUpSlow 6s ease-in-out infinite",
 				"float-diagonal": "floatDiagonal 7s ease-in-out infinite",
 				"float-diagonal-reverse": "floatDiagonalReverse 5s ease-in-out infinite",
 				"float-side": "floatSide 8s ease-in-out infinite",
 				"float-circle": "floatCircle 12s linear infinite",
+				"rotate": "rotate 10s linear infinite",
+				"pulse-slow": "pulse 6s ease-in-out infinite",
 			},
 			keyframes: {
 				floatUp: {
 					"0%, 100%": { transform: "translateY(0)" },
 					"50%": { transform: "translateY(-40px)" },
+				},
+				floatUpSlow: {
+					"0%, 100%": { transform: "translateY(0)" },
+					"50%": { transform: "translateY(-20px)" },
 				},
 				floatDiagonal: {
 					"0%, 100%": { transform: "translate(0, 0) rotate(0deg)" },
@@ -90,8 +101,28 @@ module.exports = {
 					"0%": { transform: "rotate(0deg) translateX(20px) rotate(0deg)" },
 					"100%": { transform: "rotate(360deg) translateX(20px) rotate(-360deg)" },
 				},
+				rotate: {
+					"0%": { transform: "rotate(0deg)" },
+					"100%": { transform: "rotate(360deg)" },
+				},
 			},
+			backgroundImage: {
+				'geometric-pattern': "url('/assets/labmanager/images/geometric-pattern.png')",
+				'light-pattern': "url('/assets/labmanager/images/light-pattern.png')",
+				'dark-pattern': "url('/assets/labmanager/images/dark-pattern.png')",
+			},
+			transitionProperty: {
+				'width': 'width',
+				'height': 'height',
+				'spacing': 'margin, padding',
+			},
+			boxShadow: {
+				'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.05)',
+				'glow-amber': '0 0 15px rgba(251, 191, 36, 0.4)',
+			}
 		},
 	},
-	plugins: [],
+	plugins: [
+		// Add any plugins if needed
+	],
 };

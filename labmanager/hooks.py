@@ -349,6 +349,7 @@ website_route_rules = [
     {"from_route": "/class-schedule", "to_route": "class-schedule"},
     {"from_route": "/exam-dates", "to_route": "exam-dates"},
     {"from_route": "/track-application", "to_route": "track-application"},
+    {"from_route": "/about-us", "to_route": "about-us"},
     # {"from_route": "/admin/applications", "to_route": "admin/applications"},
     # {"from_route": "/admin/applications/<id>", "to_route": "admin/applications/details"},
     # {"from_route": "/enroll", "to_route": "enroll"},
