@@ -2,69 +2,72 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import BackgroundPattern from '../../components/ui/BackgroundPattern';
 import ContactBar from '../../components/ui/ContactBar';
+import ThemeSwitcher from '../../components/ui/ThemeSwitcher';
+import { useTheme } from '../../components/ui/ThemeContext';
 
 // Import any additional components you might need
 // import { motion } from 'framer-motion'; // If you want to add animations
 
 const AboutUs = () => {
-  // Theme state
-  const [useLightTheme, setUseLightTheme] = useState(true);
+    
+  // Use theme context instead of local state
+  const { useLightTheme, toggleTheme, themeStyles } = useTheme();
   const [language, setLanguage] = useState('en'); // 'en' for English, 'ar' for Arabic
 
   // Theme-based styles
-  const themeStyles = useLightTheme ? {
-    background: "bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50",
-    backgroundPattern: "bg-[url('/assets/labmanager/images/light-pattern.png')]",
-    text: {
-      primary: "text-gray-800",
-      secondary: "text-gray-700", 
-      light: "text-gray-600"
-    },
-    heading: "text-amber-800",
-    subheading: "text-amber-700",
-    card: {
-      bg: "bg-white/80",
-      border: "border-amber-200/50",
-      hoverBorder: "hover:border-amber-400/70"
-    },
-    quote: "bg-amber-100/50",
-    cta: {
-      bg: "bg-amber-600",
-      hover: "hover:bg-amber-500"
-    },
-    accent: {
-      light: "bg-amber-500/10",
-      medium: "bg-amber-500/20",
-      strong: "bg-amber-500/30"
-    },
-    pattern: "text-amber-700/5"
-  } : {
-    background: "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700",
-    backgroundPattern: "bg-[url('/assets/labmanager/images/dark-pattern.png')]",
-    text: {
-      primary: "text-gray-200",
-      secondary: "text-gray-300", 
-      light: "text-gray-400"
-    },
-    heading: "text-amber-300",
-    subheading: "text-amber-200",
-    card: {
-      bg: "bg-gray-800/50",
-      border: "border-gray-700/50",
-      hoverBorder: "hover:border-amber-300/30"
-    },
-    quote: "bg-gray-900/50",
-    cta: {
-      bg: "bg-amber-600",
-      hover: "hover:bg-amber-500"
-    },
-    accent: {
-      light: "bg-amber-500/10",
-      medium: "bg-amber-500/20",
-      strong: "bg-amber-500/30"
-    },
-    pattern: "text-amber-500/5"
-  };
+//   const themeStyles = useLightTheme ? {
+//     background: "bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50",
+//     backgroundPattern: "bg-[url('/assets/labmanager/images/light-pattern.png')]",
+//     text: {
+//       primary: "text-gray-800",
+//       secondary: "text-gray-700", 
+//       light: "text-gray-600"
+//     },
+//     heading: "text-amber-800",
+//     subheading: "text-amber-700",
+//     card: {
+//       bg: "bg-white/80",
+//       border: "border-amber-200/50",
+//       hoverBorder: "hover:border-amber-400/70"
+//     },
+//     quote: "bg-amber-100/50",
+//     cta: {
+//       bg: "bg-amber-600",
+//       hover: "hover:bg-amber-500"
+//     },
+//     accent: {
+//       light: "bg-amber-500/10",
+//       medium: "bg-amber-500/20",
+//       strong: "bg-amber-500/30"
+//     },
+//     pattern: "text-amber-700/5"
+//   } : {
+//     background: "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700",
+//     backgroundPattern: "bg-[url('/assets/labmanager/images/dark-pattern.png')]",
+//     text: {
+//       primary: "text-gray-200",
+//       secondary: "text-gray-300", 
+//       light: "text-gray-400"
+//     },
+//     heading: "text-amber-300",
+//     subheading: "text-amber-200",
+//     card: {
+//       bg: "bg-gray-800/50",
+//       border: "border-gray-700/50",
+//       hoverBorder: "hover:border-amber-300/30"
+//     },
+//     quote: "bg-gray-900/50",
+//     cta: {
+//       bg: "bg-amber-600",
+//       hover: "hover:bg-amber-500"
+//     },
+//     accent: {
+//       light: "bg-amber-500/10",
+//       medium: "bg-amber-500/20",
+//       strong: "bg-amber-500/30"
+//     },
+//     pattern: "text-amber-500/5"
+//   };
 
   // Get Hijri date
 //   const [hijriDate, setHijriDate] = useState("");
@@ -89,9 +92,9 @@ const AboutUs = () => {
 
 
   // Toggle theme function
-  const toggleTheme = () => {
-    setUseLightTheme(!useLightTheme);
-  };
+//   const toggleTheme = () => {
+//     setUseLightTheme(!useLightTheme);
+//   };
 
   // SVG patterns for section dividers and decorations
   const GeometricPattern = ({ className }) => (

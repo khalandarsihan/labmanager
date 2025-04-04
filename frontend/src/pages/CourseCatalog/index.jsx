@@ -26,6 +26,7 @@ const CourseCatalog = () => {
         });
     }, []);
     
+    
     // Use the hook with active filters
     const { courses, isLoading } = useCourseCatalog(activeFilters);
     
