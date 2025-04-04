@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { AlertCircle } from 'lucide-react';
 import './AnnouncementsAndFAQs.css';
+import { useTheme } from '../../../components/ui/ThemeContext';
 
 const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }) => {
   const [openFaq, setOpenFaq] = useState(null);
+  const { useLightTheme, themeStyles } = useTheme();
 
   const faqsByCategory = faqs.reduce((acc, faq) => {
     const category = faq.category || 'General';
@@ -16,42 +18,38 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
 
   return (
     <section className="relative py-24 overflow-hidden">
-    
-        
-      <BackgroundPattern />
+      <BackgroundPattern useLightTheme={useLightTheme} />
       
       <div className="max-w-[1920px] mx-auto px-8 md:px-12 relative z-10">
         <div className="flex flex-col lg:flex-row relative gap-8">
           {/* Left Column - Announcements */}
-          
-            <div className="lg:w-1/2 relative group">
-            <div className="absolute inset-0 bg-gray-700/20 backdrop-blur-sm transform skew-x-12 origin-top-left transition-all duration-300 group-hover:bg-gray-700/30" />
+          <div className="lg:w-1/2 relative group">
+            <div className={`absolute inset-0 ${useLightTheme ? 'bg-amber-100/20' : 'bg-gray-700/20'} backdrop-blur-sm transform skew-x-12 origin-top-left transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
-                <div className="p-8 h-full">
-                <h2 className="text-4xl font-bold text-amber-300 mb-8">
-                    ANNOUNCEMENTS
+              <div className="p-8 h-full">
+                <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-300'} mb-8`}>
+                  ANNOUNCEMENTS
                 </h2>
                 <div className="space-y-4 overflow-auto max-h-[calc(100vh-16rem)] scrollbar-hide">
-                    {announcements.map((announcement, index) => (
-                    <AnnouncementItem key={index} announcement={announcement} />
-                    ))}
-                    {announcements.length === 0 && (
-                    <div className="text-gray-400 text-center py-4">
-                        No announcements at this time
+                  {announcements.map((announcement, index) => (
+                    <AnnouncementItem key={index} announcement={announcement} useLightTheme={useLightTheme} themeStyles={themeStyles} />
+                  ))}
+                  {announcements.length === 0 && (
+                    <div className={`${useLightTheme ? 'text-gray-500' : 'text-gray-400'} text-center py-4`}>
+                      No announcements at this time
                     </div>
-                    )}
+                  )}
                 </div>
-                </div>
+              </div>
             </div>
-            </div>
-
+          </div>
 
           {/* Right Column - FAQs */}
           <div className="lg:w-1/2 relative group">
-            <div className="absolute inset-0 bg-gray-700/20 backdrop-blur-sm transform -skew-x-12 origin-top-right transition-all duration-300 group-hover:bg-gray-700/30" />
+            <div className={`absolute inset-0 ${useLightTheme ? 'bg-amber-100/20' : 'bg-gray-700/20'} backdrop-blur-sm transform -skew-x-12 origin-top-right transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
               <div className="p-8 h-full">
-                <h2 className="text-4xl font-bold text-amber-300 mb-8">
+                <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-300'} mb-8`}>
                   FREQUENTLY<br/>ASKED QUESTIONS
                 </h2>
                 <div className="space-y-4 overflow-auto max-h-[calc(100vh-16rem)] scrollbar-hide">
@@ -64,6 +62,8 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
                         faqs={faqsByCategory[category.name] || []}
                         openFaq={openFaq}
                         setOpenFaq={setOpenFaq}
+                        useLightTheme={useLightTheme}
+                        themeStyles={themeStyles}
                       />
                     ))}
                 </div>
@@ -76,18 +76,18 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
   );
 };
 
-const AnnouncementItem = ({ announcement }) => (
-  <div className="bg-gray-800/40 rounded-lg p-4 hover:bg-gray-800/60 transition-all duration-300">
+const AnnouncementItem = ({ announcement, useLightTheme, themeStyles }) => (
+  <div className={`${useLightTheme ? 'bg-white/40 hover:bg-white/60' : 'bg-gray-800/40 hover:bg-gray-800/60'} rounded-lg p-4 transition-all duration-300`}>
     <div className="flex items-start gap-3">
-      <AlertCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-1" />
+      <AlertCircle className={`w-5 h-5 ${useLightTheme ? 'text-amber-600' : 'text-amber-300'} flex-shrink-0 mt-1`} />
       <div>
-        <h3 className="text-amber-200 font-semibold mb-2">{announcement.title}</h3>
+        <h3 className={`${useLightTheme ? 'text-amber-700' : 'text-amber-200'} font-semibold mb-2`}>{announcement.title}</h3>
         <div 
-          className="text-gray-300 text-sm"
+          className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm`}
           dangerouslySetInnerHTML={{ __html: announcement.content }}
         />
         {announcement.date && (
-          <div className="text-gray-400 text-xs mt-2">
+          <div className={`${useLightTheme ? 'text-gray-500' : 'text-gray-400'} text-xs mt-2`}>
             {new Date(announcement.date).toLocaleDateString()}
           </div>
         )}
@@ -96,9 +96,9 @@ const AnnouncementItem = ({ announcement }) => (
   </div>
 );
 
-const CategorySection = ({ category, faqs, openFaq, setOpenFaq }) => (
+const CategorySection = ({ category, faqs, openFaq, setOpenFaq, useLightTheme, themeStyles }) => (
   <div className="category-section">
-    <h3 className="text-xl font-semibold text-amber-300 mb-4">
+    <h3 className={`text-xl font-semibold ${useLightTheme ? 'text-amber-600' : 'text-amber-300'} mb-4`}>
       {category.category_name}
     </h3>
     <div className="space-y-2">
@@ -112,21 +112,23 @@ const CategorySection = ({ category, faqs, openFaq, setOpenFaq }) => (
             onClick={() => setOpenFaq(
               openFaq === `${category.name}-${index}` ? null : `${category.name}-${index}`
             )}
+            useLightTheme={useLightTheme}
+            themeStyles={themeStyles}
           />
         ))}
     </div>
   </div>
 );
 
-const FAQItem = ({ faq, isOpen, onClick }) => (
-  <div className="bg-gray-800/30 rounded-lg overflow-hidden transition-all duration-300 hover:bg-gray-800/40">
+const FAQItem = ({ faq, isOpen, onClick, useLightTheme, themeStyles }) => (
+  <div className={`${useLightTheme ? 'bg-white/30 hover:bg-white/40' : 'bg-gray-800/30 hover:bg-gray-800/40'} rounded-lg overflow-hidden transition-all duration-300`}>
     <button
       className="w-full flex justify-between items-center p-4 text-left focus:outline-none"
       aria-expanded={isOpen}
       onClick={onClick}
     >
-      <span className="text-white font-medium pr-4">{faq.question}</span>
-      <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-amber-300 text-gray-900 transition-transform duration-300">
+      <span className={`${useLightTheme ? 'text-gray-800' : 'text-white'} font-medium pr-4`}>{faq.question}</span>
+      <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${useLightTheme ? 'bg-amber-500 text-white' : 'bg-amber-300 text-gray-900'} transition-transform duration-300`}>
         {isOpen ? '−' : '+'}
       </span>
     </button>
@@ -135,43 +137,52 @@ const FAQItem = ({ faq, isOpen, onClick }) => (
         isOpen ? 'block' : 'hidden'
       }`}
     >
-      <div className="text-gray-200" dangerouslySetInnerHTML={{ __html: faq.answer }} />
+      <div className={`${useLightTheme ? 'text-gray-700' : 'text-gray-200'}`} dangerouslySetInnerHTML={{ __html: faq.answer }} />
     </div>
   </div>
 );
 
+const BackgroundPattern = ({ useLightTheme }) => {
+  const bgGradient = useLightTheme
+    ? "bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50"
+    : "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700";
+    
+  const borderColor = useLightTheme 
+    ? "border-amber-700" 
+    : "border-amber-300";
 
-const BackgroundPattern = () => (
-    <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700">
+  return (
+    <div className={`absolute inset-0 ${bgGradient}`}>
       {/* Abstract Lines */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute h-full w-px bg-amber-300/60 left-1/4 transform -skew-x-12" />
-        <div className="absolute h-full w-px bg-amber-300/50 left-1/2 transform skew-x-12" />
-        <div className="absolute h-full w-px bg-amber-300/60 left-3/4 transform -skew-x-12" />
-        <div className="absolute w-full h-px bg-amber-300/50 top-1/4 transform -skew-y-12" />
-        <div className="absolute w-full h-px bg-amber-300/60 top-1/2 transform skew-y-12" />
-        <div className="absolute w-full h-px bg-amber-300/50 top-3/4 transform -skew-y-12" />
+        <div className={`absolute h-full w-px ${borderColor}/60 left-1/4 transform -skew-x-12`} />
+        <div className={`absolute h-full w-px ${borderColor}/50 left-1/2 transform skew-x-12`} />
+        <div className={`absolute h-full w-px ${borderColor}/60 left-3/4 transform -skew-x-12`} />
+        <div className={`absolute w-full h-px ${borderColor}/50 top-1/4 transform -skew-y-12`} />
+        <div className={`absolute w-full h-px ${borderColor}/60 top-1/2 transform skew-y-12`} />
+        <div className={`absolute w-full h-px ${borderColor}/50 top-3/4 transform -skew-y-12`} />
       </div>
   
       {/* Floating Elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Top Group */}
-        <div className="absolute top-20 left-1/3 w-14 h-14 border-2 border-amber-300/20 rounded-lg backdrop-blur transform rotate-45 animate-float-diagonal delay-300" />
-        <div className="absolute top-24 right-1/3 w-10 h-10 border-2 border-amber-300/30 transform -rotate-12 backdrop-blur animate-float-up delay-700" />
+        <div className={`absolute top-20 left-1/3 w-14 h-14 border-2 ${borderColor}/20 rounded-lg backdrop-blur transform rotate-45 animate-float-diagonal delay-300`} />
+        <div className={`absolute top-24 right-1/3 w-10 h-10 border-2 ${borderColor}/30 transform -rotate-12 backdrop-blur animate-float-up delay-700`} />
   
         {/* Left Side Elements */}
-        <div className="absolute top-1/2 left-1/5 w-16 h-16 border-2 border-amber-300/20 rounded-full backdrop-blur animate-float-circle delay-1000" />
-        <div className="absolute bottom-1/3 left-1/4 w-12 h-12 border-2 border-amber-300/30 transform rotate-12 backdrop-blur animate-float-diagonal-reverse delay-500" />
+        <div className={`absolute top-1/2 left-1/5 w-16 h-16 border-2 ${borderColor}/20 rounded-full backdrop-blur animate-float-circle delay-1000`} />
+        <div className={`absolute bottom-1/3 left-1/4 w-12 h-12 border-2 ${borderColor}/30 transform rotate-12 backdrop-blur animate-float-diagonal-reverse delay-500`} />
   
         {/* Right Side Elements */}
-        <div className="absolute top-1/2 right-1/5 w-12 h-12 border-2 border-amber-300/25 rounded-lg transform rotate-45 backdrop-blur animate-float-up-slow delay-200" />
-        <div className="absolute bottom-1/3 right-1/4 w-14 h-14 border-2 border-amber-300/20 rounded-full backdrop-blur animate-float-side delay-900" />
+        <div className={`absolute top-1/2 right-1/5 w-12 h-12 border-2 ${borderColor}/25 rounded-lg transform rotate-45 backdrop-blur animate-float-up-slow delay-200`} />
+        <div className={`absolute bottom-1/3 right-1/4 w-14 h-14 border-2 ${borderColor}/20 rounded-full backdrop-blur animate-float-side delay-900`} />
   
         {/* Additional Elements */}
-        <div className="absolute top-2/3 right-1/6 w-10 h-10 border-2 border-amber-300/25 transform rotate-30 backdrop-blur animate-float-diagonal delay-600" />
-        <div className="absolute bottom-1/4 right-1/5 w-8 h-8 border-2 border-amber-300/30 rounded-lg backdrop-blur animate-float-circle delay-800" />
+        <div className={`absolute top-2/3 right-1/6 w-10 h-10 border-2 ${borderColor}/25 transform rotate-30 backdrop-blur animate-float-diagonal delay-600`} />
+        <div className={`absolute bottom-1/4 right-1/5 w-8 h-8 border-2 ${borderColor}/30 rounded-lg backdrop-blur animate-float-circle delay-800`} />
       </div>
     </div>
   );
+};
 
 export default AnnouncementsAndFAQs;
