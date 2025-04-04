@@ -13,7 +13,14 @@ export const ThemeProvider = ({ children }) => {
 
   // Theme-based styles
   const themeStyles = useLightTheme ? {
-    background: "bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50",
+    // background: "bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50",
+    background: "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50",
+    // background: "bg-gradient-to-r from-emerald-50 via-green-100 to-emerald-50",
+    // background: "bg-gradient-to-r from-teal-50 via-cyan-100 to-teal-50",
+    // background: "bg-gradient-to-r from-rose-50 via-pink-100 to-rose-50",
+    // background: "bg-gradient-to-r from-slate-100 via-blue-50 to-slate-100",
+
+    // background: "bg-gradient-to-r from-violet-100 via-purple-50 to-violet-100",
     backgroundPattern: "bg-[url('/assets/labmanager/images/light-pattern.png')]",
     text: {
       primary: "text-gray-800",
@@ -39,7 +46,8 @@ export const ThemeProvider = ({ children }) => {
     },
     pattern: "text-amber-700/5"
   } : {
-    background: "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700",
+    // background: "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700",
+    background: "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]",
     backgroundPattern: "bg-[url('/assets/labmanager/images/dark-pattern.png')]",
     text: {
       primary: "text-gray-200",

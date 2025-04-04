@@ -93,8 +93,8 @@ const FeatureCard = ({ icon, title, description, useLightTheme }) => {
 
 const BackgroundPattern = ({ useLightTheme }) => {
   const bgGradient = useLightTheme
-    ? "bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50"
-    : "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700";
+    ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50"
+    : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
     
   const borderColor = useLightTheme 
     ? "border-amber-700" 

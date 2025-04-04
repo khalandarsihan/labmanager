@@ -24,7 +24,7 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
         <div className="flex flex-col lg:flex-row relative gap-8">
           {/* Left Column - Announcements */}
           <div className="lg:w-1/2 relative group">
-            <div className={`absolute inset-0 ${useLightTheme ? 'bg-amber-100/20' : 'bg-gray-700/20'} backdrop-blur-sm transform skew-x-12 origin-top-left transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
+            <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform skew-x-12 origin-top-left transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
               <div className="p-8 h-full">
                 <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-300'} mb-8`}>
@@ -46,7 +46,7 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
 
           {/* Right Column - FAQs */}
           <div className="lg:w-1/2 relative group">
-            <div className={`absolute inset-0 ${useLightTheme ? 'bg-amber-100/20' : 'bg-gray-700/20'} backdrop-blur-sm transform -skew-x-12 origin-top-right transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
+            <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform -skew-x-12 origin-top-right transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
               <div className="p-8 h-full">
                 <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-300'} mb-8`}>
@@ -144,8 +144,8 @@ const FAQItem = ({ faq, isOpen, onClick, useLightTheme, themeStyles }) => (
 
 const BackgroundPattern = ({ useLightTheme }) => {
   const bgGradient = useLightTheme
-    ? "bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50"
-    : "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700";
+    ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50"
+    : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
     
   const borderColor = useLightTheme 
     ? "border-amber-700" 

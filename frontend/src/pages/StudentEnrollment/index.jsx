@@ -17,8 +17,10 @@ import AcademicInfoForm from './AcademicInfoForm';
 import Toast from './Toast';
 import RegistrationConfirmation from './RegistrationConfirmation';
 import BackgroundPattern from '@/components/ui/BackgroundPattern'; 
+import { useTheme } from '@/components/ui/ThemeContext';
 
 const StudentEnrollment = () => {
+  const { useLightTheme, themeStyles } = useTheme();
   const [currentStep, setCurrentStep] = useState(1);
   const [registrationId, setRegistrationId] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -26,6 +28,36 @@ const StudentEnrollment = () => {
   const [toast, setToast] = useState(null);
   const [errors, setErrors] = useState({});
   const totalSteps = 3;
+
+  // Themed styling
+  const cardBg = useLightTheme 
+    // ? "border-amber-200/50 bg-amber-50/90"
+    // ? "border-gray-200/50 bg-white/90"
+    // ? "border-amber-300/70 bg-white/90"
+    ? "border-amber-200/50 bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50"
+    
+    // : "border-gray-700/50 bg-gray-800/50";
+    : "border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]"
+  
+  const cardTitle = useLightTheme
+    ? "text-amber-700"
+    : "text-amber-300";
+    
+  const cardDesc = useLightTheme
+    ? "text-amber-700/70"
+    : "text-amber-100/70";
+    
+  const formBg = useLightTheme
+    ? "border-amber-200/50 bg-white/70"
+    : "border-gray-700/50 bg-gray-800/30";
+    
+  const buttonPrimary = useLightTheme
+    ? "bg-amber-500 text-white hover:bg-amber-600 disabled:bg-amber-300/50"
+    : "bg-amber-300 text-gray-900 hover:bg-amber-400 disabled:bg-gray-800/50";
+    
+  const buttonSecondary = useLightTheme
+    ? "disabled:bg-gray-200/50 disabled:text-gray-400 disabled:border disabled:border-gray-300/50"
+    : "disabled:bg-gray-800/50 disabled:text-gray-500 disabled:border disabled:border-gray-700/50";
 
   const [formData, setFormData] = useState({
     personal: {
@@ -160,6 +192,7 @@ const StudentEnrollment = () => {
             formData={formData.personal}
             onChange={(field, value) => handleInputChange('personal', field, value)}
             errors={errors}
+            useLightTheme={useLightTheme}
           />
         );
       case 2:
@@ -168,6 +201,7 @@ const StudentEnrollment = () => {
             formData={formData.address}
             onChange={(field, value) => handleInputChange('address', field, value)}
             errors={errors}
+            useLightTheme={useLightTheme}
           />
         );
       case 3:
@@ -179,6 +213,7 @@ const StudentEnrollment = () => {
             academicPrograms={academicPrograms?.message?.programs || []}
             islamicSpecializations={islamicSpecializations?.message?.specializations || []}
             educationLevels={educationLevels?.message?.education_levels || []}
+            useLightTheme={useLightTheme}
           />
         );
       default:
@@ -206,12 +241,12 @@ const StudentEnrollment = () => {
       <BackgroundPattern />
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <Card className="border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
+        <Card className={`${cardBg} backdrop-blur-sm`}>
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center text-amber-300">
+            <CardTitle className={`text-2xl font-bold text-center ${cardTitle}`}>
               Student Registration
             </CardTitle>
-            <CardDescription className="text-center text-amber-100/70">
+            <CardDescription className={`text-center ${cardDesc}`}>
               Join our community of learners at TechEthica
             </CardDescription>
           </CardHeader>
@@ -224,7 +259,7 @@ const StudentEnrollment = () => {
               className="mb-8"
             />
 
-            <div className="relative backdrop-blur-sm p-6 rounded-lg border border-gray-700/50">
+            <div className={`relative backdrop-blur-sm p-6 rounded-lg border ${formBg}`}>
               {getStepContent()}
             </div>
 
@@ -233,9 +268,8 @@ const StudentEnrollment = () => {
                 onClick={() => setCurrentStep(prev => prev - 1)}
                 disabled={currentStep === 1 || isSubmitting}
                 className={cn(
-                  "bg-amber-300 text-gray-900 border-0",
-                  "hover:bg-amber-400",
-                  "disabled:bg-gray-800/50 disabled:text-gray-500 disabled:border disabled:border-gray-700/50",
+                  `${buttonPrimary} border-0`,
+                  buttonSecondary,
                   "transition-all duration-200 ease-in-out"
                 )}
               >
@@ -247,8 +281,7 @@ const StudentEnrollment = () => {
                 onClick={currentStep === totalSteps ? handleSubmit : () => setCurrentStep(prev => prev + 1)}
                 disabled={isSubmitting}
                 className={cn(
-                  "bg-amber-300 text-gray-900",
-                  "hover:bg-amber-400",
+                  buttonPrimary,
                   "transition-all duration-200 ease-in-out"
                 )}
               >

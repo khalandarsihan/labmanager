@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select';
 import { Building2, Calendar } from 'lucide-react';
 
-const AcademicInfoForm = ({ formData, onChange, errors }) => {
+const AcademicInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
   // Fetch API data
   const { data: programsData } = useFrappeGetCall('labmanager.api.api.get_academic_programs');
   const { data: specializationsData } = useFrappeGetCall('labmanager.api.api.get_islamic_specializations');
@@ -22,25 +22,66 @@ const AcademicInfoForm = ({ formData, onChange, errors }) => {
   const specializationOptions = specializationsData?.message?.specializations || [];
   const educationOptions = educationLevelsData?.message?.education_levels || [];
 
+  // Apply theme-based styles
+  const labelStyle = useLightTheme 
+    ? "text-amber-700 font-medium" 
+    : "text-amber-200 font-medium";
+    
+  const inputBg = useLightTheme
+    ? "bg-white border-amber-200/50 text-gray-700 focus:border-amber-400/80 placeholder-gray-400"
+    : "bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400";
+    
+  const selectBg = useLightTheme
+    ? "bg-white border-amber-200/50 text-gray-700 focus:border-amber-400/80"
+    : "bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50";
+    
+  const selectContent = useLightTheme
+    ? "bg-white border-amber-200"
+    : "bg-gray-800 border-gray-700";
+    
+  const selectItem = useLightTheme
+    ? "text-gray-700 hover:bg-amber-50"
+    : "text-amber-100 hover:bg-gray-700";
+    
+  const iconStyle = useLightTheme
+    ? "text-amber-500/70"
+    : "text-amber-300/70";
+    
+  const errorStyle = useLightTheme
+    ? "text-red-500"
+    : "text-red-400";
+    
+  const infoBgStyle = useLightTheme
+    ? "bg-amber-50/80 border-amber-200/50"
+    : "bg-gray-800/30 border-gray-700/50";
+    
+  const infoTitleStyle = useLightTheme
+    ? "text-amber-700"
+    : "text-amber-200";
+    
+  const infoTextStyle = useLightTheme
+    ? "text-amber-700/70"
+    : "text-amber-100/70";
+
   return (
     <div className="space-y-6">
       {/* Desired Program & Islamic Studies Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <Label className="text-amber-200 font-medium">Desired Academic Program</Label>
+          <Label className={labelStyle}>Desired Academic Program</Label>
           <Select
             value={formData.desired_academic_program || ""}
             onValueChange={(value) => onChange('desired_academic_program', value)}
           >
-            <SelectTrigger className="bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50">
+            <SelectTrigger className={selectBg}>
               <SelectValue placeholder="Select desired program" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
+            <SelectContent className={selectContent}>
               {programOptions.map((program) => (
                 <SelectItem
                   key={program}
                   value={program}
-                  className="text-amber-100 hover:bg-gray-700"
+                  className={selectItem}
                 >
                   {program}
                 </SelectItem>
@@ -48,25 +89,25 @@ const AcademicInfoForm = ({ formData, onChange, errors }) => {
             </SelectContent>
           </Select>
           {errors.desired_academic_program && (
-            <span className="text-red-400 text-sm mt-1">{errors.desired_academic_program}</span>
+            <span className={`text-sm mt-1 ${errorStyle}`}>{errors.desired_academic_program}</span>
           )}
         </div>
 
         <div>
-          <Label className="text-amber-200 font-medium">Islamic Studies Specialization</Label>
+          <Label className={labelStyle}>Islamic Studies Specialization</Label>
           <Select
             value={formData.islamic_studies_specialization || ""}
             onValueChange={(value) => onChange('islamic_studies_specialization', value)}
           >
-            <SelectTrigger className="bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50">
+            <SelectTrigger className={selectBg}>
               <SelectValue placeholder="Select specialization" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
+            <SelectContent className={selectContent}>
               {specializationOptions.map((spec) => (
                 <SelectItem
                   key={spec}
                   value={spec}
-                  className="text-amber-100 hover:bg-gray-700"
+                  className={selectItem}
                 >
                   {spec}
                 </SelectItem>
@@ -74,7 +115,7 @@ const AcademicInfoForm = ({ formData, onChange, errors }) => {
             </SelectContent>
           </Select>
           {errors.islamic_studies_specialization && (
-            <span className="text-red-400 text-sm mt-1">
+            <span className={`text-sm mt-1 ${errorStyle}`}>
               {errors.islamic_studies_specialization}
             </span>
           )}
@@ -84,20 +125,20 @@ const AcademicInfoForm = ({ formData, onChange, errors }) => {
       {/* Previous Education & Year Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <Label className="text-amber-200 font-medium">Previous Education</Label>
+          <Label className={labelStyle}>Previous Education</Label>
           <Select
             value={formData.previous_education || ""}
             onValueChange={(value) => onChange('previous_education', value)}
           >
-            <SelectTrigger className="bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50">
+            <SelectTrigger className={selectBg}>
               <SelectValue placeholder="Select previous education" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
+            <SelectContent className={selectContent}>
               {educationOptions.map((level) => (
                 <SelectItem
                   key={level}
                   value={level}
-                  className="text-amber-100 hover:bg-gray-700"
+                  className={selectItem}
                 >
                   {level}
                 </SelectItem>
@@ -105,54 +146,54 @@ const AcademicInfoForm = ({ formData, onChange, errors }) => {
             </SelectContent>
           </Select>
           {errors.previous_education && (
-            <span className="text-red-400 text-sm mt-1">{errors.previous_education}</span>
+            <span className={`text-sm mt-1 ${errorStyle}`}>{errors.previous_education}</span>
           )}
         </div>
 
         <div>
-          <Label className="text-amber-200 font-medium">Year of Completion</Label>
+          <Label className={labelStyle}>Year of Completion</Label>
           <div className="relative">
             <Input
               type="number"
               value={formData.year_of_completion || ""}
               onChange={(e) => onChange('year_of_completion', e.target.value)}
-              className="pl-10 bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400"
+              className={`pl-10 ${inputBg}`}
               placeholder="YYYY"
               min="1900"
               max="2024"
             />
-            <Calendar className="w-5 h-5 absolute left-3 top-2.5 text-amber-300/70" />
+            <Calendar className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
           </div>
           {errors.year_of_completion && (
-            <span className="text-red-400 text-sm mt-1">{errors.year_of_completion}</span>
+            <span className={`text-sm mt-1 ${errorStyle}`}>{errors.year_of_completion}</span>
           )}
         </div>
       </div>
 
       {/* Previous Institution */}
       <div>
-        <Label className="text-amber-200 font-medium">Previous Institution</Label>
+        <Label className={labelStyle}>Previous Institution</Label>
         <div className="relative">
           <Input
             value={formData.institution || ""}
             onChange={(e) => onChange('institution', e.target.value)}
-            className="pl-10 bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400"
+            className={`pl-10 ${inputBg}`}
             placeholder="Enter your previous institution"
           />
-          <Building2 className="w-5 h-5 absolute left-3 top-2.5 text-amber-300/70" />
+          <Building2 className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
         </div>
         {errors.institution && (
-          <span className="text-red-400 text-sm mt-1">{errors.institution}</span>
+          <span className={`text-sm mt-1 ${errorStyle}`}>{errors.institution}</span>
         )}
       </div>
 
       {/* Educational Journey Info Box */}
-      <div className="mt-8 p-4 bg-gray-800/30 border border-gray-700/50 rounded-lg backdrop-blur-sm">
+      <div className={`mt-8 p-4 ${infoBgStyle} rounded-lg backdrop-blur-sm`}>
         <div className="flex items-center mb-2">
-          <Building2 className="w-5 h-5 text-amber-300 mr-2" />
-          <span className="text-amber-200 font-medium">Educational Journey</span>
+          <Building2 className={`w-5 h-5 ${iconStyle} mr-2`} />
+          <span className={`${infoTitleStyle} font-medium`}>Educational Journey</span>
         </div>
-        <p className="text-amber-100/70 text-sm">
+        <p className={`text-sm ${infoTextStyle}`}>
           Your academic background helps us tailor the learning experience to your needs.
           Make sure to provide accurate information about your previous studies.
         </p>

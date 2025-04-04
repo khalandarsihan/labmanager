@@ -1,7 +1,6 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import * as SelectPrimitive from "@radix-ui/react-select";
 import {
   Select,
   SelectContent,
@@ -11,7 +10,7 @@ import {
 } from '@/components/ui/select';
 import { User, Mail, Phone, Upload, Calendar } from 'lucide-react';
 
-const PersonalInfoForm = ({ formData, onChange, errors }) => {
+const PersonalInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -19,12 +18,29 @@ const PersonalInfoForm = ({ formData, onChange, errors }) => {
     }
   };
 
+  // Apply theme-based styles
+  const labelStyle = useLightTheme 
+    ? "text-amber-700 font-medium" 
+    : "text-amber-200 font-medium";
+    
+  const inputBg = useLightTheme
+    ? "bg-white border-amber-200/50 text-gray-700 focus:border-amber-400/80 placeholder-gray-400"
+    : "bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400";
+    
+  const iconStyle = useLightTheme
+    ? "text-amber-500/70"
+    : "text-amber-300/70";
+    
+  const errorStyle = useLightTheme
+    ? "text-red-500"
+    : "text-red-400";
+
   return (
     <div className="space-y-6">
       {/* Profile Image Upload */}
       <div className="flex justify-center mb-8">
         <div className="relative group">
-          <div className="w-32 h-32 rounded-full bg-gray-800/50 border-2 border-amber-300/50 overflow-hidden flex items-center justify-center hover:border-amber-300/70 transition-colors duration-300">
+          <div className={`w-32 h-32 rounded-full ${useLightTheme ? 'bg-white/80 border-amber-400/50' : 'bg-gray-800/50 border-amber-300/50'} border-2 overflow-hidden flex items-center justify-center ${useLightTheme ? 'hover:border-amber-400/80' : 'hover:border-amber-300/70'} transition-colors duration-300`}>
             {formData.profile_image ? (
               <img
                 src={URL.createObjectURL(formData.profile_image)}
@@ -32,7 +48,7 @@ const PersonalInfoForm = ({ formData, onChange, errors }) => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <User className="w-16 h-16 text-amber-300/70" />
+              <User className={`w-16 h-16 ${iconStyle}`} />
             )}
           </div>
           <input
@@ -41,8 +57,8 @@ const PersonalInfoForm = ({ formData, onChange, errors }) => {
             onChange={handleImageChange}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
-          <div className="absolute inset-0 bg-gray-900/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center backdrop-blur-sm">
-            <Upload className="w-8 h-8 text-amber-300" />
+          <div className={`absolute inset-0 ${useLightTheme ? 'bg-gray-200/50' : 'bg-gray-900/50'} opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center backdrop-blur-sm`}>
+            <Upload className={`w-8 h-8 ${useLightTheme ? 'text-amber-500' : 'text-amber-300'}`} />
           </div>
         </div>
       </div>
@@ -50,111 +66,111 @@ const PersonalInfoForm = ({ formData, onChange, errors }) => {
       {/* Name Fields */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <Label className="text-amber-200 font-medium">First Name</Label>
+          <Label className={labelStyle}>First Name</Label>
           <div className="relative">
             <Input
               value={formData.first_name || ''}
               onChange={(e) => onChange('first_name', e.target.value)}
-              className="pl-10 bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400"
+              className={`pl-10 ${inputBg}`}
               placeholder="Enter first name"
             />
-            <User className="w-5 h-5 absolute left-3 top-2.5 text-amber-300/70" />
+            <User className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
           </div>
-          {errors.first_name && <span className="text-red-400 text-sm mt-1">{errors.first_name}</span>}
+          {errors.first_name && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.first_name}</span>}
         </div>
 
         <div>
-          <Label className="text-amber-200 font-medium">Middle Name</Label>
+          <Label className={labelStyle}>Middle Name</Label>
           <div className="relative">
             <Input
               value={formData.middle_name || ''}
               onChange={(e) => onChange('middle_name', e.target.value)}
-              className="pl-10 bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400"
+              className={`pl-10 ${inputBg}`}
               placeholder="Enter middle name"
             />
-            <User className="w-5 h-5 absolute left-3 top-2.5 text-amber-300/70" />
+            <User className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
           </div>
         </div>
 
         <div>
-          <Label className="text-amber-200 font-medium">Last Name</Label>
+          <Label className={labelStyle}>Last Name</Label>
           <div className="relative">
             <Input
               value={formData.last_name || ''}
               onChange={(e) => onChange('last_name', e.target.value)}
-              className="pl-10 bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400"
+              className={`pl-10 ${inputBg}`}
               placeholder="Enter last name"
             />
-            <User className="w-5 h-5 absolute left-3 top-2.5 text-amber-300/70" />
+            <User className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
           </div>
-          {errors.last_name && <span className="text-red-400 text-sm mt-1">{errors.last_name}</span>}
+          {errors.last_name && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.last_name}</span>}
         </div>
       </div>
 
       {/* Contact & Personal Details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label className="text-amber-200 font-medium">Email</Label>
+          <Label className={labelStyle}>Email</Label>
           <div className="relative">
             <Input
               type="email"
               value={formData.email || ''}
               onChange={(e) => onChange('email', e.target.value)}
-              className="pl-10 bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400"
+              className={`pl-10 ${inputBg}`}
               placeholder="Enter email address"
             />
-            <Mail className="w-5 h-5 absolute left-3 top-2.5 text-amber-300/70" />
+            <Mail className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
           </div>
-          {errors.email && <span className="text-red-400 text-sm mt-1">{errors.email}</span>}
+          {errors.email && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.email}</span>}
         </div>
 
         <div>
-          <Label className="text-amber-200 font-medium">Phone</Label>
+          <Label className={labelStyle}>Phone</Label>
           <div className="relative">
             <Input
               type="tel"
               value={formData.phone || ''}
               onChange={(e) => onChange('phone', e.target.value)}
-              className="pl-10 bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400"
+              className={`pl-10 ${inputBg}`}
               placeholder="Enter phone number"
             />
-            <Phone className="w-5 h-5 absolute left-3 top-2.5 text-amber-300/70" />
+            <Phone className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
           </div>
-          {errors.phone && <span className="text-red-400 text-sm mt-1">{errors.phone}</span>}
+          {errors.phone && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.phone}</span>}
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label className="text-amber-200 font-medium">Date of Birth</Label>
+          <Label className={labelStyle}>Date of Birth</Label>
           <div className="relative">
             <Input
               type="date"
               value={formData.date_of_birth || ''}
               onChange={(e) => onChange('date_of_birth', e.target.value)}
-              className="pl-10 bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50"
+              className={`pl-10 ${inputBg}`}
             />
-            <Calendar className="w-5 h-5 absolute left-3 top-2.5 text-amber-300/70" />
+            <Calendar className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
           </div>
-          {errors.date_of_birth && <span className="text-red-400 text-sm mt-1">{errors.date_of_birth}</span>}
+          {errors.date_of_birth && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.date_of_birth}</span>}
         </div>
 
         <div>
-          <Label className="text-amber-200 font-medium">Gender</Label>
+          <Label className={labelStyle}>Gender</Label>
           <Select 
             value={formData.gender || ''}
             onValueChange={(value) => onChange('gender', value)}
           >
-            <SelectTrigger className="bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50">
+            <SelectTrigger className={inputBg}>
               <SelectValue placeholder="Select gender" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
-              <SelectItem value="Male" className="text-amber-100 hover:bg-gray-700">Male</SelectItem>
-              <SelectItem value="Female" className="text-amber-100 hover:bg-gray-700">Female</SelectItem>
-              <SelectItem value="Other" className="text-amber-100 hover:bg-gray-700">Other</SelectItem>
+            <SelectContent className={useLightTheme ? "bg-white border-amber-200" : "bg-gray-800 border-gray-700"}>
+              <SelectItem value="Male" className={useLightTheme ? "text-gray-700 hover:bg-amber-50" : "text-amber-100 hover:bg-gray-700"}>Male</SelectItem>
+              <SelectItem value="Female" className={useLightTheme ? "text-gray-700 hover:bg-amber-50" : "text-amber-100 hover:bg-gray-700"}>Female</SelectItem>
+              <SelectItem value="Other" className={useLightTheme ? "text-gray-700 hover:bg-amber-50" : "text-amber-100 hover:bg-gray-700"}>Other</SelectItem>
             </SelectContent>
           </Select>
-          {errors.gender && <span className="text-red-400 text-sm mt-1">{errors.gender}</span>}
+          {errors.gender && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.gender}</span>}
         </div>
       </div>
     </div>

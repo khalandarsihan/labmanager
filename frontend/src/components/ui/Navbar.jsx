@@ -175,7 +175,7 @@ const Navbar = () => {
 
   // Conditional styles based on theme
   const navBgStyle = useLightTheme 
-    ? "bg-gradient-to-r from-amber-100 to-amber-200"
+    ? "bg-gradient-to-r from-purple-50 via-purple-200 to-purple-50"
     : "bg-gradient-to-r from-[#222] to-[#444]";
     
   const logoTextStyle = useLightTheme
