@@ -1,7 +1,10 @@
 import React from 'react';
 import './Stats.css';
+import { useTheme } from '../../../components/ui/ThemeContext';
 
 const Stats = () => {
+  const { useLightTheme, themeStyles } = useTheme();
+  
   const stats = [
     {
       icon: 'fas fa-user-graduate',
@@ -25,31 +28,44 @@ const Stats = () => {
     }
   ];
 
+  // Theme-dependent styles
+  const sectionBg = useLightTheme ? 'bg-amber-50' : 'bg-[#1a1f2e]';
+  const gradientFrom = useLightTheme ? 'from-amber-50' : 'from-[#1a1f2e]';
+  const gradientTo = useLightTheme ? 'to-amber-100' : 'to-[#131720]';
+
   return (
     <>
-      <section className="py-20 bg-[#1a1f2e]">
+      <section className={`py-20 ${sectionBg}`}>
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <StatCard key={index} {...stat} />
+              <StatCard key={index} {...stat} useLightTheme={useLightTheme} />
             ))}
           </div>
         </div>
       </section>
       {/* Spacer with gradient */}
-      <div className="h-20 bg-gradient-to-b from-[#1a1f2e] to-[#131720]"></div>
+      <div className={`h-20 bg-gradient-to-b ${gradientFrom} ${gradientTo}`}></div>
     </>
   );
 };
 
-const StatCard = ({ icon, value, label }) => (
-  <div className="stat-card counter bg-[#232836] rounded-lg p-6 text-center border border-gray-700 hover:border-amber-300 transition-all duration-300 group">
-    <div className="mb-4 transform transition-transform duration-300 group-hover:scale-110">
-      <i className={`${icon} text-amber-300 text-3xl`}></i>
+const StatCard = ({ icon, value, label, useLightTheme }) => {
+  const cardBg = useLightTheme ? 'bg-white/70' : 'bg-[#232836]';
+  const borderColor = useLightTheme ? 'border-amber-200 hover:border-amber-500' : 'border-gray-700 hover:border-amber-300';
+  const iconColor = useLightTheme ? 'text-amber-600' : 'text-amber-300';
+  const valueColor = useLightTheme ? 'text-amber-700' : 'text-amber-300';
+  const labelColor = useLightTheme ? 'text-gray-700' : 'text-gray-300';
+
+  return (
+    <div className={`stat-card counter ${cardBg} rounded-lg p-6 text-center border ${borderColor} transition-all duration-300 group`}>
+      <div className="mb-4 transform transition-transform duration-300 group-hover:scale-110">
+        <i className={`${icon} ${iconColor} text-3xl`}></i>
+      </div>
+      <div className={`text-3xl font-bold ${valueColor} mb-2`}>{value}</div>
+      <div className={labelColor}>{label}</div>
     </div>
-    <div className="text-3xl font-bold text-amber-300 mb-2">{value}</div>
-    <div className="text-gray-300">{label}</div>
-  </div>
-);
+  );
+};
 
 export default Stats;
