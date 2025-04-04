@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, ChevronLeft, ChevronRight, Info, BookOpen, Calendar as CalendarIcon, Clock, MapPin, Users } from 'lucide-react';
 import BackgroundPattern from './BackgroundPattern'; 
+import { useTheme } from '../../components/ui/ThemeContext';
+
 
 
 const AcademicCalendar = () => {
+  const { useLightTheme, toggleTheme, themeStyles } = useTheme();
   // State for calendar data and UI
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -13,6 +16,7 @@ const AcademicCalendar = () => {
   const [view, setView] = useState('month'); // 'month', 'week', or 'list'
   // Make events clickable with details overlay
   const [selectedEvent, setSelectedEvent] = useState(null);
+
   
   
     // Replace the existing useEffect block in AcademicCalendar.jsx
