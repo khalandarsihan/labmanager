@@ -23,7 +23,7 @@ const CourseCard = ({ course, isListView }) => {
 // const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
 // const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-amber-400";
 
-const cardBg = useLightTheme ? "bg-white" : "bg-gray-800";
+const cardBg = useLightTheme ? "bg-white" : "bg-gray-900";
 const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
 const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
 const borderColor = useLightTheme ? "border-transparent" : "border-gray-700";
