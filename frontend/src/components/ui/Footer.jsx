@@ -86,44 +86,77 @@ import { useTheme } from './ThemeContext';
 const Footer = () => {
   const { useLightTheme } = useTheme();
   
-  // Conditional styles based on theme
-  const footerBgStyle = useLightTheme
-    ? "bg-gradient-to-r from-purple-100 via-purple-200 to-purple-100"
-    // : "bg-gradient-to-r from-[#1a1f2e]/90 to-[#131720]/90";
-    : "bg-gradient-to-r from-[#1a1f2e]/90 via-[#131720]/90 to-[#1a1f2e]/90";
-    // : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
+  // // Conditional styles based on theme
+  // const footerBgStyle = useLightTheme
+  //   ? "bg-gradient-to-r from-purple-100 via-purple-200 to-purple-100"
+  //   // : "bg-gradient-to-r from-[#1a1f2e]/90 to-[#131720]/90";
+  //   : "bg-gradient-to-r from-[#1a1f2e]/90 via-[#131720]/90 to-[#1a1f2e]/90";
+  //   // : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
     
-  const headingStyle = useLightTheme
-    ? "text-amber-700"
-    : "text-amber-400";
+  // const headingStyle = useLightTheme
+  //   ? "text-amber-700"
+  //   : "text-amber-400";
     
-  const textStyle = useLightTheme
-    ? "text-gray-800"
-    : "text-gray-200";
+  // const textStyle = useLightTheme
+  //   ? "text-gray-800"
+  //   : "text-gray-200";
     
-  const linkHoverStyle = useLightTheme
-    ? "hover:text-amber-700"
-    : "hover:text-amber-400";
+  // const linkHoverStyle = useLightTheme
+  //   ? "hover:text-amber-700"
+  //   : "hover:text-amber-400";
     
-  const socialIconStyle = useLightTheme
-    ? "text-amber-700 hover:text-amber-900"
-    : "text-amber-400 hover:text-amber-200";
+  // const socialIconStyle = useLightTheme
+  //   ? "text-amber-700 hover:text-amber-900"
+  //   : "text-amber-400 hover:text-amber-200";
+    
+  // // const copyrightBgStyle = useLightTheme
+  // //   ? "bg-gradient-to-r from-amber-100 via-amber-200 to-amber-100 hover:from-amber-200 hover:via-amber-300 hover:to-amber-200"
+  // //   : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
     
   // const copyrightBgStyle = useLightTheme
-  //   ? "bg-gradient-to-r from-amber-100 via-amber-200 to-amber-100 hover:from-amber-200 hover:via-amber-300 hover:to-amber-200"
-  //   : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
-    
-  const copyrightBgStyle = useLightTheme
-  ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50 hover:from-purple-100 hover:via-purple-200 hover:to-purple-100"
-  : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
+  // ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50 hover:from-purple-100 hover:via-purple-200 hover:to-purple-100"
+  // : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
 
-  const copyrightTextStyle = useLightTheme
-    ? "text-gray-700"
-    : "text-gray-200";
+  // const copyrightTextStyle = useLightTheme
+  //   ? "text-gray-700"
+  //   : "text-gray-200";
     
-  const highlightStyle = useLightTheme
-    ? "text-amber-700 hover:text-amber-900"
-    : "text-amber-400 hover:text-amber-200";
+  // const highlightStyle = useLightTheme
+  //   ? "text-amber-700 hover:text-amber-900"
+  //   : "text-amber-400 hover:text-amber-200";
+
+  // Conditional styles based on theme
+const footerBgStyle = useLightTheme
+? "bg-gradient-to-r from-purple-100 via-purple-200 to-purple-100"
+: "bg-gradient-to-r from-[#1a1f2e]/90 via-[#131720]/90 to-[#1a1f2e]/90";
+
+const headingStyle = useLightTheme
+? "text-purple-700"
+: "text-amber-400";
+
+const textStyle = useLightTheme
+? "text-gray-800"
+: "text-gray-200";
+
+const linkHoverStyle = useLightTheme
+? "hover:text-purple-700"
+: "hover:text-amber-400";
+
+const socialIconStyle = useLightTheme
+? "text-purple-700 hover:text-purple-900"
+: "text-amber-400 hover:text-amber-200";
+
+const copyrightBgStyle = useLightTheme
+? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50 hover:from-purple-100 hover:via-purple-200 hover:to-purple-100"
+: "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
+
+const copyrightTextStyle = useLightTheme
+? "text-gray-700"
+: "text-gray-200";
+
+const highlightStyle = useLightTheme
+? "text-purple-700 hover:text-purple-900"
+: "text-amber-400 hover:text-amber-200";
 
   return (
     <footer className={`${footerBgStyle} ${textStyle} pt-6 font-sans`}>

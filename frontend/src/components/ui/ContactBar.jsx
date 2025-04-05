@@ -61,21 +61,33 @@ import { useTheme } from './ThemeContext';
 const ContactBar = () => {
   const { useLightTheme } = useTheme();
   
-  // Use your existing styles but conditionally based on theme
+  // // Use your existing styles but conditionally based on theme
+  // // const bgStyle = useLightTheme 
+  // //   ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50   text-gray-800 hover:from-amber-100 hover:via-amber-200 hover:to-amber-100" 
+  // //   : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] text-gray-200 hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
   // const bgStyle = useLightTheme 
-  //   ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50   text-gray-800 hover:from-amber-100 hover:via-amber-200 hover:to-amber-100" 
-  //   : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] text-gray-200 hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
+  // ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50 text-gray-800 hover:from-purple-100 hover:via-purple-200 hover:to-purple-100" 
+  // : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] text-gray-200 hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
+
+  // const titleStyle = useLightTheme
+  //   ? "text-amber-700"
+  //   : "text-amber-300";
+    
+  // const linkStyle = useLightTheme 
+  //   ? "text-gray-700 hover:text-amber-600" 
+  //   : "text-gray-200 hover:text-amber-300";
+
   const bgStyle = useLightTheme 
   ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50 text-gray-800 hover:from-purple-100 hover:via-purple-200 hover:to-purple-100" 
   : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444] text-gray-200 hover:from-[#222222] hover:via-[#333333] hover:to-amber-100";
 
-  const titleStyle = useLightTheme
-    ? "text-amber-700"
-    : "text-amber-300";
-    
-  const linkStyle = useLightTheme 
-    ? "text-gray-700 hover:text-amber-600" 
-    : "text-gray-200 hover:text-amber-300";
+const titleStyle = useLightTheme
+  ? "text-purple-700"
+  : "text-amber-300";
+  
+const linkStyle = useLightTheme 
+  ? "text-gray-700 hover:text-purple-600" 
+  : "text-gray-200 hover:text-amber-300";
 
   return (
     <div className={`relative ${bgStyle} text-center py-4 px-6 transition-all duration-700 ease-in-out shadow-lg`}>
