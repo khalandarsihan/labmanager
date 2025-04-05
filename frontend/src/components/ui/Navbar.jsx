@@ -174,29 +174,53 @@ const Navbar = () => {
   };
 
   // Conditional styles based on theme
+  // const navBgStyle = useLightTheme 
+  //   ? "bg-gradient-to-r from-purple-50 via-purple-200 to-purple-50"
+  //   : "bg-gradient-to-r from-[#222] to-[#444]";
+    
+  // const logoTextStyle = useLightTheme
+  //   ? "text-amber-700 hover:text-amber-800"
+  //   : "text-amber-300 hover:text-amber-200";
+    
+  // const linkTextStyle = useLightTheme
+  //   ? "text-gray-700 hover:text-amber-700"
+  //   : "text-white hover:text-amber-300";
+    
+  // const dropdownBgStyle = useLightTheme
+  //   ? "bg-amber-50"
+  //   : "bg-[#333]";
+    
+  // const ctaBgStyle = useLightTheme
+  //   ? "bg-amber-500 text-white hover:bg-amber-600"
+  //   : "bg-amber-300 text-[#333] hover:bg-amber-200";
+    
+  // const mobileMenuStyle = useLightTheme
+  //   ? "text-gray-700"
+  //   : "text-white";
+
   const navBgStyle = useLightTheme 
-    ? "bg-gradient-to-r from-purple-50 via-purple-200 to-purple-50"
-    : "bg-gradient-to-r from-[#222] to-[#444]";
-    
-  const logoTextStyle = useLightTheme
-    ? "text-amber-700 hover:text-amber-800"
-    : "text-amber-300 hover:text-amber-200";
-    
-  const linkTextStyle = useLightTheme
-    ? "text-gray-700 hover:text-amber-700"
-    : "text-white hover:text-amber-300";
-    
-  const dropdownBgStyle = useLightTheme
-    ? "bg-amber-50"
-    : "bg-[#333]";
-    
-  const ctaBgStyle = useLightTheme
-    ? "bg-amber-500 text-white hover:bg-amber-600"
-    : "bg-amber-300 text-[#333] hover:bg-amber-200";
-    
-  const mobileMenuStyle = useLightTheme
-    ? "text-gray-700"
-    : "text-white";
+  ? "bg-gradient-to-r from-purple-50 via-purple-200 to-purple-50"
+  : "bg-gradient-to-r from-[#222] to-[#444]";
+  
+const logoTextStyle = useLightTheme
+  ? "text-purple-700 hover:text-purple-800"
+  : "text-amber-300 hover:text-amber-200";
+  
+const linkTextStyle = useLightTheme
+  ? "text-gray-700 hover:text-purple-700"
+  : "text-white hover:text-amber-300";
+  
+const dropdownBgStyle = useLightTheme
+  ? "bg-purple-50"
+  : "bg-[#333]";
+  
+const ctaBgStyle = useLightTheme
+  ? "bg-purple-500 text-white hover:bg-purple-600"
+  : "bg-amber-300 text-[#333] hover:bg-amber-200";
+  
+const mobileMenuStyle = useLightTheme
+  ? "text-gray-700"
+  : "text-white";
 
   return (
     <nav className={`${navBgStyle} py-[15px] px-5 w-full relative top-[1px] z-[1000] -mt-[1px]`}>
