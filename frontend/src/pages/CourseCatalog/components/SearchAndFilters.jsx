@@ -16,22 +16,39 @@ const SearchAndFilters = ({
     const searchInputRef = useRef(null);
     const debounceTimerRef = useRef(null);
     
+    // // Define theme-specific styles
+    // const containerBg = useLightTheme 
+    //     ? "bg-amber-50/80 border-amber-200/50" 
+    //     : "bg-gray-800/50 border-gray-700/50";
+        
+    // const inputBg = useLightTheme
+    //     ? "bg-white/80 border-amber-200 text-gray-700 placeholder-gray-500"
+    //     : "bg-gray-900/50 border-gray-700 text-gray-200 placeholder-gray-400";
+        
+    // const buttonBg = useLightTheme
+    //     ? "border-amber-200 hover:bg-amber-100/50 text-gray-700"
+    //     : "border-gray-700 hover:bg-gray-700/50 text-gray-200";
+        
+    // const activeButtonBg = useLightTheme
+    //     ? "bg-amber-200 text-gray-800"
+    //     : "bg-gray-700";
+
     // Define theme-specific styles
-    const containerBg = useLightTheme 
-        ? "bg-amber-50/80 border-amber-200/50" 
-        : "bg-gray-800/50 border-gray-700/50";
-        
-    const inputBg = useLightTheme
-        ? "bg-white/80 border-amber-200 text-gray-700 placeholder-gray-500"
-        : "bg-gray-900/50 border-gray-700 text-gray-200 placeholder-gray-400";
-        
-    const buttonBg = useLightTheme
-        ? "border-amber-200 hover:bg-amber-100/50 text-gray-700"
-        : "border-gray-700 hover:bg-gray-700/50 text-gray-200";
-        
-    const activeButtonBg = useLightTheme
-        ? "bg-amber-200 text-gray-800"
-        : "bg-gray-700";
+const containerBg = useLightTheme 
+? "bg-purple-50/80 border-purple-200/50" 
+: "bg-gray-800/50 border-gray-700/50";
+
+const inputBg = useLightTheme
+? "bg-white/80 border-purple-200 text-gray-700 placeholder-gray-500"
+: "bg-gray-900/50 border-gray-700 text-gray-200 placeholder-gray-400";
+
+const buttonBg = useLightTheme
+? "border-purple-200 hover:bg-purple-100/50 text-gray-700"
+: "border-gray-700 hover:bg-gray-700/50 text-gray-200";
+
+const activeButtonBg = useLightTheme
+? "bg-purple-200 text-gray-800"
+: "bg-gray-700";
     
     const handleSearchChange = (e) => {
         const value = e.target.value;

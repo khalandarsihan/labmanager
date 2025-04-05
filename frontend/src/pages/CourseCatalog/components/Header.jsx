@@ -23,24 +23,24 @@ const Header = () => {
   const { useLightTheme, themeStyles } = useTheme();
 
   const bgGradient = useLightTheme
-    ? "from-amber-50/50 to-amber-100/10"
-    : "from-slate-900/50 to-slate-900/10";
+    ? "bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50"
+    : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
 
   const hoverBg = useLightTheme
-    ? "hover:bg-amber-100/30"
-    : "hover:bg-slate-800/30";
+  ? "hover:bg-purple-100/30"
+  : "hover:bg-gray-800/30";
 
-  const textColor = useLightTheme
-    ? "text-amber-800"
-    : "text-gray-300";
+const textColor = useLightTheme
+  ? "text-purple-800"
+  : "text-gray-300";
 
   const titleGradient = useLightTheme
-    ? "from-amber-700 via-amber-600 to-amber-700"
-    : "from-amber-400 via-amber-300 to-amber-400";
-    
-  const decorativeColor = useLightTheme
-    ? "text-amber-500"
-    : "text-amber-300";
+  ? "from-purple-700 via-purple-600 to-purple-700"
+  : "from-amber-400 via-amber-300 to-amber-400";  // Keep amber for dark
+  
+const decorativeColor = useLightTheme
+  ? "text-purple-500"
+  : "text-amber-300";  // Keep amber for dark
 
   return (
     <div className="relative max-w-7xl mx-auto px-4 pt-16 pb-8">

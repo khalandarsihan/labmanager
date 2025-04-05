@@ -13,14 +13,26 @@ const CourseCard = ({ course, isListView }) => {
         return `/files/${imagePath.split('/files/')[1]}`;
     };
 
-    const cardBg = useLightTheme ? "bg-white" : "bg-gray-800";
-    const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
-    const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
-    const hoverBorder = useLightTheme ? "hover:border-amber-500" : "hover:border-amber-400";
+    // const cardBg = useLightTheme ? "bg-white" : "bg-gray-800";
+    // const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
+    // const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
+    // const hoverBorder = useLightTheme ? "hover:border-amber-500" : "hover:border-amber-400";
+
+// const cardBg = useLightTheme ? "bg-white" : "bg-gray-800";
+// const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
+// const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
+// const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-amber-400";
+
+const cardBg = useLightTheme ? "bg-white" : "bg-gray-800";
+const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
+const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
+const borderColor = useLightTheme ? "border-transparent" : "border-gray-700";
+const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-amber-400";
 
     const GridView = () => (
         <div className="p-3">
-            <Card className={`${cardBg} border overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
+            {/* <Card className={`${cardBg} border overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}> */}
+            <Card className={`${cardBg} border ${borderColor} overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
                 <div className="relative">
                     {/* Price and Featured Badge */}
                     <div className="absolute top-3 left-3 z-10">
@@ -110,7 +122,8 @@ const CourseCard = ({ course, isListView }) => {
 
     const ListView = () => (
         <div className="p-3">
-            <Card className={`${cardBg} border overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
+            {/* <Card className={`${cardBg} border overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}> */}
+            <Card className={`${cardBg} border ${borderColor} overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
                 <div className="flex">
                     {/* Left side - Image */}
                     <div className="relative w-72">
