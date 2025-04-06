@@ -7,23 +7,23 @@ const Hero = () => {
   
   // Define theme-dependent styles
   const overlayGradient = useLightTheme
-    ? "bg-gradient-to-r from-amber-100/60 to-amber-50/55"
-    : "bg-gradient-to-r from-gray-800/60 to-gray-700/55";
+    ? "bg-gradient-to-r from-purple-100/55 to-purple-50/50"
+    : "bg-gradient-to-r from-gray-800/50 to-gray-700/45";
     
   const topGradient = useLightTheme
-    ? "bg-gradient-to-b from-amber-50/50 to-transparent"
-    : "bg-gradient-to-b from-black/50 to-transparent";
+    ? "bg-gradient-to-b from-purple-50/50 to-transparent"
+    : "bg-gradient-to-b from-black/45 to-transparent";
     
   const bottomGradient = useLightTheme
-    ? "bg-gradient-to-t from-amber-100/70 to-transparent"
-    : "bg-gradient-to-t from-black/70 to-transparent";
+    ? "bg-gradient-to-t from-purple-100/60 to-transparent"
+    : "bg-gradient-to-t from-black/60 to-transparent";
     
   const bottomShadowGradient = useLightTheme
-    ? "bg-gradient-to-t from-amber-50/90 to-transparent"
+    ? "bg-gradient-to-t from-purple-50/70 to-transparent"
     : "bg-gradient-to-t from-gray-900/90 to-transparent";
     
   const titleColor = useLightTheme
-    ? "text-amber-700"
+    ? "text-purple-700"
     : "text-amber-300";
     
   const descriptionColor = useLightTheme
@@ -31,7 +31,7 @@ const Hero = () => {
     : "text-gray-200";
     
   const buttonStyle = useLightTheme
-    ? "bg-amber-500 text-white hover:bg-amber-600"
+    ? "bg-purple-500 text-white hover:bg-purple-600"
     : "bg-amber-300 text-gray-900 hover:bg-amber-200";
 
   return (

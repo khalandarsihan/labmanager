@@ -7,7 +7,7 @@ const ThemeSwitcher = ({ useLightTheme, toggleTheme }) => {
         onClick={toggleTheme}
         className={`p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 ${
           useLightTheme 
-            ? 'bg-amber-600 text-white hover:bg-amber-700' 
+            ? 'bg-purple-600 text-white hover:bg-purple-700' 
             : 'bg-gray-800 text-amber-300 hover:bg-gray-700'
         }`}
         aria-label={useLightTheme ? 'Switch to dark theme' : 'Switch to light theme'}

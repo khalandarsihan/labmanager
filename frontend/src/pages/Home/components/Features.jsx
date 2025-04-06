@@ -17,7 +17,7 @@ const Features = ({ features }) => {
     <section className="relative py-20 overflow-hidden">
       <BackgroundPattern useLightTheme={useLightTheme} />
       <div className="relative w-full z-10">
-        <h2 className={`text-4xl font-bold text-center ${useLightTheme ? 'text-amber-700' : 'text-amber-200'} mb-12`}>
+        <h2 className={`text-4xl font-bold text-center ${useLightTheme ? 'text-purple-700' : 'text-amber-200'} mb-12`}>
           Our Features
         </h2>
         
@@ -63,26 +63,26 @@ const FeatureCard = ({ icon, title, description, useLightTheme }) => {
     <div className="inline-block w-80 px-3 my-4">
       <Card className={`h-48 p-6 ${
         useLightTheme 
-          ? 'bg-white/50 backdrop-blur-sm border border-amber-200/50 hover:border-amber-500/50'
+          ? 'bg-white/50 backdrop-blur-sm border border-purple-200/50 hover:border-purple-500/50'
           : 'bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-amber-300/50'
         } transition-all duration-300 hover:scale-105 rounded-xl`}>
         <div className={`absolute inset-0 ${
           useLightTheme
-            ? 'bg-gradient-to-br from-amber-50/50 to-amber-100/50'
+            ? 'bg-gradient-to-br from-purple-50/50 to-purple-100/50'
             : 'bg-gradient-to-br from-gray-800/50 to-gray-900/50'
           } rounded-xl`} />
         <div className="relative z-10 flex flex-col items-center h-full">
           <div className={`w-12 h-12 mb-2 ${
             useLightTheme
-              ? 'bg-amber-100/50'
+              ? 'bg-purple-100/50'
               : 'bg-gray-800/50'
             } rounded-lg flex items-center justify-center`}>
-            <span className={`text-2xl ${useLightTheme ? 'text-amber-600' : 'text-amber-300'}`}>{icon}</span>
+            <span className={`text-2xl ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`}>{icon}</span>
           </div>
-          <h3 className={`text-lg font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-200'} mb-1 text-center w-full`}>
+          <h3 className={`text-lg font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'} mb-1 text-center w-full`}>
             {title}
           </h3>
-          <p className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-center text-sm w-full whitespace-normal overflow-hidden line-clamp-2`}>
+          <p className={`${useLightTheme ? 'text-purple-700' : 'text-gray-300'} text-center text-sm w-full whitespace-normal overflow-hidden line-clamp-2`}>
             {description}
           </p>
         </div>
@@ -97,7 +97,7 @@ const BackgroundPattern = ({ useLightTheme }) => {
     : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
     
   const borderColor = useLightTheme 
-    ? "border-amber-700" 
+    ? "border-purple-700" 
     : "border-amber-300";
     
   const opacity = useLightTheme ? "opacity-5" : "opacity-10";
