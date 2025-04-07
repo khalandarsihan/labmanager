@@ -1,0 +1,26 @@
+/* 
+ * This is an optional CSS file for additional isolation if needed
+ * Create this file in the same directory as Hero.jsx if the z-index approach doesn't fully work
+ */
+
+/* Force the hero section to create its own stacking context */
+section {
+    isolation: isolate;
+  }
+  
+  /* Hide any background patterns or images that might be applied from parent elements */
+  section::before,
+  section::after {
+    display: none !important;
+  }
+  
+  /* Make sure video takes precedence */
+  section video {
+    z-index: 5;
+    position: relative;
+  }
+  
+  /* Create a clean background for the video */
+  section .absolute:first-child {
+    background: none !important;
+  }
