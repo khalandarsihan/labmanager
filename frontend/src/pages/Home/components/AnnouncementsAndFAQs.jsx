@@ -27,7 +27,7 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
             <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform skew-x-12 origin-top-left transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
               <div className="p-8 h-full">
-                <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-300'} mb-8`}>
+                <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-8`}>
                   ANNOUNCEMENTS
                 </h2>
                 <div className="space-y-4 overflow-auto max-h-[calc(100vh-16rem)] scrollbar-hide">
@@ -46,10 +46,10 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
 
           {/* Right Column - FAQs */}
           <div className="lg:w-1/2 relative group">
-            <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform -skew-x-12 origin-top-right transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
+            <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform -skew-x-12 origin-top-right transition-all duration-300 ${useLightTheme ? 'group-hover:bg-purple-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
               <div className="p-8 h-full">
-                <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-300'} mb-8`}>
+                <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-8`}>
                   FREQUENTLY<br/>ASKED QUESTIONS
                 </h2>
                 <div className="space-y-4 overflow-auto max-h-[calc(100vh-16rem)] scrollbar-hide">
@@ -72,6 +72,27 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
           </div>
         </div>
       </div>
+      
+      {/* Theme-specific CSS classes for announcements content */}
+      <style jsx>{`
+        .theme-heading {
+          color: ${useLightTheme ? '#6b21a8' : '#fcd34d'};
+        }
+        .theme-subheading {
+          color: ${useLightTheme ? '#7e22ce' : '#fcd34d'};
+        }
+        .theme-text-primary {
+          color: ${useLightTheme ? '#1f2937' : '#ffffff'};
+        }
+        .theme-card {
+          background-color: ${useLightTheme ? 'rgba(255, 255, 255, 0.4)' : 'rgba(31, 41, 55, 0.3)'};
+          backdrop-filter: blur(4px);
+          color: ${useLightTheme ? '#374151' : '#e5e7eb'};
+        }
+        .theme-link:hover {
+          color: ${useLightTheme ? '#7e22ce' : '#fcd34d'};
+        }
+      `}</style>
     </section>
   );
 };
@@ -79,11 +100,11 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
 const AnnouncementItem = ({ announcement, useLightTheme, themeStyles }) => (
   <div className={`${useLightTheme ? 'bg-white/40 hover:bg-white/60' : 'bg-gray-800/40 hover:bg-gray-800/60'} rounded-lg p-4 transition-all duration-300`}>
     <div className="flex items-start gap-3">
-      <AlertCircle className={`w-5 h-5 ${useLightTheme ? 'text-amber-600' : 'text-amber-300'} flex-shrink-0 mt-1`} />
+      <AlertCircle className={`w-5 h-5 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'} flex-shrink-0 mt-1`} />
       <div>
-        <h3 className={`${useLightTheme ? 'text-amber-700' : 'text-amber-200'} font-semibold mb-2`}>{announcement.title}</h3>
+        <h3 className={`${useLightTheme ? 'text-purple-700' : 'text-amber-200'} font-semibold mb-2`}>{announcement.title}</h3>
         <div 
-          className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm`}
+          className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm announcement-content`}
           dangerouslySetInnerHTML={{ __html: announcement.content }}
         />
         {announcement.date && (
@@ -98,7 +119,7 @@ const AnnouncementItem = ({ announcement, useLightTheme, themeStyles }) => (
 
 const CategorySection = ({ category, faqs, openFaq, setOpenFaq, useLightTheme, themeStyles }) => (
   <div className="category-section">
-    <h3 className={`text-xl font-semibold ${useLightTheme ? 'text-amber-600' : 'text-amber-300'} mb-4`}>
+    <h3 className={`text-xl font-semibold ${useLightTheme ? 'text-purple-600' : 'text-amber-300'} mb-4`}>
       {category.category_name}
     </h3>
     <div className="space-y-2">
@@ -128,7 +149,7 @@ const FAQItem = ({ faq, isOpen, onClick, useLightTheme, themeStyles }) => (
       onClick={onClick}
     >
       <span className={`${useLightTheme ? 'text-gray-800' : 'text-white'} font-medium pr-4`}>{faq.question}</span>
-      <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${useLightTheme ? 'bg-amber-500 text-white' : 'bg-amber-300 text-gray-900'} transition-transform duration-300`}>
+      <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${useLightTheme ? 'bg-purple-500 text-white' : 'bg-amber-300 text-gray-900'} transition-transform duration-300`}>
         {isOpen ? '−' : '+'}
       </span>
     </button>
@@ -148,7 +169,7 @@ const BackgroundPattern = ({ useLightTheme }) => {
     : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
     
   const borderColor = useLightTheme 
-    ? "border-amber-700" 
+    ? "border-purple-700" 
     : "border-amber-300";
 
   return (
