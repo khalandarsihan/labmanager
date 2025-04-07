@@ -103,7 +103,25 @@
 
 /* Theme-specific styling for announcement content when rendered from API */
 .announcement-content .theme-heading {
-  color: inherit;
+  color: inherit !important;
+  transition: color 0.3s ease;
+}
+
+/* Style for the announcement headings specifically */
+.announcement-content h2.theme-heading,
+.announcement-content h3.theme-heading {
+  font-weight: bold;
+  line-height: 1.2;
+  transition: color 0.3s ease;
+}
+
+/* Ensure all theme elements transition smoothly */
+.theme-heading,
+.theme-subheading,
+.theme-text-primary,
+.theme-card,
+.theme-link {
+  transition: color 0.3s ease, background-color 0.3s ease;
 }
 
 /* Add additional theme-specific styles that might be needed */
