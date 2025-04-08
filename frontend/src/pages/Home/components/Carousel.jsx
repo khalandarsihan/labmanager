@@ -43,8 +43,8 @@ const Carousel = ({ slides = [] }) => {
                     alt={slide.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className={`absolute inset-x-0 bottom-0 ${useLightTheme ? 'bg-gradient-to-t from-amber-100/80 to-transparent' : 'bg-gradient-to-t from-gray-900/80 to-transparent'} p-6`}>
-                    <h3 className={`text-2xl font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-200'} mb-2`}>
+                  <div className={`absolute inset-x-0 bottom-0 ${useLightTheme ? 'bg-gradient-to-t from-purple-100/80 to-transparent' : 'bg-gradient-to-t from-gray-900/80 to-transparent'} p-6`}>
+                    <h3 className={`text-2xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'} mb-2`}>
                       {slide.title}
                     </h3>
                     <p className={useLightTheme ? 'text-gray-700' : 'text-gray-200'}>{slide.description}</p>
@@ -60,23 +60,23 @@ const Carousel = ({ slides = [] }) => {
                 onClick={prevSlide}
                 className={`absolute left-4 top-1/2 -translate-y-1/2 ${
                   useLightTheme 
-                    ? 'bg-amber-100/80 hover:bg-amber-200 border border-amber-300/20 hover:border-amber-300/50' 
+                    ? 'bg-purple-100/80 hover:bg-purple-200 border border-purple-300/20 hover:border-purple-300/50' 
                     : 'bg-gray-800/80 hover:bg-gray-700 border border-amber-300/20 hover:border-amber-300/50'
                 } p-2 rounded-full transition-all`}
                 aria-label="Previous slide"
               >
-                <ChevronLeft className={`h-6 w-6 ${useLightTheme ? 'text-amber-700' : 'text-amber-200'}`} />
+                <ChevronLeft className={`h-6 w-6 ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`} />
               </button>
               <button
                 onClick={nextSlide}
                 className={`absolute right-4 top-1/2 -translate-y-1/2 ${
                   useLightTheme 
-                    ? 'bg-amber-100/80 hover:bg-amber-200 border border-amber-300/20 hover:border-amber-300/50' 
+                    ? 'bg-purple-100/80 hover:bg-purple-200 border border-purple-300/20 hover:border-purple-300/50' 
                     : 'bg-gray-800/80 hover:bg-gray-700 border border-amber-300/20 hover:border-amber-300/50'
                 } p-2 rounded-full transition-all`}
                 aria-label="Next slide"
               >
-                <ChevronRight className={`h-6 w-6 ${useLightTheme ? 'text-amber-700' : 'text-amber-200'}`} />
+                <ChevronRight className={`h-6 w-6 ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`} />
               </button>
 
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
@@ -86,8 +86,8 @@ const Carousel = ({ slides = [] }) => {
                     onClick={() => setCurrentSlide(index)}
                     className={`w-2 h-2 rounded-full transition-all ${
                       index === currentSlide
-                        ? useLightTheme ? 'bg-amber-600 w-4' : 'bg-amber-300 w-4'
-                        : useLightTheme ? 'bg-gray-400 hover:bg-amber-500' : 'bg-gray-400 hover:bg-amber-200'
+                        ? useLightTheme ? 'bg-purple-600 w-4' : 'bg-amber-300 w-4'
+                        : useLightTheme ? 'bg-gray-400 hover:bg-purple-500' : 'bg-gray-400 hover:bg-amber-200'
                     }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />
@@ -107,7 +107,7 @@ const BackgroundPattern = ({ useLightTheme }) => {
     : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
     
   const borderColor = useLightTheme 
-    ? "border-amber-700" 
+    ? "border-purple-700" 
     : "border-amber-300";
     
   return (

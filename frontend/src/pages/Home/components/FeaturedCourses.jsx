@@ -29,7 +29,7 @@ const FeaturedCourses = ({ courses = [] }) => {
       <div id="featuredCoursesContainer" className="relative z-10">
         <div className="featured-courses-container">
           <div className="flex items-center justify-between mb-8">
-            <h2 className={`text-2xl font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-200'}`}>Featured Courses</h2>
+            <h2 className={`text-2xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`}>Featured Courses</h2>
             <div className="flex gap-2">
               <NavigationButton
                 direction="left"
@@ -55,8 +55,8 @@ const FeaturedCourses = ({ courses = [] }) => {
       </div>
       
       <div className="absolute bottom-0 right-0 w-32 h-32 opacity-30">
-        <div className={`absolute bottom-8 right-8 w-16 h-16 border-2 ${useLightTheme ? 'border-amber-600/20' : 'border-amber-300/20'} rounded-full backdrop-blur animate-float-circle delay-700`} />
-        <div className={`absolute bottom-16 right-16 w-8 h-8 border-2 ${useLightTheme ? 'border-amber-600/20' : 'border-amber-300/20'} transform rotate-45 backdrop-blur animate-float-diagonal delay-500`} />
+        <div className={`absolute bottom-8 right-8 w-16 h-16 border-2 ${useLightTheme ? 'border-purple-600/20' : 'border-amber-300/20'} rounded-full backdrop-blur animate-float-circle delay-700`} />
+        <div className={`absolute bottom-16 right-16 w-8 h-8 border-2 ${useLightTheme ? 'border-purple-600/20' : 'border-amber-300/20'} transform rotate-45 backdrop-blur animate-float-diagonal delay-500`} />
       </div>
     </section>
   );
@@ -64,7 +64,7 @@ const FeaturedCourses = ({ courses = [] }) => {
 
 const CourseCard = ({ course, useLightTheme, themeStyles }) => (
   <div className="course-card">
-    <Card className={`${useLightTheme ? 'bg-white/50 border-amber-200/50 hover:border-amber-500/50' : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-300/50'} backdrop-blur-sm h-full transition-all duration-300 hover:transform hover:scale-[1.02] relative`}>
+    <Card className={`${useLightTheme ? 'bg-white/50 border-purple-200/50 hover:border-purple-500/50' : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-300/50'} backdrop-blur-sm h-full transition-all duration-300 hover:transform hover:scale-[1.02] relative`}>
       <div className="course-card-image">
         <img
           src={course.featured_image_small || "/assets/labmanager/images/course-placeholder.jpg"}
@@ -73,15 +73,15 @@ const CourseCard = ({ course, useLightTheme, themeStyles }) => (
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
       </div>
       <div className="p-6">
-        <h3 className={`text-lg font-bold ${useLightTheme ? 'text-amber-700' : 'text-amber-200'} mb-2`}>{course.title}</h3>
+        <h3 className={`text-lg font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'} mb-2`}>{course.title}</h3>
         <p className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm line-clamp-2 mb-4`}>
           {course.short_description}
         </p>
         <div className="flex justify-between items-center">
-          <span className={`${useLightTheme ? 'text-amber-600' : 'text-amber-300'} font-bold`}>₹{course.price}</span>
+          <span className={`${useLightTheme ? 'text-purple-600' : 'text-amber-300'} font-bold`}>₹{course.price}</span>
           <a
             href={`/courses/${course.course_code}`}
-            className={`${useLightTheme ? 'bg-amber-500/90 hover:bg-amber-500 text-white' : 'bg-amber-300/90 hover:bg-amber-300 text-gray-900'} px-4 py-2 rounded font-semibold transition-all duration-300 hover:shadow-lg`}
+            className={`${useLightTheme ? 'bg-purple-500/90 hover:bg-purple-500 text-white' : 'bg-amber-300/90 hover:bg-amber-300 text-gray-900'} px-4 py-2 rounded font-semibold transition-all duration-300 hover:shadow-lg`}
           >
             Learn More
           </a>
@@ -96,14 +96,14 @@ const NavigationButton = ({ direction, onClick, useLightTheme }) => (
     onClick={onClick}
     className={`p-2 rounded-full ${
       useLightTheme
-        ? 'bg-amber-100/80 hover:bg-amber-200 border border-amber-300/20 hover:border-amber-300/50'
+        ? 'bg-purple-100/80 hover:bg-purple-200 border border-purple-300/20 hover:border-purple-300/50'
         : 'bg-gray-800/80 hover:bg-gray-700 border border-amber-300/20 hover:border-amber-300/50'
     } transition-all duration-300`}
   >
     {direction === 'left' ? (
-      <ChevronLeft className={`w-6 h-6 ${useLightTheme ? 'text-amber-700' : 'text-amber-200'}`} />
+      <ChevronLeft className={`w-6 h-6 ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`} />
     ) : (
-      <ChevronRight className={`w-6 h-6 ${useLightTheme ? 'text-amber-700' : 'text-amber-200'}`} />
+      <ChevronRight className={`w-6 h-6 ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`} />
     )}
   </button>
 );
@@ -114,7 +114,7 @@ const BackgroundPattern = ({ useLightTheme }) => {
     : "bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
     
   const borderColor = useLightTheme 
-    ? "border-amber-700" 
+    ? "border-purple-700" 
     : "border-amber-300";
     
   const opacity = useLightTheme ? "opacity-5" : "opacity-10";
