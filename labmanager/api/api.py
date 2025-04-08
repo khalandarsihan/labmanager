@@ -1015,7 +1015,6 @@ def generate_registration_id(academic_program):
             "decoded_id": f"REG-D-{fallback_hash}"
         }
 
-
 @frappe.whitelist(allow_guest=True)
 def register_student(**kwargs):
     """API endpoint to register a new student"""
@@ -1067,17 +1066,7 @@ def register_student(**kwargs):
 
         doc.insert(ignore_permissions=True)
         
-        # Create initial timeline entry
-        create_timeline_entry(
-            doc.name, 
-            "Submitted", 
-            "Application submitted successfully",
-            "Administrator"  # Use administrator to ensure it works
-        )
-        
-        # Create default document requirements
-        create_default_document_requirements(doc)
-        
+       
         # Send confirmation email with the encoded registration ID
         try:
             send_registration_confirmation(doc)
@@ -1096,8 +1085,8 @@ def register_student(**kwargs):
         return {
             "status": "error",
             "message": f"Registration failed: {str(e)}"
-        }
-
+        }  
+    
 
 def send_registration_confirmation(doc):
     """Send confirmation email to student"""
@@ -2004,23 +1993,12 @@ def get_application_status(registration_id=None):
             fields=["document_type", "status", "submitted_date", "notes", "document_file", "rejection_reason"],
             order_by="creation"
         )
-        
-        # If no documents are defined yet, create default document requirements
+
+        # If no documents are found, log it but don't create new ones
         if not documents:
-            try:
-                create_default_document_requirements(doc)
-                
-                # Fetch the newly created documents
-                documents = frappe.get_all(
-                    "Required Document",
-                    filters={"registration_id": doc.name},
-                    fields=["document_type", "status", "submitted_date", "notes", "document_file", "rejection_reason"],
-                    order_by="creation"
-                )
-            except Exception as doc_error:
-                frappe.logger().error(f"Error creating default documents: {str(doc_error)}")
-                # Continue even if document creation fails
-                documents = []
+            frappe.logger().debug(f"No documents found for registration: {doc.name}")
+            # Return empty list instead of creating documents
+            documents = []
         
         # Get scheduled interviews
         interviews = frappe.get_all(

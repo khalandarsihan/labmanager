@@ -2,50 +2,50 @@
 import frappe
 from labmanager.timeline_service import create_timeline_entry
 
+# Update create_default_document_requirements function
 def create_default_document_requirements(registration_doc):
     """Create default document requirements based on the program and education level"""
     try:
         # Different document requirements based on education level
-        if registration_doc.previous_education == "High School":
+        if registration_doc.previous_education in ["Class X", "SSLC"]:
             documents = [
                 {
-                    "document_type": "High School Transcript",
+                    "document_type": "Class X / SSLC Transcript",
                     "status": "Approved",
-                    "notes": "Please submit your complete high school transcript"
-                },
-                {
-                    "document_type": "High School Diploma",
-                    "status": "Approved",
-                    "notes": "Please submit a copy of your high school diploma"
+                    "notes": "Please submit a copy of your Class X or SSLC transcript"
                 }
             ]
-        elif registration_doc.previous_education in ["Bachelor's Degree", "Master's Degree"]:
+        elif registration_doc.previous_education == "Plus One":
             documents = [
                 {
-                    "document_type": "College/University Transcript",
+                    "document_type": "Plus One Transcript",
                     "status": "Approved",
-                    "notes": "Please submit your complete college/university transcript"
-                },
+                    "notes": "Please submit a copy of your Plus One transcript"
+                }
+            ]
+        elif registration_doc.previous_education in ["Plus Two", "Pre-University (PU)"]:
+            documents = [
                 {
-                    "document_type": "Degree Certificate",
+                    "document_type": "PU / Plus Two Transcript",
                     "status": "Approved",
-                    "notes": f"Please submit a copy of your {registration_doc.previous_education}"
+                    "notes": "Please submit a copy of your Pre-University or Plus Two transcript"
                 }
             ]
         else:
             documents = []
             
+            
         # Common documents for all applicants
         common_documents = [
             {
-                "document_type": "Identity Document (Passport/National ID)",
+                "document_type": "Aadhaar Card",
                 "status": "Approved",
-                "notes": "Please submit a valid government-issued ID"
+                "notes": "Upload Aadhaar card as identity proof"
             },
             {
-                "document_type": "Recent Passport Photo",
+                "document_type": "Passport Size Photo",
                 "status": "Approved",
-                "notes": "Please submit a recent passport-sized photo (taken within the last 6 months)"
+                "notes": "Upload a recent passport-size photo"
             }
         ]
         
@@ -82,19 +82,13 @@ def create_default_document_requirements(registration_doc):
         frappe.db.commit()
         
         # If this is the first set of document requests, update the application status
+        # but don't create redundant timeline entry
         if registration_doc.status != "Documents Requested":
             registration_doc.status = "Documents Requested"
             registration_doc.next_steps = get_default_next_steps("Documents Requested")
             registration_doc.save()
             
-            # Create a timeline entry for the status change
-            create_timeline_entry(
-                registration_doc.name,
-                "Documents Requested",
-                "Application status updated to Documents Requested",
-                created_by
-            )
-        
+       
         return True
     except Exception as e:
         frappe.log_error(f"Error creating document requirements: {str(e)}")
