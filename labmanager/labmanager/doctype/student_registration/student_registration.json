@@ -191,7 +191,7 @@
    "fieldname": "status",
    "fieldtype": "Select",
    "label": "Status",
-   "options": "Submitted\nUnder Review\nDocuments Requested\nInterview Scheduled\nAccepted\nWaitlisted\nRejected"
+   "options": "Submitted\nDocuments Requested\nUnder Review\nInterview Scheduled\nAccepted\nWaitlisted\nRejected"
   },
   {
    "fieldname": "section_break_yndw",
@@ -227,7 +227,7 @@
    "link_fieldname": "registration_id"
   }
  ],
- "modified": "2025-04-01 17:16:58.618081",
+ "modified": "2025-04-08 17:04:21.861759",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Student Registration",

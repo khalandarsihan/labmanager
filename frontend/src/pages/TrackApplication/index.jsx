@@ -198,8 +198,8 @@ const handleDocumentUpload = async (documentType, preventTabSwitch = false) => {
   const renderProgressIndicator = () => {
     const statuses = [
       'Submitted',
-      'Under Review',
       'Documents Requested',
+      'Under Review',
       'Interview Scheduled',
       'Accepted',
       'Waitlisted',
@@ -207,38 +207,38 @@ const handleDocumentUpload = async (documentType, preventTabSwitch = false) => {
     ];
     
     const currentStatusIndex = statusData ? 
-      statuses.indexOf(statusData.current_status) : 0;
-    
-    // Don't render progress for rejected or waitlisted applications
-    if (statusData && (statusData.current_status === 'Rejected' || statusData.current_status === 'Waitlisted')) {
-      return null;
-    }
-    
-    return (
-      <div className="w-full mb-6">
-        <div className="flex justify-between mb-2">
-          {statuses.slice(0, 5).map((status, index) => (
-            <div key={index} className="flex flex-col items-center">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center 
-                ${index <= currentStatusIndex ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-400'}`}>
-                {index + 1}
-              </div>
-              <div className="text-xs mt-1 text-center max-w-[70px]">
-                {status}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="relative h-1 bg-gray-700 mt-2">
-          <div 
-            className="absolute h-1 bg-amber-300" 
-            style={{ width: `${Math.min(100, (currentStatusIndex / 4) * 100)}%` }}
-          ></div>
-        </div>
-      </div>
-    );
-  };
+    statuses.indexOf(statusData.current_status) : 0;
   
+  // Don't render progress for rejected or waitlisted applications
+  if (statusData && (statusData.current_status === 'Rejected' || statusData.current_status === 'Waitlisted')) {
+    return null;
+  }
+  
+  return (
+    <div className="w-full mb-6">
+      <div className="flex justify-between mb-2">
+        {statuses.slice(0, 5).map((status, index) => (
+          <div key={index} className="flex flex-col items-center">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center 
+              ${index <= currentStatusIndex ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-400'}`}>
+              {index + 1}
+            </div>
+            <div className="text-xs mt-1 text-center max-w-[70px]">
+              {status}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="relative h-1 bg-gray-700 mt-2">
+        <div 
+          className="absolute h-1 bg-amber-300" 
+          style={{ width: `${Math.min(100, (currentStatusIndex / 4) * 100)}%` }}
+        ></div>
+      </div>
+    </div>
+  );
+};
+
   // Render content based on application status
   const renderStatusSpecificContent = () => {
     if (!statusData) return null;
