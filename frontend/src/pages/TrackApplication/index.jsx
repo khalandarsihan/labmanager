@@ -194,6 +194,18 @@ const TrackApplication = ({ initialRegistrationId }) => {
     return `${hour > 12 ? hour - 12 : hour}:${minutes} ${hour >= 12 ? 'PM' : 'AM'}`;
   };
   
+  const formatDateOnly = (dateString) => {
+    if (!dateString) return 'N/A';
+    
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+
   // Function to render status badge with appropriate color
   const renderStatusBadge = (status) => {
     let className = '';
@@ -604,14 +616,14 @@ const TrackApplication = ({ initialRegistrationId }) => {
                                 </div>
                                 
                                 <div className={`grid grid-cols-1 md:grid-cols-2 gap-2 text-sm ${bodyText}`}>
-                                  <div className="flex items-center">
-                                    <Calendar className={`w-4 h-4 mr-2 ${iconColor}`} />
-                                    <span>Date: {formatDate(interview.date)}</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <Clock className={`w-4 h-4 mr-2 ${iconColor}`} />
-                                    <span>Time: {formatTime(interview.time)}</span>
-                                  </div>
+                                <div className="flex items-center">
+                                <Calendar className={`w-4 h-4 mr-2 ${iconColor}`} />
+                                <span>Date: {formatDateOnly(interview.date)}</span>
+                              </div>
+                              <div className="flex items-center">
+                                <Clock className={`w-4 h-4 mr-2 ${iconColor}`} />
+                                <span>Time: {formatTime(interview.time)}</span>
+                              </div>
                                   <div className="flex items-center">
                                     <User className={`w-4 h-4 mr-2 ${iconColor}`} />
                                     <span>Interviewer: {interview.interviewer}</span>
