@@ -18,12 +18,23 @@ class InterviewSchedule(Document):
         if self.location:
             description += f" at {self.location}"
         
+        # Always use Admissions Team for interview scheduling
+        created_by = "Admissions Team"
+        
+        # Create timeline entry with the correct creator
         create_timeline_entry(
             self.registration_id,
             "Interview Scheduled",
             description,
-            frappe.session.user
+            created_by
         )
+        
+        # Update application status if needed
+        registration_doc = frappe.get_doc("Student Registration", self.registration_id)
+        if registration_doc.status != "Interview Scheduled":
+            registration_doc.status = "Interview Scheduled"
+            registration_doc.next_steps = get_default_next_steps("Interview Scheduled")
+            registration_doc.save()
         
         # Update application status if needed
         registration_doc = frappe.get_doc("Student Registration", self.registration_id)

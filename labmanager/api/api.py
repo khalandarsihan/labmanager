@@ -987,20 +987,30 @@ def generate_registration_id(academic_program):
             }
         )
         
+        # Add an additional number to ensure uniqueness
+        current_time_suffix = frappe.utils.now_datetime().strftime("%H%M%S")[:4]
+        
         # Generate sequential decoded ID
         sequence_number = str(registration_count + 1).zfill(4)
         decoded_id = f"{current_year}-{program_code}-{sequence_number}"
         
-        # Generate encoded ID with hash
+        # Generate encoded ID with hash and time component
         base_number = 1000 + registration_count
-        sequence_hash = frappe.generate_hash(str(base_number), 5)[:4]
+        sequence_hash = frappe.generate_hash(str(base_number) + current_time_suffix, 5)[:4]
         encoded_id = f"{current_year}-{program_code}-{sequence_hash}"
         
-        # Ensure uniqueness of encoded ID
-        while frappe.db.exists("Student Registration", encoded_id):
-            base_number += 1
-            sequence_hash = frappe.generate_hash(str(base_number), 5)[:4]
+        # Ensure uniqueness of encoded ID by explicitly checking the database
+        while frappe.db.exists("Student Registration", {"registration_id": encoded_id}):
+            # If a duplicate is found, generate a new hash with more randomness
+            sequence_hash = frappe.generate_hash(str(base_number) + frappe.utils.now_datetime().strftime("%H%M%S"), 5)[:4]
             encoded_id = f"{current_year}-{program_code}-{sequence_hash}"
+        
+        # Also check the decoded_registration_id field since that's used for the document name
+        while frappe.db.exists("Student Registration", {"decoded_registration_id": decoded_id}):
+            # If duplicate found, increment the sequence number
+            registration_count += 1
+            sequence_number = str(registration_count + 1).zfill(4)
+            decoded_id = f"{current_year}-{program_code}-{sequence_number}"
         
         return {
             "encoded_id": encoded_id,
@@ -1009,7 +1019,8 @@ def generate_registration_id(academic_program):
 
     except Exception as e:
         frappe.log_error(f"Registration ID generation failed: {str(e)}")
-        fallback_hash = frappe.generate_hash()[:8]
+        # Create a more unique fallback using timestamp
+        fallback_hash = frappe.generate_hash(frappe.utils.now_datetime().strftime("%Y%m%d%H%M%S"))[:8]
         return {
             "encoded_id": f"REG-E-{fallback_hash}",
             "decoded_id": f"REG-D-{fallback_hash}"
@@ -2247,23 +2258,6 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
             registration_doc.save()
             status_updated = True
         
-        # Create timeline entry for interview scheduling
-        create_timeline_entry(
-            registration_doc.name,
-            "Interview Scheduled",
-            f"Interview scheduled for {date} at {time}",
-            frappe.session.user
-        )
-        
-        # Add separate timeline entry if application status was changed
-        if status_updated:
-            status_description = "Application status updated to Interview Scheduled"
-            create_timeline_entry(
-                registration_doc.name,
-                "Interview Scheduled",
-                status_description,
-                frappe.session.user
-            )
         
         return {
             "status": "success",
@@ -2294,7 +2288,7 @@ def upload_application_document(registration_id, document_type, file_data, filen
         registrations = frappe.get_all(
             "Student Registration",
             filters={"registration_id": registration_id},
-            fields=["name", "first_name", "last_name"],
+            fields=["name", "first_name", "middle_name", "last_name"],
             limit=1
         )
         
@@ -2307,7 +2301,13 @@ def upload_application_document(registration_id, document_type, file_data, filen
             
         # Get the actual document using the name we found
         doc_name = registrations[0].name
-        student_name = f"{registrations[0].first_name} {registrations[0].last_name}".strip()
+        # Use full name format
+        student_name = " ".join(filter(None, [
+            registrations[0].first_name,
+            registrations[0].middle_name,
+            registrations[0].last_name
+        ])).strip()
+        
         frappe.logger().debug(f"Found registration with name: {doc_name}")
         
         # Process the file upload
@@ -2406,7 +2406,6 @@ def upload_application_document(registration_id, document_type, file_data, filen
                     "message": f"Error updating document status: {str(doc_error)}"
                 }
         else:
-            frappe.logger().debug(f"No required document found for {document_type}, creating new one")
             # Create a new required document record if it doesn't exist
             try:
                 req_doc = frappe.new_doc("Required Document")
@@ -2424,13 +2423,13 @@ def upload_application_document(registration_id, document_type, file_data, filen
                     "status": "error",
                     "message": f"Error creating document record: {str(new_doc_error)}"
                 }
-        
-        # Create a timeline entry with student name
+            
+        # Create a timeline entry with student name and correct heading
         create_timeline_entry(
             doc_name,
-            "Documents Requested",
-            f"Document uploaded: {document_type}",
-            student_name  # Use student name directly
+            status="Documents Uploaded",  # Change this heading for uploads
+            description=f"Document uploaded: {document_type}",
+            created_by=student_name  # Use the full name
         )
         
         # Return success response
