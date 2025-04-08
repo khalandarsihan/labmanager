@@ -34,29 +34,29 @@ const StudentEnrollment = () => {
     // ? "border-amber-200/50 bg-amber-50/90"
     // ? "border-gray-200/50 bg-white/90"
     // ? "border-amber-300/70 bg-white/90"
-    ? "border-amber-200/50 bg-gradient-to-r from-amber-50 via-amber-100 to-amber-50"
+    ? "border-purple-200/50 bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50"
     
     // : "border-gray-700/50 bg-gray-800/50";
     : "border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]"
   
   const cardTitle = useLightTheme
-    ? "text-amber-700"
+    ? "text-purple-700"
     : "text-amber-300";
     
   const cardDesc = useLightTheme
-    ? "text-amber-700/70"
+    ? "text-purple-700/70"
     : "text-amber-100/70";
     
   const formBg = useLightTheme
-    ? "border-amber-200/50 bg-white/70"
+    ? "border-purple-200/50 bg-white/70"
     : "border-gray-700/50 bg-gray-800/30";
     
   const buttonPrimary = useLightTheme
-    ? "bg-amber-500 text-white hover:bg-amber-600 disabled:bg-amber-300/50"
+    ? "bg-purple-500 text-white hover:bg-purple-600 disabled:bg-purple-300/50"
     : "bg-amber-300 text-gray-900 hover:bg-amber-400 disabled:bg-gray-800/50";
     
   const buttonSecondary = useLightTheme
-    ? "disabled:bg-gray-200/50 disabled:text-gray-400 disabled:border disabled:border-gray-300/50"
+    ? "disabled:bg-purple-200/50 disabled:text-purple-400 disabled:border disabled:border-purple-300/50"
     : "disabled:bg-gray-800/50 disabled:text-gray-500 disabled:border disabled:border-gray-700/50";
 
   const [formData, setFormData] = useState({

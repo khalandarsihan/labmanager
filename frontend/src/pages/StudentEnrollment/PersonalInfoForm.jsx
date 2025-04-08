@@ -20,15 +20,15 @@ const PersonalInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
 
   // Apply theme-based styles
   const labelStyle = useLightTheme 
-    ? "text-amber-700 font-medium" 
+    ? "text-purple-700 font-medium" 
     : "text-amber-200 font-medium";
     
   const inputBg = useLightTheme
-    ? "bg-white border-amber-200/50 text-gray-700 focus:border-amber-400/80 placeholder-gray-400"
+    ? "bg-white border-purple-200/50 text-purple-700 focus:border-purple-400/80 placeholder-gray-400"
     : "bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400";
     
   const iconStyle = useLightTheme
-    ? "text-amber-500/70"
+    ? "text-purple-500/70"
     : "text-amber-300/70";
     
   const errorStyle = useLightTheme
@@ -58,7 +58,7 @@ const PersonalInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
           <div className={`absolute inset-0 ${useLightTheme ? 'bg-gray-200/50' : 'bg-gray-900/50'} opacity-0 group-hover:opacity-100 transition-opacity rounded-full flex items-center justify-center backdrop-blur-sm`}>
-            <Upload className={`w-8 h-8 ${useLightTheme ? 'text-amber-500' : 'text-amber-300'}`} />
+            <Upload className={`w-8 h-8 ${useLightTheme ? 'text-purple-500' : 'text-amber-300'}`} />
           </div>
         </div>
       </div>
@@ -164,10 +164,10 @@ const PersonalInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
             <SelectTrigger className={inputBg}>
               <SelectValue placeholder="Select gender" />
             </SelectTrigger>
-            <SelectContent className={useLightTheme ? "bg-white border-amber-200" : "bg-gray-800 border-gray-700"}>
-              <SelectItem value="Male" className={useLightTheme ? "text-gray-700 hover:bg-amber-50" : "text-amber-100 hover:bg-gray-700"}>Male</SelectItem>
-              <SelectItem value="Female" className={useLightTheme ? "text-gray-700 hover:bg-amber-50" : "text-amber-100 hover:bg-gray-700"}>Female</SelectItem>
-              <SelectItem value="Other" className={useLightTheme ? "text-gray-700 hover:bg-amber-50" : "text-amber-100 hover:bg-gray-700"}>Other</SelectItem>
+            <SelectContent className={useLightTheme ? "bg-white border-purple-200" : "bg-gray-800 border-gray-700"}>
+              <SelectItem value="Male" className={useLightTheme ? "text-purple-700 hover:bg-purple-50" : "text-amber-100 hover:bg-gray-700"}>Male</SelectItem>
+              <SelectItem value="Female" className={useLightTheme ? "text-purple-700 hover:bg-purple-50" : "text-amber-100 hover:bg-gray-700"}>Female</SelectItem>
+              <SelectItem value="Other" className={useLightTheme ? "text-purple-700 hover:bg-purple-50" : "text-amber-100 hover:bg-gray-700"}>Other</SelectItem>
             </SelectContent>
           </Select>
           {errors.gender && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.gender}</span>}

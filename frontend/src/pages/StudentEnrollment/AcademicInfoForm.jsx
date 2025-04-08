@@ -24,27 +24,27 @@ const AcademicInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
 
   // Apply theme-based styles
   const labelStyle = useLightTheme 
-    ? "text-amber-700 font-medium" 
+    ? "text-purple-700 font-medium" 
     : "text-amber-200 font-medium";
     
   const inputBg = useLightTheme
-    ? "bg-white border-amber-200/50 text-gray-700 focus:border-amber-400/80 placeholder-gray-400"
+    ? "bg-white border-purple-200/50 text-gray-700 focus:border-purple-400/80 placeholder-gray-400"
     : "bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400";
     
   const selectBg = useLightTheme
-    ? "bg-white border-amber-200/50 text-gray-700 focus:border-amber-400/80"
+    ? "bg-white border-purple-200/50 text-purple-700 focus:border-purple-400/80"
     : "bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50";
     
   const selectContent = useLightTheme
-    ? "bg-white border-amber-200"
+    ? "bg-white border-purple-200"
     : "bg-gray-800 border-gray-700";
     
   const selectItem = useLightTheme
-    ? "text-gray-700 hover:bg-amber-50"
+    ? "text-purple-700 hover:bg-purple-50"
     : "text-amber-100 hover:bg-gray-700";
     
   const iconStyle = useLightTheme
-    ? "text-amber-500/70"
+    ? "text-purple-500/70"
     : "text-amber-300/70";
     
   const errorStyle = useLightTheme
@@ -52,15 +52,15 @@ const AcademicInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
     : "text-red-400";
     
   const infoBgStyle = useLightTheme
-    ? "bg-amber-50/80 border-amber-200/50"
+    ? "bg-purple-50/80 border-purple-200/50"
     : "bg-gray-800/30 border-gray-700/50";
     
   const infoTitleStyle = useLightTheme
-    ? "text-amber-700"
+    ? "text-purple-700"
     : "text-amber-200";
     
   const infoTextStyle = useLightTheme
-    ? "text-amber-700/70"
+    ? "text-purple-700/70"
     : "text-amber-100/70";
 
   return (

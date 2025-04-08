@@ -7,15 +7,15 @@ import { MapPin, Building2, Globe, Flag } from 'lucide-react';
 const AddressInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
   // Apply theme-based styles
   const labelStyle = useLightTheme 
-    ? "text-amber-700 font-medium" 
+    ? "text-purple-700 font-medium" 
     : "text-amber-200 font-medium";
     
   const inputBg = useLightTheme
-    ? "bg-white border-amber-200/50 text-gray-700 focus:border-amber-400/80 placeholder-gray-400"
+    ? "bg-white border-purple-200/50 text-purple-700 focus:border-purple-400/80 placeholder-gray-400"
     : "bg-gray-800/50 border-gray-700/50 text-amber-100 focus:border-amber-300/50 placeholder-gray-400";
     
   const iconStyle = useLightTheme
-    ? "text-amber-500/70"
+    ? "text-purple-500/70"
     : "text-amber-300/70";
     
   const errorStyle = useLightTheme
