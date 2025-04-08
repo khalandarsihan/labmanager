@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { FileText, Upload, Clock, CheckCircle, AlertCircle, Eye, RotateCw, X } from 'lucide-react';
 
-const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
+const DocumentUpload = ({ document, registrationId, onUploadSuccess, useLightTheme }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState(null);
   const [file, setFile] = useState(null);
@@ -14,6 +14,51 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
   const [viewMode, setViewMode] = useState(document.status === 'Submitted' ? 'view' : 'upload');
   
   const { call: uploadDocument } = useFrappePostCall('labmanager.api.api.upload_application_document');
+
+ 
+  const cardBg = useLightTheme 
+    ? "border-purple-200/50 bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50"
+    : "border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
+    
+  const infoTextColor = useLightTheme
+    ? "text-gray-700"
+    : "text-gray-300";
+    
+  const notesColor = useLightTheme
+    ? "text-sm text-gray-700 mb-3"
+    : "text-sm text-gray-300 mb-3";
+    
+  const dateColor = useLightTheme
+    ? "text-gray-700"
+    : "text-gray-300";
+    
+  const iconColor = useLightTheme
+    ? "text-purple-500"
+    : "text-amber-500";
+    
+  const errorText = useLightTheme
+    ? "text-sm text-red-500"
+    : "text-sm text-red-400";
+    
+  const buttonPrimary = useLightTheme
+    ? "bg-purple-600 text-white hover:bg-purple-700"
+    : "bg-amber-300 text-gray-900 hover:bg-amber-400";
+    
+  const buttonSecondary = useLightTheme
+    ? "border-purple-300 text-purple-600 bg-white hover:bg-purple-50"
+    : "border-amber-300/50 text-amber-300 bg-gray-800 hover:bg-amber-300/10";
+    
+  const fileSelectButton = useLightTheme
+    ? "cursor-pointer bg-gray-700 text-purple-200 px-3 py-2 rounded-md hover:bg-gray-600 flex items-center"
+    : "cursor-pointer bg-gray-700 text-amber-300 px-3 py-2 rounded-md hover:bg-gray-600 flex items-center";
+    
+  const submittedBg = useLightTheme
+    ? "bg-purple-50/50 p-3 rounded-md border border-purple-200 shadow-md text-sm flex justify-between items-center"
+    : "bg-sky-900/20 p-3 rounded-md border border-sky-700/40 shadow-md text-sm flex justify-between items-center";
+    
+  const deadlineText = useLightTheme
+    ? "text-xs text-purple-400 mt-3 flex items-center"
+    : "text-xs text-amber-300/70 mt-3 flex items-center";
   
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -173,14 +218,17 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
   };
   
   return (
-    <div className="bg-sky-100 rounded-lg p-4 border border-sky-200 shadow-md mb-4">
+    <div className={cardBg}>
       <div className="flex justify-between items-center mb-2">
-        <h4 className="font-medium text-gray-800">{document.document_type}</h4>
+        <h4 className={`font-medium ${infoTextColor}`}>{document.document_type}</h4>
         {renderStatusBadge()}
       </div>
       
       {document.status === 'Rejected' && (
-        <div className="bg-red-900/20 text-red-300 p-3 rounded-md mb-3 text-sm">
+        <div className={useLightTheme 
+          ? "bg-red-100 text-red-700 p-3 rounded-md mb-3 text-sm" 
+          : "bg-red-900/20 text-red-300 p-3 rounded-md mb-3 text-sm"
+        }>
           <AlertCircle className="w-4 h-4 inline-block mr-2" />
           Reason: {document.rejection_reason || 'Document does not meet requirements'}
         </div>
@@ -188,15 +236,15 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
       
       {viewMode === 'view' ? (
         // View mode for submitted documents
-        <div className="bg-sky-100/50 p-3 rounded-md border border-sky-200 shadow-md text-sm flex justify-between items-center">
+        <div className={submittedBg}>
           <div className="flex items-center">
-            <FileText className="w-4 h-4 mr-2 text-amber-500" />
-            <span className="text-gray-700">Document submitted on {document.submitted_date}</span>
+            <FileText className={`w-4 h-4 mr-2 ${iconColor}`} />
+            <span className={dateColor}>Document submitted on {document.submitted_date}</span>
           </div>
           <Button 
             size="sm" 
             variant="outline" 
-            className="h-8 border-amber-300 text-amber-700 bg-white"
+            className={`h-8 ${buttonSecondary}`}
             onClick={handleReplace}
           >
             <RotateCw className="w-3 h-3 mr-1" /> Replace
@@ -205,7 +253,7 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
       ) : (
         // Upload mode
         <>
-          <p className="text-sm text-gray-800 mb-3">{document.notes || `Please upload your ${document.document_type.toLowerCase()}`}</p>
+          <p className={notesColor}>{document.notes || `Please upload your ${document.document_type.toLowerCase()}`}</p>
           <div className="flex gap-2 mt-2">
             <Input 
               type="file" 
@@ -216,7 +264,7 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
             />
             <label 
               htmlFor={`file-${document.document_type.replace(/\s+/g, '-').toLowerCase()}`} 
-              className="cursor-pointer bg-gray-700 text-amber-300 px-3 py-2 rounded-md hover:bg-gray-600 flex items-center"
+              className={fileSelectButton}
             >
               <Upload className="w-4 h-4 mr-2" />
               Select File
@@ -224,7 +272,7 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
             <Button 
               onClick={handleUpload}
               disabled={!file || isUploading}
-              className="bg-amber-300 text-gray-900 hover:bg-amber-400"
+              className={buttonPrimary}
             >
               {isUploading ? 
                 <><Clock className="w-4 h-4 mr-2 animate-spin" /> Uploading...</> : 
@@ -234,13 +282,13 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
           </div>
           
           {file && (
-            <div className="mt-2 text-sm text-grey-800">
+            <div className={`mt-2 text-sm ${infoTextColor}`}>
               Selected: {file.name} ({Math.round(file.size / 1024)} KB)
             </div>
           )}
           
           {error && (
-            <div className="mt-2 text-sm text-red-400">
+            <div className={`mt-2 ${errorText}`}>
               <AlertCircle className="w-4 h-4 inline-block mr-1" />
               {error}
             </div>
@@ -249,7 +297,7 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
       )}
       
       {document.deadline && (
-        <div className="text-xs text-amber-300/70 mt-3 flex items-center">
+        <div className={deadlineText}>
           <Clock className="w-3 h-3 mr-1" />
           Deadline: {document.deadline}
         </div>
@@ -258,9 +306,12 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess }) => {
       {/* Document Preview Modal */}
       {showPreview && document.file_url && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-lg p-4 max-w-4xl w-full max-h-[90vh] flex flex-col">
+          <div className={useLightTheme 
+            ? "bg-white rounded-lg p-4 max-w-4xl w-full max-h-[90vh] flex flex-col"
+            : "bg-gray-800 rounded-lg p-4 max-w-4xl w-full max-h-[90vh] flex flex-col"
+          }>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-amber-300">{document.document_type}</h3>
+              <h3 className={`text-lg font-medium ${useLightTheme ? "text-purple-700" : "text-amber-300"}`}>{document.document_type}</h3>
               <Button variant="ghost" size="sm" onClick={() => setShowPreview(false)}>
                 <X className="w-5 h-5" />
               </Button>
