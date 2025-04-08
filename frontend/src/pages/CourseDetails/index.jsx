@@ -368,11 +368,11 @@ const CourseDetails = ({ courseCode }) => {
                 </CardHeader>
                 <CardContent className="p-6">
                   <Button
-                  className={`w-full mb-4 ${useLightTheme ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-amber-300 hover:bg-amber-400 text-gray-900'}`}
-                  onClick={() => setShowEnrollment(true)}
-                >
-                  Enroll Now
-                </Button>
+                    className={`w-full mb-4 ${useLightTheme ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-amber-300 hover:bg-amber-400 text-gray-900'}`}
+                    onClick={() => window.location.href = '/student-registration/new'}
+                  >
+                    Enroll Now
+                  </Button>
                   <p className={`text-sm text-center ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`}>30-day money-back guarantee</p>
                 </CardContent>
               </Card>
