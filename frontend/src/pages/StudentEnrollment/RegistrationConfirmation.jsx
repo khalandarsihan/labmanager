@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, FileText, Mail, Phone, Download } from 'lucide-react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { saveAs } from 'file-saver';
-// import Toast from './Toast';
 import { useToast } from '@/components/ui/toast';
+import BackgroundPattern from '@/components/ui/BackgroundPattern';
+import { useTheme } from '@/components/ui/ThemeContext';
 
 const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
-  // Toast state
-  // const [toast, setToast] = useState(null);
   const { toast, Toaster } = useToast();
   const [localStudentData, setLocalStudentData] = useState(studentData || {});
+  const { useLightTheme, themeStyles } = useTheme();
 
   // Try to load data from localStorage if not provided via props
   useEffect(() => {
@@ -35,6 +35,46 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
     }
   }, [studentData]);
 
+  // Apply theme-based styles
+  // const cardBg = useLightTheme
+  //   ? "border-purple-200/50 bg-white/80"
+  //   : "border-gray-700/50 bg-gray-800/50";
+  const cardBg = useLightTheme 
+  ? "border-purple-200/50 bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50"
+  : "border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]"
+    
+  const headerText = useLightTheme
+    ? "text-purple-700"
+    : "text-amber-300";
+    
+  const descriptionText = useLightTheme
+    ? "text-purple-600/70"
+    : "text-amber-100/70";
+    
+  const sectionBg = useLightTheme
+    ? "bg-purple-50/80 border-purple-200/50"
+    : "bg-gray-700/30 border-gray-700/50";
+    
+  const labelText = useLightTheme
+    ? "text-purple-400"
+    : "text-gray-400";
+    
+  const valueText = useLightTheme
+    ? "text-gray-700"
+    : "text-gray-200";
+    
+  const iconColor = useLightTheme
+    ? "text-purple-500"
+    : "text-amber-300";
+    
+  const buttonPrimary = useLightTheme
+    ? "bg-purple-600 text-white hover:bg-purple-700"
+    : "bg-amber-300 text-gray-900 hover:bg-amber-400";
+    
+  const buttonOutline = useLightTheme
+    ? "border-purple-300/50 text-purple-600 hover:bg-purple-500/10"
+    : "border-amber-300/50 text-amber-300 hover:bg-amber-300/10";
+
   const handleDownloadConfirmation = async () => {
     try {
       // Create a new PDF document
@@ -55,13 +95,18 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       const tableMargin = 60; // Slightly larger margin for the table
       const lineHeight = textSize * 1.5;
       
+      // Use different colors based on theme
+      const primaryColor = useLightTheme
+        ? { r: 0.5, g: 0.3, b: 0.8 } // purple for light theme
+        : { r: 0.85, g: 0.65, b: 0.13 }; // amber for dark theme
+      
       // Draw school logo/header
       page.drawText('TechEthica Institute', {
         x: margin,
         y: page.getHeight() - margin,
         size: 24,
         font: helveticaBold,
-        color: rgb(0.85, 0.65, 0.13), // amber color
+        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
       page.drawText('Application Confirmation', {
@@ -97,7 +142,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         width: 400,
         height: 40,
         color: rgb(0.95, 0.95, 0.95),
-        borderColor: rgb(0.85, 0.65, 0.13),
+        borderColor: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
         borderWidth: 1,
       });
       
@@ -125,14 +170,14 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         y: studentInfoY,
         size: headerSize,
         font: helveticaBold,
-        color: rgb(0.85, 0.65, 0.13),
+        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
       page.drawLine({
         start: { x: margin, y: studentInfoY - 10 },
         end: { x: page.getWidth() - margin, y: studentInfoY - 10 },
         thickness: 1,
-        color: rgb(0.85, 0.65, 0.13),
+        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
       // Format data for the table
@@ -304,14 +349,14 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         y: nextStepsY,
         size: headerSize,
         font: helveticaBold,
-        color: rgb(0.85, 0.65, 0.13),
+        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
       page.drawLine({
         start: { x: margin, y: nextStepsY - 10 },
         end: { x: page.getWidth() - margin, y: nextStepsY - 10 },
         thickness: 1,
-        color: rgb(0.85, 0.65, 0.13),
+        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
       const steps = [
@@ -347,7 +392,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         start: { x: margin, y: footerY + 20 },
         end: { x: page.getWidth() - margin, y: footerY + 20 },
         thickness: 1,
-        color: rgb(0.85, 0.65, 0.13),
+        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
       page.drawText('TechEthica Institute', {
@@ -355,7 +400,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         y: footerY,
         size: textSize,
         font: helveticaBold,
-        color: rgb(0.85, 0.65, 0.13),
+        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
       page.drawText('www.techethica.edu | +1 (555) 123-4567', {
@@ -373,11 +418,6 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       saveAs(blob, `TechEthica_Application_${registrationId}.pdf`);
       
-      // Show success toast
-      // setToast({
-      //   type: 'success',
-      //   message: 'Confirmation PDF downloaded successfully'
-      // });
       toast({
         title: 'Success',
         description: 'Confirmation PDF downloaded successfully'
@@ -385,43 +425,29 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       
     } catch (error) {
       console.error('Error generating PDF:', error);
-
-  //     setToast({
-  //       type: 'error',
-  //       message: 'Failed to generate PDF confirmation'
-  //     });
-
-
       toast({
         title: 'Error',
         description: 'Failed to generate PDF confirmation',
         variant: 'destructive'
       });
-      }
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-gray-900 via-gray-800 to-gray-700 py-12 px-4 relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute h-full w-px bg-amber-300/60 left-1/4 transform -skew-x-12"></div>
-        <div className="absolute h-full w-px bg-amber-300/50 left-1/2 transform skew-x-12"></div>
-        <div className="absolute h-full w-px bg-amber-300/60 left-3/4 transform -skew-x-12"></div>
-        <div className="absolute w-full h-px bg-amber-300/50 top-1/4 transform -skew-y-12"></div>
-        <div className="absolute w-full h-px bg-amber-300/60 top-1/2 transform skew-y-12"></div>
-        <div className="absolute w-full h-px bg-amber-300/50 top-3/4 transform -skew-y-12"></div>
-      </div>
+    <div className="min-h-screen py-12 px-4 relative overflow-hidden">
+      {/* Use the BackgroundPattern component instead of hard-coded background */}
+      <BackgroundPattern />
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <Card className="border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
+        <Card className={`${cardBg} backdrop-blur-sm`}>
           <CardHeader>
             <div className="flex justify-center mb-6">
-              <CheckCircle className="w-16 h-16 text-amber-300" />
+              <CheckCircle className={`w-16 h-16 ${iconColor}`} />
             </div>
-            <CardTitle className="text-2xl font-bold text-center text-amber-300">
+            <CardTitle className={`text-2xl font-bold text-center ${headerText}`}>
               Application Submitted Successfully!
             </CardTitle>
-            <CardDescription className="text-center text-amber-100/70 mt-2">
+            <CardDescription className={`text-center ${descriptionText} mt-2`}>
               Your application reference number:<br />
               <span className="font-mono font-bold text-lg">{registrationId}</span>
             </CardDescription>
@@ -430,42 +456,42 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
           <CardContent>
             <div className="space-y-6">
               {/* Application Details */}
-              <div className="bg-gray-700/30 rounded-lg p-6 backdrop-blur-sm border border-gray-700/50">
-                <h3 className="text-lg font-semibold text-amber-300 mb-4">Application Details</h3>
-                <dl className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-200">
+              <div className={`${sectionBg} rounded-lg p-6 backdrop-blur-sm border`}>
+                <h3 className={`text-lg font-semibold ${headerText} mb-4`}>Application Details</h3>
+                <dl className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${valueText}`}>
                   <div>
-                    <dt className="text-gray-400 text-sm">Full Name</dt>
+                    <dt className={`${labelText} text-sm`}>Full Name</dt>
                     <dd>{[localStudentData.first_name, localStudentData.middle_name, localStudentData.last_name].filter(Boolean).join(' ') || 'Not provided'}</dd>
                   </div>
                   <div>
-                    <dt className="text-gray-400 text-sm">Email</dt>
+                    <dt className={`${labelText} text-sm`}>Email</dt>
                     <dd>{localStudentData.email || 'Not provided'}</dd>
                   </div>
                   <div>
-                    <dt className="text-gray-400 text-sm">Program</dt>
+                    <dt className={`${labelText} text-sm`}>Program</dt>
                     <dd>{localStudentData.desired_academic_program || 'Not provided'}</dd>
                   </div>
                   <div>
-                    <dt className="text-gray-400 text-sm">Specialization</dt>
+                    <dt className={`${labelText} text-sm`}>Specialization</dt>
                     <dd>{localStudentData.islamic_studies_specialization || 'Not provided'}</dd>
                   </div>
                 </dl>
               </div>
 
               {/* Next Steps */}
-              <div className="bg-gray-700/30 rounded-lg p-6 backdrop-blur-sm border border-gray-700/50">
-                <h3 className="text-lg font-semibold text-amber-300 mb-4">Next Steps</h3>
-                <ul className="space-y-4 text-gray-200">
+              <div className={`${sectionBg} rounded-lg p-6 backdrop-blur-sm border`}>
+                <h3 className={`text-lg font-semibold ${headerText} mb-4`}>Next Steps</h3>
+                <ul className={`space-y-4 ${valueText}`}>
                   <li className="flex items-start">
-                    <FileText className="w-5 h-5 mr-3 text-amber-300 mt-1 flex-shrink-0" />
+                    <FileText className={`w-5 h-5 mr-3 ${iconColor} mt-1 flex-shrink-0`} />
                     <span>Our admissions team will review your application within 5-7 business days.</span>
                   </li>
                   <li className="flex items-start">
-                    <Mail className="w-5 h-5 mr-3 text-amber-300 mt-1 flex-shrink-0" />
+                    <Mail className={`w-5 h-5 mr-3 ${iconColor} mt-1 flex-shrink-0`} />
                     <span>You will receive an email notification about your application status.</span>
                   </li>
                   <li className="flex items-start">
-                    <Phone className="w-5 h-5 mr-3 text-amber-300 mt-1 flex-shrink-0" />
+                    <Phone className={`w-5 h-5 mr-3 ${iconColor} mt-1 flex-shrink-0`} />
                     <span>For any queries, contact our admissions office at admissions@techethica.edu</span>
                   </li>
                 </ul>
@@ -474,28 +500,28 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
               {/* Action Buttons */}
               <div className="flex flex-wrap justify-center gap-4 mt-8">
                 <Button 
-                onClick={() => window.location.href = `/track-application?id=${registrationId}`}
-                className="bg-amber-300 text-gray-900 hover:bg-amber-400 transition-all duration-200"
-              >
-                Track Your Application
-              </Button>
+                  onClick={() => window.location.href = `/track-application?id=${registrationId}`}
+                  className={`${buttonPrimary} transition-all duration-200`}
+                >
+                  Track Your Application
+                </Button>
                 <Button 
                   onClick={handleDownloadConfirmation}
-                  className="bg-amber-300 text-gray-900 hover:bg-amber-400 transition-all duration-200"
+                  className={`${buttonPrimary} transition-all duration-200`}
                 >
                   <Download className="w-4 h-4 mr-2" />
                   Download Confirmation
                 </Button>
                 <Button 
                   onClick={() => window.location.href = '/course-catalog'}
-                  className="bg-amber-300 text-gray-900 hover:bg-amber-400 transition-all duration-200"
+                  className={`${buttonPrimary} transition-all duration-200`}
                 >
                   Browse Courses
                 </Button>
                 <Button 
                   onClick={() => window.location.href = '/home_react'}
                   variant="outline"
-                  className="border-amber-300/50 text-amber-300 hover:bg-amber-300/10 transition-all duration-200"
+                  className={`${buttonOutline} transition-all duration-200`}
                 >
                   Return to Homepage
                 </Button>
@@ -506,7 +532,6 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       </div>
 
       {/* Toast notifications */}
-      {/* <Toast toast={toast} setToast={setToast} /> */}
       <Toaster />
     </div>
   );
