@@ -177,7 +177,7 @@ const CourseDetails = ({ courseCode }) => {
                             <ul className="space-y-2">
                               {course.prerequisites.map((prereq, index) => (
                                 <li key={index} className={`flex items-center gap-2 px-4 ${themeStyles.text.primary}`}>
-                                  <CheckCircle className={`w-4 h-4 ${useLightTheme ? 'text-amber-600' : 'text-amber-300'}`} />
+                                  <CheckCircle className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
                                   <div dangerouslySetInnerHTML={{ __html: prereq }} />
                                 </li>
                               ))}
@@ -191,7 +191,7 @@ const CourseDetails = ({ courseCode }) => {
                             <ul className="space-y-2">
                               {course.learning_objectives.map((objective, index) => (
                                 <li key={index} className={`flex items-center gap-2 px-4 ${themeStyles.text.primary}`}>
-                                  <Target className={`w-4 h-4 ${useLightTheme ? 'text-amber-600' : 'text-amber-300'}`} />
+                                  <Target className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
                                   <div dangerouslySetInnerHTML={{ __html: objective }} />
                                 </li>
                               ))}
@@ -237,7 +237,7 @@ const CourseDetails = ({ courseCode }) => {
                                     className={`flex items-center justify-between p-2 mt-2 rounded ${useLightTheme ? 'bg-gray-50' : 'bg-gray-800'}`}
                                   >
                                     <div className="flex items-center gap-3">
-                                      <Play className={`w-4 h-4 ${useLightTheme ? 'text-amber-600' : 'text-amber-300'}`} />
+                                      <Play className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
                                       <div>
                                         <p className={`font-medium ${themeStyles.text.primary}`}>{lesson.title}</p>
                                         <p className={`text-sm ${themeStyles.text.light}`}>{`${lesson.duration} ${lesson.unit}`}</p>
@@ -332,12 +332,12 @@ const CourseDetails = ({ courseCode }) => {
               </CardHeader>
               <CardContent className="p-6">
                 <Button
-                  className="w-full mb-4"
-                  onClick={() => setShowEnrollment(true)}
-                >
-                  Enroll Now
-                </Button>
-                <p className={`text-sm text-center ${themeStyles.text.light}`}>30-day money-back guarantee</p>
+                className={`w-full mb-4 ${useLightTheme ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'bg-amber-200 hover:bg-amber-300 text-gray-900'}`}
+                onClick={() => setShowEnrollment(true)}
+              >
+                Enroll Now
+              </Button>
+                <p className={`text-sm text-center ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`}>30-day money-back guarantee</p>
               </CardContent>
             </Card>
           </div>
