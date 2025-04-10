@@ -9,8 +9,15 @@ module.exports = {
 	theme: {
 		container: {
 			center: true,
-			padding: "2rem",
+			padding: {
+				DEFAULT: "1rem",
+				sm: "2rem",
+			},
 			screens: {
+				sm: "640px",
+				md: "768px",
+				lg: "1024px",
+				xl: "1280px",
 				"2xl": "1400px",
 			},
 		},
@@ -57,9 +64,9 @@ module.exports = {
 				},
 			},
 			fontFamily: {
-				'arabic': ['Amiri', 'Scheherazade New', 'serif'],
-				'serif': ['Playfair Display', 'serif'],
-				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				arabic: ["Amiri", "Scheherazade New", "serif"],
+				serif: ["Playfair Display", "serif"],
+				sans: ["Inter", "system-ui", "sans-serif"],
 			},
 			borderRadius: {
 				lg: "var(--radius)",
@@ -73,7 +80,7 @@ module.exports = {
 				"float-diagonal-reverse": "floatDiagonalReverse 5s ease-in-out infinite",
 				"float-side": "floatSide 8s ease-in-out infinite",
 				"float-circle": "floatCircle 12s linear infinite",
-				"rotate": "rotate 10s linear infinite",
+				rotate: "rotate 10s linear infinite",
 				"pulse-slow": "pulse 6s ease-in-out infinite",
 			},
 			keyframes: {
@@ -107,22 +114,52 @@ module.exports = {
 				},
 			},
 			backgroundImage: {
-				'geometric-pattern': "url('/assets/labmanager/images/geometric-pattern.png')",
-				'light-pattern': "url('/assets/labmanager/images/light-pattern.png')",
-				'dark-pattern': "url('/assets/labmanager/images/dark-pattern.png')",
+				"geometric-pattern": "url('/assets/labmanager/images/geometric-pattern.png')",
+				"light-pattern": "url('/assets/labmanager/images/light-pattern.png')",
+				"dark-pattern": "url('/assets/labmanager/images/dark-pattern.png')",
 			},
 			transitionProperty: {
-				'width': 'width',
-				'height': 'height',
-				'spacing': 'margin, padding',
+				width: "width",
+				height: "height",
+				spacing: "margin, padding",
 			},
 			boxShadow: {
-				'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.05)',
-				'glow-amber': '0 0 15px rgba(251, 191, 36, 0.4)',
-			}
+				"inner-light": "inset 0 2px 4px 0 rgba(255, 255, 255, 0.05)",
+				"glow-amber": "0 0 15px rgba(251, 191, 36, 0.4)",
+				"glow-purple": "0 0 15px rgba(124, 58, 237, 0.4)",
+			},
+			// Mobile-specific utilities
+			screens: {
+				xs: "480px",
+				// Keep defaults for sm, md, lg, xl, 2xl
+			},
+			spacing: {
+				"safe-top": "env(safe-area-inset-top)",
+				"safe-bottom": "env(safe-area-inset-bottom)",
+				"safe-left": "env(safe-area-inset-left)",
+				"safe-right": "env(safe-area-inset-right)",
+			},
 		},
 	},
 	plugins: [
 		// Add any plugins if needed
+		function ({ addUtilities }) {
+			const newUtilities = {
+				".no-scrollbar::-webkit-scrollbar": {
+					display: "none",
+				},
+				".no-scrollbar": {
+					"-ms-overflow-style": "none",
+					"scrollbar-width": "none",
+				},
+				".safe-paddings": {
+					"padding-top": "env(safe-area-inset-top)",
+					"padding-bottom": "env(safe-area-inset-bottom)",
+					"padding-left": "env(safe-area-inset-left)",
+					"padding-right": "env(safe-area-inset-right)",
+				},
+			};
+			addUtilities(newUtilities);
+		},
 	],
 };

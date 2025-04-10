@@ -3,6 +3,17 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- Add these meta tags to your layout.html file in the head section -->
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<!-- Prevent iOS from detecting phone numbers and applying styling -->
+		<meta name="format-detection" content="telephone=no" />
+		<!-- Ensure proper rendering on older IE browsers -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<!-- Optional: Fast clicking on mobile devices -->
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<title>{% block title %}{% endblock %}</title>
 
 		<!-- Stylesheets -->
