@@ -4,23 +4,27 @@ import { useTheme } from './ThemeContext';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const { useLightTheme } = useTheme();
   const [isMobile, setIsMobile] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
+  const { useLightTheme } = useTheme();
 
-  // Check if we're on mobile screen size
+  // Check viewport dimensions and orientation
   useEffect(() => {
-    const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const checkViewport = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      setIsMobile(width < 768);
+      setIsLandscape(width > height);
     };
     
     // Initial check
-    checkIfMobile();
+    checkViewport();
     
     // Add event listener
-    window.addEventListener('resize', checkIfMobile);
+    window.addEventListener('resize', checkViewport);
     
     // Clean up
-    return () => window.removeEventListener('resize', checkIfMobile);
+    return () => window.removeEventListener('resize', checkViewport);
   }, []);
 
   const toggleMenu = () => {
@@ -59,6 +63,9 @@ const Navbar = () => {
     ? "text-gray-700"
     : "text-white";
 
+  // Calculate max height for mobile menu in landscape mode
+  const mobileMenuHeight = isLandscape ? 'max-h-[70vh]' : '';
+  
   return (
     <nav className={`${navBgStyle} py-3 px-4 md:py-[15px] md:px-5 w-full relative top-[1px] z-[1000] -mt-[1px]`}>
       <div className="flex justify-between items-center max-w-[1300px] mx-auto">
@@ -68,32 +75,30 @@ const Navbar = () => {
           TechEthica
         </a>
 
-        {/* Mobile Menu Icon */}
-        <div className={`md:hidden cursor-pointer ${mobileMenuStyle} text-2xl`} onClick={toggleMenu}>
-          <i className={`fa ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
-        </div>
-
         {/* Navbar Menu - Desktop shows horizontally, Mobile shows vertically when open */}
-        <ul className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row items-start md:items-center list-none md:ml-8 gap-2 md:gap-5 ${
-          isMenuOpen ? `absolute top-[60px] left-0 w-full ${dropdownBgStyle} text-left p-4 z-50` : ''
-        }`}>
+        <ul 
+          className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row items-start md:items-center list-none md:ml-8 gap-2 md:gap-1 lg:gap-3 xl:gap-5 ${
+            isMenuOpen ? `absolute top-[60px] left-0 w-full ${dropdownBgStyle} text-left p-4 z-50 ${mobileMenuHeight} ${isLandscape ? 'overflow-y-auto' : ''}` : ''
+          }`}
+          style={isLandscape && isMenuOpen ? { maxHeight: '70vh', overflowY: 'auto' } : {}}
+        >
           <li className="w-full md:w-auto">
-            <a href="/" className={`flex items-center no-underline ${linkTextStyle} text-base hover:scale-110 transition-all duration-300 px-3 py-2`}>
+            <a href="/" className={`flex items-center no-underline ${linkTextStyle} text-sm md:text-base hover:scale-110 transition-all duration-300 px-3 py-2`}>
               <i className="fa fa-home mr-[5px] text-[18px]"></i> Home
             </a>
           </li>
           
           {/* About Us link */}
           <li className="w-full md:w-auto">
-            <a href="/about-us" className={`flex items-center no-underline ${linkTextStyle} text-base hover:scale-110 transition-all duration-300 px-3 py-2`}>
+            <a href="/about-us" className={`flex items-center no-underline ${linkTextStyle} text-sm md:text-base hover:scale-110 transition-all duration-300 px-3 py-2`}>
               <i className="fa fa-university mr-[5px] text-[18px]"></i> About
             </a>
           </li>
 
           {/* Courses dropdown */}
-          <li className="w-full md:w-auto relative whitespace-nowrap">
+          <li className="w-full md:w-auto relative group">
             <div 
-              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} text-base md:hover:scale-110 transition-all duration-300 px-3 py-2 cursor-pointer`}
+              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} text-sm md:text-base md:hover:scale-110 transition-all duration-300 px-3 py-2 cursor-pointer`}
               onClick={() => toggleDropdown('courses')}
             >
               <div className="flex items-center">
@@ -125,14 +130,14 @@ const Navbar = () => {
             </ul>
           </li>
 
-          {/* Live & Learn dropdown */}
-          <li className="w-full md:w-auto relative whitespace-nowrap">
+          {/* Live & Learn dropdown - Fixed to prevent wrapping */}
+          <li className="w-full md:w-auto relative group">
             <div 
-              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} text-base md:hover:scale-110 transition-all duration-300 px-3 py-2 cursor-pointer`}
+              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} text-sm md:text-base md:hover:scale-110 transition-all duration-300 px-2 md:px-3 py-2 cursor-pointer nowrap`}
               onClick={() => toggleDropdown('livelearn')}
             >
-              <div className="flex items-center">
-                <i className="fa fa-seedling mr-[5px] text-[18px]"></i> Live & Learn
+              <div className="flex items-center whitespace-nowrap">
+                <i className="fa fa-seedling mr-[5px] text-[18px]"></i> Live&nbsp;&&nbsp;Learn
               </div>
               {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'livelearn' ? 'up' : 'down'} ml-2`}></i>}
             </div>
@@ -161,9 +166,9 @@ const Navbar = () => {
           </li>
 
           {/* Schedule dropdown */}
-          <li className="w-full md:w-auto relative whitespace-nowrap">
+          <li className="w-full md:w-auto relative group">
             <div 
-              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} text-base md:hover:scale-110 transition-all duration-300 px-3 py-2 cursor-pointer`}
+              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} text-sm md:text-base md:hover:scale-110 transition-all duration-300 px-3 py-2 cursor-pointer`}
               onClick={() => toggleDropdown('schedule')}
             >
               <div className="flex items-center">
@@ -195,14 +200,14 @@ const Navbar = () => {
             </ul>
           </li>
 
-          {/* Parent Portal dropdown */}
-          <li className="w-full md:w-auto relative whitespace-nowrap">
+          {/* Parent Portal dropdown - Fixed to prevent wrapping */}
+          <li className="w-full md:w-auto relative group">
             <div 
-              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} text-base md:hover:scale-110 transition-all duration-300 px-3 py-2 cursor-pointer`}
+              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} text-sm md:text-base md:hover:scale-110 transition-all duration-300 px-2 md:px-3 py-2 cursor-pointer`}
               onClick={() => toggleDropdown('parent')}
             >
-              <div className="flex items-center">
-                <i className="fa fa-user-friends mr-[5px] text-[18px]"></i> Parent Portal
+              <div className="flex items-center whitespace-nowrap">
+                <i className="fa fa-user-friends mr-[5px] text-[18px]"></i> Parent&nbsp;Portal
               </div>
               {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'parent' ? 'up' : 'down'} ml-2`}></i>}
             </div>
@@ -232,33 +237,50 @@ const Navbar = () => {
 
           {/* Contact link */}
           <li className="w-full md:w-auto">
-            <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-base hover:scale-110 transition-all duration-300 px-3 py-2`}>
+            <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-sm md:text-base hover:scale-110 transition-all duration-300 px-3 py-2`}>
               <i className="fa fa-envelope mr-[5px] text-[18px]"></i> Contact
             </a>
           </li>
         </ul>
 
-        {/* CTA Button - Only visible on desktop, mobile gets version in menu */}
-        <a
-          href="/student-registration/new"
-          className={`hidden md:flex items-center justify-center ${ctaBgStyle} px-4 py-2 md:px-6 md:py-3 no-underline rounded font-bold transform hover:scale-110 transition-all duration-300 min-w-[150px] md:min-w-[200px] whitespace-nowrap md:ml-8`}
-        >
-          <i className="fa fa-rocket mr-2 transform group-hover:scale-110 transition-transform duration-300"></i>
-          Start Learning Today
-        </a>
-        
-        {/* Mobile-only CTA button - only shown when menu is open */}
-        {isMenuOpen && (
+        <div className="flex items-center ml-auto">
+          {/* CTA Button - Desktop version */}
           <a
             href="/student-registration/new"
-            className={`md:hidden absolute bottom-4 left-4 right-4 flex items-center justify-center ${ctaBgStyle} px-4 py-3 no-underline rounded font-bold transition-all duration-300 whitespace-nowrap`}
-            style={{ display: isMenuOpen ? 'flex' : 'none' }}
+            className={`hidden md:flex items-center justify-center ${ctaBgStyle} px-4 py-2 md:px-6 md:py-3 no-underline rounded font-bold transform hover:scale-110 transition-all duration-300 min-w-[150px] md:min-w-[200px] whitespace-nowrap`}
           >
-            <i className="fa fa-rocket mr-2"></i>
+            <i className="fa fa-rocket mr-2 transform group-hover:scale-110 transition-transform duration-300"></i>
             Start Learning Today
           </a>
-        )}
+          
+          {/* CTA Button - Mobile Landscape version (always visible in landscape) */}
+          {isMobile && isLandscape && !isMenuOpen && (
+            <a
+              href="/student-registration/new"
+              className={`flex items-center justify-center ${ctaBgStyle} px-3 py-2 no-underline rounded font-bold transition-all duration-300 whitespace-nowrap mr-4`}
+            >
+              <i className="fa fa-rocket mr-1"></i>
+              <span className="text-sm">Enroll</span>
+            </a>
+          )}
+          
+          {/* Mobile Menu Icon */}
+          <div className={`md:hidden cursor-pointer ${mobileMenuStyle} text-2xl`} onClick={toggleMenu}>
+            <i className={`fa ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
+          </div>
+        </div>
       </div>
+      
+      {/* Mobile-only CTA button - only shown when menu is open */}
+      {isMenuOpen && (
+        <a
+          href="/student-registration/new"
+          className={`md:hidden fixed ${isLandscape ? 'bottom-2 right-2 z-[1001]' : 'bottom-4 left-4 right-4'} flex items-center justify-center ${ctaBgStyle} px-4 py-3 no-underline rounded font-bold transition-all duration-300 whitespace-nowrap ${isLandscape ? 'w-auto' : ''}`}
+        >
+          <i className="fa fa-rocket mr-2"></i>
+          {isLandscape ? "Enroll Now" : "Start Learning Today"}
+        </a>
+      )}
     </nav>
   );
 };

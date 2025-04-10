@@ -2,19 +2,32 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<!-- Add these meta tags to your layout.html file in the head section -->
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+		/>
 		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
 		<!-- Prevent iOS from detecting phone numbers and applying styling -->
 		<meta name="format-detection" content="telephone=no" />
-		<!-- Ensure proper rendering on older IE browsers -->
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<!-- Optional: Fast clicking on mobile devices -->
+		<!-- Improve font rendering -->
+		<meta name="text-rendering" content="optimizeLegibility" />
+		<!-- Control text size adjustment -->
+		<meta name="text-size-adjust" content="100%" />
+		<!-- Add mobile web app capability -->
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+
 		<title>{% block title %}{% endblock %}</title>
+
+		<!-- Preconnect to font sources for faster loading -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+		<!-- Arabic font -->
+		<link
+			href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+			rel="stylesheet"
+		/>
 
 		<!-- Stylesheets -->
 		<link
@@ -28,7 +41,30 @@
 			type="image/x-icon"
 		/>
 		<link rel="icon" href="/assets/labmanager/images/favicon.ico" type="image/x-icon" />
-		<script src="https://cdn.tailwindcss.com"></script>
+
+		<!-- Fix for mobile overflow issues -->
+		<style>
+			html,
+			body {
+				overflow-x: hidden;
+				width: 100%;
+				-webkit-overflow-scrolling: touch;
+				margin: 0;
+				padding: 0;
+			}
+			body {
+				position: relative;
+				min-height: 100vh;
+			}
+			@media (max-width: 767px) {
+				/* Mobile-specific fixes */
+				.font-arabic {
+					/* Better Arabic text rendering on mobile */
+					text-rendering: optimizeLegibility;
+					word-break: keep-all;
+				}
+			}
+		</style>
 
 		{% block head %}{% endblock %}
 	</head>
