@@ -493,6 +493,11 @@ const Navbar = () => {
                   <i className="fa fa-id-card mr-[5px]"></i> Student Portal
                 </a>
               </li> */}
+                  <li className="py-[5px]">
+                  <a href="/track-application" className={`flex items-center no-underline ${linkTextStyle} text-sm`}>
+                    <i className="fa fa-file-alt mr-[5px]"></i> Track Application
+                  </a>
+                </li>
               <li className="py-[5px]">
                 <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-sm`}>
                   <i className="fa fa-life-ring mr-[5px]"></i> Help Center
