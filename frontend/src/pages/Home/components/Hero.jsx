@@ -114,8 +114,8 @@ const Hero = () => {
     : "text-amber-300";
     
   const descriptionColor = useLightTheme
-    ? "text-gray-700"
-    : "text-gray-200";
+    ? "text-purple-700"
+    : "text-amber-200";
     
   const buttonStyle = useLightTheme
     ? "bg-purple-500 text-white hover:bg-purple-600"
