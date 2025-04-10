@@ -63,7 +63,7 @@ doctype_js = {
 # ----------
 
 # application home page (will override Website Settings)
-home_page = "home"
+home_page = "home_react"
 
 # website user home page (by Role)
 # role_home_page = {
@@ -337,6 +337,7 @@ website_context = {
 # ]
 
 website_route_rules = [
+    {"from_route": "/", "to_route": "home_react"}, 
     {"from_route": "/home-react", "to_route": "home_react"},
     {"from_route": "/courses/<course>", "to_route": "courses/details"},
     {"from_route": "/courses/catalog", "to_route": "courses/catalog"},

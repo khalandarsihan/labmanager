@@ -431,7 +431,7 @@ const Navbar = () => {
           isMenuOpen ? `absolute top-[60px] left-0 w-full ${dropdownBgStyle} text-center p-[10px]` : ''
         }`}>
           <li>
-            <a href="/home_react" className={`flex items-center no-underline ${linkTextStyle} text-base hover:scale-110 transition-all duration-300 px-3 py-2`}>
+            <a href="/" className={`flex items-center no-underline ${linkTextStyle} text-base hover:scale-110 transition-all duration-300 px-3 py-2`}>
               <i className="fa fa-home mr-[5px] text-[18px]"></i> Home
             </a>
           </li>
