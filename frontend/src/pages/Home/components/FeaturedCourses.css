@@ -5,15 +5,29 @@
   padding: 0 20px;
 }
 
-.courses-scroll {
+/* Carousel container to manage overflow */
+.carousel-container {
   width: 100%;
-  gap: 20px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
 }
 
+/* Carousel track for smooth animation */
+.carousel-track {
+  display: flex;
+  transition: transform 500ms ease-out;
+}
+
+/* Carousel slide for individual cards */
+.carousel-slide {
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+
+/* Course card styling */
 .course-card {
-  flex: none;
-  width: 360px;
-  padding: 4px 8px 12px;
+  height: 100%;
 }
 
 .course-card-image {
@@ -35,6 +49,30 @@
 
 .course-card:hover .course-card-image img {
   transform: scale(1.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .course-card-image {
+    height: 10rem;
+  }
+  
+  /* Make buttons slightly smaller on mobile */
+  .course-card a {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Mobile landscape specific styles */
+@media (max-width: 767px) and (orientation: landscape) {
+  .course-card-image {
+    height: 8rem;
+  }
+  
+  .course-card {
+    font-size: 0.9rem;
+  }
 }
 
 /* Hide scrollbar */

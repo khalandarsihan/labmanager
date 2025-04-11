@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './FeaturedCourses.css';
@@ -7,49 +7,151 @@ import { useTheme } from '../../../components/ui/ThemeContext';
 const FeaturedCourses = ({ courses = [] }) => {
   const scrollContainerRef = useRef(null);
   const { useLightTheme, themeStyles } = useTheme();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleCards, setVisibleCards] = useState(4);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
 
-  const scroll = (direction) => {
-    if (scrollContainerRef.current) {
-      const container = scrollContainerRef.current;
-      const cardWidth = 360;
-      container.scrollBy({
-        left: cardWidth * (direction === 'left' ? -1 : 1),
-        behavior: 'smooth'
-      });
-    }
+  // Update viewport info
+  useEffect(() => {
+    const updateViewportInfo = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const mobile = width < 768;
+      const landscape = width > height;
+      
+      setIsMobile(mobile);
+      setIsLandscape(landscape);
+      
+      // Determine how many cards are visible at once
+      let visible = 4; // Default desktop view
+      
+      if (mobile) {
+        if (landscape) {
+          // Mobile in landscape orientation - show 2 cards
+          visible = 2;
+        } else {
+          // Mobile in portrait orientation - show 1 card
+          visible = 1;
+        }
+      } else if (width < 1200) {
+        // For tablet sized screens
+        visible = 2;
+      }
+      
+      setVisibleCards(visible);
+      
+      // If current index would cause empty space at the end, adjust it
+      const maxValidIndex = Math.max(0, courses.length - visible);
+      if (currentIndex > maxValidIndex) {
+        setCurrentIndex(maxValidIndex);
+      }
+    };
+    
+    updateViewportInfo();
+    window.addEventListener('resize', updateViewportInfo);
+    window.addEventListener('orientationchange', updateViewportInfo);
+    return () => {
+      window.removeEventListener('resize', updateViewportInfo);
+      window.removeEventListener('orientationchange', updateViewportInfo);
+    };
+  }, [courses.length, currentIndex]);
+
+  // Navigation moves one card at a time
+  const nextSlide = () => {
+    // Ensure we don't go past the end of the list
+    const maxIndex = Math.max(0, courses.length - visibleCards);
+    setCurrentIndex(prevIndex => Math.min(prevIndex + 1, maxIndex));
+  };
+
+  const prevSlide = () => {
+    // Ensure we don't go before the beginning of the list
+    setCurrentIndex(prevIndex => Math.max(prevIndex - 1, 0));
   };
 
   if (!courses.length) {
     return null;
   }
 
+  // Determine button states
+  const isAtStart = currentIndex === 0;
+  const isAtEnd = currentIndex >= courses.length - visibleCards;
+
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section className="relative py-12 sm:py-20 overflow-hidden">
       <BackgroundPattern useLightTheme={useLightTheme} />
       <div id="featuredCoursesContainer" className="relative z-10">
         <div className="featured-courses-container">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-6 sm:mb-8">
             <h2 className={`text-2xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`}>Featured Courses</h2>
             <div className="flex gap-2">
-              <NavigationButton
-                direction="left"
-                onClick={() => scroll('left')}
-                useLightTheme={useLightTheme}
-              />
-              <NavigationButton
-                direction="right"
-                onClick={() => scroll('right')}
-                useLightTheme={useLightTheme}
-              />
+              <button
+                onClick={prevSlide}
+                disabled={isAtStart}
+                className={`p-2 rounded-full transition-all duration-300 ${
+                  useLightTheme
+                    ? isAtStart
+                      ? 'bg-gray-100 border border-gray-200 cursor-not-allowed'
+                      : 'bg-purple-100/80 hover:bg-purple-200 border border-purple-300/20 hover:border-purple-300/50'
+                    : isAtStart
+                      ? 'bg-gray-900 border border-gray-700 cursor-not-allowed'
+                      : 'bg-gray-800/80 hover:bg-gray-700 border border-amber-300/20 hover:border-amber-300/50'
+                }`}
+                aria-label="Previous course"
+              >
+                <ChevronLeft className={`w-6 h-6 ${
+                  useLightTheme
+                    ? isAtStart ? 'text-gray-400' : 'text-purple-700'
+                    : isAtStart ? 'text-gray-600' : 'text-amber-200'
+                }`} />
+              </button>
+              <button
+                onClick={nextSlide}
+                disabled={isAtEnd}
+                className={`p-2 rounded-full transition-all duration-300 ${
+                  useLightTheme
+                    ? isAtEnd
+                      ? 'bg-gray-100 border border-gray-200 cursor-not-allowed'
+                      : 'bg-purple-100/80 hover:bg-purple-200 border border-purple-300/20 hover:border-purple-300/50'
+                    : isAtEnd
+                      ? 'bg-gray-900 border border-gray-700 cursor-not-allowed'
+                      : 'bg-gray-800/80 hover:bg-gray-700 border border-amber-300/20 hover:border-amber-300/50'
+                }`}
+                aria-label="Next course"
+              >
+                <ChevronRight className={`w-6 h-6 ${
+                  useLightTheme
+                    ? isAtEnd ? 'text-gray-400' : 'text-purple-700'
+                    : isAtEnd ? 'text-gray-600' : 'text-amber-200'
+                }`} />
+              </button>
             </div>
           </div>
-          <div
-            ref={scrollContainerRef}
-            className="courses-scroll flex overflow-x-auto scrollbar-hide scroll-smooth"
-          >
-            {courses.map((course) => (
-              <CourseCard key={course.course_code} course={course} useLightTheme={useLightTheme} themeStyles={themeStyles} />
-            ))}
+          
+          <div className="carousel-container overflow-hidden">
+            <div
+              ref={scrollContainerRef}
+              className="carousel-track flex transition-transform duration-500 ease-out"
+              style={{
+                width: `${courses.length * (100 / visibleCards)}%`,
+                transform: `translateX(-${currentIndex * (100 / courses.length)}%)`
+              }}
+            >
+              {courses.map((course, index) => (
+                <div
+                  key={course.course_code}
+                  className="carousel-slide"
+                  style={{ width: `${100 / courses.length}%` }}
+                >
+                  <CourseCard
+                    course={course}
+                    useLightTheme={useLightTheme}
+                    themeStyles={themeStyles}
+                    isMobile={isMobile}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -62,8 +164,8 @@ const FeaturedCourses = ({ courses = [] }) => {
   );
 };
 
-const CourseCard = ({ course, useLightTheme, themeStyles }) => (
-  <div className="course-card">
+const CourseCard = ({ course, useLightTheme, themeStyles, isMobile }) => (
+  <div className="course-card px-2 sm:px-4">
     <Card className={`${useLightTheme ? 'bg-white/50 border-purple-200/50 hover:border-purple-500/50' : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-300/50'} backdrop-blur-sm h-full transition-all duration-300 hover:transform hover:scale-[1.02] relative`}>
       <div className="course-card-image">
         <img
@@ -72,7 +174,7 @@ const CourseCard = ({ course, useLightTheme, themeStyles }) => (
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
       </div>
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <h3 className={`text-lg font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'} mb-2`}>{course.title}</h3>
         <p className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm line-clamp-2 mb-4`}>
           {course.short_description}
@@ -81,7 +183,7 @@ const CourseCard = ({ course, useLightTheme, themeStyles }) => (
           <span className={`${useLightTheme ? 'text-purple-600' : 'text-amber-300'} font-bold`}>₹{course.price}</span>
           <a
             href={`/courses/${course.course_code}`}
-            className={`${useLightTheme ? 'bg-purple-500/90 hover:bg-purple-500 text-white' : 'bg-amber-300/90 hover:bg-amber-300 text-gray-900'} px-4 py-2 rounded font-semibold transition-all duration-300 hover:shadow-lg`}
+            className={`${useLightTheme ? 'bg-purple-500/90 hover:bg-purple-500 text-white' : 'bg-amber-300/90 hover:bg-amber-300 text-gray-900'} px-3 py-2 rounded font-semibold transition-all duration-300 hover:shadow-lg text-sm sm:text-base`}
           >
             Learn More
           </a>
@@ -89,23 +191,6 @@ const CourseCard = ({ course, useLightTheme, themeStyles }) => (
       </div>
     </Card>
   </div>
-);
-
-const NavigationButton = ({ direction, onClick, useLightTheme }) => (
-  <button
-    onClick={onClick}
-    className={`p-2 rounded-full ${
-      useLightTheme
-        ? 'bg-purple-100/80 hover:bg-purple-200 border border-purple-300/20 hover:border-purple-300/50'
-        : 'bg-gray-800/80 hover:bg-gray-700 border border-amber-300/20 hover:border-amber-300/50'
-    } transition-all duration-300`}
-  >
-    {direction === 'left' ? (
-      <ChevronLeft className={`w-6 h-6 ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`} />
-    ) : (
-      <ChevronRight className={`w-6 h-6 ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`} />
-    )}
-  </button>
 );
 
 const BackgroundPattern = ({ useLightTheme }) => {
