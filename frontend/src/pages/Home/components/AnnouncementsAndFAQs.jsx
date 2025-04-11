@@ -45,18 +45,21 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
     return acc;
   }, {});
 
+  // Mobile padding adjustment
+  const mobileContentPadding = isMobile ? 'px-1 sm:px-4' : 'px-4 sm:px-8';
+
   return (
     <section className="relative py-12 sm:py-24 overflow-hidden">
       <BackgroundPattern useLightTheme={useLightTheme} />
       
-      <div className="max-w-[1920px] mx-auto px-4 sm:px-8 md:px-12 relative z-10">
-        <div className="flex flex-col lg:flex-row relative gap-6 sm:gap-8">
+      <div className="max-w-[1920px] mx-auto px-2 sm:px-8 md:px-12 relative z-10">
+        <div className="flex flex-col lg:flex-row relative gap-4 sm:gap-8">
           {/* Left Column - Announcements */}
-          <div className="lg:w-1/2 relative group">
+          <div className="lg:w-1/2 relative group announcements-container">
             <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform skew-x-12 origin-top-left transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
-              <div className="p-5 sm:p-8 h-full">
-                <h2 className={`text-3xl sm:text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-4 sm:mb-8 text-center sm:text-left`}>
+              <div className={`p-3 sm:p-8 h-full section-content-wrapper ${isMobile ? 'px-2' : ''}`}>
+                <h2 className={`text-3xl sm:text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-4 sm:mb-8 text-center sm:text-left section-title`}>
                   ANNOUNCEMENTS
                 </h2>
                 
@@ -100,8 +103,8 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
           <div className="lg:w-1/2 relative group">
             <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform -skew-x-12 origin-top-right transition-all duration-300 ${useLightTheme ? 'group-hover:bg-purple-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
-              <div className="p-5 sm:p-8 h-full">
-                <h2 className={`text-3xl sm:text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-4 sm:mb-8 text-center sm:text-left`}>
+              <div className={`p-3 sm:p-8 h-full section-content-wrapper ${isMobile ? 'px-2' : ''}`}>
+                <h2 className={`text-3xl sm:text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-4 sm:mb-8 text-center sm:text-left section-title`}>
                   {isMobile ? "FAQs" : "FREQUENTLY\nASKED QUESTIONS"}
                 </h2>
                 
@@ -133,10 +136,14 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
         .theme-heading {
           color: ${useLightTheme ? '#6b21a8' : '#fcd34d'} !important;
           transition: color 0.3s ease;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
         .theme-subheading {
           color: ${useLightTheme ? '#7e22ce' : '#fcd34d'} !important;
           transition: color 0.3s ease;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
         }
         .theme-text-primary {
           color: ${useLightTheme ? '#1f2937' : '#ffffff'};
@@ -156,6 +163,24 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
         .announcement-content h2.theme-heading,
         .announcement-content h3.theme-heading {
           color: ${useLightTheme ? '#6b21a8' : '#fcd34d'} !important;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        
+        /* Mobile-specific styles for announcement content */
+        @media (max-width: 640px) {
+          .announcement-content h1,
+          .announcement-content h2,
+          .announcement-content h3 {
+            font-size: 1.25rem !important;
+            line-height: 1.3 !important;
+          }
+          
+          /* Additional mobile layout adjustments */
+          .section-content-wrapper {
+            padding-left: 8px !important;
+            padding-right: 8px !important;
+          }
         }
       `}</style>
     </section>
@@ -163,15 +188,15 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
 };
 
 const AnnouncementItem = ({ announcement, useLightTheme, themeStyles, isMobile }) => (
-  <div className={`${useLightTheme ? 'bg-white/40 hover:bg-white/60' : 'bg-gray-800/40 hover:bg-gray-800/60'} rounded-lg p-4 sm:p-5 transition-all duration-300`}>
-    <div className="flex items-start gap-3">
-      <AlertCircle className={`w-5 h-5 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'} flex-shrink-0 mt-1`} />
-      <div className="w-full">
-        <h3 className={`${useLightTheme ? 'text-purple-700' : 'text-amber-200'} font-semibold text-base sm:text-lg mb-2`}>
+  <div className={`${useLightTheme ? 'bg-white/40 hover:bg-white/60' : 'bg-gray-800/40 hover:bg-gray-800/60'} rounded-lg p-3 sm:p-5 transition-all duration-300 announcement-item ${isMobile ? 'mx-0 px-3' : ''}`}>
+    <div className="flex items-start gap-2 sm:gap-3">
+      <AlertCircle className={`w-5 h-5 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'} flex-shrink-0 mt-1 announcement-icon`} />
+      <div className="w-full announcement-content-wrapper">
+        <h3 className={`${useLightTheme ? 'text-purple-700' : 'text-amber-200'} font-semibold text-base sm:text-lg mb-2 break-words`}>
           {announcement.title}
         </h3>
         <div 
-          className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm sm:text-base announcement-content`}
+          className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm sm:text-base announcement-content break-words ${isMobile ? 'pl-0 pr-0' : ''}`}
           dangerouslySetInnerHTML={{ __html: announcement.content }}
         />
         <div className="flex flex-wrap justify-between items-center mt-3">
@@ -198,7 +223,7 @@ const AnnouncementItem = ({ announcement, useLightTheme, themeStyles, isMobile }
 );
 
 const CategorySection = ({ category, faqs, openFaq, setOpenFaq, useLightTheme, themeStyles, isMobile }) => (
-  <div className="category-section mb-6">
+  <div className={`category-section mb-6 ${isMobile ? 'px-0' : ''}`}>
     <h3 className={`text-xl sm:text-2xl font-bold ${useLightTheme ? 'text-purple-600' : 'text-amber-300'} mb-4`}>
       {category.category_name}
     </h3>
@@ -223,13 +248,13 @@ const CategorySection = ({ category, faqs, openFaq, setOpenFaq, useLightTheme, t
 );
 
 const FAQItem = ({ faq, isOpen, onClick, useLightTheme, themeStyles, isMobile }) => (
-  <div className={`${useLightTheme ? 'bg-white/30 hover:bg-white/40' : 'bg-gray-800/30 hover:bg-gray-800/40'} rounded-lg overflow-hidden transition-all duration-300`}>
+  <div className={`${useLightTheme ? 'bg-white/30 hover:bg-white/40' : 'bg-gray-800/30 hover:bg-gray-800/40'} rounded-lg overflow-hidden transition-all duration-300 faq-item ${isMobile ? 'px-2' : ''}`}>
     <button
-      className="w-full flex justify-between items-center p-4 text-left focus:outline-none"
+      className="w-full flex justify-between items-center p-3 sm:p-4 text-left focus:outline-none"
       aria-expanded={isOpen}
       onClick={onClick}
     >
-      <span className={`${useLightTheme ? 'text-gray-800' : 'text-white'} font-semibold text-base sm:text-lg pr-4`}>
+      <span className={`${useLightTheme ? 'text-gray-800' : 'text-white'} font-semibold text-base sm:text-lg pr-2 sm:pr-4`}>
         {faq.question}
       </span>
       <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${useLightTheme ? 'bg-purple-500 text-white' : 'bg-amber-300 text-gray-900'} transition-transform duration-300`}>
@@ -237,12 +262,12 @@ const FAQItem = ({ faq, isOpen, onClick, useLightTheme, themeStyles, isMobile })
       </span>
     </button>
     <div
-      className={`px-4 pb-4 transition-all duration-300 ${
+      className={`px-3 sm:px-4 pb-3 sm:pb-4 transition-all duration-300 ${
         isOpen ? 'block' : 'hidden'
       }`}
     >
       <div 
-        className={`${useLightTheme ? 'text-gray-700' : 'text-gray-200'} text-sm sm:text-base`} 
+        className={`${useLightTheme ? 'text-gray-700' : 'text-gray-200'} faq-answer-content`} 
         dangerouslySetInnerHTML={{ __html: faq.answer }}
       />
     </div>

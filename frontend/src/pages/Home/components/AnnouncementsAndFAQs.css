@@ -124,4 +124,115 @@
   transition: color 0.3s ease, background-color 0.3s ease;
 }
 
-/* Add additional theme-specific styles that might be needed */
+/* Responsive text handling for announcements */
+.announcement-content {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* FAQ answer styling improvements */
+.faq-answer-content {
+  font-weight: 500;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+/* Mobile layout improvements */
+@media (max-width: 767px) {
+  /* Make announcements section use more horizontal space */
+  .announcements-container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Expand announcement items to use full width */
+  .announcement-item {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  
+  /* Adjust content padding for better mobile view */
+  .announcement-content {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: left;
+  }
+  
+  /* Give more space for the content text */
+  .announcement-content-wrapper {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Reduce icon size and padding to give more space to text */
+  .announcement-icon {
+    padding-right: 8px !important;
+  }
+  
+  /* Make section headers stand out more */
+  .section-title {
+    text-align: center;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  
+  /* Expand FAQ items to use more horizontal space */
+  .faq-item, .category-section {
+    width: 100% !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+  
+  /* Content wrapper needs to be wider */
+  .section-content-wrapper {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+}
+
+/* Specific styles for mobile view */
+@media (max-width: 640px) {
+  .announcement-content h2,
+  .announcement-content h3 {
+    font-size: 1.5rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  /* Make any large text more responsive */
+  .announcement-content * {
+    max-width: 100%;
+  }
+  
+  .faq-answer-content {
+    font-size: 1rem;
+  }
+}
+
+/* For the 2025-26 TECHETHICA ADMISSION text specifically */
+@media (max-width: 480px) {
+  .announcement-content h1,
+  .announcement-content h2,
+  .announcement-content h3 {
+    font-size: 1.25rem !important;
+    line-height: 1.2 !important;
+    word-break: break-word;
+  }
+  
+  /* Further reduce padding for very small screens */
+  .announcement-item, .faq-item {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  
+  /* Ensure text spans full width */
+  .announcement-content-wrapper, .faq-answer-content {
+    width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
