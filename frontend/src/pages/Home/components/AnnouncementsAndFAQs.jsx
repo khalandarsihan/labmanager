@@ -1,11 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import './AnnouncementsAndFAQs.css';
 import { useTheme } from '../../../components/ui/ThemeContext';
 
 const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }) => {
   const [openFaq, setOpenFaq] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
   const { useLightTheme, themeStyles } = useTheme();
+
+  // Check viewport dimensions and orientation
+  useEffect(() => {
+    const checkViewport = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      setIsMobile(width < 768);
+      setIsLandscape(width > height);
+    };
+    
+    // Initial check
+    checkViewport();
+    
+    // Add event listener
+    window.addEventListener('resize', checkViewport);
+    
+    // Clean up
+    return () => window.removeEventListener('resize', checkViewport);
+  }, []);
 
   // Process announcements to ensure they have the expected properties
   const processedAnnouncements = announcements.map(announcement => ({
@@ -25,22 +46,30 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
   }, {});
 
   return (
-    <section className="relative py-24 overflow-hidden">
+    <section className="relative py-12 sm:py-24 overflow-hidden">
       <BackgroundPattern useLightTheme={useLightTheme} />
       
-      <div className="max-w-[1920px] mx-auto px-8 md:px-12 relative z-10">
-        <div className="flex flex-col lg:flex-row relative gap-8">
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-8 md:px-12 relative z-10">
+        <div className="flex flex-col lg:flex-row relative gap-6 sm:gap-8">
           {/* Left Column - Announcements */}
           <div className="lg:w-1/2 relative group">
             <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform skew-x-12 origin-top-left transition-all duration-300 ${useLightTheme ? 'group-hover:bg-amber-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
-              <div className="p-8 h-full">
-                <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-8`}>
+              <div className="p-5 sm:p-8 h-full">
+                <h2 className={`text-3xl sm:text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-4 sm:mb-8 text-center sm:text-left`}>
                   ANNOUNCEMENTS
                 </h2>
-                <div className="space-y-4 overflow-auto max-h-[calc(100vh-16rem)] scrollbar-hide">
+                
+                {/* Reduced height for better content visibility on mobile */}
+                <div className="space-y-3 sm:space-y-4 overflow-auto max-h-[400px] md:max-h-[calc(100vh-16rem)] scrollbar-hide">
                   {processedAnnouncements.map((announcement, index) => (
-                    <AnnouncementItem key={index} announcement={announcement} useLightTheme={useLightTheme} themeStyles={themeStyles} />
+                    <AnnouncementItem 
+                      key={index} 
+                      announcement={announcement} 
+                      useLightTheme={useLightTheme} 
+                      themeStyles={themeStyles}
+                      isMobile={isMobile}
+                    />
                   ))}
                   {processedAnnouncements.length === 0 && (
                     <div className={`${useLightTheme ? 'text-gray-500' : 'text-gray-400'} text-center py-4`}>
@@ -53,7 +82,7 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
                 <div className="mt-6 text-center">
                   <a
                     href="/student-registration/new"
-                    className={`inline-flex items-center justify-center px-6 py-3 rounded-md font-bold transform hover:scale-110 transition-all duration-300 ${
+                    className={`inline-flex items-center justify-center px-6 py-3 rounded-md text-base sm:text-lg font-bold transform hover:scale-110 transition-all duration-300 ${
                       useLightTheme 
                         ? 'bg-purple-600 text-white hover:bg-purple-700' 
                         : 'bg-amber-300 text-gray-900 hover:bg-amber-400'
@@ -71,11 +100,13 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
           <div className="lg:w-1/2 relative group">
             <div className={`absolute inset-0 ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} backdrop-blur-sm transform -skew-x-12 origin-top-right transition-all duration-300 ${useLightTheme ? 'group-hover:bg-purple-100/30' : 'group-hover:bg-gray-700/30'}`} />
             <div className="relative z-10 rounded-xl overflow-hidden transition-all duration-300 hover:transform hover:scale-[1.02]">
-              <div className="p-8 h-full">
-                <h2 className={`text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-8`}>
-                  FREQUENTLY<br/>ASKED QUESTIONS
+              <div className="p-5 sm:p-8 h-full">
+                <h2 className={`text-3xl sm:text-4xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-300'} mb-4 sm:mb-8 text-center sm:text-left`}>
+                  {isMobile ? "FAQs" : "FREQUENTLY\nASKED QUESTIONS"}
                 </h2>
-                <div className="space-y-4 overflow-auto max-h-[calc(100vh-16rem)] scrollbar-hide">
+                
+                {/* Reduced height for better content visibility on mobile */}
+                <div className="space-y-4 overflow-auto max-h-[400px] md:max-h-[calc(100vh-16rem)] scrollbar-hide">
                   {categories
                     .sort((a, b) => a.sequence - b.sequence)
                     .map((category) => (
@@ -87,6 +118,7 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
                         setOpenFaq={setOpenFaq}
                         useLightTheme={useLightTheme}
                         themeStyles={themeStyles}
+                        isMobile={isMobile}
                       />
                     ))}
                 </div>
@@ -130,18 +162,20 @@ const AnnouncementsAndFAQs = ({ categories = [], faqs = [], announcements = [] }
   );
 };
 
-const AnnouncementItem = ({ announcement, useLightTheme, themeStyles }) => (
-  <div className={`${useLightTheme ? 'bg-white/40 hover:bg-white/60' : 'bg-gray-800/40 hover:bg-gray-800/60'} rounded-lg p-4 transition-all duration-300`}>
+const AnnouncementItem = ({ announcement, useLightTheme, themeStyles, isMobile }) => (
+  <div className={`${useLightTheme ? 'bg-white/40 hover:bg-white/60' : 'bg-gray-800/40 hover:bg-gray-800/60'} rounded-lg p-4 sm:p-5 transition-all duration-300`}>
     <div className="flex items-start gap-3">
       <AlertCircle className={`w-5 h-5 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'} flex-shrink-0 mt-1`} />
       <div className="w-full">
-        <h3 className={`${useLightTheme ? 'text-purple-700' : 'text-amber-200'} font-semibold mb-2`}>{announcement.title}</h3>
+        <h3 className={`${useLightTheme ? 'text-purple-700' : 'text-amber-200'} font-semibold text-base sm:text-lg mb-2`}>
+          {announcement.title}
+        </h3>
         <div 
-          className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm announcement-content`}
+          className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm sm:text-base announcement-content`}
           dangerouslySetInnerHTML={{ __html: announcement.content }}
         />
         <div className="flex flex-wrap justify-between items-center mt-3">
-          <div className={`${useLightTheme ? 'text-gray-500' : 'text-gray-400'} text-xs`}>
+          <div className={`${useLightTheme ? 'text-gray-500' : 'text-gray-400'} text-xs sm:text-sm`}>
             {announcement.date ? new Date(announcement.date).toLocaleDateString() : ''}
           </div>
           {announcement.showCta && (
@@ -154,7 +188,7 @@ const AnnouncementItem = ({ announcement, useLightTheme, themeStyles }) => (
               }`}
             >
               <i className="fa fa-graduation-cap mr-2"></i>
-              {announcement.ctaText}
+              {isMobile ? 'Apply' : announcement.ctaText}
             </a>
           )}
         </div>
@@ -163,12 +197,12 @@ const AnnouncementItem = ({ announcement, useLightTheme, themeStyles }) => (
   </div>
 );
 
-const CategorySection = ({ category, faqs, openFaq, setOpenFaq, useLightTheme, themeStyles }) => (
-  <div className="category-section">
-    <h3 className={`text-xl font-semibold ${useLightTheme ? 'text-purple-600' : 'text-amber-300'} mb-4`}>
+const CategorySection = ({ category, faqs, openFaq, setOpenFaq, useLightTheme, themeStyles, isMobile }) => (
+  <div className="category-section mb-6">
+    <h3 className={`text-xl sm:text-2xl font-bold ${useLightTheme ? 'text-purple-600' : 'text-amber-300'} mb-4`}>
       {category.category_name}
     </h3>
-    <div className="space-y-2">
+    <div className="space-y-3">
       {faqs
         .sort((a, b) => a.sequence - b.sequence)
         .map((faq, index) => (
@@ -181,20 +215,23 @@ const CategorySection = ({ category, faqs, openFaq, setOpenFaq, useLightTheme, t
             )}
             useLightTheme={useLightTheme}
             themeStyles={themeStyles}
+            isMobile={isMobile}
           />
         ))}
     </div>
   </div>
 );
 
-const FAQItem = ({ faq, isOpen, onClick, useLightTheme, themeStyles }) => (
+const FAQItem = ({ faq, isOpen, onClick, useLightTheme, themeStyles, isMobile }) => (
   <div className={`${useLightTheme ? 'bg-white/30 hover:bg-white/40' : 'bg-gray-800/30 hover:bg-gray-800/40'} rounded-lg overflow-hidden transition-all duration-300`}>
     <button
       className="w-full flex justify-between items-center p-4 text-left focus:outline-none"
       aria-expanded={isOpen}
       onClick={onClick}
     >
-      <span className={`${useLightTheme ? 'text-gray-800' : 'text-white'} font-medium pr-4`}>{faq.question}</span>
+      <span className={`${useLightTheme ? 'text-gray-800' : 'text-white'} font-semibold text-base sm:text-lg pr-4`}>
+        {faq.question}
+      </span>
       <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${useLightTheme ? 'bg-purple-500 text-white' : 'bg-amber-300 text-gray-900'} transition-transform duration-300`}>
         {isOpen ? '−' : '+'}
       </span>
@@ -204,7 +241,10 @@ const FAQItem = ({ faq, isOpen, onClick, useLightTheme, themeStyles }) => (
         isOpen ? 'block' : 'hidden'
       }`}
     >
-      <div className={`${useLightTheme ? 'text-gray-700' : 'text-gray-200'}`} dangerouslySetInnerHTML={{ __html: faq.answer }} />
+      <div 
+        className={`${useLightTheme ? 'text-gray-700' : 'text-gray-200'} text-sm sm:text-base`} 
+        dangerouslySetInnerHTML={{ __html: faq.answer }}
+      />
     </div>
   </div>
 );
@@ -230,23 +270,19 @@ const BackgroundPattern = ({ useLightTheme }) => {
         <div className={`absolute w-full h-px ${borderColor}/50 top-3/4 transform -skew-y-12`} />
       </div>
   
-      {/* Floating Elements */}
+      {/* Floating Elements - Reduced and simplified for mobile */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Top Group */}
-        <div className={`absolute top-20 left-1/3 w-14 h-14 border-2 ${borderColor}/20 rounded-lg backdrop-blur transform rotate-45 animate-float-diagonal delay-300`} />
-        <div className={`absolute top-24 right-1/3 w-10 h-10 border-2 ${borderColor}/30 transform -rotate-12 backdrop-blur animate-float-up delay-700`} />
+        {/* Top Elements - Fewer on mobile */}
+        <div className={`absolute top-20 left-1/3 w-10 h-10 sm:w-14 sm:h-14 border-2 ${borderColor}/20 rounded-lg backdrop-blur transform rotate-45 animate-float-diagonal delay-300`} />
+        <div className={`hidden sm:block absolute top-24 right-1/3 w-10 h-10 border-2 ${borderColor}/30 transform -rotate-12 backdrop-blur animate-float-up delay-700`} />
   
-        {/* Left Side Elements */}
-        <div className={`absolute top-1/2 left-1/5 w-16 h-16 border-2 ${borderColor}/20 rounded-full backdrop-blur animate-float-circle delay-1000`} />
-        <div className={`absolute bottom-1/3 left-1/4 w-12 h-12 border-2 ${borderColor}/30 transform rotate-12 backdrop-blur animate-float-diagonal-reverse delay-500`} />
+        {/* Side Elements - Fewer on mobile */}
+        <div className={`hidden sm:block absolute top-1/2 left-1/5 w-16 h-16 border-2 ${borderColor}/20 rounded-full backdrop-blur animate-float-circle delay-1000`} />
+        <div className={`absolute bottom-1/3 left-1/4 w-8 h-8 sm:w-12 sm:h-12 border-2 ${borderColor}/30 transform rotate-12 backdrop-blur animate-float-diagonal-reverse delay-500`} />
   
-        {/* Right Side Elements */}
-        <div className={`absolute top-1/2 right-1/5 w-12 h-12 border-2 ${borderColor}/25 rounded-lg transform rotate-45 backdrop-blur animate-float-up-slow delay-200`} />
-        <div className={`absolute bottom-1/3 right-1/4 w-14 h-14 border-2 ${borderColor}/20 rounded-full backdrop-blur animate-float-side delay-900`} />
-  
-        {/* Additional Elements */}
-        <div className={`absolute top-2/3 right-1/6 w-10 h-10 border-2 ${borderColor}/25 transform rotate-30 backdrop-blur animate-float-diagonal delay-600`} />
-        <div className={`absolute bottom-1/4 right-1/5 w-8 h-8 border-2 ${borderColor}/30 rounded-lg backdrop-blur animate-float-circle delay-800`} />
+        {/* Bottom Elements - Fewer on mobile */}
+        <div className={`hidden sm:block absolute top-2/3 right-1/6 w-10 h-10 border-2 ${borderColor}/25 transform rotate-30 backdrop-blur animate-float-diagonal delay-600`} />
+        <div className={`absolute bottom-1/4 right-1/5 w-6 h-6 sm:w-8 sm:h-8 border-2 ${borderColor}/30 rounded-lg backdrop-blur animate-float-circle delay-800`} />
       </div>
     </div>
   );
