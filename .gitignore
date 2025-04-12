@@ -88,7 +88,7 @@ bundle-analysis.html
 
 # Generated files
 public/js/react/bundle.js
-frontend/package-lock.json
+# frontend/package-lock.json
 public/js/react/bundle.js.map
 
 # Build outputs
