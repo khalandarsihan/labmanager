@@ -459,7 +459,7 @@ fixtures = [
     "Quiz",
     "Quiz Question",
     "Code Test Case",
-    "Matching Pairs",
+    # "Matching Pairs",
     "Quiz Option",
     "Quiz Question Mapping",
     
