@@ -4,7 +4,7 @@
   "description": "Manage labs",
   "main": "index.js",
   "scripts": {
-    "build": "npx tailwindcss -i ./labmanager/templates/base.css -o ./labmanager/public/css/style.css",
+    "build": "npx tailwindcss -i ./labmanager/templates/base.css -o ./labmanager/public/css/frappe-style.css",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
