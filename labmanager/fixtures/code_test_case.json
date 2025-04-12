@@ -1,0 +1,24 @@
+[
+ {
+  "docstatus": 0,
+  "doctype": "Code Test Case",
+  "expected_output": "120",
+  "input": "factorial(5)",
+  "modified": "2025-01-26 09:43:27.141302",
+  "name": "CODE-00001",
+  "parent": "QUIZ-00000005",
+  "parentfield": "test_cases",
+  "parenttype": "Quiz Question"
+ },
+ {
+  "docstatus": 0,
+  "doctype": "Code Test Case",
+  "expected_output": "1",
+  "input": "factorial(0)",
+  "modified": "2025-01-26 09:43:27.141302",
+  "name": "CODE-00002",
+  "parent": "QUIZ-00000005",
+  "parentfield": "test_cases",
+  "parenttype": "Quiz Question"
+ }
+]

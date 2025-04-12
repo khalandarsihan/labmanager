@@ -1,0 +1,34 @@
+[
+ {
+  "category_name": "Admissions & Support",
+  "docstatus": 0,
+  "doctype": "FAQ Category",
+  "modified": "2025-02-02 17:41:30.653199",
+  "name": "Admissions & Support",
+  "sequence": 4
+ },
+ {
+  "category_name": "Education & Learning",
+  "docstatus": 0,
+  "doctype": "FAQ Category",
+  "modified": "2025-02-02 17:41:07.347541",
+  "name": "Education & Learning",
+  "sequence": 2
+ },
+ {
+  "category_name": "General Information",
+  "docstatus": 0,
+  "doctype": "FAQ Category",
+  "modified": "2025-02-02 17:40:56.743788",
+  "name": "General Information",
+  "sequence": 1
+ },
+ {
+  "category_name": "Program Details",
+  "docstatus": 0,
+  "doctype": "FAQ Category",
+  "modified": "2025-02-02 17:41:17.950648",
+  "name": "Program Details",
+  "sequence": 3
+ }
+]

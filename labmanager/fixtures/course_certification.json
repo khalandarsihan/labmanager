@@ -1,0 +1,47 @@
+[
+ {
+  "accreditation": null,
+  "badge_image": null,
+  "certification_name": "Certified Full-Stack Developer",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Course Certification",
+  "issuing_authority": null,
+  "modified": "2025-02-01 10:51:11.459780",
+  "name": "Certified Full-Stack Developer",
+  "signature_image": null,
+  "type": "Professional Certificate",
+  "validity_period": "Lifetime",
+  "verification_method": null
+ },
+ {
+  "accreditation": null,
+  "badge_image": null,
+  "certification_name": "Certified Arabic Learner",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Course Certification",
+  "issuing_authority": null,
+  "modified": "2025-02-01 10:25:51.022875",
+  "name": "Certified Arabic Learner",
+  "signature_image": null,
+  "type": "Professional Certificate",
+  "validity_period": "Lifetime",
+  "verification_method": null
+ },
+ {
+  "accreditation": "Tech Education Board",
+  "badge_image": null,
+  "certification_name": "Certfied Web Developer",
+  "description": null,
+  "docstatus": 0,
+  "doctype": "Course Certification",
+  "issuing_authority": "TechEthica",
+  "modified": "2025-01-25 07:10:32.072003",
+  "name": "Certfied Web Developer",
+  "signature_image": null,
+  "type": "Industry-Recognized Certificate",
+  "validity_period": "Lifetime",
+  "verification_method": null
+ }
+]

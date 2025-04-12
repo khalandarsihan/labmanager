@@ -1,0 +1,46 @@
+[
+ {
+  "course": "CC102",
+  "description": "Career Outcomes\nPotential Roles",
+  "docstatus": 0,
+  "doctype": "Course Career Outcome",
+  "industry": "Information Technology",
+  "modified": "2025-01-25 23:33:01.955297",
+  "name": "CC102-CO-00001",
+  "required_skills": [
+   {
+    "skills": "Node.js"
+   },
+   {
+    "skills": "MongoDB"
+   },
+   {
+    "skills": "API Design"
+   },
+   {
+    "skills": "AWS"
+   },
+   {
+    "skills": "DevOps"
+   }
+  ],
+  "role_title": [
+   {
+    "role_title": "Frontend Specialist"
+   },
+   {
+    "role_title": "Backend Developer"
+   },
+   {
+    "role_title": "DevOps Engineer"
+   },
+   {
+    "role_title": "Full-stack Developer"
+   },
+   {
+    "role_title": "Software Architect"
+   }
+  ],
+  "salary_range": null
+ }
+]

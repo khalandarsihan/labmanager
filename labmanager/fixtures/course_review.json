@@ -1,0 +1,30 @@
+[
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Review",
+  "helpful_count": 0,
+  "instructor_response": null,
+  "modified": "2025-01-25 23:36:09.928718",
+  "name": "CC102-REV-00001",
+  "rating": 4.8,
+  "review_date": "2025-01-25 23:34:56",
+  "review_text": "<div class=\"ql-editor read-mode\"><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(3, 7, 18);\">This course transformed my understanding of web development. The practical projects were incredibly valuable.</span></p></div>",
+  "status": "Approved",
+  "student": "john.doe@example.com"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Review",
+  "helpful_count": 11,
+  "instructor_response": null,
+  "modified": "2025-01-25 23:36:58.827431",
+  "name": "CC102-REV-00002",
+  "rating": 4.9,
+  "review_date": "2025-01-25 23:34:56",
+  "review_text": "<div class=\"ql-editor read-mode\"><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(3, 7, 18);\">Excellent curriculum and hands-on learning experience. The instructor support was outstanding.</span></p></div>",
+  "status": "Approved",
+  "student": "anaz@gmail.com"
+ }
+]

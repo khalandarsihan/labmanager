@@ -1,0 +1,180 @@
+[
+ {
+  "average_rating": 0.0,
+  "course_category": [
+   {
+    "course_category": "Arabic Grammar"
+   },
+   {
+    "course_category": "Islamic Poetry & Literature"
+   }
+  ],
+  "course_certification": "Certified Arabic Learner",
+  "course_code": "CC103",
+  "description": "<div class=\"ql-editor read-mode\"><p>Learn the Arabic language from scratch and explore fundamental Islamic studies, including Quranic recitation, Hadith, and Fiqh. Ideal for beginners seeking structured learning.</p><p><br></p><p><br></p></div>",
+  "docstatus": 0,
+  "doctype": "Course",
+  "duration": "16",
+  "featured_image": "/files/Islamic Studies During Ramadan Facebook Post (800 x 400 px).png",
+  "featured_image_catalog": "/files/Islamic Studies During Ramadan Facebook Post (370 x 208 px).png",
+  "featured_image_small": "/files/Islamic Studies During Ramadan Facebook Post (400 x 300 px).png",
+  "instructor": "iga0vgbl30",
+  "level": "Beginner",
+  "modified": "2025-02-19 11:40:47.041772",
+  "moodle_course_id": null,
+  "name": "CC103",
+  "preview_enabled": 1,
+  "price": 12000.0,
+  "short_description": "Start your journey in Arabic and Islamic studies with expert guidance.",
+  "show_in_featured_section": 1,
+  "start_date": "2025-02-01",
+  "status": "Active",
+  "students_enrolled": 0,
+  "title": "Arabic Language & Islamic Studies",
+  "total_duration": "50 hours",
+  "total_lessons": 25,
+  "total_projects": 5,
+  "unit": "Weeks"
+ },
+ {
+  "average_rating": 0.0,
+  "course_category": [],
+  "course_certification": "Certified Full-Stack Developer",
+  "course_code": "CC104",
+  "description": "<div class=\"ql-editor read-mode\"><p>Become a proficient full-stack developer with hands-on experience in JavaScript, including React.js, Node.js, Express, and MongoDB. Learn how to build and deploy scalable web applications.</p></div>",
+  "docstatus": 0,
+  "doctype": "Course",
+  "duration": "16",
+  "featured_image": "/files/Yellow and Black Development Company Instagram Post (800 x 400 px).png",
+  "featured_image_catalog": "/files/Yellow and Black Development Company Instagram Post (370 x 208 px).png",
+  "featured_image_small": "/files/Yellow and Black Development Company Instagram Post (400 x 300 px).png",
+  "instructor": "INST-0001",
+  "level": "Beginner",
+  "modified": "2025-02-17 11:06:28.412234",
+  "moodle_course_id": null,
+  "name": "CC104",
+  "preview_enabled": 1,
+  "price": 5999.0,
+  "short_description": "Master both front-end and back-end JavaScript development with real-world projects.",
+  "show_in_featured_section": 1,
+  "start_date": "2025-02-01",
+  "status": "Active",
+  "students_enrolled": 0,
+  "title": "Full-Stack JavaScript Development",
+  "total_duration": "60 hours",
+  "total_lessons": 30,
+  "total_projects": 15,
+  "unit": "Weeks"
+ },
+ {
+  "average_rating": 4.9,
+  "course_category": [
+   {
+    "course_category": "Islamic Poetry & Literature"
+   }
+  ],
+  "course_certification": null,
+  "course_code": "CC105",
+  "description": "<div class=\"ql-editor read-mode\"><p>This course provides an in-depth study of Qasidat al-Burdah, the renowned poem by Imam Al-Busiri. Students will explore its poetic beauty, historical significance, spiritual themes, and linguistic excellence. The course will also delve into the meanings behind each verse and its impact on Islamic culture worldwide.</p></div>",
+  "docstatus": 0,
+  "doctype": "Course",
+  "duration": "720",
+  "featured_image": "/files/Burdah (800 x 400 px).png",
+  "featured_image_catalog": "/files/burdah (400 x 300 px).png",
+  "featured_image_small": "/files/burdah (400 x 300 px).png",
+  "instructor": "INST-0001",
+  "level": "Beginner",
+  "modified": "2025-02-19 11:40:52.660018",
+  "moodle_course_id": null,
+  "name": "CC105",
+  "preview_enabled": 1,
+  "price": 2999.0,
+  "short_description": "A comprehensive study of Imam Al-Busiri's Qasidat al-Burdah, covering its themes, language, and spiritual significance.",
+  "show_in_featured_section": 1,
+  "start_date": "2025-02-16",
+  "status": "Active",
+  "students_enrolled": 3456,
+  "title": "قصيدة البردة",
+  "total_duration": "12 hours",
+  "total_lessons": 12,
+  "total_projects": 1,
+  "unit": "Minutes"
+ },
+ {
+  "average_rating": 0.0,
+  "course_category": [
+   {
+    "course_category": "Fiqh & Islamic Law"
+   },
+   {
+    "course_category": "Shafi'i Fiqh"
+   }
+  ],
+  "course_certification": null,
+  "course_code": "CC101",
+  "description": "<div class=\"ql-editor read-mode\"><p>This course is based on the classical Islamic jurisprudence (fiqh) book <em>Fath ul-Mu’een</em>, written by <strong>Sheikh Zainuddin bin Abdul Aziz al-Malibari</strong>. It provides a deep dive into the Shafi’i school of thought, covering <strong>acts of worship (ibadah), transactions (mu’amalat), marriage (nikah), criminal law (hudood), and other key legal rulings</strong>.</p><p>Designed for serious students of knowledge, this course also integrates insights from the renowned commentary <strong>I’anat al-Talibeen</strong>.</p></div>",
+  "docstatus": 0,
+  "doctype": "Course",
+  "duration": "16",
+  "featured_image": "/files/Blue and White Illustrative Eid Al-Adha Greeting Instagram Post (400 x 300 px) (800 x 400 px).png",
+  "featured_image_catalog": "/files/Blue and White Illustrative Eid Al-Adha Greeting Instagram Post (370 x 208 px).png",
+  "featured_image_small": "/files/Blue and White Illustrative Eid Al-Adha Greeting Instagram Post (400 x 300 px).png",
+  "instructor": "INST-0001",
+  "level": "Advanced",
+  "modified": "2025-02-19 11:39:51.557513",
+  "moodle_course_id": null,
+  "name": "CC101",
+  "preview_enabled": 1,
+  "price": 9999.0,
+  "short_description": "Master the principles of Shafi’i fiqh with an in-depth study of Fath ul-Mu’een, guided by expert scholars.",
+  "show_in_featured_section": 1,
+  "start_date": "2025-02-12",
+  "status": "Active",
+  "students_enrolled": 0,
+  "title": "Fath ul-Mu’een – Shafi’i Fiqh",
+  "total_duration": "60 hours",
+  "total_lessons": 30,
+  "total_projects": 5,
+  "unit": "Hours"
+ },
+ {
+  "average_rating": 0.0,
+  "course_category": [
+   {
+    "course_category": "Full Stack Development"
+   },
+   {
+    "course_category": "Backend Development"
+   },
+   {
+    "course_category": "Frontend Development"
+   }
+  ],
+  "course_certification": "Certfied Web Developer",
+  "course_code": "CC102",
+  "description": "<div class=\"ql-editor read-mode\"><p>Master modern web development techniques including React, Node.js, and cloud deployment. Perfect for developers looking to upgrade their skills.</p></div>",
+  "docstatus": 0,
+  "doctype": "Course",
+  "duration": "12",
+  "featured_image": "/files/web_development.png",
+  "featured_image_catalog": "/files/Blue and White Modern Web Development Flyer (400 x 250 px) (370 x 208 px).png",
+  "featured_image_small": "/files/image11w0a4339.png",
+  "instructor": "INST-0001",
+  "level": "Intermediate",
+  "modified": "2025-04-08 08:20:40.071842",
+  "moodle_course_id": null,
+  "name": "CC102",
+  "preview_enabled": 1,
+  "price": 7999.0,
+  "short_description": "Master the basics of web development with HTML, CSS, and JavaScript",
+  "show_in_featured_section": 1,
+  "start_date": "2025-01-29",
+  "status": "Active",
+  "students_enrolled": 0,
+  "title": "Advanced Web Development",
+  "total_duration": "48",
+  "total_lessons": 24,
+  "total_projects": 12,
+  "unit": "Weeks"
+ }
+]

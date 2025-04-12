@@ -1,0 +1,50 @@
+[
+ {
+  "answer": "<div class=\"ql-editor read-mode\"><p>B<span style=\"background-color: rgb(255, 255, 255); color: rgb(75, 85, 99);\">asic JavaScript knowledge is recommended. We provide preparatory materials for beginners.</span></p></div>",
+  "category": null,
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course FAQ",
+  "helpful_count": 0,
+  "modified": "2025-01-25 23:38:05.737817",
+  "name": "CC102-FAQ-00001",
+  "question": "Do I need prior programming experience?",
+  "sequence": 1
+ },
+ {
+  "answer": "<div class=\"ql-editor read-mode\"><p><span style=\"background-color: rgb(255, 255, 255);\">Expect to spend 8-10 hours per week on lectures, assignments, and projects.</span></p><p><br></p><p><br></p></div>",
+  "category": null,
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course FAQ",
+  "helpful_count": 0,
+  "modified": "2025-01-25 23:39:00.320849",
+  "name": "CC102-FAQ-00002",
+  "question": "What is the time commitment per week?",
+  "sequence": 2
+ },
+ {
+  "answer": "<div class=\"ql-editor read-mode\"><p>Yes, we offer a 30-day money-back guarantee if you're not satisfied with the course.</p></div>",
+  "category": null,
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course FAQ",
+  "helpful_count": 0,
+  "modified": "2025-01-25 23:39:54.341108",
+  "name": "CC102-FAQ-00003",
+  "question": "Is there a money-back guarantee?",
+  "sequence": 3
+ },
+ {
+  "answer": "<div class=\"ql-editor read-mode\"><p>Yes, you'll have access to instructor support, community forums, and weekly Q&amp;A sessions.</p></div>",
+  "category": null,
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course FAQ",
+  "helpful_count": 0,
+  "modified": "2025-01-25 23:40:26.837934",
+  "name": "CC102-FAQ-00004",
+  "question": "Will I get support if I'm stuck?",
+  "sequence": 4
+ }
+]

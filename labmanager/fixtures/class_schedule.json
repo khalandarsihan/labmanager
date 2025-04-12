@@ -1,0 +1,24 @@
+[
+ {
+  "academic_year": "2025-2026",
+  "docstatus": 0,
+  "doctype": "Class Schedule",
+  "grade": "Plus Two",
+  "is_active": 1,
+  "modified": "2025-03-28 23:16:40.625049",
+  "name": "CS-Plus Two-A-0001",
+  "section": "A",
+  "term": "Term 1 2025-2026"
+ },
+ {
+  "academic_year": "2025-2026",
+  "docstatus": 0,
+  "doctype": "Class Schedule",
+  "grade": "Plus One",
+  "is_active": 1,
+  "modified": "2025-03-28 23:16:14.885273",
+  "name": "CS-Plus One-A-0001",
+  "section": "A",
+  "term": "Term 1 2025-2026"
+ }
+]

@@ -1,0 +1,20 @@
+[
+ {
+  "description": "Plus One Karnataka Board",
+  "docstatus": 0,
+  "doctype": "School Grade",
+  "grade_name": "Plus One",
+  "modified": "2025-03-28 18:21:14.591180",
+  "name": "Plus One",
+  "sequence_no": 1
+ },
+ {
+  "description": "Plus Two Karnataka Board",
+  "docstatus": 0,
+  "doctype": "School Grade",
+  "grade_name": "Plus Two",
+  "modified": "2025-03-28 18:21:37.454777",
+  "name": "Plus Two",
+  "sequence_no": 2
+ }
+]

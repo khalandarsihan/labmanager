@@ -1,0 +1,82 @@
+[
+ {
+  "description": "Unlock insights with machine learning and AI",
+  "docstatus": 0,
+  "doctype": "Carousel",
+  "image": "/files/image16f2e33.jpg",
+  "modified": "2025-02-16 13:27:27.599160",
+  "name": "CAR-0001",
+  "sequence_no": 1,
+  "title": "Data Science"
+ },
+ {
+  "description": "Protect systems and networks from threats",
+  "docstatus": 0,
+  "doctype": "Carousel",
+  "image": "/files/image-1904ea3.png",
+  "modified": "2025-02-16 13:28:14.205570",
+  "name": "CAR-0002",
+  "sequence_no": 2,
+  "title": "Cyber Security"
+ },
+ {
+  "description": "Build modern and responsive web applications",
+  "docstatus": 0,
+  "doctype": "Carousel",
+  "image": "/files/image2201e4f.jpg",
+  "modified": "2025-02-16 13:28:52.058792",
+  "name": "CAR-0003",
+  "sequence_no": 3,
+  "title": "Web Development"
+ },
+ {
+  "description": "Empower solutions with AI and deep learning",
+  "docstatus": 0,
+  "doctype": "Carousel",
+  "image": "/files/image37ac0bf.jpg",
+  "modified": "2025-02-16 13:29:29.452742",
+  "name": "CAR-0004",
+  "sequence_no": 4,
+  "title": "Artificial Intelligence"
+ },
+ {
+  "description": "Scale applications with cloud infrastructure",
+  "docstatus": 0,
+  "doctype": "Carousel",
+  "image": "/files/image43c1658.jpg",
+  "modified": "2025-02-16 13:30:06.170783",
+  "name": "CAR-0005",
+  "sequence_no": 5,
+  "title": "Cloud Computing"
+ },
+ {
+  "description": "Secure and decentralized digital transactions",
+  "docstatus": 0,
+  "doctype": "Carousel",
+  "image": "/files/image564e94c.jpg",
+  "modified": "2025-02-16 13:30:44.658430",
+  "name": "CAR-0006",
+  "sequence_no": 6,
+  "title": "Blockchain Technology"
+ },
+ {
+  "description": "Connect devices for smart automation",
+  "docstatus": 0,
+  "doctype": "Carousel",
+  "image": "/files/image669bf42.jpeg",
+  "modified": "2025-02-16 13:32:42.454151",
+  "name": "CAR-0007",
+  "sequence_no": 7,
+  "title": "Internet of Things (IoT)"
+ },
+ {
+  "description": "Develop scalable and efficient software systems",
+  "docstatus": 0,
+  "doctype": "Carousel",
+  "image": "/files/image135eed83.jpeg",
+  "modified": "2025-02-16 13:32:15.595290",
+  "name": "CAR-0008",
+  "sequence_no": 8,
+  "title": "Software Engineering"
+ }
+]

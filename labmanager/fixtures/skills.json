@@ -1,0 +1,82 @@
+[
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:06:12.826132",
+  "name": "Node.js",
+  "skill_name": "Node.js"
+ },
+ {
+  "course": "CC101",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:07:52.956210",
+  "name": "MongoDB",
+  "skill_name": "MongoDB"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:06:05.577400",
+  "name": "AWS",
+  "skill_name": "AWS"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:05:59.120090",
+  "name": "DevOps",
+  "skill_name": "DevOps"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:05:51.105613",
+  "name": "API Design",
+  "skill_name": "API Design"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:08:32.423603",
+  "name": "Python",
+  "skill_name": "Python"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:08:26.190216",
+  "name": "JavaScript",
+  "skill_name": "JavaScript"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:08:19.476220",
+  "name": "HTML",
+  "skill_name": "HTML"
+ },
+ {
+  "course": "CC101",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:08:12.840897",
+  "name": "CSS",
+  "skill_name": "CSS"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Skills",
+  "modified": "2025-01-30 20:08:06.865931",
+  "name": "React",
+  "skill_name": "React"
+ }
+]

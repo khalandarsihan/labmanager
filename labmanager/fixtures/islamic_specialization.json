@@ -1,0 +1,56 @@
+[
+ {
+  "code": "IHS",
+  "docstatus": 0,
+  "doctype": "Islamic Specialization",
+  "modified": "2025-02-14 15:45:19.576352",
+  "name": "Islamic History & Seerah",
+  "sequence_no": 6,
+  "specialization_name": "Islamic History & Seerah"
+ },
+ {
+  "code": "ALL",
+  "docstatus": 0,
+  "doctype": "Islamic Specialization",
+  "modified": "2025-02-14 15:44:57.505164",
+  "name": "Arabic Language & Literature",
+  "sequence_no": 5,
+  "specialization_name": "Arabic Language & Literature"
+ },
+ {
+  "code": "HS",
+  "docstatus": 0,
+  "doctype": "Islamic Specialization",
+  "modified": "2025-02-14 15:43:58.924840",
+  "name": "Hadith Studies",
+  "sequence_no": 2,
+  "specialization_name": "Hadith Studies"
+ },
+ {
+  "code": "FIL",
+  "docstatus": 0,
+  "doctype": "Islamic Specialization",
+  "modified": "2025-02-14 15:44:38.396633",
+  "name": "Fiqh & Islamic Law",
+  "sequence_no": 4,
+  "specialization_name": "Fiqh & Islamic Law"
+ },
+ {
+  "code": "QST",
+  "docstatus": 0,
+  "doctype": "Islamic Specialization",
+  "modified": "2025-02-14 15:43:38.148722",
+  "name": "Quranic Studies & Tajweed",
+  "sequence_no": 1,
+  "specialization_name": "Quranic Studies & Tajweed"
+ },
+ {
+  "code": "ITA",
+  "docstatus": 0,
+  "doctype": "Islamic Specialization",
+  "modified": "2025-02-14 15:44:19.575120",
+  "name": "Islamic Theology & Aqeedah",
+  "sequence_no": 3,
+  "specialization_name": "Islamic Theology & Aqeedah"
+ }
+]

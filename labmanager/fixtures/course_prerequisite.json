@@ -1,0 +1,52 @@
+[
+ {
+  "course": "CC101",
+  "docstatus": 0,
+  "doctype": "Course Prerequisite",
+  "modified": "2025-04-08 08:23:28.483894",
+  "name": "CC101-PRE-1",
+  "prerequisite": "<div class=\"ql-editor read-mode\"><p>Should have a strong skills in arabic grammar.</p></div>",
+  "sequence": 1,
+  "type": null
+ },
+ {
+  "course": "CC101",
+  "docstatus": 0,
+  "doctype": "Course Prerequisite",
+  "modified": "2025-04-08 08:23:11.482364",
+  "name": "CC101-PRE-2",
+  "prerequisite": "<div class=\"ql-editor read-mode\"><p>Should have already completed smaller kithabs in Fiqh.</p></div>",
+  "sequence": 2,
+  "type": "Knowledge"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Prerequisite",
+  "modified": "2025-04-08 08:22:01.086631",
+  "name": "CC102-PRE-1",
+  "prerequisite": "<div class=\"ql-editor read-mode\"><p>Basic JavaScript knowledge</p></div>",
+  "sequence": 1,
+  "type": "Knowledge"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Prerequisite",
+  "modified": "2025-04-08 08:22:48.154018",
+  "name": "CC102-PRE-2",
+  "prerequisite": "<div class=\"ql-editor read-mode\"><p>Understanding of HTML &amp; CSS</p></div>",
+  "sequence": 2,
+  "type": "Knowledge"
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Prerequisite",
+  "modified": "2025-04-08 08:22:25.521912",
+  "name": "CC102-PRE-3",
+  "prerequisite": "<div class=\"ql-editor read-mode\"><p>Familiarity with web development concepts</p></div>",
+  "sequence": 3,
+  "type": "Knowledge"
+ }
+]

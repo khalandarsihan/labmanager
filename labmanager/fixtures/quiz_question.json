@@ -1,0 +1,111 @@
+[
+ {
+  "correct_boolean": 1,
+  "correct_text": null,
+  "docstatus": 0,
+  "doctype": "Quiz Question",
+  "initial_code": null,
+  "matching_pairs": [],
+  "modified": "2025-01-26 09:38:59.961686",
+  "name": "QUIZ-00000002",
+  "options": [],
+  "question": "<div class=\"ql-editor read-mode\"><p>React components must always return a single root element.</p></div>",
+  "question_type": "True/False",
+  "test_cases": []
+ },
+ {
+  "correct_boolean": 0,
+  "correct_text": "useState",
+  "docstatus": 0,
+  "doctype": "Quiz Question",
+  "initial_code": null,
+  "matching_pairs": [],
+  "modified": "2025-01-26 09:39:32.563623",
+  "name": "QUIZ-00000003",
+  "options": [],
+  "question": "<div class=\"ql-editor read-mode\"><p>To update state in React, we use the _______ hook.</p></div>",
+  "question_type": "Fill in the Blank",
+  "test_cases": []
+ },
+ {
+  "correct_boolean": 0,
+  "correct_text": null,
+  "docstatus": 0,
+  "doctype": "Quiz Question",
+  "initial_code": null,
+  "matching_pairs": [
+   {
+    "left_item": "useState",
+    "right_item": "State Management"
+   },
+   {
+    "left_item": "useEffect",
+    "right_item": "Side Effects"
+   },
+   {
+    "left_item": "useContext",
+    "right_item": "Context Access"
+   }
+  ],
+  "modified": "2025-01-26 09:40:50.826165",
+  "name": "QUIZ-00000004",
+  "options": [],
+  "question": "<div class=\"ql-editor read-mode\"><p>Match the React hooks with their primary purposes:</p></div>",
+  "question_type": "Matching",
+  "test_cases": []
+ },
+ {
+  "correct_boolean": 0,
+  "correct_text": null,
+  "docstatus": 0,
+  "doctype": "Quiz Question",
+  "initial_code": "function factorial(n) \n\n// Your code here",
+  "matching_pairs": [],
+  "modified": "2025-01-26 09:43:27.141302",
+  "name": "QUIZ-00000005",
+  "options": [],
+  "question": "<div class=\"ql-editor read-mode\"><p>Write a function that calculates the factorial of a number using recursion.</p></div>",
+  "question_type": "Code Assessment",
+  "test_cases": [
+   {
+    "expected_output": "120",
+    "input": "factorial(5)"
+   },
+   {
+    "expected_output": "1",
+    "input": "factorial(0)"
+   }
+  ]
+ },
+ {
+  "correct_boolean": 0,
+  "correct_text": null,
+  "docstatus": 0,
+  "doctype": "Quiz Question",
+  "initial_code": null,
+  "matching_pairs": [],
+  "modified": "2025-01-26 09:37:02.220819",
+  "name": "QUIZ-00000001",
+  "options": [
+   {
+    "is_correct": 0,
+    "option_text": "useState"
+   },
+   {
+    "is_correct": 1,
+    "option_text": "useEffect"
+   },
+   {
+    "is_correct": 0,
+    "option_text": "useContext"
+   },
+   {
+    "is_correct": 0,
+    "option_text": "useReducer"
+   }
+  ],
+  "question": "<div class=\"ql-editor read-mode\"><p>Which hook in React is used for performing side effects?</p></div>",
+  "question_type": "MCQ",
+  "test_cases": []
+ }
+]

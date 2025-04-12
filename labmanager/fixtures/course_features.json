@@ -1,0 +1,74 @@
+[
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Features",
+  "feature_name": "1:1 Mentoring",
+  "modified": "2025-01-26 07:11:50.800930",
+  "name": "CC102-FEAT-00001",
+  "sequence": 1
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Features",
+  "feature_name": "Live Projects",
+  "modified": "2025-01-26 07:11:56.326746",
+  "name": "CC102-FEAT-00002",
+  "sequence": 2
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Features",
+  "feature_name": "Industry Expert Sessions",
+  "modified": "2025-01-26 07:12:01.491513",
+  "name": "CC102-FEAT-00003",
+  "sequence": 3
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Features",
+  "feature_name": "Resume Building",
+  "modified": "2025-01-26 07:12:09.702281",
+  "name": "CC102-FEAT-00004",
+  "sequence": 4
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Features",
+  "feature_name": "Mock Interviews",
+  "modified": "2025-01-26 07:12:15.452317",
+  "name": "CC102-FEAT-00005",
+  "sequence": 5
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Features",
+  "feature_name": "Lifetime Access",
+  "modified": "2025-01-26 07:12:20.542053",
+  "name": "CC102-FEAT-00006",
+  "sequence": 6
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Features",
+  "feature_name": "Career Guidance",
+  "modified": "2025-01-26 07:12:26.322775",
+  "name": "CC102-FEAT-00007",
+  "sequence": 7
+ },
+ {
+  "course": "CC102",
+  "docstatus": 0,
+  "doctype": "Course Features",
+  "feature_name": "Networking Events",
+  "modified": "2025-01-26 07:12:30.747480",
+  "name": "CC102-FEAT-00008",
+  "sequence": 8
+ }
+]

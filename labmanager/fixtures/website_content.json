@@ -1,0 +1,13 @@
+[
+ {
+  "content": "<h1 class=\"theme-heading text-5xl md:text-7xl font-bold text-center mb-16 tracking-tight\">\n    Welcome to TechEthica\n</h1>\n<div class=\"space-y-8 w-full max-w-none\">\n    <p class=\"leading-relaxed w-full text-1xl md:text-1xl theme-text-primary\">\n        TechEthica is a premier educational institution dedicated to empowering learners with \n        a deep understanding of Islamic values and cutting-edge technical skills. Our mission \n        is to cultivate well-rounded individuals by nurturing their spiritual and ethical growth through \n        <span class=\"theme-highlight\">Quran</span>, <span class=\"theme-highlight\">Hadith</span>, <span class=\"theme-highlight\">Fiqh</span>, <span class=\"theme-highlight\">Seerah</span>, <span class=\"theme-highlight\">Tariqh</span>, \n        <span class=\"theme-highlight\">Tasawwuf</span>, <span class=\"theme-highlight\">Arabic Language</span>, and <span class=\"theme-highlight\">Literature</span>, while also developing proficiency in \n        <span class=\"theme-highlight\">Computer Science</span>, <span class=\"theme-highlight\">Data Science</span>, <span class=\"theme-highlight\">AI</span>, \n        <span class=\"theme-highlight\">DevOps</span>, <span class=\"theme-highlight\">Cloud Computing</span>, <span class=\"theme-highlight\">Full-Stack Development</span>, \n        <span class=\"theme-highlight\">Frappe</span>, <span class=\"theme-highlight\">React</span>, and <span class=\"theme-highlight\">Python</span>.\n    </p>\n    \n    <p class=\"leading-relaxed w-full text-1xl md:text-1xl theme-text-primary\">\n        TechEthica is a unique platform designed to <span class=\"theme-highlight\">equip students with industry-ready skills</span> \n        and <span class=\"theme-highlight\">instill strong moral values</span>, shaping them into <span class=\"theme-highlight\">ethical professionals</span> and <span class=\"theme-highlight\">responsible \n        global citizens</span>. Our <span class=\"theme-highlight\">holistic approach to education</span> ensures the intellectual, spiritual, and \n        professional development of every student, providing them with an environment that is both \n        <span class=\"theme-highlight\">technologically advanced</span> and <span class=\"theme-highlight\">spiritually enriching</span>.\n    </p>\n</div>",
+  "docstatus": 0,
+  "doctype": "Website Content",
+  "is_active": 1,
+  "modified": "2025-04-07 10:28:05.979388",
+  "name": "CONTENT-0001",
+  "section": "Welcome",
+  "sequence": 1,
+  "title": "Welcome to TechEthica"
+ }
+]

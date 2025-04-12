@@ -8,7 +8,7 @@
     "build:all": "npm run clean && webpack --mode production && npm run build:css",
     "build:css": "tailwindcss -i ./src/styles/base.css -o ../labmanager/public/css/react-style.css",
     "dev:react": "webpack --mode development --watch",
-    "dev:css": "tailwindcss -i ./src/styles/base.css -o ../labmanager/public/css/style.css --watch",
+    "dev:css": "tailwindcss -i ./src/styles/base.css -o ../labmanager/public/css/react-style.css --watch",
     "dev": "concurrently \"npm run dev:react\" \"npm run dev:css\"",
     "clean": "rm -rf ../labmanager/public/js/react/* ../labmanager/public/css/react-style.css",
     "build:prod": "npm run clean && npm run build && npm run build:css"

@@ -1,0 +1,58 @@
+[
+ {
+  "course": "CC102",
+  "description": "<div class=\"ql-editor read-mode\"><h4><span style=\"background-color: rgb(255, 255, 255); color: rgb(3, 7, 18);\">Advanced React Patterns</span></h4><p><br></p></div>",
+  "docstatus": 0,
+  "doctype": "Course Module",
+  "duration": "6",
+  "learning_objectives": "CC102-OBJ-2",
+  "modified": "2025-01-26 06:57:56.124234",
+  "name": "CC102-Frontend Development with React-2",
+  "sequence": 2,
+  "status": "Active",
+  "title": "Frontend Development with React",
+  "unit": "Hours"
+ },
+ {
+  "course": "CC101",
+  "description": "<div class=\"ql-editor read-mode\"><p><strong>Learn to Pray, Fast and Perform Hajj</strong></p></div>",
+  "docstatus": 0,
+  "doctype": "Course Module",
+  "duration": "10",
+  "learning_objectives": null,
+  "modified": "2025-01-25 08:58:39.784023",
+  "name": "CC101-Fiqh-ul-Ibada-1",
+  "sequence": 1,
+  "status": "Active",
+  "title": "Fiqh-ul-Ibada",
+  "unit": "Hours"
+ },
+ {
+  "course": "CC102",
+  "description": "<div class=\"ql-editor read-mode\"><p>React Fundamentals</p></div>",
+  "docstatus": 0,
+  "doctype": "Course Module",
+  "duration": "3",
+  "learning_objectives": "CC102-OBJ-1",
+  "modified": "2025-01-26 06:57:45.083577",
+  "name": "CC102-Frontend Development with React-1",
+  "sequence": 1,
+  "status": "Active",
+  "title": "Frontend Development with React",
+  "unit": "Weeks"
+ },
+ {
+  "course": "CC102",
+  "description": "<div class=\"ql-editor read-mode\"><p>Node.js Basics</p></div>",
+  "docstatus": 0,
+  "doctype": "Course Module",
+  "duration": "3",
+  "learning_objectives": null,
+  "modified": "2025-01-26 06:57:37.609842",
+  "name": "CC102-Backend Development with Node.js-1",
+  "sequence": 1,
+  "status": "Active",
+  "title": "Backend Development with Node.js",
+  "unit": "Weeks"
+ }
+]

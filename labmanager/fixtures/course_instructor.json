@@ -1,0 +1,48 @@
+[
+ {
+  "bio": null,
+  "docstatus": 0,
+  "doctype": "Course Instructor",
+  "email": null,
+  "experience": null,
+  "expertise_areas": [],
+  "full_name": "Sheikh Abdullah",
+  "image": null,
+  "linkedin_profile": null,
+  "modified": "2025-02-01 10:25:23.717010",
+  "name": "iga0vgbl30",
+  "rating": 0.0,
+  "title": null
+ },
+ {
+  "bio": "<div class=\"ql-editor read-mode\"><p>Khalandar Sihan is Proficient lecturer.</p></div>",
+  "docstatus": 0,
+  "doctype": "Course Instructor",
+  "email": null,
+  "experience": "Senior Mudarris",
+  "expertise_areas": [
+   {
+    "skills": "HTML"
+   },
+   {
+    "skills": "JavaScript"
+   },
+   {
+    "skills": "CSS"
+   },
+   {
+    "skills": "React"
+   },
+   {
+    "skills": "Python"
+   }
+  ],
+  "full_name": "Khalandar Sihan Saquafi",
+  "image": "/files/image1631f00.jpg",
+  "linkedin_profile": null,
+  "modified": "2025-01-30 20:33:58.224171",
+  "name": "INST-0001",
+  "rating": 0.0,
+  "title": "AI & ML Engineer"
+ }
+]
