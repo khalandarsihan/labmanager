@@ -1,8 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../../../components/ui/ThemeContext';
 
 const Hero = () => {
   const { useLightTheme } = useTheme();
+  const videoRef = useRef(null);
+  const [videoLoaded, setVideoLoaded] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(window.innerWidth < window.innerHeight);
+
+  // Handle orientation changes
+  useEffect(() => {
+    const handleResize = () => {
+      setIsPortrait(window.innerWidth < window.innerHeight);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Handle video loading
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.addEventListener('loadeddata', () => {
+        setVideoLoaded(true);
+        console.log("Video loaded successfully");
+      });
+      
+      videoRef.current.addEventListener('error', (e) => {
+        console.error("Video loading error:", e);
+        setVideoLoaded(false);
+      });
+    }
+  }, []);
   
   // Define theme-dependent styles
   const overlayGradient = useLightTheme
@@ -37,15 +65,24 @@ const Hero = () => {
     ? "bg-purple-50"
     : "bg-gray-900";
 
+  // Choose the appropriate object-fit style based on orientation
+  // For portrait mode, we use 'object-contain' to prevent cropping
+  // For landscape, we can use 'object-cover' for a more immersive look
+  const videoFitStyle = isPortrait 
+    ? "object-contain" // Ensures the entire video is visible, may have letterboxing
+    : "object-cover";  // Fills the container, may crop
+
   return (
     <section className={`relative w-full h-[85vh] md:h-screen min-h-[500px] overflow-hidden ${bgColor} z-10`}>
       {/* Create a barrier element to prevent background pattern bleed-through */}
       <div className="absolute inset-0 z-0 bg-black"></div>
       
-      {/* Video Container - hidden on very small screens to improve performance */}
+      {/* Video Container */}
       <div className="absolute inset-0 w-full h-full z-1">
+        {/* Video with adaptive object-fit based on orientation */}
         <video 
-          className="hidden sm:block w-full h-full object-cover" 
+          ref={videoRef}
+          className={`w-full h-full ${videoFitStyle} ${videoLoaded ? 'block' : 'hidden'}`}
           autoPlay 
           loop 
           muted 
@@ -54,8 +91,10 @@ const Hero = () => {
           <source src="/assets/labmanager/videos/background-video.mp4" type="video/mp4" />
         </video>
         
-        {/* Fallback background for very small screens */}
-        <div className="sm:hidden absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900"></div>
+        {/* Fallback background when video isn't loaded yet or fails */}
+        <div 
+          className={`absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 ${videoLoaded ? 'hidden' : 'block'}`}
+        ></div>
       </div>
 
       {/* Layered Overlays for Depth with theme-aware colors */}
