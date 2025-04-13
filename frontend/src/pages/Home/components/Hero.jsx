@@ -33,55 +33,64 @@ const Hero = () => {
     }
   }, []);
   
-  // Define theme-dependent styles
+  // Simplified overlay for better background pattern visibility
   const overlayGradient = useLightTheme
-    ? "bg-gradient-to-r from-purple-100/40 to-purple-50/35"
-    : "bg-gradient-to-r from-gray-800/50 to-gray-700/45";
-    
-
-  const topGradient = useLightTheme
-  ? "bg-gradient-to-b from-purple-50/20 to-transparent"
-  : "bg-gradient-to-b from-gray-900/20 to-transparent";
-
-  const bottomGradient = useLightTheme
-  ? "bg-gradient-to-t from-purple-100/25 to-transparent"
-  : "bg-gradient-to-t from-[#444444]/25 to-transparent";
-
-  const bottomShadowGradient = useLightTheme
-  ? "bg-gradient-to-t from-purple-50/50 to-transparent"
-  : "bg-gradient-to-t from-gray-900/60 to-transparent";
+    ? "bg-gradient-to-r from-purple-50/30 via-purple-100/25 to-purple-50/30"
+    : "bg-gradient-to-r from-gray-900/40 via-gray-800/35 to-gray-700/40";
 
   // Use the themeStyles directly from context
   const titleColor = themeStyles.heading;
   const descriptionColor = themeStyles.subheading;
   
-  // Use the cta style from themeStyles
-  // const buttonStyle = `${themeStyles.cta.bg} ${useLightTheme ? 'text-white' : 'text-gray-900'} ${themeStyles.cta.hover}`;
   const buttonStyle = useLightTheme
-  ? "bg-purple-500 text-white hover:bg-purple-600"
-  : "bg-amber-300 text-gray-900 hover:bg-amber-200";
+    ? "bg-purple-600 text-white hover:bg-purple-700"
+    : "bg-amber-400 text-gray-900 hover:bg-amber-300";
 
   // Choose the appropriate object-fit style based on orientation
   const videoFitStyle = isPortrait 
-    ? "object-contain" // Ensures the entire video is visible, may have letterboxing
-    : "object-cover";  // Fills the container, may crop
+    ? "object-contain"
+    : "object-cover";
 
   return (
     <section className="relative w-full h-[85vh] md:h-screen min-h-[500px] overflow-hidden z-10">
-      {/* Transparent container to establish stacking context */}
-      <div className="absolute inset-0 z-0 bg-transparent"></div>
-      
-      {/* BackgroundPattern component - placed so it extends fully */}
-      <div className="absolute inset-0 z-3   overflow-hidden">
+      {/* Standard BackgroundPattern component */}
+      <div className="absolute inset-0 z-0">
         <BackgroundPattern />
       </div>
       
-      {/* Video Container */}
+      {/* Additional geometric elements with higher contrast - locally in Hero */}
+      <div className="absolute inset-0 -z-5 pointer-events-none">
+        {/* Higher contrast lines that overlay the BackgroundPattern lines */}
+        <div className="fixed inset-0 opacity-30 pointer-events-none">
+          <div className={`absolute h-full w-0.5 ${useLightTheme ? 'bg-purple-600/80' : 'bg-amber-400/80'} left-1/4 transform -skew-x-12`} />
+          <div className={`absolute h-full w-0.5 ${useLightTheme ? 'bg-purple-600/80' : 'bg-amber-400/80'} left-1/2 transform skew-x-12`} />
+          <div className={`absolute h-full w-0.5 ${useLightTheme ? 'bg-purple-600/80' : 'bg-amber-400/80'} left-3/4 transform -skew-x-12`} />
+          <div className={`absolute w-full h-0.5 ${useLightTheme ? 'bg-purple-600/80' : 'bg-amber-400/80'} top-1/4 transform -skew-y-12`} />
+          <div className={`absolute w-full h-0.5 ${useLightTheme ? 'bg-purple-600/80' : 'bg-amber-400/80'} top-1/2 transform skew-y-12`} />
+          <div className={`absolute w-full h-0.5 ${useLightTheme ? 'bg-purple-600/80' : 'bg-amber-400/80'} top-3/4 transform -skew-y-12`} />
+        </div>
+        
+        {/* Additional square geometric elements with higher contrast */}
+        <div className="fixed inset-0 overflow-visible pointer-events-none">
+          {/* Top Group - All squares */}
+          <div className={`absolute top-20 left-1/3 w-14 h-14 border-2 ${useLightTheme ? 'border-purple-600/60' : 'border-amber-400/60'} transform rotate-45 backdrop-blur-sm animate-float-diagonal delay-300`} />
+          <div className={`absolute top-24 right-1/3 w-10 h-10 border-2 ${useLightTheme ? 'border-purple-600/60' : 'border-amber-400/60'} transform -rotate-12 backdrop-blur-sm animate-float-up delay-700`} />
+          
+          {/* Left Side Elements - All squares */}
+          <div className={`absolute top-1/2 left-20 w-16 h-16 border-2 ${useLightTheme ? 'border-purple-600/60' : 'border-amber-400/60'} transform backdrop-blur-sm animate-float-circle delay-1000`} />
+          <div className={`absolute bottom-1/3 left-1/4 w-12 h-12 border-2 ${useLightTheme ? 'border-purple-600/60' : 'border-amber-400/60'} transform rotate-12 backdrop-blur-sm animate-float-diagonal-reverse delay-500`} />
+          
+          {/* Right Side Elements - All squares */}
+          <div className={`absolute top-1/2 right-20 w-12 h-12 border-2 ${useLightTheme ? 'border-purple-600/60' : 'border-amber-400/60'} transform rotate-45 backdrop-blur-sm animate-float-up-slow delay-200`} />
+          <div className={`absolute bottom-1/3 right-1/4 w-14 h-14 border-2 ${useLightTheme ? 'border-purple-600/60' : 'border-amber-400/60'} backdrop-blur-sm animate-float-side delay-900`} />
+        </div>
+      </div>
+      
+      {/* Video Container with reduced opacity to make patterns more visible */}
       <div className="absolute inset-0 w-full h-full z-2">
-        {/* Video with adaptive object-fit based on orientation */}
         <video 
           ref={videoRef}
-          className={`w-full h-full ${videoFitStyle} opacity-95 ${videoLoaded ? 'block' : 'hidden'}`}
+          className={`w-full h-full ${videoFitStyle} opacity-75 ${videoLoaded ? 'block' : 'hidden'}`}
           autoPlay 
           loop 
           muted 
@@ -90,26 +99,22 @@ const Hero = () => {
           <source src="/assets/labmanager/videos/background-video.mp4" type="video/mp4" />
         </video>
         
-        {/* Fallback when video isn't loaded - just display the BackgroundPattern */}
+        {/* Fallback when video isn't loaded */}
         <div 
           className={`absolute inset-0 bg-transparent ${videoLoaded ? 'hidden' : 'block'}`}
         ></div>
       </div>
 
-      {/* Subtle overlays for depth with theme-aware colors */}
+      {/* Single overlay with theme-aware colors */}
       <div className={`absolute inset-0 ${overlayGradient} z-3`} />
-      <div className="absolute inset-0 z-4">
-        <div className={`absolute inset-0 ${topGradient}`} />
-        <div className={`absolute inset-0 ${bottomGradient}`} />
-      </div>
 
       {/* Content */}
       <div className="relative z-20 flex items-center justify-center h-full text-center px-4">
         <div className="max-w-4xl">
-          <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold ${titleColor} mb-4 md:mb-6 drop-shadow-lg`}>
+          <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold ${titleColor} mb-4 md:mb-6 drop-shadow-xl`}>
             Why Choose TechEthica?
           </h1>
-          <p className={`text-base sm:text-lg md:text-xl ${descriptionColor} mb-6 md:mb-8 drop-shadow max-w-md mx-auto`}>
+          <p className={`text-base sm:text-lg md:text-xl ${descriptionColor} mb-6 md:mb-8 drop-shadow-lg max-w-md mx-auto`}>
             Discover a world of knowledge through our innovative online learning platform
           </p>
           <a
@@ -121,8 +126,12 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Bottom Gradient */}
-      <div className={`absolute bottom-0 left-0 right-0 h-24 md:h-32 ${bottomShadowGradient} z-5`} />
+      {/* Transition gradient to welcome section */}
+      <div className={`absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t ${
+        useLightTheme 
+          ? "from-purple-50/95 to-transparent" 
+          : "from-gray-900/95 to-transparent"
+      } z-5`} />
     </section>
   );
 };

@@ -1,38 +1,102 @@
 /* 
- * CSS for Hero component with BackgroundPattern integration
+ * CSS for Hero component with enhanced BackgroundPattern integration
  */
+
+/* Make sure animations are defined for the Hero component */
+@keyframes float-diagonal {
+  0%, 100% { transform: translate(0, 0) rotate(45deg); }
+  50% { transform: translate(10px, -10px) rotate(45deg); }
+}
+
+@keyframes float-up {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes float-circle {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(5px, -5px); }
+}
+
+@keyframes float-side {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(12px); }
+}
+
+@keyframes float-up-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes float-diagonal-reverse {
+  0%, 100% { transform: translate(0, 0) rotate(12deg); }
+  50% { transform: translate(-8px, 8px) rotate(12deg); }
+}
+
+/* Apply animations to hero elements */
+.animate-float-diagonal {
+  animation: float-diagonal 6s ease-in-out infinite;
+}
+
+.animate-float-up {
+  animation: float-up 5s ease-in-out infinite;
+}
+
+.animate-float-circle {
+  animation: float-circle 7s ease-in-out infinite;
+}
+
+.animate-float-side {
+  animation: float-side 6s ease-in-out infinite;
+}
+
+.animate-float-up-slow {
+  animation: float-up-slow 8s ease-in-out infinite;
+}
+
+.animate-float-diagonal-reverse {
+  animation: float-diagonal-reverse 7s ease-in-out infinite;
+}
+
+/* Animation delays */
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+.delay-900 { animation-delay: 900ms; }
+.delay-1000 { animation-delay: 1000ms; }
+
+/* Backdrop blur utility */
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
 
 /* Force the hero section to create its own stacking context */
 section {
   isolation: isolate;
 }
 
-/* Ensure the BackgroundPattern component spreads correctly */
-section .absolute.z-1 {
-  position: fixed; /* Makes the background extend to the entire viewport */
-  height: 100vh; /* Full viewport height */
-  width: 100vw; /* Full viewport width */
+/* Ensure the pattern and overlay elements don't cause scroll issues */
+section .fixed {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
 }
 
 /* Video styling */
 section video {
   z-index: 5;
   position: relative;
+  transition: opacity 0.4s ease;
 }
 
 /* Improve the transition between video and background in portrait mode */
 @media (orientation: portrait) {
   /* Reduce the contrast of letterboxing in portrait mode */
   section video.object-contain {
-    opacity: 0.95; /* Slightly transparent to blend with background */
+    opacity: 0.75; /* More transparent to blend with background better */
     transition: opacity 0.3s ease;
-  }
-  
-  /* Ensure the BackgroundPattern expands properly on mobile */
-  section .z-1 > div,
-  section .z-1 > div > div {
-    position: fixed;
-    min-height: 100vh;
-    min-width: 100vw;
   }
 }
