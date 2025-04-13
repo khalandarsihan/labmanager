@@ -93,199 +93,195 @@ const Navbar = () => {
   const isLargePhone = isMobile && width >= 400;
   const menuHeight = isLandscape ? (isLargePhone ? 'max-h-[85vh]' : 'max-h-[75vh]') : '';
   
-  // Font size classes
+  // UPDATED: Increased font size for desktop view
   const textSizeClass = isMobile && isLandscape 
     ? 'text-xs'
     : 'text-sm md:text-base lg:text-lg';
   
+  // UPDATED: Increased icon size for desktop view
   const iconSize = isMobile && isLandscape 
     ? 'text-[14px]'
     : 'text-[18px] md:text-[20px] lg:text-[22px]';
   
   return (
-    <nav className={`${navBgStyle} py-2 px-4 md:py-3 md:px-6 w-full relative top-[1px] z-[1000] -mt-[1px]`}>
-      <div className="flex justify-between items-center max-w-[1400px] mx-auto px-4 md:px-8">
-        {/* Logo - Left Section */}
-        <div className="flex-none">
-          <a href="/" className={`flex items-center ${isMobile && isLandscape ? 'text-base' : 'text-xl md:text-2xl'} font-bold ${logoTextStyle} no-underline transform hover:scale-105 transition-all duration-300`}>
-            <i className={`fa fa-graduation-cap mr-1 ${isMobile && isLandscape ? 'text-[16px]' : 'text-[24px] md:text-[28px]'}`}></i>
-            TechEthica
-          </a>
-        </div>
+    <nav className={`${navBgStyle} py-2 px-2 md:py-3 md:px-4 w-full relative top-[1px] z-[1000] -mt-[1px]`}>
+      <div className="flex justify-between items-center max-w-[1300px] mx-auto">
+        {/* Logo */}
+        <a href="/" className={`flex items-center ${isMobile && isLandscape ? 'text-base' : 'text-xl md:text-2xl'} font-bold ${logoTextStyle} no-underline transform hover:scale-105 transition-all duration-300`}>
+          <i className={`fa fa-graduation-cap mr-1 ${isMobile && isLandscape ? 'text-[16px]' : 'text-[24px] md:text-[28px]'}`}></i>
+          TechEthica
+        </a>
 
-        {/* Navbar Menu - Center Section */}
-        <div className={`flex-1 ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
-          <ul 
-            className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row items-start md:items-center md:justify-center list-none mx-auto gap-1 md:gap-4 lg:gap-6 xl:gap8 ${
-              isMenuOpen ? `absolute top-[50px] left-0 w-full ${dropdownBgStyle} text-left p-2 z-50 ${menuHeight} ${isLandscape ? 'overflow-y-auto' : ''}` : 'md:flex'
-            }`}
-            style={isLandscape && isMenuOpen ? { maxHeight: isLargePhone ? '85vh' : '75vh', overflowY: 'auto' } : {}}
-          >
-            {/* Home link */}
-            <li className="w-full md:w-auto">
-              <a href="/" className={`flex items-center no-underline ${linkTextStyle} ${textSizeClass} hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2`}>
-                <i className={`fa fa-home mr-1 ${iconSize}`}></i> Home
-              </a>
-            </li>
-            
-            {/* About Us link */}
-            <li className="w-full md:w-auto">
-              <a href="/about-us" className={`flex items-center no-underline ${linkTextStyle} ${textSizeClass} hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2`}>
-                <i className={`fa fa-university mr-1 ${iconSize}`}></i> About
-              </a>
-            </li>
+        {/* Navbar Menu */}
+        <ul 
+          className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row items-start md:items-center list-none md:ml-4 lg:ml-6 gap-1 md:gap-1 lg:gap-2 xl:gap-3 ${
+            isMenuOpen ? `absolute top-[50px] left-0 w-full ${dropdownBgStyle} text-left p-2 z-50 ${menuHeight} ${isLandscape ? 'overflow-y-auto' : ''}` : ''
+          }`}
+          style={isLandscape && isMenuOpen ? { maxHeight: isLargePhone ? '85vh' : '75vh', overflowY: 'auto' } : {}}
+        >
+          {/* Home link */}
+          <li className="w-full md:w-auto">
+            <a href="/" className={`flex items-center no-underline ${linkTextStyle} ${textSizeClass} hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2`}>
+              <i className={`fa fa-home mr-1 ${iconSize}`}></i> Home
+            </a>
+          </li>
+          
+          {/* About Us link */}
+          <li className="w-full md:w-auto">
+            <a href="/about-us" className={`flex items-center no-underline ${linkTextStyle} ${textSizeClass} hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2`}>
+              <i className={`fa fa-university mr-1 ${iconSize}`}></i> About
+            </a>
+          </li>
 
-            {/* Courses dropdown */}
-            <li className="w-full md:w-auto relative group">
-              <div 
-                className={`flex items-center justify-between w-full no-underline ${linkTextStyle} ${textSizeClass} md:hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2 cursor-pointer`}
-                onClick={() => toggleDropdown('courses')}
-              >
-                <div className="flex items-center">
-                  <i className={`fa fa-book mr-1 ${iconSize}`}></i> Courses
-                </div>
-                {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'courses' ? 'up' : 'down'} ml-1`}></i>}
+          {/* Courses dropdown */}
+          <li className="w-full md:w-auto relative group">
+            <div 
+              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} ${textSizeClass} md:hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2 cursor-pointer`}
+              onClick={() => toggleDropdown('courses')}
+            >
+              <div className="flex items-center">
+                <i className={`fa fa-book mr-1 ${iconSize}`}></i> Courses
               </div>
-              <ul className={`${isMobile ? (activeDropdown === 'courses' ? 'block pl-4' : 'hidden') : 'hidden md:group-hover:block absolute'} ${!isMobile ? dropdownBgStyle : ''} ${!isMobile ? 'p-2 rounded min-w-[180px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-300' : ''} ${!isMobile ? 'left-0 top-full' : ''}`}>
-                <li className="py-1">
-                  <a href="/courses/catalog" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-list mr-1"></i> Course Catalog
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-graduation-cap mr-1"></i> My Courses
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-tasks mr-1"></i> Assignments
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-check-circle mr-1"></i> Grades
-                  </a>
-                </li>
-              </ul>
-            </li>
+              {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'courses' ? 'up' : 'down'} ml-1`}></i>}
+            </div>
+            <ul className={`${isMobile ? (activeDropdown === 'courses' ? 'block pl-4' : 'hidden') : 'hidden md:group-hover:block absolute'} ${!isMobile ? dropdownBgStyle : ''} ${!isMobile ? 'p-2 rounded min-w-[180px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-300' : ''} ${!isMobile ? 'left-0 top-full' : ''}`}>
+              <li className="py-1">
+                <a href="/courses/catalog" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-list mr-1"></i> Course Catalog
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-graduation-cap mr-1"></i> My Courses
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-tasks mr-1"></i> Assignments
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-check-circle mr-1"></i> Grades
+                </a>
+              </li>
+            </ul>
+          </li>
 
-            {/* Live & Learn dropdown */}
-            <li className="w-full md:w-auto relative group">
-              <div 
-                className={`flex items-center justify-between w-full no-underline ${linkTextStyle} ${textSizeClass} md:hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2 cursor-pointer nowrap`}
-                onClick={() => toggleDropdown('livelearn')}
-              >
-                <div className="flex items-center whitespace-nowrap">
-                  <i className={`fa fa-seedling mr-1 ${iconSize}`}></i> Live&nbsp;&&nbsp;Learn
-                </div>
-                {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'livelearn' ? 'up' : 'down'} ml-1`}></i>}
+          {/* Live & Learn dropdown */}
+          <li className="w-full md:w-auto relative group">
+            <div 
+              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} ${textSizeClass} md:hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2 cursor-pointer nowrap`}
+              onClick={() => toggleDropdown('livelearn')}
+            >
+              <div className="flex items-center whitespace-nowrap">
+                <i className={`fa fa-seedling mr-1 ${iconSize}`}></i> Live&nbsp;&&nbsp;Learn
               </div>
-              <ul className={`${isMobile ? (activeDropdown === 'livelearn' ? 'block pl-4' : 'hidden') : 'hidden md:group-hover:block absolute'} ${!isMobile ? dropdownBgStyle : ''} ${!isMobile ? 'p-2 rounded min-w-[180px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-300' : ''} ${!isMobile ? 'left-0 top-full' : ''}`}>
-                <li className="py-1">
-                  <a href="/student-life" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-users mr-1"></i> Student Life
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-user mr-1"></i> Student Login
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="/track-application" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-file-alt mr-1"></i> Track Application
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-life-ring mr-1"></i> Help Center
-                  </a>
-                </li>
-              </ul>
-            </li>
+              {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'livelearn' ? 'up' : 'down'} ml-1`}></i>}
+            </div>
+            <ul className={`${isMobile ? (activeDropdown === 'livelearn' ? 'block pl-4' : 'hidden') : 'hidden md:group-hover:block absolute'} ${!isMobile ? dropdownBgStyle : ''} ${!isMobile ? 'p-2 rounded min-w-[180px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-300' : ''} ${!isMobile ? 'left-0 top-full' : ''}`}>
+              <li className="py-1">
+                <a href="/student-life" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-users mr-1"></i> Student Life
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-user mr-1"></i> Student Login
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="/track-application" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-file-alt mr-1"></i> Track Application
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-life-ring mr-1"></i> Help Center
+                </a>
+              </li>
+            </ul>
+          </li>
 
-            {/* Schedule dropdown */}
-            <li className="w-full md:w-auto relative group">
-              <div 
-                className={`flex items-center justify-between w-full no-underline ${linkTextStyle} ${textSizeClass} md:hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2 cursor-pointer`}
-                onClick={() => toggleDropdown('schedule')}
-              >
-                <div className="flex items-center">
-                  <i className={`fa fa-calendar-alt mr-1 ${iconSize}`}></i> Schedule
-                </div>
-                {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'schedule' ? 'up' : 'down'} ml-1`}></i>}
+          {/* Schedule dropdown */}
+          <li className="w-full md:w-auto relative group">
+            <div 
+              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} ${textSizeClass} md:hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2 cursor-pointer`}
+              onClick={() => toggleDropdown('schedule')}
+            >
+              <div className="flex items-center">
+                <i className={`fa fa-calendar-alt mr-1 ${iconSize}`}></i> Schedule
               </div>
-              <ul className={`${isMobile ? (activeDropdown === 'schedule' ? 'block pl-4' : 'hidden') : 'hidden md:group-hover:block absolute'} ${!isMobile ? dropdownBgStyle : ''} ${!isMobile ? 'p-2 rounded min-w-[180px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-300' : ''} ${!isMobile ? 'left-0 top-full' : ''}`}>
-                <li className="py-1">
-                  <a href="/academic-calendar" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-calendar mr-1"></i> Academic Calendar
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="/class-schedule" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-clock mr-1"></i> Class Schedule
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="/exam-dates" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-file-alt mr-1"></i> Exam Dates
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-bullhorn mr-1"></i> Events
-                  </a>
-                </li>
-              </ul>
-            </li>
+              {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'schedule' ? 'up' : 'down'} ml-1`}></i>}
+            </div>
+            <ul className={`${isMobile ? (activeDropdown === 'schedule' ? 'block pl-4' : 'hidden') : 'hidden md:group-hover:block absolute'} ${!isMobile ? dropdownBgStyle : ''} ${!isMobile ? 'p-2 rounded min-w-[180px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-300' : ''} ${!isMobile ? 'left-0 top-full' : ''}`}>
+              <li className="py-1">
+                <a href="/academic-calendar" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-calendar mr-1"></i> Academic Calendar
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="/class-schedule" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-clock mr-1"></i> Class Schedule
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="/exam-dates" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-file-alt mr-1"></i> Exam Dates
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-bullhorn mr-1"></i> Events
+                </a>
+              </li>
+            </ul>
+          </li>
 
-            {/* Parent Portal dropdown */}
-            <li className="w-full md:w-auto relative group">
-              <div 
-                className={`flex items-center justify-between w-full no-underline ${linkTextStyle} ${textSizeClass} md:hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2 cursor-pointer`}
-                onClick={() => toggleDropdown('parent')}
-              >
-                <div className="flex items-center whitespace-nowrap">
-                  <i className={`fa fa-user-friends mr-1 ${iconSize}`}></i> Parent&nbsp;Portal
-                </div>
-                {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'parent' ? 'up' : 'down'} ml-1`}></i>}
+          {/* Parent Portal dropdown */}
+          <li className="w-full md:w-auto relative group">
+            <div 
+              className={`flex items-center justify-between w-full no-underline ${linkTextStyle} ${textSizeClass} md:hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2 cursor-pointer`}
+              onClick={() => toggleDropdown('parent')}
+            >
+              <div className="flex items-center whitespace-nowrap">
+                <i className={`fa fa-user-friends mr-1 ${iconSize}`}></i> Parent&nbsp;Portal
               </div>
-              <ul className={`${isMobile ? (activeDropdown === 'parent' ? 'block pl-4' : 'hidden') : 'hidden md:group-hover:block absolute'} ${!isMobile ? dropdownBgStyle : ''} ${!isMobile ? 'p-2 rounded min-w-[160px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-300' : ''} ${!isMobile ? 'left-0 top-full' : ''}`}>
-                <li className="py-1">
-                  <a href="/student/dashboard" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-user-tie mr-1"></i> Parent Dashboard
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-chart-bar mr-1"></i> Progress Reports
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-calendar-check mr-1"></i> Attendance
-                  </a>
-                </li>
-                <li className="py-1">
-                  <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
-                    <i className="fa fa-credit-card mr-1"></i> Fee Payment
-                  </a>
-                </li>
-              </ul>
-            </li>
+              {isMobile && <i className={`fa fa-chevron-${activeDropdown === 'parent' ? 'up' : 'down'} ml-1`}></i>}
+            </div>
+            <ul className={`${isMobile ? (activeDropdown === 'parent' ? 'block pl-4' : 'hidden') : 'hidden md:group-hover:block absolute'} ${!isMobile ? dropdownBgStyle : ''} ${!isMobile ? 'p-2 rounded min-w-[160px] opacity-0 md:group-hover:opacity-100 transition-opacity duration-300' : ''} ${!isMobile ? 'left-0 top-full' : ''}`}>
+              <li className="py-1">
+                <a href="/student/dashboard" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
+                  <i className="fa fa-user-tie mr-1"></i> Parent Dashboard
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base whitespace-nowrap`}>
+                  <i className="fa fa-chart-bar mr-1"></i> Progress Reports
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-calendar-check mr-1"></i> Attendance
+                </a>
+              </li>
+              <li className="py-1">
+                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                  <i className="fa fa-credit-card mr-1"></i> Fee Payment
+                </a>
+              </li>
+            </ul>
+          </li>
 
-            {/* Contact link */}
-            <li className="w-full md:w-auto">
-              <a href="#" className={`flex items-center no-underline ${linkTextStyle} ${textSizeClass} hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2`}>
-                <i className={`fa fa-envelope mr-1 ${iconSize}`}></i> Contact
-              </a>
-            </li>
-          </ul>
-        </div>
+          {/* Contact link */}
+          <li className="w-full md:w-auto">
+            <a href="#" className={`flex items-center no-underline ${linkTextStyle} ${textSizeClass} hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2`}>
+              <i className={`fa fa-envelope mr-1 ${iconSize}`}></i> Contact
+            </a>
+          </li>
+        </ul>
 
-        {/* Right Section - CTA and Mobile Menu */}
-        <div className="flex-none flex items-center">
+        <div className="flex items-center ml-auto md:ml-8 lg:ml-12"> 
           {/* CTA Button - Desktop version */}
           <a
             href="/student-registration/new"
@@ -307,7 +303,7 @@ const Navbar = () => {
           )}
           
           {/* Mobile Menu Icon */}
-          <div className={`md:hidden cursor-pointer ${mobileMenuStyle} text-xl ml-4`} onClick={toggleMenu}>
+          <div className={`md:hidden cursor-pointer ${mobileMenuStyle} text-xl`} onClick={toggleMenu}>
             <i className={`fa ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
           </div>
         </div>

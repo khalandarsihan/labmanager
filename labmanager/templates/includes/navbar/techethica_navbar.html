@@ -16,7 +16,6 @@
 				z-index: 1000;
 				transition: background 0.3s ease-in-out;
 				margin-top: -1px; /* To prevent any tiny gap */
-				box-sizing: border-box;
 			}
 
 			body {
@@ -29,26 +28,8 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				max-width: 1400px;
+				max-width: 1200px;
 				margin: auto;
-				padding: 0 30px;
-			}
-
-			/* Three-column layout */
-			.navbar-left {
-				flex: 0 0 auto;
-				margin-right: 20px;
-			}
-
-			.navbar-center {
-				flex: 1 1 auto;
-				display: flex;
-				justify-content: center;
-			}
-
-			.navbar-right {
-				flex: 0 0 auto;
-				margin-left: 20px;
 			}
 
 			/* Logo - Updated color */
@@ -77,9 +58,8 @@
 				list-style: none;
 				display: flex;
 				align-items: center;
-				gap: 4 0px;
-				margin: 0;
-				padding: 0;
+				gap: 20px;
+				margin-left: 80px;
 			}
 
 			.navbar-menu li {
@@ -138,7 +118,7 @@
 
 			.dropdown-menu a {
 				color: #fff;
-				font-size: 16px; /* Dropdown font size */
+				font-size: 18px; /* Increased from 14px to 16px */
 				white-space: nowrap;
 			}
 
@@ -165,6 +145,7 @@
 				justify-content: center;
 				min-width: 200px;
 				white-space: nowrap;
+				margin-left: 120px;
 				font-size: 18px; /* Added font-size */
 			}
 
@@ -191,10 +172,6 @@
 			}
 
 			@media (max-width: 768px) {
-				.navbar-center {
-					display: none;
-				}
-
 				.navbar-menu {
 					display: none;
 					flex-direction: column;
@@ -213,7 +190,6 @@
 
 				.hamburger-menu {
 					display: block;
-					margin-left: 15px;
 				}
 
 				.cta-button {
@@ -234,108 +210,95 @@
 				}
 			}
 		</style>
-	</head>
-	<body>
 		<nav class="navbar">
 			<div class="navbar-container">
-				<!-- Left Section - Logo -->
-				<div class="navbar-left">
-					<a href="#" class="navbar-logo">
-						<i class="fa fa-graduation-cap"></i> TechEthica
-					</a>
-				</div>
+				<!-- Logo -->
+				<a href="#" class="navbar-logo">
+					<i class="fa fa-graduation-cap"></i> TechEthica
+				</a>
 
-				<!-- Center Section - Menu -->
-				<div class="navbar-center">
-					<ul class="navbar-menu">
-						<li>
-							<a href="/"><i class="fa fa-home"></i> Home</a>
-						</li>
-						<li class="dropdown">
-							<a href="#"><i class="fa fa-book"></i> Courses</a>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#"><i class="fa fa-list"></i> Course Catalog</a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-graduation-cap"></i> My Courses</a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-tasks"></i> Assignments</a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-check-circle"></i> Grades</a>
-								</li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="#"><i class="fa fa-calendar-alt"></i> Schedule</a>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#"
-										><i class="fa fa-calendar"></i> Academic Calendar</a
-									>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-clock"></i> Class Schedule</a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-file-alt"></i> Exam Dates</a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-bullhorn"></i> Events</a>
-								</li>
-							</ul>
-						</li>
-						<li class="dropdown dropdown-wide">
-							<a href="#"><i class="fa fa-user-graduate"></i> Student Access</a>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#"><i class="fa fa-user"></i> Student Login</a>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-life-ring"></i> Help Center</a>
-								</li>
-							</ul>
-						</li>
-						<li class="dropdown dropdown-wide">
-							<a href="#"><i class="fa fa-users"></i> Parent Portal</a>
-							<ul class="dropdown-menu">
-								<li>
-									<a href="#"><i class="fa fa-user-tie"></i> Parent Dashboard</a>
-								</li>
-								<li>
-									<a href="#"
-										><i class="fa fa-chart-bar"></i> Progress Reports</a
-									>
-								</li>
-								<li>
-									<a href="#"
-										><i class="fa fa-calendar-check"></i> Attendance Records</a
-									>
-								</li>
-								<li>
-									<a href="#"><i class="fa fa-credit-card"></i> Fee Payment</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a href="#"><i class="fa fa-envelope"></i> Contact</a>
-						</li>
-					</ul>
-				</div>
+				<!-- Navbar Menu -->
+				<ul class="navbar-menu">
+					<li>
+						<a href="/"><i class="fa fa-home"></i> Home</a>
+					</li>
+					<li class="dropdown">
+						<a href="#"><i class="fa fa-book"></i> Courses</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#"><i class="fa fa-list"></i> Course Catalog</a>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-graduation-cap"></i> My Courses</a>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-tasks"></i> Assignments</a>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-check-circle"></i> Grades</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown">
+						<a href="#"><i class="fa fa-calendar-alt"></i> Schedule</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#"><i class="fa fa-calendar"></i> Academic Calendar</a>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-clock"></i> Class Schedule</a>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-file-alt"></i> Exam Dates</a>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-bullhorn"></i> Events</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown dropdown-wide">
+						<a href="#"><i class="fa fa-user-graduate"></i> Student Access</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#"><i class="fa fa-user"></i> Student Login</a>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-life-ring"></i> Help Center</a>
+							</li>
+						</ul>
+					</li>
+					<li class="dropdown dropdown-wide">
+						<a href="#"><i class="fa fa-users"></i> Parent Portal</a>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#"><i class="fa fa-user-tie"></i> Parent Dashboard</a>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-chart-bar"></i> Progress Reports</a>
+							</li>
+							<li>
+								<a href="#"
+									><i class="fa fa-calendar-check"></i> Attendance Records</a
+								>
+							</li>
+							<li>
+								<a href="#"><i class="fa fa-credit-card"></i> Fee Payment</a>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<a href="#"><i class="fa fa-envelope"></i> Contact</a>
+					</li>
+				</ul>
 
-				<!-- Right Section - CTA Button and Mobile Menu -->
-				<div class="navbar-right">
-					<!-- CTA Button -->
-					<a href="/student-registration/new" class="cta-button">
-						<i class="fa fa-rocket"></i> Start Learning Today
-					</a>
+				<!-- CTA Button -->
+				<a href="/student-registration/new" class="cta-button">
+					<i class="fa fa-rocket"></i> Start Learning Today
+				</a>
 
-					<!-- Mobile Menu Icon -->
-					<div class="hamburger-menu" onclick="toggleMenu()">
-						<i class="fa fa-bars"></i>
-					</div>
+				<!-- Mobile Menu Icon -->
+				<div class="hamburger-menu" onclick="toggleMenu()">
+					<i class="fa fa-bars"></i>
 				</div>
 			</div>
 		</nav>
@@ -346,5 +309,6 @@
 				menu.classList.toggle("active");
 			}
 		</script>
-	</body>
+	</head>
+	<body></body>
 </html>
