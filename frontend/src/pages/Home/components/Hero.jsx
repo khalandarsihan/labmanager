@@ -35,23 +35,22 @@ const Hero = () => {
   
   // Define theme-dependent styles
   const overlayGradient = useLightTheme
-    ? "bg-gradient-to-r from-purple-100/55 to-purple-50/50"
-    : "bg-gradient-to-r from-gray-800/70 to-gray-700/65";
+    ? "bg-gradient-to-r from-purple-100/40 to-purple-50/35"
+    : "bg-gradient-to-r from-gray-800/50 to-gray-700/45";
     
+
   const topGradient = useLightTheme
-  ? "bg-gradient-to-b from-purple-50/30 to-transparent"
-  : "bg-gradient-to-b from-gray-900/30 to-transparent";
+  ? "bg-gradient-to-b from-purple-50/20 to-transparent"
+  : "bg-gradient-to-b from-gray-900/20 to-transparent";
 
-const bottomGradient = useLightTheme
-  ? "bg-gradient-to-t from-purple-100/40 to-transparent"
-  : "bg-gradient-to-t from-[#444444]/30 to-transparent";
+  const bottomGradient = useLightTheme
+  ? "bg-gradient-to-t from-purple-100/25 to-transparent"
+  : "bg-gradient-to-t from-[#444444]/25 to-transparent";
 
-
-    
   const bottomShadowGradient = useLightTheme
-    ? "bg-gradient-to-t from-purple-50/70 to-transparent"
-    : "bg-gradient-to-t from-gray-900/90 to-transparent";
-    
+  ? "bg-gradient-to-t from-purple-50/50 to-transparent"
+  : "bg-gradient-to-t from-gray-900/60 to-transparent";
+
   // Use the themeStyles directly from context
   const titleColor = themeStyles.heading;
   const descriptionColor = themeStyles.subheading;
@@ -73,7 +72,7 @@ const bottomGradient = useLightTheme
       <div className="absolute inset-0 z-0 bg-transparent"></div>
       
       {/* BackgroundPattern component - placed so it extends fully */}
-      <div className="absolute inset-0 z-1 overflow-hidden">
+      <div className="absolute inset-0 z-3   overflow-hidden">
         <BackgroundPattern />
       </div>
       
@@ -82,7 +81,7 @@ const bottomGradient = useLightTheme
         {/* Video with adaptive object-fit based on orientation */}
         <video 
           ref={videoRef}
-          className={`w-full h-full ${videoFitStyle} ${videoLoaded ? 'block' : 'hidden'}`}
+          className={`w-full h-full ${videoFitStyle} opacity-95 ${videoLoaded ? 'block' : 'hidden'}`}
           autoPlay 
           loop 
           muted 
