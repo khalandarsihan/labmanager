@@ -1,26 +1,38 @@
 /* 
- * This is an optional CSS file for additional isolation if needed
- * Create this file in the same directory as Hero.jsx if the z-index approach doesn't fully work
+ * CSS for Hero component with BackgroundPattern integration
  */
 
 /* Force the hero section to create its own stacking context */
 section {
-    isolation: isolate;
+  isolation: isolate;
+}
+
+/* Ensure the BackgroundPattern component spreads correctly */
+section .absolute.z-1 {
+  position: fixed; /* Makes the background extend to the entire viewport */
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+}
+
+/* Video styling */
+section video {
+  z-index: 5;
+  position: relative;
+}
+
+/* Improve the transition between video and background in portrait mode */
+@media (orientation: portrait) {
+  /* Reduce the contrast of letterboxing in portrait mode */
+  section video.object-contain {
+    opacity: 0.95; /* Slightly transparent to blend with background */
+    transition: opacity 0.3s ease;
   }
   
-  /* Hide any background patterns or images that might be applied from parent elements */
-  section::before,
-  section::after {
-    display: none !important;
+  /* Ensure the BackgroundPattern expands properly on mobile */
+  section .z-1 > div,
+  section .z-1 > div > div {
+    position: fixed;
+    min-height: 100vh;
+    min-width: 100vw;
   }
-  
-  /* Make sure video takes precedence */
-  section video {
-    z-index: 5;
-    position: relative;
-  }
-  
-  /* Create a clean background for the video */
-  section .absolute:first-child {
-    background: none !important;
-  }
+}

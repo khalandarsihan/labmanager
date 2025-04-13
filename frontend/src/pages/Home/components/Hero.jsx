@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../../../components/ui/ThemeContext';
+import BackgroundPattern from '../../../components/ui/BackgroundPattern';
 
 const Hero = () => {
-  const { useLightTheme } = useTheme();
+  const { useLightTheme, themeStyles } = useTheme();
   const videoRef = useRef(null);
   const [videoLoaded, setVideoLoaded] = useState(false);
   const [isPortrait, setIsPortrait] = useState(window.innerWidth < window.innerHeight);
@@ -35,50 +36,49 @@ const Hero = () => {
   // Define theme-dependent styles
   const overlayGradient = useLightTheme
     ? "bg-gradient-to-r from-purple-100/55 to-purple-50/50"
-    : "bg-gradient-to-r from-gray-800/50 to-gray-700/45";
+    : "bg-gradient-to-r from-gray-800/70 to-gray-700/65";
     
   const topGradient = useLightTheme
-    ? "bg-gradient-to-b from-purple-50/50 to-transparent"
-    : "bg-gradient-to-b from-black/45 to-transparent";
-    
-  const bottomGradient = useLightTheme
-    ? "bg-gradient-to-t from-purple-100/60 to-transparent"
-    : "bg-gradient-to-t from-black/60 to-transparent";
+  ? "bg-gradient-to-b from-purple-50/30 to-transparent"
+  : "bg-gradient-to-b from-gray-900/30 to-transparent";
+
+const bottomGradient = useLightTheme
+  ? "bg-gradient-to-t from-purple-100/40 to-transparent"
+  : "bg-gradient-to-t from-[#444444]/30 to-transparent";
+
+
     
   const bottomShadowGradient = useLightTheme
     ? "bg-gradient-to-t from-purple-50/70 to-transparent"
     : "bg-gradient-to-t from-gray-900/90 to-transparent";
     
-  const titleColor = useLightTheme
-    ? "text-purple-700"
-    : "text-amber-300";
-    
-  const descriptionColor = useLightTheme
-    ? "text-purple-700"
-    : "text-amber-200";
-    
+  // Use the themeStyles directly from context
+  const titleColor = themeStyles.heading;
+  const descriptionColor = themeStyles.subheading;
+  
+  // Use the cta style from themeStyles
+  // const buttonStyle = `${themeStyles.cta.bg} ${useLightTheme ? 'text-white' : 'text-gray-900'} ${themeStyles.cta.hover}`;
   const buttonStyle = useLightTheme
-    ? "bg-purple-500 text-white hover:bg-purple-600"
-    : "bg-amber-300 text-gray-900 hover:bg-amber-200";
-    
-  const bgColor = useLightTheme
-    ? "bg-purple-50"
-    : "bg-gray-900";
+  ? "bg-purple-500 text-white hover:bg-purple-600"
+  : "bg-amber-300 text-gray-900 hover:bg-amber-200";
 
   // Choose the appropriate object-fit style based on orientation
-  // For portrait mode, we use 'object-contain' to prevent cropping
-  // For landscape, we can use 'object-cover' for a more immersive look
   const videoFitStyle = isPortrait 
     ? "object-contain" // Ensures the entire video is visible, may have letterboxing
     : "object-cover";  // Fills the container, may crop
 
   return (
-    <section className={`relative w-full h-[85vh] md:h-screen min-h-[500px] overflow-hidden ${bgColor} z-10`}>
-      {/* Create a barrier element to prevent background pattern bleed-through */}
-      <div className="absolute inset-0 z-0 bg-black"></div>
+    <section className="relative w-full h-[85vh] md:h-screen min-h-[500px] overflow-hidden z-10">
+      {/* Transparent container to establish stacking context */}
+      <div className="absolute inset-0 z-0 bg-transparent"></div>
+      
+      {/* BackgroundPattern component - placed so it extends fully */}
+      <div className="absolute inset-0 z-1 overflow-hidden">
+        <BackgroundPattern />
+      </div>
       
       {/* Video Container */}
-      <div className="absolute inset-0 w-full h-full z-1">
+      <div className="absolute inset-0 w-full h-full z-2">
         {/* Video with adaptive object-fit based on orientation */}
         <video 
           ref={videoRef}
@@ -91,15 +91,15 @@ const Hero = () => {
           <source src="/assets/labmanager/videos/background-video.mp4" type="video/mp4" />
         </video>
         
-        {/* Fallback background when video isn't loaded yet or fails */}
+        {/* Fallback when video isn't loaded - just display the BackgroundPattern */}
         <div 
-          className={`absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 ${videoLoaded ? 'hidden' : 'block'}`}
+          className={`absolute inset-0 bg-transparent ${videoLoaded ? 'hidden' : 'block'}`}
         ></div>
       </div>
 
-      {/* Layered Overlays for Depth with theme-aware colors */}
-      <div className={`absolute inset-0 ${overlayGradient} z-2`} />
-      <div className="absolute inset-0 z-3">
+      {/* Subtle overlays for depth with theme-aware colors */}
+      <div className={`absolute inset-0 ${overlayGradient} z-3`} />
+      <div className="absolute inset-0 z-4">
         <div className={`absolute inset-0 ${topGradient}`} />
         <div className={`absolute inset-0 ${bottomGradient}`} />
       </div>
@@ -123,7 +123,7 @@ const Hero = () => {
       </div>
 
       {/* Bottom Gradient */}
-      <div className={`absolute bottom-0 left-0 right-0 h-24 md:h-32 ${bottomShadowGradient} z-4`} />
+      <div className={`absolute bottom-0 left-0 right-0 h-24 md:h-32 ${bottomShadowGradient} z-5`} />
     </section>
   );
 };
