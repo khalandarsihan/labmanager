@@ -3265,6 +3265,10 @@ video {
   --tw-gradient-to: #444444 var(--tw-gradient-to-position);
 }
 
+.to-\[\#444444\]\/50 {
+  --tw-gradient-to: rgb(68 68 68 / 0.5) var(--tw-gradient-to-position);
+}
+
 .to-\[\#444\] {
   --tw-gradient-to: #444 var(--tw-gradient-to-position);
 }

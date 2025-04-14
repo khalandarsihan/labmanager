@@ -36,8 +36,10 @@ const Hero = () => {
   
   // Simplified overlay for better background pattern visibility
   const overlayGradient = useLightTheme
-    ? "bg-gradient-to-r from-purple-50/55 via-purple-100/25 to-purple-50/50"
-    : "bg-gradient-to-r from-gray-900/55 via-gray-800/35 to-gray-700/50";
+    ? "border-purple-200/50 bg-gradient-to-r from-purple-50/55 via-purple-100/25 to-purple-50/50"
+    : "border-gray-700/50 bg-gradient-to-r from-gray-900/55 via-gray-800/35 to-[#444444]/50";
+    // ? "bg-gradient-to-r from-purple-50/55 via-purple-100/25 to-purple-50/50"
+    // : "bg-gradient-to-r from-gray-900/55 via-gray-800/35 to-gray-700/50";
 
   // Use the themeStyles directly from context
   const titleColor = themeStyles.heading;
