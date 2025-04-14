@@ -1,5 +1,5 @@
 /* 
- * CSS for Hero component with improved z-index management
+ * CSS for Hero component with improved z-index management and transitions
  */
 
 /* Animation definitions */
@@ -92,6 +92,13 @@ section video {
   transition: opacity 0.4s ease;
 }
 
+/* Improve bottom transition gradient - make it smoother */
+section .bg-gradient-to-t {
+  height: 24px !important; /* Taller gradient for smoother transition */
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
 /* Mobile-specific adjustments */
 @media (max-width: 768px) {
   /* Adjust pattern visibility on mobile */
@@ -101,7 +108,7 @@ section video {
   
   /* Ensure smoother transition to Welcome section */
   section .bg-gradient-to-t {
-    height: 1.5rem; /* Smaller gradient on mobile */
+    height: 20px !important; /* Smaller but still substantial gradient on mobile */
   }
 }
 
@@ -117,4 +124,35 @@ section video {
   section {
     margin-bottom: -1px; /* Eliminate any gaps between sections */
   }
+}
+
+/* Additional rules to ensure smooth transitions */
+section + section {
+  margin-top: -1px; /* Removes any potential gap between sections */
+}
+
+/* Create better blending at section boundaries */
+.section-transition {
+  position: relative;
+  overflow: hidden;
+}
+
+.section-transition::before,
+.section-transition::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 24px;
+  pointer-events: none;
+}
+
+.section-transition::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--bg-color), transparent);
+}
+
+.section-transition::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--bg-color), transparent);
 }

@@ -10,20 +10,27 @@ const Welcome = ({ content }) => {
   
   return (
     <section className="relative py-16 md:py-24 overflow-hidden w-screen mt-0">
-      {/* Background Pattern - positioned absolutely with lower z-index */}
-      <div className="absolute inset-0 z-0">
+      {/* Background Pattern - using the same component */}
+      <div className="absolute inset-0 -z-10">
         <BackgroundPattern />
       </div>
       
-      {/* Content with higher z-index */}
+      {/* Content with proper z-index */}
       <div className="w-screen max-w-none px-8 md:px-16 relative z-10">
         <div className={`${themeStyles.text.primary} text-lg md:text-xl leading-relaxed w-full max-w-none welcome-content`}>
           <div dangerouslySetInnerHTML={{ __html: content?.content || '' }} />
         </div>
       </div>
       
-      {/* Top transition gradient to blend with Hero section */}
-      <div className={`absolute top-0 left-0 right-0 h-16 bg-gradient-to-b ${
+      {/* Top transition gradient - taller and solid for seamless blending */}
+      <div className={`absolute top-0 left-0 right-0 h-40 bg-gradient-to-b ${
+        useLightTheme 
+          ? "from-purple-50 via-purple-50 to-transparent" 
+          : "from-gray-900 via-gray-900 to-transparent"
+      } z-1`} />
+      
+      {/* Bottom transition gradient for seamless transition to announcements */}
+      <div className={`absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t ${
         useLightTheme 
           ? "from-purple-50 to-transparent" 
           : "from-gray-900 to-transparent"
@@ -46,7 +53,6 @@ const Welcome = ({ content }) => {
         }
         .theme-card {
           background-color: ${useLightTheme ? 'rgba(255, 255, 255, 0.4)' : 'rgba(31, 41, 55, 0.3)'};
-          backdrop-filter: blur(4px);
           color: ${useLightTheme ? '#374151' : '#e5e7eb'};
         }
         .theme-link:hover {
