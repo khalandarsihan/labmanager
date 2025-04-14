@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTheme } from '../../../components/ui/ThemeContext';
 import BackgroundPattern from '../../../components/ui/BackgroundPattern';
-import './Welcome.css'; // Keep this for the animation styles
+import './Welcome.css';
 
 const Welcome = ({ content }) => {
   const { useLightTheme, themeStyles } = useTheme();
@@ -9,17 +9,25 @@ const Welcome = ({ content }) => {
   if (!content) return null;
   
   return (
-    <section className="relative py-24 overflow-hidden w-screen">
-      {/* Use the imported BackgroundPattern component */}
-      <div className="absolute inset-0">
+    <section className="relative py-16 md:py-24 overflow-hidden w-screen mt-0">
+      {/* Background Pattern - positioned absolutely with lower z-index */}
+      <div className="absolute inset-0 z-0">
         <BackgroundPattern />
       </div>
       
+      {/* Content with higher z-index */}
       <div className="w-screen max-w-none px-8 md:px-16 relative z-10">
         <div className={`${themeStyles.text.primary} text-lg md:text-xl leading-relaxed w-full max-w-none welcome-content`}>
           <div dangerouslySetInnerHTML={{ __html: content?.content || '' }} />
         </div>
       </div>
+      
+      {/* Top transition gradient to blend with Hero section */}
+      <div className={`absolute top-0 left-0 right-0 h-16 bg-gradient-to-b ${
+        useLightTheme 
+          ? "from-purple-50 to-transparent" 
+          : "from-gray-900 to-transparent"
+      } z-1`} />
       
       {/* Theme-specific CSS classes for welcome content */}
       <style jsx>{`

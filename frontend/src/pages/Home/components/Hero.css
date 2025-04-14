@@ -1,8 +1,8 @@
 /* 
- * CSS for Hero component with enhanced BackgroundPattern integration
+ * CSS for Hero component with improved z-index management
  */
 
-/* Make sure animations are defined for the Hero component */
+/* Animation definitions */
 @keyframes float-diagonal {
   0%, 100% { transform: translate(0, 0) rotate(45deg); }
   50% { transform: translate(10px, -10px) rotate(45deg); }
@@ -78,25 +78,43 @@ section {
   isolation: isolate;
 }
 
-/* Ensure the pattern and overlay elements don't cause scroll issues */
+/* Improve mobile styling - remove fixed positioning that causes issues */
 section .fixed {
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
+  position: absolute; /* Changed from fixed to prevent mobile issues */
+  height: 100%;
+  width: 100%;
 }
 
-/* Video styling */
+/* Video styling - ensure it sits above background patterns but below content */
 section video {
   z-index: 5;
   position: relative;
   transition: opacity 0.4s ease;
 }
 
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  /* Adjust pattern visibility on mobile */
+  section .absolute.opacity-20 {
+    opacity: 0.15; /* Reduce pattern visibility further on mobile */
+  }
+  
+  /* Ensure smoother transition to Welcome section */
+  section .bg-gradient-to-t {
+    height: 1.5rem; /* Smaller gradient on mobile */
+  }
+}
+
 /* Improve the transition between video and background in portrait mode */
 @media (orientation: portrait) {
-  /* Reduce the contrast of letterboxing in portrait mode */
+  /* Make video more visible in portrait mode */
   section video.object-contain {
-    opacity: 0.75; /* More transparent to blend with background better */
+    opacity: 0.9; /* More opaque on mobile */
     transition: opacity 0.3s ease;
+  }
+  
+  /* Adjust spacing for transitions */
+  section {
+    margin-bottom: -1px; /* Eliminate any gaps between sections */
   }
 }
