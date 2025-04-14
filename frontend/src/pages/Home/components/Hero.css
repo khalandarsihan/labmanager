@@ -102,8 +102,8 @@ section .bg-gradient-to-t {
 /* Mobile-specific adjustments */
 @media (max-width: 768px) {
   /* Adjust pattern visibility on mobile */
-  section .absolute.opacity-20 {
-    opacity: 0.15; /* Reduce pattern visibility further on mobile */
+  section .absolute.opacity-5 {
+    opacity: 0.05; /* Reduce pattern visibility further on mobile */
   }
   
   /* Ensure smoother transition to Welcome section */
@@ -116,8 +116,8 @@ section .bg-gradient-to-t {
 @media (orientation: portrait) {
   /* Make video more visible in portrait mode */
   section video.object-contain {
-    opacity: 0.9; /* More opaque on mobile */
-    transition: opacity 0.3s ease;
+    opacity: 0.4; /* More opaque on mobile */
+    transition: opacity 0.4s ease;
   }
   
   /* Adjust spacing for transitions */

@@ -36,10 +36,10 @@ const Hero = () => {
   
   // // Video overlay gradient - consistent with the theme
   const overlayGradient = useLightTheme
-  //   // ? "bg-gradient-to-r from-purple-50/80 via-purple-100/50 to-purple-50/80"
-  //   // : "bg-gradient-to-r from-gray-900/80 via-gray-800/60 to-gray-700/80";
-    ? "border-purple-200/50 bg-gradient-to-r from-purple-50/80 via-purple-100/90 to-purple-50/80"
-    : "border-gray-700/50 bg-gradient-to-r from-gray-900/80 via-gray-800/90 to-[#444444]/80";
+    ? "bg-gradient-to-r from-purple-50/80 via-purple-100/50 to-purple-50/80"
+    : "bg-gradient-to-r from-gray-900/80 via-gray-800/50 to-gray-700/80";
+    // ? "border-purple-200/50 bg-gradient-to-r from-purple-50/80 via-purple-100/90 to-purple-50/80"
+    // : "border-gray-700/50 bg-gradient-to-r from-gray-900/80 via-gray-800/90 to-[#444444]/80";
 
   // Video overlay gradient - consistent with the theme
 // const overlayGradient = useLightTheme
@@ -72,7 +72,7 @@ const Hero = () => {
   ref={videoRef}
   className={`w-full h-full ${videoFitStyle} ${
     videoLoaded 
-      ? 'opacity-50 md:opacity-50 sm:opacity-40 max-sm:opacity-30' 
+      ? 'opacity-30 md:opacity-30 sm:opacity-30 max-sm:opacity-10' 
       : 'opacity-0'
   } transition-opacity duration-500`}
   autoPlay 
