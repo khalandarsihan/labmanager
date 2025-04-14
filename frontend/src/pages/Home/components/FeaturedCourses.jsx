@@ -11,6 +11,10 @@ const FeaturedCourses = ({ courses = [] }) => {
   const [visibleCards, setVisibleCards] = useState(4);
   const [isMobile, setIsMobile] = useState(false);
   const [isLandscape, setIsLandscape] = useState(false);
+  
+  // Touch handling states
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
 
   // Update viewport info
   useEffect(() => {
@@ -67,6 +71,57 @@ const FeaturedCourses = ({ courses = [] }) => {
   const prevSlide = () => {
     // Ensure we don't go before the beginning of the list
     setCurrentIndex(prevIndex => Math.max(prevIndex - 1, 0));
+  };
+
+  // Simple touch handlers
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setStartX(e.pageX);
+  };
+
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setStartX(e.touches[0].pageX);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    
+    const dx = e.pageX - startX;
+    if (Math.abs(dx) > 50) {
+      if (dx > 0 && currentIndex > 0) {
+        prevSlide();
+      } else if (dx < 0 && currentIndex < courses.length - visibleCards) {
+        nextSlide();
+      }
+      setIsDragging(false);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    
+    const dx = e.touches[0].pageX - startX;
+    if (Math.abs(dx) > 50) {
+      if (dx > 0 && currentIndex > 0) {
+        prevSlide();
+      } else if (dx < 0 && currentIndex < courses.length - visibleCards) {
+        nextSlide();
+      }
+      setIsDragging(false);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
   };
 
   if (!courses.length) {
@@ -128,7 +183,16 @@ const FeaturedCourses = ({ courses = [] }) => {
             </div>
           </div>
           
-          <div className="carousel-container overflow-hidden">
+          <div 
+            className="carousel-container overflow-hidden"
+            onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            onMouseMove={handleMouseMove}
+            onTouchMove={handleTouchMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onTouchEnd={handleTouchEnd}
+          >
             <div
               ref={scrollContainerRef}
               className="carousel-track flex transition-transform duration-500 ease-out"
@@ -166,7 +230,7 @@ const FeaturedCourses = ({ courses = [] }) => {
 
 const CourseCard = ({ course, useLightTheme, themeStyles, isMobile }) => (
   <div className="course-card px-2 sm:px-4">
-    <Card className={`${useLightTheme ? 'bg-white/50 border-purple-200/50 hover:border-purple-500/50' : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-300/50'} backdrop-blur-sm h-full transition-all duration-300 hover:transform hover:scale-[1.02] relative`}>
+    <Card className={`${useLightTheme ? 'bg-white/50 border-purple-200 hover:border-purple-400 hover:border-2' : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-300 hover:border-2'} backdrop-blur-sm h-full transition-all duration-300 hover:shadow-lg relative`}>
       <div className="course-card-image">
         <img
           src={course.featured_image_small || "/assets/labmanager/images/course-placeholder.jpg"}

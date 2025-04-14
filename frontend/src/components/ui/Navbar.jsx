@@ -12,49 +12,96 @@ const Navbar = () => {
   });
   const { useLightTheme } = useTheme();
   
-  // Use a ref to store the current menu state for event handlers
+  // Use refs to store current state values for event handlers
   const menuOpenRef = useRef(isMenuOpen);
+  const viewportInfoRef = useRef(viewportInfo);
+  
+  // Update refs when state changes
   useEffect(() => {
     menuOpenRef.current = isMenuOpen;
   }, [isMenuOpen]);
+  
+  useEffect(() => {
+    viewportInfoRef.current = viewportInfo;
+  }, [viewportInfo]);
 
-  // Reliable viewport detection function
-  const updateViewportInfo = () => {
-    // Small delay to ensure dimensions are updated after orientation changes
-    setTimeout(() => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      
+  // Completely rewritten viewport detection
+  const detectViewport = () => {
+    // Get accurate dimensions
+    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    const height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    
+    // Check for mobile and landscape
+    const isMobile = width < 768;
+    const isLandscape = width > height;
+    
+    // Only update state if something changed
+    if (
+      viewportInfoRef.current.width !== width ||
+      viewportInfoRef.current.height !== height ||
+      viewportInfoRef.current.isMobile !== isMobile ||
+      viewportInfoRef.current.isLandscape !== isLandscape
+    ) {
       setViewportInfo({
-        isMobile: width < 768,
-        isLandscape: width > height,
+        isMobile,
+        isLandscape,
         width,
         height
       });
-    }, 50);
+    }
   };
 
-  // Initialize and set up event listeners
+  // Set up event listeners with improved handling
   useEffect(() => {
-    // Initial check
-    updateViewportInfo();
+    // Initial detection
+    detectViewport();
     
-    // Event listeners
-    window.addEventListener('resize', updateViewportInfo);
-    window.addEventListener('orientationchange', updateViewportInfo);
+    // Define handler functions that can be removed
+    const handleResize = () => {
+      detectViewport();
+    };
     
-    // Clean up
+    const handleOrientationChange = () => {
+      // For orientation changes, use a multi-step approach
+      // First immediate check
+      detectViewport();
+      
+      // Delayed checks to catch all browsers/devices
+      setTimeout(detectViewport, 100);
+      setTimeout(detectViewport, 300);
+      setTimeout(detectViewport, 500);
+    };
+    
+    // DOMContentLoaded might be too late, use load instead
+    const handleLoad = () => {
+      detectViewport();
+    };
+    
+    // Attach all event listeners
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', handleOrientationChange, { passive: true });
+    window.addEventListener('load', handleLoad, { passive: true });
+    
+    // On mount, check multiple times to catch any delayed rendering
+    setTimeout(detectViewport, 100);
+    setTimeout(detectViewport, 300);
+    
+    // Cleanup
     return () => {
-      window.removeEventListener('resize', updateViewportInfo);
-      window.removeEventListener('orientationchange', updateViewportInfo);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+      window.removeEventListener('load', handleLoad);
     };
   }, []);
-
-  // Toggle menu with reliable detection
+  
+  // Also check viewport when menu is toggled
   const toggleMenu = () => {
-    updateViewportInfo(); // Force viewport update before toggling
+    detectViewport(); // Force viewport check
     setIsMenuOpen(!isMenuOpen);
     setActiveDropdown(null);
+    
+    // Additional checks after toggle
+    setTimeout(detectViewport, 100);
   };
 
   const toggleDropdown = (dropdownName) => {
@@ -91,17 +138,29 @@ const Navbar = () => {
   // Extract variables for cleaner JSX
   const { isMobile, isLandscape, width } = viewportInfo;
   const isLargePhone = isMobile && width >= 400;
-  const menuHeight = isLandscape ? (isLargePhone ? 'max-h-[85vh]' : 'max-h-[75vh]') : '';
   
-  // UPDATED: Increased font size for desktop view
+  // IMPORTANT: Set menu height directly with fixed values rather than relying on conditional classes
+  const getMenuHeight = () => {
+    if (isLandscape) {
+      return isLargePhone ? '85vh' : '75vh';
+    }
+    return 'auto';
+  };
+  
+  // UPDATED: Text and icon sizes with more straightforward calculations
   const textSizeClass = isMobile && isLandscape 
     ? 'text-xs'
     : 'text-sm md:text-base lg:text-lg';
   
-  // UPDATED: Increased icon size for desktop view
   const iconSize = isMobile && isLandscape 
     ? 'text-[14px]'
     : 'text-[18px] md:text-[20px] lg:text-[22px]';
+  
+  // Create a fixed inline style for menu to ensure it works in all view modes
+  const menuStyle = isMenuOpen && isLandscape ? {
+    maxHeight: getMenuHeight(),
+    overflowY: 'auto',
+  } : {};
   
   return (
     <nav className={`${navBgStyle} py-2 px-2 md:py-3 md:px-4 w-full relative top-[1px] z-[1000] -mt-[1px]`}>
@@ -112,12 +171,12 @@ const Navbar = () => {
           TechEthica
         </a>
 
-        {/* Navbar Menu */}
+        {/* Navbar Menu - Using inline style for more control */}
         <ul 
           className={`${isMenuOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row items-start md:items-center list-none md:ml-4 lg:ml-6 gap-1 md:gap-1 lg:gap-2 xl:gap-3 ${
-            isMenuOpen ? `absolute top-[50px] left-0 w-full ${dropdownBgStyle} text-left p-2 z-50 ${menuHeight} ${isLandscape ? 'overflow-y-auto' : ''}` : ''
+            isMenuOpen ? `absolute top-[50px] left-0 w-full ${dropdownBgStyle} text-left p-2 z-50` : ''
           }`}
-          style={isLandscape && isMenuOpen ? { maxHeight: isLargePhone ? '85vh' : '75vh', overflowY: 'auto' } : {}}
+          style={menuStyle}
         >
           {/* Home link */}
           <li className="w-full md:w-auto">

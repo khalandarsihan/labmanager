@@ -11,6 +11,12 @@
   position: relative;
   overflow: hidden;
   border-radius: 0.5rem;
+  touch-action: pan-y;
+  cursor: grab;
+}
+
+.carousel-container:active {
+  cursor: grabbing;
 }
 
 /* Carousel track for smooth animation */
