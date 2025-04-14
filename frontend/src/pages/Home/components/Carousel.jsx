@@ -44,13 +44,15 @@ const Carousel = ({ slides = [] }) => {
                     alt={slide.title}
                     className="w-full h-full object-cover"
                   />
-                  <div className={`absolute inset-x-0 bottom-0 ${useLightTheme ? 'bg-gradient-to-t from-purple-100/80 to-transparent' : 'bg-gradient-to-t from-gray-900/80 to-transparent'} p-4 md:p-6`}>
-                    <h3 className={`text-xl md:text-2xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'} mb-1 md:mb-2`}>
-                      {slide.title}
-                    </h3>
-                    <p className={`text-sm md:text-base ${useLightTheme ? 'text-gray-700' : 'text-gray-200'}`}>
-                      {slide.description}
-                    </p>
+                  <div className={`absolute inset-x-0 bottom-0 ${useLightTheme ? 'bg-gradient-to-t from-purple-100/80 to-transparent' : 'bg-gradient-to-t from-gray-900/80 to-transparent'} pt-16 pb-8 px-4 md:pt-24 md:pb-10 md:px-6`}>
+                    <div className="transform -translate-y-4 md:-translate-y-6">
+                      <h3 className={`text-xl md:text-2xl font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'} mb-1 md:mb-2`}>
+                        {slide.title}
+                      </h3>
+                      <p className={`text-sm md:text-base ${useLightTheme ? 'text-gray-700' : 'text-gray-200'}`}>
+                        {slide.description}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
