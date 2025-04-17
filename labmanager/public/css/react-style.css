@@ -1684,6 +1684,10 @@ video {
   min-width: max-content;
 }
 
+.min-w-\[33\.3\%\] {
+  min-width: 33.3%;
+}
+
 .max-w-2xl {
   max-width: 42rem;
 }
@@ -1734,6 +1738,10 @@ video {
 
 .max-w-sm {
   max-width: 24rem;
+}
+
+.max-w-\[33\.3\%\] {
+  max-width: 33.3%;
 }
 
 .flex-1 {
@@ -2039,6 +2047,10 @@ video {
 
 .grid-cols-7 {
   grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .flex-col {
@@ -6395,6 +6407,10 @@ video {
 
   .md\:grid-cols-6 {
     grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .md\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .md\:flex-row {

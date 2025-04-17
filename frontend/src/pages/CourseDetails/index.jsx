@@ -44,7 +44,7 @@ const CourseDetails = ({ courseCode }) => {
 
   // Define decoration colors based on theme with increased opacity
   const decorationBorderColor = useLightTheme ? "border-purple-400" : "border-amber-300";
-  const decorationOpacity = useLightTheme ? "opacity-45" : "opacity-40";
+  const decorationOpacity = useLightTheme ? "opacity-35" : "opacity-30";
   const lineBorderColor = useLightTheme ? "border-purple-300" : "border-amber-300";
   const lineOpacity = useLightTheme ? "opacity-35" : "opacity-30";
 
@@ -214,198 +214,201 @@ const CourseDetails = ({ courseCode }) => {
   
             {/* Tabs Section - Updated with theme-specific styling */}
             <div className="w-full">
-              <Tabs defaultValue="overview">
-                <TabsList className={`w-full grid grid-cols-5 rounded-t-lg overflow-hidden ${tabListBg}`}>
-                  <TabsTrigger 
-                    value="overview" 
-                    className={`py-3 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
-                  >
-                    Overview
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="curriculum" 
-                    className={`py-3 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
-                  >
-                    Curriculum
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="preview" 
-                    className={`py-3 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
-                  >
-                    Sample Lesson
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="outcomes" 
-                    className={`py-3 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
-                  >
-                    Outcomes
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="certificate" 
-                    className={`py-3 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
-                  >
-                    Certificate
-                  </TabsTrigger>
-                </TabsList>
-  
-                <TabsContent value="overview" className="p-0">
-                  <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
+  <Tabs defaultValue="overview">
+    <div className="overflow-x-auto">
+      <TabsList className={`w-full flex min-w-max rounded-t-lg ${tabListBg}`}>
+        <TabsTrigger 
+          value="overview" 
+          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+        >
+          Overview
+        </TabsTrigger>
+        <TabsTrigger 
+          value="curriculum" 
+          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+        >
+          Curriculum
+        </TabsTrigger>
+        <TabsTrigger 
+          value="preview" 
+          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+        >
+          Sample Lesson
+        </TabsTrigger>
+        <TabsTrigger 
+          value="outcomes" 
+          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+        >
+          Outcomes
+        </TabsTrigger>
+        <TabsTrigger 
+          value="certificate" 
+          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+        >
+          Certificate
+        </TabsTrigger>
+      </TabsList>
+    </div>
+
+    <TabsContent value="overview" className="p-0">
+      <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
+        <CardHeader>
+          <CardTitle className={themeStyles.subheading}>Course Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="space-y-6">
+            {course.prerequisites?.length > 0 && (
+              <div>
+                <h3 className={`text-lg font-semibold mb-2 ${themeStyles.subheading}`}>Prerequisites</h3>
+                <ul className="space-y-2">
+                  {course.prerequisites.map((prereq, index) => (
+                    <li key={index} className={`flex items-center gap-2 px-4 ${themeStyles.text.primary}`}>
+                      <CheckCircle className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
+                      <div dangerouslySetInnerHTML={{ __html: prereq }} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {course.learning_objectives?.length > 0 && (
+              <div>
+                <h3 className={`text-lg font-semibold mb-2 ${themeStyles.subheading}`}>Learning Objectives</h3>
+                <ul className="space-y-2">
+                  {course.learning_objectives.map((objective, index) => (
+                    <li key={index} className={`flex items-center gap-2 px-4 ${themeStyles.text.primary}`}>
+                      <Target className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
+                      <div dangerouslySetInnerHTML={{ __html: objective }} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </TabsContent>
+
+    <TabsContent value="curriculum" className="p-0">
+      <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
+        <CardHeader>
+          <CardTitle className={themeStyles.subheading}>Course Syllabus</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            {course.syllabus?.map((module) => (
+              <Collapsible key={module.name}>
+                <CollapsibleTrigger className="w-full">
+                  <Card className={`border-2 ${useLightTheme ? 'hover:border-purple-200' : 'hover:border-amber-300'} ${themeStyles.card.bg}`}>
                     <CardHeader>
-                      <CardTitle className={themeStyles.subheading}>Course Overview</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6">
-                      <div className="space-y-6">
-                        {course.prerequisites?.length > 0 && (
-                          <div>
-                            <h3 className={`text-lg font-semibold mb-2 ${themeStyles.subheading}`}>Prerequisites</h3>
-                            <ul className="space-y-2">
-                              {course.prerequisites.map((prereq, index) => (
-                                <li key={index} className={`flex items-center gap-2 px-4 ${themeStyles.text.primary}`}>
-                                  <CheckCircle className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
-                                  <div dangerouslySetInnerHTML={{ __html: prereq }} />
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-  
-                        {course.learning_objectives?.length > 0 && (
-                          <div>
-                            <h3 className={`text-lg font-semibold mb-2 ${themeStyles.subheading}`}>Learning Objectives</h3>
-                            <ul className="space-y-2">
-                              {course.learning_objectives.map((objective, index) => (
-                                <li key={index} className={`flex items-center gap-2 px-4 ${themeStyles.text.primary}`}>
-                                  <Target className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
-                                  <div dangerouslySetInnerHTML={{ __html: objective }} />
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-  
-                <TabsContent value="curriculum" className="p-0">
-                  <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
-                    <CardHeader>
-                      <CardTitle className={themeStyles.subheading}>Course Syllabus</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6">
-                      <div className="space-y-4">
-                        {course.syllabus?.map((module) => (
-                          <Collapsible key={module.name}>
-                            <CollapsibleTrigger className="w-full">
-                              <Card className={`border-2 ${useLightTheme ? 'hover:border-purple-200' : 'hover:border-amber-300'} ${themeStyles.card.bg}`}>
-                                <CardHeader>
-                                  <div className="flex items-center justify-between">
-                                    <div>
-                                      <CardTitle className={`text-lg ${themeStyles.subheading}`}>{module.title}</CardTitle>
-                                      <CardDescription className={`mt-1 ${themeStyles.text.light}`}>
-                                        {`${module.duration} ${module.unit}`}
-                                      </CardDescription>
-                                    </div>
-                                    <ChevronDown className={`w-5 h-5 ${themeStyles.text.secondary}`} />
-                                  </div>
-                                </CardHeader>
-                              </Card>
-                            </CollapsibleTrigger>
-  
-                            <CollapsibleContent>
-                              <div className="mt-4 ml-4">
-                                <div className={themeStyles.text.primary} dangerouslySetInnerHTML={{ __html: module.description }} />
-                                {module.lessons?.map((lesson, index) => (
-                                  <div
-                                    key={`${module.name}-${index}`}
-                                    className={`flex items-center justify-between p-2 mt-2 rounded ${useLightTheme ? 'bg-gray-50' : 'bg-gray-800'}`}
-                                  >
-                                    <div className="flex items-center gap-3">
-                                      <Play className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
-                                      <div>
-                                        <p className={`font-medium ${themeStyles.text.primary}`}>{lesson.title}</p>
-                                        <p className={`text-sm ${themeStyles.text.light}`}>{`${lesson.duration} ${lesson.unit}`}</p>
-                                      </div>
-                                    </div>
-                                    {lesson.preview_enabled && (
-                                      <Button variant="outline" size="sm">
-                                        Preview
-                                      </Button>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            </CollapsibleContent>
-                          </Collapsible>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-  
-                <TabsContent value="preview" className="p-0">
-                  <PreviewSection
-                    resourceData={resourceData}
-                    quizData={quizData?.message}
-                    onError={(error) => console.error('Preview Section Error:', error)}
-                  />
-                </TabsContent>
-  
-                <TabsContent value="outcomes" className="p-0">
-                  <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
-                    <CardHeader>
-                      <CardTitle className={themeStyles.subheading}>Career Outcomes</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-6">
-                      <div className="space-y-8">
-                        {/* Potential Roles Section */}
+                      <div className="flex items-center justify-between">
                         <div>
-                          <h3 className={`text-xl font-semibold mb-4 ${themeStyles.subheading}`}>Potential Roles</h3>
-                          <div className="space-y-3">
-                            {outcomeData?.message?.message?.roles?.map((role, index) => (
-                              <div
-                                key={index}
-                                className={`flex items-center gap-3 ${themeStyles.text.primary}`}
-                              >
-                                <User className={`w-5 h-5 ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`} />
-                                <span className="text-base">{role}</span>
-                              </div>
-                            ))}
-                          </div>
+                          <CardTitle className={`text-lg ${themeStyles.subheading}`}>{module.title}</CardTitle>
+                          <CardDescription className={`mt-1 ${themeStyles.text.light}`}>
+                            {`${module.duration} ${module.unit}`}
+                          </CardDescription>
                         </div>
-  
-                        {/* Industry Skills Section */}
-                        <div className="mt-8">
-                          <h3 className={`text-xl font-semibold mb-4 ${themeStyles.subheading}`}>Industry Skills</h3>
-                          <div className="flex flex-wrap gap-2">
-                            {outcomeData?.message?.message?.skills?.map((skill, index) => (
-                              <span
-                                key={index}
-                                className={`px-4 py-2 ${useLightTheme ? 'bg-blue-50 text-blue-700' : 'bg-blue-900/30 text-blue-300'} rounded-full text-sm font-medium`}
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
+                        <ChevronDown className={`w-5 h-5 ${themeStyles.text.secondary}`} />
                       </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-  
-                <TabsContent value="certificate" className="p-0">
-                  <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
-                    <CardHeader>
-                      <CardTitle className={themeStyles.subheading}>Course Certificate</CardTitle>
                     </CardHeader>
-                    <CardContent className="p-6">
-                      <p className={themeStyles.text.primary}>Certificate content here</p>
-                    </CardContent>
                   </Card>
-                </TabsContent>
-              </Tabs>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                  <div className="mt-4 ml-4">
+                    <div className={themeStyles.text.primary} dangerouslySetInnerHTML={{ __html: module.description }} />
+                    {module.lessons?.map((lesson, index) => (
+                      <div
+                        key={`${module.name}-${index}`}
+                        className={`flex items-center justify-between p-2 mt-2 rounded ${useLightTheme ? 'bg-gray-50' : 'bg-gray-800'}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Play className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
+                          <div>
+                            <p className={`font-medium ${themeStyles.text.primary}`}>{lesson.title}</p>
+                            <p className={`text-sm ${themeStyles.text.light}`}>{`${lesson.duration} ${lesson.unit}`}</p>
+                          </div>
+                        </div>
+                        {lesson.preview_enabled && (
+                          <Button variant="outline" size="sm">
+                            Preview
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Collapsible>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    </TabsContent>
+
+    <TabsContent value="preview" className="p-0">
+      <PreviewSection
+        resourceData={resourceData}
+        quizData={quizData?.message}
+        onError={(error) => console.error('Preview Section Error:', error)}
+      />
+    </TabsContent>
+
+    <TabsContent value="outcomes" className="p-0">
+      <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
+        <CardHeader>
+          <CardTitle className={themeStyles.subheading}>Career Outcomes</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="space-y-8">
+            {/* Potential Roles Section */}
+            <div>
+              <h3 className={`text-xl font-semibold mb-4 ${themeStyles.subheading}`}>Potential Roles</h3>
+              <div className="space-y-3">
+                {outcomeData?.message?.message?.roles?.map((role, index) => (
+                  <div
+                    key={index}
+                    className={`flex items-center gap-3 ${themeStyles.text.primary}`}
+                  >
+                    <User className={`w-5 h-5 ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`} />
+                    <span className="text-base">{role}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Industry Skills Section */}
+            <div className="mt-8">
+              <h3 className={`text-xl font-semibold mb-4 ${themeStyles.subheading}`}>Industry Skills</h3>
+              <div className="flex flex-wrap gap-2">
+                {outcomeData?.message?.message?.skills?.map((skill, index) => (
+                  <span
+                    key={index}
+                    className={`px-4 py-2 ${useLightTheme ? 'bg-blue-50 text-blue-700' : 'bg-blue-900/30 text-blue-300'} rounded-full text-sm font-medium`}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
+        </CardContent>
+      </Card>
+    </TabsContent>
+
+    <TabsContent value="certificate" className="p-0">
+      <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
+        <CardHeader>
+          <CardTitle className={themeStyles.subheading}>Course Certificate</CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          <p className={themeStyles.text.primary}>Certificate content here</p>
+        </CardContent>
+      </Card>
+    </TabsContent>
+  </Tabs>
+</div>
+
+</div>
   
           {/* Right Column - Price Card */}
           <div className="md:col-span-1">
