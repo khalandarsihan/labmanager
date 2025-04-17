@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './Carousel.css';
 import { useTheme } from '../../../components/ui/ThemeContext';
@@ -6,19 +6,44 @@ import { useTheme } from '../../../components/ui/ThemeContext';
 const Carousel = ({ slides = [] }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { useLightTheme, themeStyles } = useTheme();
+  const intervalRef = useRef(null);
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
 
+  const startInterval = useCallback(() => {
+    // Clear any existing interval first
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    // Start a new interval
+    intervalRef.current = setInterval(nextSlide, 3000);
+  }, [nextSlide]);
+
   const prevSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides.length]);
+    // Reset the interval when manually navigating
+    startInterval();
+  }, [slides.length, startInterval]);
+
+  // Add click handler for next button that also resets interval
+  const handleNextClick = useCallback(() => {
+    nextSlide();
+    startInterval();
+  }, [nextSlide, startInterval]);
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 2000);
-    return () => clearInterval(interval);
-  }, [nextSlide]);
+    // Start the interval when component mounts
+    startInterval();
+    
+    // Clear interval when component unmounts
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [startInterval]);
 
   if (!slides || slides.length === 0) return null;
 
@@ -74,7 +99,7 @@ const Carousel = ({ slides = [] }) => {
                 <ChevronLeft className={`h-4 w-4 md:h-6 md:w-6 ${useLightTheme ? 'text-purple-700' : 'text-amber-200'}`} />
               </button>
               <button
-                onClick={nextSlide}
+                onClick={handleNextClick}
                 className={`absolute right-2 md:right-4 top-1/2 -translate-y-1/2 ${
                   useLightTheme 
                     ? 'bg-purple-100/80 hover:bg-purple-200 border border-purple-300/20 hover:border-purple-300/50' 
@@ -89,7 +114,10 @@ const Carousel = ({ slides = [] }) => {
                 {slides.map((_, index) => (
                   <button
                     key={index}
-                    onClick={() => setCurrentSlide(index)}
+                    onClick={() => {
+                      setCurrentSlide(index);
+                      startInterval(); // Reset interval when clicking indicators
+                    }}
                     className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all ${
                       index === currentSlide
                         ? useLightTheme ? 'bg-purple-600 w-3 md:w-4' : 'bg-amber-300 w-3 md:w-4'
