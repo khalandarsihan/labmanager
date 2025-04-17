@@ -2,11 +2,11 @@ import React from 'react';
 
 const CourseSkeleton = ({ isListView }) => {
     return (
-        <div className={`bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-lg shadow-lg overflow-hidden animate-pulse ${isListView ? 'flex' : ''}`}>
-            <div className={`relative ${isListView ? 'flex gap-6' : ''}`}>
-                <div className={`relative ${isListView ? 'w-64 flex-shrink-0' : 'w-full'}`}>
-                    {/* Image skeleton */}
-                    <div className="bg-gray-700/50 h-48 w-full"></div>
+        <div className={`bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-lg shadow-lg overflow-hidden animate-pulse`}>
+            <div className={`relative ${isListView ? 'flex flex-col sm:flex-row' : ''}`}>
+                {/* Image skeleton */}
+                <div className={`relative ${isListView ? 'w-full sm:w-64 sm:flex-shrink-0 h-48' : 'w-full h-48'}`}>
+                    <div className="bg-gray-700/50 h-full w-full"></div>
                 </div>
                 
                 <div className="p-6 flex-1">

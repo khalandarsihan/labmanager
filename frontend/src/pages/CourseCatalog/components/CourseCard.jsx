@@ -14,25 +14,14 @@ const CourseCard = ({ course, isListView }) => {
         return `/files/${imagePath.split('/files/')[1]}`;
     };
 
-    // const cardBg = useLightTheme ? "bg-white" : "bg-gray-800";
-    // const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
-    // const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
-    // const hoverBorder = useLightTheme ? "hover:border-amber-500" : "hover:border-amber-400";
-
-// const cardBg = useLightTheme ? "bg-white" : "bg-gray-800";
-// const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
-// const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
-// const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-amber-400";
-
-const cardBg = useLightTheme ? "bg-white" : "bg-gray-900";
-const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
-const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
-const borderColor = useLightTheme ? "border-transparent" : "border-gray-700";
-const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-amber-400";
+    const cardBg = useLightTheme ? "bg-white" : "bg-gray-900";
+    const textColor = useLightTheme ? "text-gray-900" : "text-gray-100";
+    const textSecondary = useLightTheme ? "text-gray-600" : "text-gray-300";
+    const borderColor = useLightTheme ? "border-transparent" : "border-gray-700";
+    const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-amber-400";
 
     const GridView = () => (
         <div className="p-3">
-            {/* <Card className={`${cardBg} border overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}> */}
             <Card className={`${cardBg} border ${borderColor} overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
                 <div className="relative">
                     {/* Price and Featured Badge */}
@@ -90,12 +79,12 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                         </div>
 
                         {/*  LMS Enabled badge */}
-                            <div className="flex items-center gap-2 mb-4">
-                                <Database className="w-4 h-4 text-amber-500" />
-                                <span className={`text-sm ${textSecondary}`}>
-                                Learning Management System Access
-                                </span>
-                            </div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <Database className="w-4 h-4 text-amber-500" />
+                            <span className={`text-sm ${textSecondary} truncate`}>
+                            Learning Management System Access
+                            </span>
+                        </div>
 
                         {/* Instructor Info */}
                         {course.instructor && (
@@ -110,7 +99,7 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                                             />
                                         ) : null}
                                     </div>
-                                    <span className={`text-sm ${textSecondary}`}>
+                                    <span className={`text-sm ${textSecondary} truncate max-w-[100px]`}>
                                         {course.instructor.name}
                                     </span>
                                 </div>
@@ -131,11 +120,11 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
 
     const ListView = () => (
         <div className="p-3">
-            {/* <Card className={`${cardBg} border overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}> */}
             <Card className={`${cardBg} border ${borderColor} overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
-                <div className="flex">
+                {/* Force display block on mobile devices to ensure it's always list view */}
+                <div className="block sm:flex">
                     {/* Left side - Image */}
-                    <div className="relative w-72">
+                    <div className="relative w-full sm:w-72 h-48 sm:h-auto">
                         <img
                             src={getImageUrl(course.featured_image_catalog)}
                             alt={course.title}
@@ -156,7 +145,7 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                     </div>
 
                     {/* Right side - Content */}
-                    <div className="flex-1 p-6">
+                    <div className="flex-1 p-4 sm:p-6">
                         <a 
                             href={`/courses/${course.course_code}`}
                             className="block group"
@@ -169,7 +158,7 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                             {course.short_description}
                         </p>
 
-                        <div className="flex items-center gap-6 mb-4">
+                        <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-4">
                             <div className="flex items-center gap-2">
                                 <Clock className="w-4 h-4 text-amber-500" />
                                 <span className={`text-sm ${textSecondary}`}>
@@ -185,12 +174,12 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                         </div>
 
                         {/* LMS Enabled badge */}
-                            <div className="flex items-center gap-2 mb-4">
-                                <Database className="w-4 h-4 text-amber-500" />
-                                <span className={`text-sm ${textSecondary}`}>
-                                Learning Management System Access
-                                </span>
-                            </div>
+                        <div className="flex items-center gap-2 mb-4">
+                            <Database className="w-4 h-4 text-amber-500" />
+                            <span className={`text-sm ${textSecondary}`}>
+                            Learning Management System Access
+                            </span>
+                        </div>
 
                         {course.instructor && (
                             <div className="flex items-center justify-between">
@@ -204,7 +193,7 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                                             />
                                         ) : null}
                                     </div>
-                                    <span className={`text-sm ${textSecondary}`}>
+                                    <span className={`text-sm ${textSecondary} truncate max-w-[120px] sm:max-w-[150px]`}>
                                         {course.instructor.name}
                                     </span>
                                 </div>
