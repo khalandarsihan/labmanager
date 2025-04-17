@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Database } from 'lucide-react';
 import './FeaturedCourses.css';
 import { formatPrice } from '../../../utils/priceFormat';
 import { useTheme } from '../../../components/ui/ThemeContext';
@@ -273,6 +273,14 @@ const CourseCard = ({ course, useLightTheme, themeStyles, isMobile }) => (
         <p className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm line-clamp-2 mb-4`}>
           {course.short_description}
         </p>
+          {/* Add LMS Enabled badge */}
+          <div className="flex items-center gap-2 mb-3">
+          <Database className={`w-4 h-4 ${useLightTheme ? 'text-purple-500' : 'text-amber-300'}`} />
+          <span className={`text-xs ${useLightTheme ? 'text-gray-600' : 'text-gray-300'}`}>
+            LMS Enabled
+          </span>
+          </div>  
+
         <div className="flex justify-between items-center">
           <span className={`${useLightTheme ? 'text-purple-600' : 'text-amber-300'} font-bold`}>
             {formatPrice(course.price)}

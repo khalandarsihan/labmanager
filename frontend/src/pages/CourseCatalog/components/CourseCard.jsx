@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Users, Star, Bookmark } from 'lucide-react';
+import { Clock, Users, Star, Bookmark, Database } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { formatPrice } from '../../../utils/priceFormat';
 import { useTheme } from '../../../components/ui/ThemeContext';
@@ -89,6 +89,14 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                             </div>
                         </div>
 
+                        {/*  LMS Enabled badge */}
+                            <div className="flex items-center gap-2 mb-4">
+                                <Database className="w-4 h-4 text-amber-500" />
+                                <span className={`text-sm ${textSecondary}`}>
+                                Learning Management System Access
+                                </span>
+                            </div>
+
                         {/* Instructor Info */}
                         {course.instructor && (
                             <div className="flex items-center justify-between">
@@ -175,6 +183,14 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                                 </span>
                             </div>
                         </div>
+
+                        {/* LMS Enabled badge */}
+                            <div className="flex items-center gap-2 mb-4">
+                                <Database className="w-4 h-4 text-amber-500" />
+                                <span className={`text-sm ${textSecondary}`}>
+                                Learning Management System Access
+                                </span>
+                            </div>
 
                         {course.instructor && (
                             <div className="flex items-center justify-between">

@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Clock, BookOpen, Trophy, Calendar, Users, Target, CheckCircle,
-  ChevronDown, Play, FileText, Code, LinkIcon
+  ChevronDown, Play, FileText, Code, LinkIcon, Database, Server
 } from 'lucide-react';
 import PreviewSection from './PreviewSection';
 import { formatPrice } from '../../utils/priceFormat';
@@ -159,25 +159,54 @@ const CourseDetails = ({ courseCode }) => {
             />
   
             {/* Course Metadata */}
-            <div className="grid grid-cols-2 gap-6 mb-8">
-              <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
-                <Clock className="w-5 h-5" />
-                <span>{`${course.duration} ${course.unit}`}</span>
-              </div>
-              <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
-                <BookOpen className="w-5 h-5" />
-                <span>{course.level}</span>
-              </div>
-              <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
-                <Calendar className="w-5 h-5" />
-                <span>{course.start_date}</span>
-              </div>
-              <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
-                <Users className="w-5 h-5" />
-                <span>{course.status}</span>
-              </div>
-            </div>
-  
+{/* Desktop grid layout (hidden on smaller screens) */}
+<div className="hidden lg:grid lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
+    <Clock className="w-5 h-5 flex-shrink-0" />
+    <span>{`${course.duration} ${course.unit}`}</span>
+  </div>
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
+    <BookOpen className="w-5 h-5 flex-shrink-0" />
+    <span>{course.level}</span>
+  </div>
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
+    <Calendar className="w-5 h-5 flex-shrink-0" />
+    <span>{course.start_date}</span>
+  </div>
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
+    <Users className="w-5 h-5 flex-shrink-0" />
+    <span>{course.status}</span>
+  </div>
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary} col-span-1`}>
+    <Database className="w-5 h-5 flex-shrink-0" />
+    <span className="whitespace-nowrap">Learning Management System Access</span>
+  </div>
+</div>
+{/* Mobile/tablet flex layout (hidden on desktop) */}
+<div className="flex flex-wrap gap-x-6 gap-y-3 mb-8 lg:hidden">
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
+    <Clock className="w-5 h-5 flex-shrink-0" />
+    <span>{`${course.duration} ${course.unit}`}</span>
+  </div>
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
+    <BookOpen className="w-5 h-5 flex-shrink-0" />
+    <span>{course.level}</span>
+  </div>
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
+    <Calendar className="w-5 h-5 flex-shrink-0" />
+    <span>{course.start_date}</span>
+  </div>
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary}`}>
+    <Users className="w-5 h-5 flex-shrink-0" />
+    <span>{course.status}</span>
+  </div>
+  <div className={`flex items-center gap-2 ${themeStyles.text.secondary} w-full`}>
+    <Database className="w-5 h-5 flex-shrink-0" />
+    <span className="whitespace-nowrap">Learning Management System Access</span>
+  </div>
+</div>
+
+
             {/* Instructor Section */}
             {instructorData && (
               <Card className={`mb-8 ${themeStyles.card.bg} ${themeStyles.card.border}`}>
