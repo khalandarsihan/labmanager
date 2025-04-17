@@ -82,6 +82,10 @@ module.exports = {
 				"float-circle": "floatCircle 12s linear infinite",
 				rotate: "rotate 10s linear infinite",
 				"pulse-slow": "pulse 6s ease-in-out infinite",
+				// New animations for decorative elements
+				"float-slow": "float-slow 5s ease-in-out infinite",
+				"float-very-slow": "float-very-slow 10s ease-in-out infinite",
+				pulse: "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
 			},
 			keyframes: {
 				floatUp: {
@@ -112,6 +116,23 @@ module.exports = {
 					"0%": { transform: "rotate(0deg)" },
 					"100%": { transform: "rotate(360deg)" },
 				},
+				// New keyframes for decorative elements
+				"float-slow": {
+					"0%": { transform: "translateY(0)" },
+					"50%": { transform: "translateY(-10px)" },
+					"100%": { transform: "translateY(0)" },
+				},
+				"float-very-slow": {
+					"0%": { transform: "translateY(0) rotate(0deg)" },
+					"25%": { transform: "translateY(-5px) rotate(1deg)" },
+					"50%": { transform: "translateY(-10px) rotate(2deg)" },
+					"75%": { transform: "translateY(-5px) rotate(1deg)" },
+					"100%": { transform: "translateY(0) rotate(0deg)" },
+				},
+				pulse: {
+					"0%, 100%": { opacity: 1 },
+					"50%": { opacity: 0.5 },
+				},
 			},
 			backgroundImage: {
 				"geometric-pattern": "url('/assets/labmanager/images/geometric-pattern.png')",
@@ -138,6 +159,13 @@ module.exports = {
 				"safe-bottom": "env(safe-area-inset-bottom)",
 				"safe-left": "env(safe-area-inset-left)",
 				"safe-right": "env(safe-area-inset-right)",
+				// New spacing values for decorative elements
+				"1/5": "20%",
+				"2/5": "40%",
+				"3/5": "60%",
+				"4/5": "80%",
+				"1/6": "16.666667%",
+				"5/6": "83.333333%",
 			},
 		},
 	},
