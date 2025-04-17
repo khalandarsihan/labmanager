@@ -1,6 +1,7 @@
 import React from 'react';
 import { Clock, Users, Star, Bookmark } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { formatPrice } from '../../../utils/priceFormat';
 import { useTheme } from '../../../components/ui/ThemeContext';
 
 const CourseCard = ({ course, isListView }) => {
@@ -37,7 +38,7 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                     {/* Price and Featured Badge */}
                     <div className="absolute top-3 left-3 z-10">
                         <span className="bg-gray-900/80 text-white px-3 py-1 rounded-full text-sm">
-                            ₹{course.price}
+                        {formatPrice(course.price)}
                         </span>
                     </div>
                     {course.show_in_featured_section && (
@@ -134,7 +135,7 @@ const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-am
                         />
                         <div className="absolute top-3 left-3">
                             <span className="bg-gray-900/80 text-white px-3 py-1 rounded-full text-sm">
-                                ₹{course.price}
+                            {formatPrice(course.price)}
                             </span>
                         </div>
                         {course.show_in_featured_section && (

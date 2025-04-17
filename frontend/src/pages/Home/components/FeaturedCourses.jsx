@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import './FeaturedCourses.css';
+import { formatPrice } from '../../../utils/priceFormat';
 import { useTheme } from '../../../components/ui/ThemeContext';
 
 const FeaturedCourses = ({ courses = [] }) => {
@@ -228,6 +229,35 @@ const FeaturedCourses = ({ courses = [] }) => {
   );
 };
 
+// const CourseCard = ({ course, useLightTheme, themeStyles, isMobile }) => (
+//   <div className="course-card px-2 sm:px-4">
+//     <Card className={`${useLightTheme ? 'bg-white/50 border-purple-200 hover:border-purple-400 hover:border-2' : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-300 hover:border-2'} backdrop-blur-sm h-full transition-all duration-300 hover:shadow-lg relative`}>
+//       <div className="course-card-image">
+//         <img
+//           src={course.featured_image_small || "/assets/labmanager/images/course-placeholder.jpg"}
+//           alt={course.title}
+//         />
+//         <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
+//       </div>
+//       <div className="p-4 sm:p-6">
+//         <h3 className={`text-lg font-bold ${useLightTheme ? 'text-purple-700' : 'text-amber-200'} mb-2`}>{course.title}</h3>
+//         <p className={`${useLightTheme ? 'text-gray-700' : 'text-gray-300'} text-sm line-clamp-2 mb-4`}>
+//           {course.short_description}
+//         </p>
+//         <div className="flex justify-between items-center">
+//           <span className={`${useLightTheme ? 'text-purple-600' : 'text-amber-300'} font-bold`}>₹{course.price}</span>
+//           <a
+//             href={`/courses/${course.course_code}`}
+//             className={`${useLightTheme ? 'bg-purple-500/90 hover:bg-purple-500 text-white' : 'bg-amber-300/90 hover:bg-amber-300 text-gray-900'} px-3 py-2 rounded font-semibold transition-all duration-300 hover:shadow-lg text-sm sm:text-base`}
+//           >
+//             Learn More
+//           </a>
+//         </div>
+//       </div>
+//     </Card>
+//   </div>
+// );
+
 const CourseCard = ({ course, useLightTheme, themeStyles, isMobile }) => (
   <div className="course-card px-2 sm:px-4">
     <Card className={`${useLightTheme ? 'bg-white/50 border-purple-200 hover:border-purple-400 hover:border-2' : 'bg-gray-800/50 border-gray-700/50 hover:border-amber-300 hover:border-2'} backdrop-blur-sm h-full transition-all duration-300 hover:shadow-lg relative`}>
@@ -244,7 +274,9 @@ const CourseCard = ({ course, useLightTheme, themeStyles, isMobile }) => (
           {course.short_description}
         </p>
         <div className="flex justify-between items-center">
-          <span className={`${useLightTheme ? 'text-purple-600' : 'text-amber-300'} font-bold`}>₹{course.price}</span>
+          <span className={`${useLightTheme ? 'text-purple-600' : 'text-amber-300'} font-bold`}>
+            {formatPrice(course.price)}
+          </span>
           <a
             href={`/courses/${course.course_code}`}
             className={`${useLightTheme ? 'bg-purple-500/90 hover:bg-purple-500 text-white' : 'bg-amber-300/90 hover:bg-amber-300 text-gray-900'} px-3 py-2 rounded font-semibold transition-all duration-300 hover:shadow-lg text-sm sm:text-base`}
@@ -256,6 +288,7 @@ const CourseCard = ({ course, useLightTheme, themeStyles, isMobile }) => (
     </Card>
   </div>
 );
+
 
 const BackgroundPattern = ({ useLightTheme }) => {
   const bgGradient = useLightTheme
