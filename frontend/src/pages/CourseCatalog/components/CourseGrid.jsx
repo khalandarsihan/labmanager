@@ -22,17 +22,13 @@ const CourseGrid = ({ courses = [], viewMode, isLoading }) => {
         );
     }
 
-    // Detect mobile device width more precisely
-    const isMobile = window.innerWidth < 640;
-    const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
+    // Remove auto-detection logic to respect user's choice on all screen sizes
+    // Always use the viewMode selected by the user
     
-    // Always force list view on mobile if that's what the user selected
-    const effectiveViewMode = (isMobile && viewMode === 'list') ? 'list' : viewMode;
-
     return (
         <div className="max-w-7xl mx-auto p-4 sm:p-8">
             <div className={`${
-                effectiveViewMode === 'grid'
+                viewMode === 'grid'
                     ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-8'
                     : 'flex flex-col space-y-4 sm:space-y-8'
             }`}>
@@ -40,7 +36,7 @@ const CourseGrid = ({ courses = [], viewMode, isLoading }) => {
                     <CourseCard
                         key={course.course_code}
                         course={course}
-                        isListView={effectiveViewMode === 'list'}
+                        isListView={viewMode === 'list'}
                     />
                 ))}
             </div>
@@ -48,4 +44,4 @@ const CourseGrid = ({ courses = [], viewMode, isLoading }) => {
     );
 };
 
-export default CourseGrid;
+export default CourseGrid;  

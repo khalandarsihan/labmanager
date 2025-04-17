@@ -121,23 +121,23 @@ const CourseCard = ({ course, isListView }) => {
     const ListView = () => (
         <div className="p-3">
             <Card className={`${cardBg} border ${borderColor} overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
-                {/* Force display block on mobile devices to ensure it's always list view */}
-                <div className="block sm:flex">
-                    {/* Left side - Image */}
-                    <div className="relative w-full sm:w-72 h-48 sm:h-auto">
+                {/* Always use horizontal layout for list view, even on mobile */}
+                <div className="flex flex-row h-auto">
+                    {/* Left side - Image (fixed width on all screens) */}
+                    <div className="relative w-1/3 sm:w-72 h-auto min-h-[120px]">
                         <img
                             src={getImageUrl(course.featured_image_catalog)}
                             alt={course.title}
                             className="w-full h-full object-cover"
                         />
-                        <div className="absolute top-3 left-3">
-                            <span className="bg-gray-900/80 text-white px-3 py-1 rounded-full text-sm">
+                        <div className="absolute top-2 left-2">
+                            <span className="bg-gray-900/80 text-white px-2 py-1 rounded-full text-xs sm:text-sm">
                             {formatPrice(course.price)}
                             </span>
                         </div>
                         {course.show_in_featured_section && (
-                            <div className="absolute top-3 right-3">
-                                <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                            <div className="absolute top-2 right-2">
+                                <span className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs sm:text-sm">
                                     Featured
                                 </span>
                             </div>
@@ -145,36 +145,36 @@ const CourseCard = ({ course, isListView }) => {
                     </div>
 
                     {/* Right side - Content */}
-                    <div className="flex-1 p-4 sm:p-6">
+                    <div className="flex-1 p-2 sm:p-6">
                         <a 
                             href={`/courses/${course.course_code}`}
                             className="block group"
                         >
-                            <h3 className={`text-xl font-bold ${textColor} mb-2 group-hover:text-amber-500 transition-colors duration-200`}>
+                            <h3 className={`text-sm sm:text-xl font-bold ${textColor} mb-1 sm:mb-2 group-hover:text-amber-500 transition-colors duration-200 line-clamp-2`}>
                                 {course.title}
                             </h3>
                         </a>
-                        <p className={`${textSecondary} text-sm mb-4`}>
+                        <p className={`${textSecondary} text-xs sm:text-sm mb-2 sm:mb-4 line-clamp-2`}>
                             {course.short_description}
                         </p>
 
-                        <div className="flex flex-wrap items-center gap-4 sm:gap-6 mb-4">
-                            <div className="flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-amber-500" />
-                                <span className={`text-sm ${textSecondary}`}>
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-6 mb-2 sm:mb-4">
+                            <div className="flex items-center gap-1 sm:gap-2">
+                                <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
+                                <span className={`text-xs sm:text-sm ${textSecondary}`}>
                                     {course.duration} {course.unit}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <Users className="w-4 h-4 text-amber-500" />
-                                <span className={`text-sm ${textSecondary}`}>
+                            <div className="flex items-center gap-1 sm:gap-2">
+                                <Users className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
+                                <span className={`text-xs sm:text-sm ${textSecondary}`}>
                                     {course.total_lessons} students
                                 </span>
                             </div>
                         </div>
 
-                        {/* LMS Enabled badge */}
-                        <div className="flex items-center gap-2 mb-4">
+                        {/* LMS Enabled badge - only show on larger screens */}
+                        <div className="hidden sm:flex items-center gap-2 mb-4">
                             <Database className="w-4 h-4 text-amber-500" />
                             <span className={`text-sm ${textSecondary}`}>
                             Learning Management System Access
@@ -184,7 +184,7 @@ const CourseCard = ({ course, isListView }) => {
                         {course.instructor && (
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-100 rounded-full overflow-hidden">
                                         {course.instructor.image ? (
                                             <img
                                                 src={getImageUrl(course.instructor.image)}
@@ -193,15 +193,15 @@ const CourseCard = ({ course, isListView }) => {
                                             />
                                         ) : null}
                                     </div>
-                                    <span className={`text-sm ${textSecondary} truncate max-w-[120px] sm:max-w-[150px]`}>
+                                    <span className={`text-xs sm:text-sm ${textSecondary} truncate max-w-[100px] sm:max-w-[200px]`}>
                                         {course.instructor.name}
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                                    <span className={`text-sm ${textSecondary}`}>4.8</span>
-                                    <button className="ml-2">
-                                        <Bookmark className="w-4 h-4 text-gray-400 hover:text-amber-500" />
+                                <div className="flex items-center gap-1 sm:gap-2">
+                                    <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 fill-current" />
+                                    <span className={`text-xs sm:text-sm ${textSecondary}`}>4.8</span>
+                                    <button className="ml-1 sm:ml-2">
+                                        <Bookmark className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-amber-500" />
                                     </button>
                                 </div>
                             </div>
