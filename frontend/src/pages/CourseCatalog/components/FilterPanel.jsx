@@ -11,19 +11,12 @@ import { useTheme } from '../../../components/ui/ThemeContext';
 const FilterPanel = ({ onFilterChange }) => {
     const { useLightTheme } = useTheme();
     
-    // // Define theme specific styles
-    // const borderColor = useLightTheme ? "border-amber-200" : "border-gray-700";
-    // const labelColor = useLightTheme ? "text-gray-700" : "text-gray-300";
-    // const selectBg = useLightTheme 
-    //     ? "bg-white/90 border-amber-200 text-gray-700" 
-    //     : "bg-gray-900/50 border-gray-700 text-gray-200";
-
-// Define theme specific styles
-const borderColor = useLightTheme ? "border-purple-200" : "border-gray-700";
-const labelColor = useLightTheme ? "text-gray-700" : "text-gray-300";
-const selectBg = useLightTheme 
-    ? "bg-purple-50/90 border-purple-200 text-gray-700" 
-    : "bg-gray-900/50 border-gray-700 text-gray-200";
+    // Define theme specific styles with semi-transparent backgrounds
+    const borderColor = useLightTheme ? "border-purple-200" : "border-gray-700";
+    const labelColor = useLightTheme ? "text-gray-700" : "text-gray-300";
+    const selectBg = useLightTheme 
+        ? "bg-purple-50/30 border-purple-200 text-gray-700" 
+        : "bg-gray-900/30 border-gray-700 text-gray-200";
     
     const priceRanges = [
         { label: 'All Prices', value: 'all' },

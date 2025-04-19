@@ -1,3 +1,4 @@
+
 import React from 'react';
 import CourseCard from './CourseCard';
 import CourseSkeleton from './CourseSkeleton';
@@ -26,7 +27,7 @@ const CourseGrid = ({ courses = [], viewMode, isLoading }) => {
     // Always use the viewMode selected by the user
     
     return (
-        <div className="max-w-7xl mx-auto p-4 sm:p-8">
+        <div className="max-w-7xl mx-auto p-4 sm:p-8 relative z-10">
             <div className={`${
                 viewMode === 'grid'
                     ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4 sm:gap-8'
@@ -44,4 +45,4 @@ const CourseGrid = ({ courses = [], viewMode, isLoading }) => {
     );
 };
 
-export default CourseGrid;  
+export default CourseGrid;

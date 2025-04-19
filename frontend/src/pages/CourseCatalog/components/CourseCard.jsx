@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Clock, Users, Star, Bookmark, Database } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -21,7 +22,7 @@ const CourseCard = ({ course, isListView }) => {
     const hoverBorder = useLightTheme ? "hover:border-purple-500" : "hover:border-amber-400";
 
     const GridView = () => (
-        <div className="p-3">
+        <div className="p-3 relative z-10">
             <Card className={`${cardBg} border ${borderColor} overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
                 <div className="relative">
                     {/* Price and Featured Badge */}
@@ -124,7 +125,7 @@ const CourseCard = ({ course, isListView }) => {
     );
 
     const ListView = () => (
-        <div className="p-3">
+        <div className="p-3 relative z-10">
             <Card className={`${cardBg} border ${borderColor} overflow-hidden ${hoverBorder} transition-all duration-300 hover:transform hover:scale-[1.02]`}>
                 {/* Always use horizontal layout for list view, even on mobile */}
                 <div className="flex flex-row h-auto">

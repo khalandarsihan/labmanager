@@ -14,12 +14,12 @@ const BackgroundPattern = () => {
     : "bg-amber-300";
     
   const borderColor = useLightTheme 
-    ? "border-purple-500" // Darker purple for better visibility
+    ? "border-purple-600" // Darker purple for better visibility
     : "border-amber-300";
     
   // Different opacity for different themes
-  const linesOpacity = useLightTheme ? "opacity-20" : "opacity-10";
-  const elementsOpacity = useLightTheme ? "/40" : "/20"; // For the fractional opacities in tailwind
+  const linesOpacity = useLightTheme ? "opacity-30" : "opacity-10";
+  const elementsOpacity = useLightTheme ? "/60" : "/20"; // For the fractional opacities in tailwind
 
   return (
     <>
