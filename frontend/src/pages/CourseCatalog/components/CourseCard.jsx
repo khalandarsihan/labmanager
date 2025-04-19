@@ -86,11 +86,12 @@ const CourseCard = ({ course, isListView }) => {
                             </span>
                         </div>
 
-                        {/* Instructor Info */}
+                        {/* COMPLETELY REDESIGNED INSTRUCTOR SECTION FOR GRID */}
                         {course.instructor && (
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="flex flex-wrap items-center">
+                                {/* Left side - avatar and name with exactly 70% width */}
+                                <div className="w-3/4 pr-2 flex items-center">
+                                    <div className="w-8 h-8 bg-gray-100 rounded-full overflow-hidden mr-2 flex-shrink-0">
                                         {course.instructor.image ? (
                                             <img
                                                 src={getImageUrl(course.instructor.image)}
@@ -99,15 +100,19 @@ const CourseCard = ({ course, isListView }) => {
                                             />
                                         ) : null}
                                     </div>
-                                    <span className={`text-sm ${textSecondary} truncate max-w-[100px]`}>
-                                        {course.instructor.name}
-                                    </span>
+                                    <div className="min-w-0 flex-1">
+                                        <p className={`text-sm ${textSecondary} truncate`}>
+                                            {course.instructor.name}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                                    <span className={`text-sm ${textSecondary}`}>4.8</span>
-                                    <button className="ml-2">
-                                        <Bookmark className="w-4 h-4 text-gray-400 hover:text-amber-500" />
+                                
+                                {/* Right side - rating fixed at 30% width */}
+                                <div className="w-1/4 flex items-center justify-end">
+                                    <Star className="w-4 h-4 text-yellow-400 fill-current flex-shrink-0" />
+                                    <span className={`text-sm ${textSecondary} mx-1 flex-shrink-0`}>4.8</span>
+                                    <button>
+                                        <Bookmark className="w-4 h-4 text-gray-400 hover:text-amber-500 flex-shrink-0" />
                                     </button>
                                 </div>
                             </div>
@@ -182,9 +187,9 @@ const CourseCard = ({ course, isListView }) => {
                         </div>
 
                         {course.instructor && (
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="flex items-center">
+                                <div className="flex items-center mr-auto">
+                                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gray-100 rounded-full overflow-hidden mr-2 flex-shrink-0">
                                         {course.instructor.image ? (
                                             <img
                                                 src={getImageUrl(course.instructor.image)}
@@ -193,14 +198,14 @@ const CourseCard = ({ course, isListView }) => {
                                             />
                                         ) : null}
                                     </div>
-                                    <span className={`text-xs sm:text-sm ${textSecondary} truncate max-w-[100px] sm:max-w-[200px]`}>
+                                    <span className={`text-xs sm:text-sm ${textSecondary} truncate`}>
                                         {course.instructor.name}
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-1 sm:gap-2">
+                                <div className="flex items-center ml-4 flex-shrink-0">
                                     <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-400 fill-current" />
-                                    <span className={`text-xs sm:text-sm ${textSecondary}`}>4.8</span>
-                                    <button className="ml-1 sm:ml-2">
+                                    <span className={`text-xs sm:text-sm ${textSecondary} mx-1`}>4.8</span>
+                                    <button>
                                         <Bookmark className="w-3 h-3 sm:w-4 sm:h-4 text-gray-400 hover:text-amber-500" />
                                     </button>
                                 </div>
