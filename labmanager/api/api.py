@@ -3,6 +3,7 @@ from frappe import _
 import requests
 import json
 from datetime import datetime
+from frappe.utils.file_manager import save_file
 from labmanager.timeline_service import create_timeline_entry, get_application_timeline, ensure_initial_timeline_entry
 from labmanager.utils import create_default_document_requirements, get_default_next_steps
 
@@ -2312,60 +2313,31 @@ def upload_application_document(registration_id, document_type, file_data, filen
         
         # Process the file upload
         try:
-            # Determine file extension from the content type or filename
-            file_ext = None
-            
-            # First try to extract from MIME type in data URL
-            if isinstance(file_data, str) and file_data.startswith('data:'):
-                mime_type = file_data.split(';')[0].replace('data:', '')
-                frappe.logger().debug(f"Detected MIME type: {mime_type}")
-                
-                # Map MIME types to extensions
-                mime_map = {
-                    'image/png': '.png',
-                    'image/jpeg': '.jpg',
-                    'image/jpg': '.jpg',
-                    'application/pdf': '.pdf',
-                    'application/msword': '.doc',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx'
-                }
-                file_ext = mime_map.get(mime_type)
-                
-                # Split the base64 data from the content type
-                if ';base64,' in file_data:
-                    file_data = file_data.split(';base64,')[1]
-            
-            # If no extension determined yet, try to get it from filename
-            if not file_ext and filename:
-                if '.' in filename:
-                    file_ext = '.' + filename.split('.')[-1].lower()
-            
-            # Default to .pdf if still no extension
-            if not file_ext:
-                file_ext = '.pdf'
-                
-            frappe.logger().debug(f"Using file extension: {file_ext}")
-            
-            # Generate file name
+            # Generate a safe file name
             if filename:
                 # Remove any extension from the original filename
                 base_name = filename.split('.')[0] if '.' in filename else filename
-                final_filename = f"{base_name}{file_ext}"
+                safe_base_name = frappe.scrub(base_name.replace(' ', '_'))
             else:
                 # Create a unique name if no filename provided
-                unique_suffix = frappe.utils.random_string(8)
-                final_filename = f"{document_type.replace(' ', '_')}_{unique_suffix}{file_ext}"
+                safe_base_name = frappe.scrub(document_type.replace(' ', '_'))
                 
-            frappe.logger().debug(f"Final filename: {final_filename}")
-                
-            # Create the file document
-            file_doc = frappe.new_doc("File")
-            file_doc.file_name = final_filename
-            file_doc.attached_to_doctype = "Student Registration"
-            file_doc.attached_to_name = doc_name
-            file_doc.is_private = 0
-            file_doc.content = file_data
-            file_doc.insert(ignore_permissions=True)
+            # Append unique identifier
+            unique_suffix = frappe.utils.random_string(8)
+            final_filename = f"{safe_base_name}_{unique_suffix}"
+            
+            # Save the file using Frappe's built-in file upload method
+            # Use the utility function that handles base64 properly
+            from frappe.utils.file_manager import save_file
+            
+            file_doc = save_file(
+                fname=final_filename,
+                content=file_data,
+                dt="Student Registration",
+                dn=doc_name,
+                is_private=0,
+                decode=True  # Tell Frappe that the content is base64 encoded
+            )
             
             file_url = file_doc.file_url
             
@@ -2435,12 +2407,61 @@ def upload_application_document(registration_id, document_type, file_data, filen
         # Return success response
         return {
             "status": "success",
-            "message": "Document uploaded successfully"
+            "message": "Document uploaded successfully",
+            "file_url": file_url  # Return the file URL for verification
         }
         
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "Document Upload Error")
         frappe.logger().error(f"Upload error: {str(e)}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+
+# Also add a GET endpoint to retrieve document URLs
+@frappe.whitelist(allow_guest=True)
+def get_document_file(document_type, registration_id):
+    """Get the file URL for a specific document type and registration"""
+    try:
+        # Find the registration by registration_id
+        registrations = frappe.get_all(
+            "Student Registration",
+            filters={"registration_id": registration_id},
+            fields=["name"],
+            limit=1
+        )
+        
+        if not registrations:
+            return {
+                "status": "error",
+                "message": f"Application with ID {registration_id} not found"
+            }
+            
+        # Get the document record
+        doc = frappe.get_all(
+            "Required Document",
+            filters={
+                "registration_id": registrations[0].name,
+                "document_type": document_type
+            },
+            fields=["document_file", "status"],
+            limit=1
+        )
+        
+        if doc and doc[0].document_file:
+            return {
+                "status": "success",
+                "file_url": doc[0].document_file,
+                "document_status": doc[0].status
+            }
+        else:
+            return {
+                "status": "error",
+                "message": "Document not found"
+            }
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Get Document Error")
         return {
             "status": "error",
             "message": str(e)

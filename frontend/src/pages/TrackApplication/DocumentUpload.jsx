@@ -1,5 +1,5 @@
 // DocumentUpload.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFrappePostCall } from 'frappe-react-sdk';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,10 +12,17 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess, useLightThe
   const [file, setFile] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
   const [viewMode, setViewMode] = useState(document.status === 'Submitted' ? 'view' : 'upload');
+  const [fileUrl, setFileUrl] = useState(document.document_file); // Store the file URL
   
   const { call: uploadDocument } = useFrappePostCall('labmanager.api.api.upload_application_document');
 
- 
+  // Update viewMode and fileUrl when document status changes
+  useEffect(() => {
+    setViewMode(document.status === 'Submitted' ? 'view' : 'upload');
+    setFileUrl(document.document_file);
+  }, [document.status, document.document_file]);
+
+  // Theme-based styles (unchanged)
   const cardBg = useLightTheme 
     ? "border-purple-200/50 bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50"
     : "border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
@@ -109,13 +116,19 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess, useLightThe
           // Check for response success - Frappe wraps responses in message property
           if (response && response.message) {
             // The message itself could be an object with status or a string
-            if (typeof response.message === 'object' && response.message.status === "success") {
+            if (typeof response.message === 'object' && 
+                (response.message.status === "success" || 
+                 response.message.file_url)) {
               // Update local view mode immediately
               setViewMode('view');
               
               // Update local document status and date
               document.status = 'Submitted';
               document.submitted_date = new Date().toISOString().split('T')[0];
+              
+              // Store the file URL from the response
+              setFileUrl(response.message.file_url);
+              document.document_file = response.message.file_url;
               
               // Notify parent component
               onUploadSuccess(document.document_type);
@@ -189,6 +202,7 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess, useLightThe
         
         // Reset file state
         setFile(null);
+        setFileUrl(null);
         
         // Keep the current tab selected when calling parent callback
         if (onUploadSuccess) {
@@ -241,14 +255,26 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess, useLightThe
             <FileText className={`w-4 h-4 mr-2 ${iconColor}`} />
             <span className={dateColor}>Document submitted on {document.submitted_date}</span>
           </div>
-          <Button 
-            size="sm" 
-            variant="outline" 
-            className={`h-8 ${buttonSecondary}`}
-            onClick={handleReplace}
-          >
-            <RotateCw className="w-3 h-3 mr-1" /> Replace
-          </Button>
+          <div className="flex gap-2">
+            {fileUrl && (
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className={`h-8 ${buttonSecondary}`}
+                onClick={() => window.open(fileUrl, '_blank')}
+              >
+                <Eye className="w-3 h-3 mr-1" /> View
+              </Button>
+            )}
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className={`h-8 ${buttonSecondary}`}
+              onClick={handleReplace}
+            >
+              <RotateCw className="w-3 h-3 mr-1" /> Replace
+            </Button>
+          </div>
         </div>
       ) : (
         // Upload mode
@@ -304,20 +330,22 @@ const DocumentUpload = ({ document, registrationId, onUploadSuccess, useLightThe
       )}
       
       {/* Document Preview Modal */}
-      {showPreview && document.file_url && (
+      {showPreview && fileUrl && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
           <div className={useLightTheme 
             ? "bg-white rounded-lg p-4 max-w-4xl w-full max-h-[90vh] flex flex-col"
             : "bg-gray-800 rounded-lg p-4 max-w-4xl w-full max-h-[90vh] flex flex-col"
           }>
             <div className="flex justify-between items-center mb-4">
-              <h3 className={`text-lg font-medium ${useLightTheme ? "text-purple-700" : "text-amber-300"}`}>{document.document_type}</h3>
+              <h3 className={`text-lg font-medium ${useLightTheme ? "text-purple-700" : "text-amber-300"}`}>
+                {document.document_type}
+              </h3>
               <Button variant="ghost" size="sm" onClick={() => setShowPreview(false)}>
                 <X className="w-5 h-5" />
               </Button>
             </div>
             <div className="flex-1 overflow-auto bg-white rounded">
-              <iframe src={document.file_url} className="w-full h-full min-h-[500px]" />
+              <iframe src={fileUrl} className="w-full h-full min-h-[500px]" />
             </div>
           </div>
         </div>
