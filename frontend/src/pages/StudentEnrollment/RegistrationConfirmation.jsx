@@ -116,9 +116,9 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       try {
         // Try different paths for the logo
         const logoUrls = [
-          '/assets/labmanager/images/logo.jpeg', 
-          '/files/logo.jpeg',                   // fallback if uploaded via File Doctype
-          '/assets/images/logo.jpeg',           // fallback if you move it to frappe's public/images
+          '/assets/labmanager/images/techethica_letterhead.jpeg',
+          // '/files/logo.jpeg',
+          // '/assets/images/logo.jpeg',
           // '/public/images/logo.jpeg',
           // '/images/logo.jpeg',
           // 'labmanager/public/images/logo.jpeg'
@@ -144,28 +144,22 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
           const logo = await pdfDoc.embedJpg(logoBytes);
           
           // Calculate logo dimensions (maintaining aspect ratio)
-          const logoWidth = 160; // Increased for A3 page
+          const logoWidth = page.getWidth() * 0.9; // 90% of page width for a letterhead style
           logoHeight = (logo.height / logo.width) * logoWidth;
           
           // Draw the logo
           page.drawImage(logo, {
-            x: margin,
+            x: (page.getWidth() - logoWidth) / 2,  // This centers the logo horizontally
             y: page.getHeight() - margin - logoHeight,
             width: logoWidth,
             height: logoHeight,
           });
-          
-          // Draw institution name next to logo
-          page.drawText('TechEthica Institute', {
-            x: margin + logoWidth + 20,
-            y: page.getHeight() - margin - (logoHeight / 2) + 10,
-            size: 24,
-            font: helveticaBold,
-            color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-          });
-          
+
+
+         
           console.log(`Logo successfully loaded from ${successUrl}`);
-        } else {
+        } 
+        else {
           throw new Error('No logo found at any expected path');
         }
       } catch (logoError) {
@@ -182,7 +176,9 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       }
       
       // Adjust vertical positions to account for logo
-      const contentStartY = page.getHeight() - margin - 100; // Moved down to account for logo
+      // const contentStartY = page.getHeight() - margin - 100; // Moved down to account for logo
+      // Adjust vertical positions to account for larger logo
+        const contentStartY = page.getHeight() - margin - logoHeight - 50; // Added more space
       
       page.drawText('Application Confirmation', {
         x: margin,
@@ -568,7 +564,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
             console.error('Email sending failed:', response?.message);
             // Silent failure - don't show error toast to avoid disrupting user experience
             // But log it for debugging purposes
-            frappe.log_error(`Email sending failed: ${JSON.stringify(response)}`, 'PDF Email Error');
+            console.log(`Email sending failed: ${JSON.stringify(response)}`);
           }
         } catch (emailError) {
           console.error('Error sending PDF via email:', emailError);
