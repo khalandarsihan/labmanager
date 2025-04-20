@@ -2641,3 +2641,172 @@ def get_timeline_entries(registration_id):
             "status": "error",
             "message": str(e)
         }
+        
+@frappe.whitelist(allow_guest=True)
+def send_registration_pdf(registration_id, email, pdf_data, first_name='', last_name=''):
+    """Send the registration PDF to the provided email address"""
+    try:
+        import base64
+        import os
+        from frappe.utils import get_files_path
+        
+        # Log the request
+        frappe.logger().debug(f"Attempting to send PDF for registration {registration_id} to {email}")
+        
+        # Validate input
+        if not registration_id or not email or not pdf_data:
+            frappe.logger().error("Missing required parameters for PDF email")
+            return {
+                "status": "error",
+                "message": "Missing required parameters (registration_id, email, or pdf_data)"
+            }
+        
+        # Verify the registration exists
+        registrations = frappe.get_all(
+            "Student Registration",
+            filters={"registration_id": registration_id},
+            fields=["name"],
+            limit=1
+        )
+        
+        if not registrations:
+            frappe.logger().error(f"Registration {registration_id} not found")
+            return {
+                "status": "error",
+                "message": f"Registration with ID {registration_id} not found"
+            }
+            
+        # Decode PDF data from base64
+        try:
+            # Handle potential padding issues in base64 string
+            if len(pdf_data) % 4:
+                # Add padding if needed
+                pdf_data += '=' * (4 - len(pdf_data) % 4)
+                
+            pdf_content = base64.b64decode(pdf_data)
+        except Exception as e:
+            frappe.logger().error(f"Error decoding PDF data: {str(e)}")
+            return {
+                "status": "error",
+                "message": "Invalid PDF data format"
+            }
+            
+        # Format student name
+        student_name = ' '.join(filter(None, [first_name, last_name]))
+        if not student_name:
+            student_name = "Student"
+        
+        # Set ignore permissions flag to allow guest to send email
+        frappe.flags.ignore_permissions = True
+            
+        # Send the email with PDF attachment
+        try:
+            # Check email account configuration
+            email_account = frappe.get_doc("Email Account", "Admission Team")
+            
+            # Get the notification email template
+            email_template = """
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                <div style="text-align: center; padding: 20px 0;">
+                    <img src="https://techethica.edu/logo.png" alt="TechEthica Logo" style="max-width: 180px;">
+                </div>
+                
+                <div style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
+                    <h2 style="color: #4a2c82; margin-top: 0;">Application Confirmation</h2>
+                    
+                    <p>Dear {name},</p>
+                    
+                    <p>Thank you for submitting your application to TechEthica Institute. 
+                    Your application has been successfully received and is currently being processed.</p>
+                    
+                    <p><strong>Application Reference Number:</strong> {registration_id}</p>
+                    
+                    <p>Please find attached your application confirmation PDF for your records.
+                    You can use your reference number to track the status of your application on our website.</p>
+                    
+                    <h3 style="color: #4a2c82;">What happens next:</h3>
+                    <ol>
+                        <li>Our admissions team will review your application within 5-7 business days.</li>
+                        <li>You will receive email notifications as your application progresses.</li>
+                        <li>You may be asked to submit additional documents or schedule an interview.</li>
+                    </ol>
+                    
+                    <p>If you have any questions, please contact our admissions office at <a href="mailto:admissions@techethica.edu">admissions@techethica.edu</a>.</p>
+                </div>
+                
+                <div style="padding: 15px; text-align: center; font-size: 12px; color: #666;">
+                    <p>Best regards,<br>The TechEthica Admissions Team</p>
+                    <p>&copy; {year} TechEthica Institute. All rights reserved.</p>
+                </div>
+            </div>
+            """
+            
+            # Format the email with student details
+            from datetime import datetime
+            current_year = datetime.now().year
+            
+            formatted_email = email_template.format(
+                name=student_name,
+                registration_id=registration_id,
+                year=current_year
+            )
+            
+            # Smaller chunk size for attachment to avoid memory issues
+            file_name = f"TechEthica_Application_{registration_id}.pdf"
+            
+            # Send mail directly with specific sender
+            frappe.sendmail(
+                sender=email_account.email_id,
+                recipients=[email],
+                subject=f"Your TechEthica Application Confirmation - {registration_id}",
+                message=formatted_email,
+                attachments=[{
+                    'fname': file_name,
+                    'fcontent': pdf_content
+                }],
+                retry=3
+            )
+            
+            frappe.logger().debug(f"Email with PDF successfully sent to {email}")
+            
+            # Log the email event for tracking
+            try:
+                # Create a simple log entry for the email
+                frappe.get_doc({
+                    "doctype": "Communication",
+                    "communication_type": "Email",
+                    "content": f"Application confirmation email sent with PDF attachment",
+                    "subject": f"Application Confirmation - {registration_id}",
+                    "sender": email_account.email_id,
+                    "recipients": email,
+                    "reference_doctype": "Student Registration",
+                    "reference_name": registrations[0].name,
+                    "status": "Sent"
+                }).insert(ignore_permissions=True)
+            except Exception as log_error:
+                # Don't fail if logging fails
+                frappe.logger().error(f"Error creating email log: {str(log_error)}")
+                
+            return {
+                "status": "success",
+                "message": "Application confirmation PDF has been sent to your email"
+            }
+            
+        except Exception as email_error:
+            frappe.logger().error(f"Email sending error: {str(email_error)}\n{frappe.get_traceback()}")
+            
+            return {
+                "status": "error",
+                "message": "Failed to send confirmation email"
+            }
+        finally:
+            # Reset permissions flag
+            frappe.flags.ignore_permissions = False
+            
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "PDF Email Sending Error")
+        frappe.logger().error(f"Overall error in send_registration_pdf: {str(e)}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
