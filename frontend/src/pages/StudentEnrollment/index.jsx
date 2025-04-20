@@ -1,3 +1,4 @@
+// StudentEnrollment/index.jsx with improved responsiveness
 import React, { useState } from 'react';
 import { useFrappePostCall, useFrappeGetCall } from 'frappe-react-sdk';
 import {
@@ -29,15 +30,10 @@ const StudentEnrollment = () => {
   const [errors, setErrors] = useState({});
   const totalSteps = 3;
 
-  // Themed styling
+  // Themed styling with responsive adjustments
   const cardBg = useLightTheme 
-    // ? "border-amber-200/50 bg-amber-50/90"
-    // ? "border-gray-200/50 bg-white/90"
-    // ? "border-amber-300/70 bg-white/90"
     ? "border-purple-200/50 bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50"
-    
-    // : "border-gray-700/50 bg-gray-800/50";
-    : "border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]"
+    : "border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]";
   
   const cardTitle = useLightTheme
     ? "text-purple-700"
@@ -236,41 +232,61 @@ const StudentEnrollment = () => {
   }
   
   return (
-    <div className="relative">
+    <div className="relative min-h-screen px-4 md:px-8 lg:px-12 py-8 md:py-12 lg:py-16">
       {/* BackgroundPattern is positioned behind everything */}
       <BackgroundPattern />
 
-      <div className="max-w-4xl mx-auto relative z-10">
-        <Card className={`${cardBg} backdrop-blur-sm`}>
-          <CardHeader>
-            <CardTitle className={`text-2xl font-bold text-center ${cardTitle}`}>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <Card className={cn(
+          cardBg,
+          "backdrop-blur-sm",
+          "w-full",
+          "md:w-11/12",
+          "lg:w-4/5",
+          "xl:w-3/4",
+          "mx-auto"
+        )}>
+          <CardHeader className="px-4 py-6 md:px-8 md:py-8">
+            <CardTitle className={cn(
+              "text-xl sm:text-2xl lg:text-3xl font-bold text-center",
+              cardTitle
+            )}>
               Student Registration
             </CardTitle>
-            <CardDescription className={`text-center ${cardDesc}`}>
+            <CardDescription className={cn(
+              "text-sm sm:text-base text-center mt-2 md:mt-4",
+              cardDesc
+            )}>
               Join our community of learners at TechEthica
             </CardDescription>
           </CardHeader>
           
-          <CardContent>
+          <CardContent className="px-4 py-6 md:px-8 md:py-8">
             <ProgressSteps
               currentStep={currentStep}
               totalSteps={3}
               labels={["Personal Info", "Address", "Academic Details"]}
-              className="mb-8"
+              className="mb-6 md:mb-8 lg:mb-12"
             />
 
-            <div className={`relative backdrop-blur-sm p-6 rounded-lg border ${formBg}`}>
+            <div className={cn(
+              "relative backdrop-blur-sm p-4 md:p-6 lg:p-8 rounded-lg border",
+              formBg,
+              "min-h-[300px] md:min-h-[400px]"
+            )}>
               {getStepContent()}
             </div>
 
-            <div className="flex justify-between mt-8">
+            <div className="flex flex-col sm:flex-row justify-between gap-4 mt-6 md:mt-8 lg:mt-12">
               <Button
                 onClick={() => setCurrentStep(prev => prev - 1)}
                 disabled={currentStep === 1 || isSubmitting}
                 className={cn(
+                  "w-full sm:w-auto min-w-[120px] md:min-w-[140px]",
                   `${buttonPrimary} border-0`,
                   buttonSecondary,
-                  "transition-all duration-200 ease-in-out"
+                  "transition-all duration-200 ease-in-out",
+                  "h-10 md:h-12 px-4 md:px-6"
                 )}
               >
                 <ChevronLeft className="w-4 h-4 mr-2" />
@@ -281,8 +297,10 @@ const StudentEnrollment = () => {
                 onClick={currentStep === totalSteps ? handleSubmit : () => setCurrentStep(prev => prev + 1)}
                 disabled={isSubmitting}
                 className={cn(
+                  "w-full sm:w-auto min-w-[120px] md:min-w-[140px]",
                   buttonPrimary,
-                  "transition-all duration-200 ease-in-out"
+                  "transition-all duration-200 ease-in-out",
+                  "h-10 md:h-12 px-4 md:px-6"
                 )}
               >
                 {currentStep === totalSteps ? (

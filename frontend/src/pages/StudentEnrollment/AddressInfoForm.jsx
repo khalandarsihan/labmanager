@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { MapPin, Building2, Globe, Flag } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
 const AddressInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
   // Apply theme-based styles
@@ -23,78 +24,96 @@ const AddressInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
     : "text-red-400";
     
   return (
-    <div className="space-y-6">
-      {/* Address Field */}
-      <div>
-        <Label className={labelStyle}>Address</Label>
+    <div className="space-y-4 md:space-y-6 w-full">
+      {/* Address Field - Full width on all screens */}
+      <div className="w-full">
+        <Label className={cn("text-sm md:text-base", labelStyle)}>Address</Label>
         <div className="relative">
           <Textarea
             value={formData.address || ''}
             onChange={(e) => onChange('address', e.target.value)}
-            className={`pl-10 ${inputBg} min-h-[100px]`}
+            className={cn(
+              "pl-8 sm:pl-10 min-h-[80px] sm:min-h-[100px] resize-y",
+              inputBg
+            )}
             placeholder="Enter your address"
           />
-          <MapPin className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
+          <MapPin className={cn(
+            "w-4 h-4 sm:w-5 sm:h-5 absolute left-2 sm:left-3 top-2 sm:top-2.5",
+            iconStyle
+          )} />
         </div>
-        {errors.address && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.address}</span>}
+        {errors.address && <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.address}</span>}
       </div>
 
-      {/* City, State, Country, Postal Code */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div>
-          <Label className={labelStyle}>City</Label>
+      {/* City, State, Country, Postal Code - Responsive grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="w-full">
+          <Label className={cn("text-sm md:text-base", labelStyle)}>City</Label>
           <div className="relative">
             <Input
               value={formData.city || ''}
               onChange={(e) => onChange('city', e.target.value)}
-              className={`pl-10 ${inputBg}`}
+              className={cn("pl-8 sm:pl-10 h-10 sm:h-12", inputBg)}
               placeholder="Enter city"
             />
-            <Building2 className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
+            <Building2 className={cn(
+              "w-4 h-4 sm:w-5 sm:h-5 absolute left-2 sm:left-3 top-3 sm:top-3.5",
+              iconStyle
+            )} />
           </div>
-          {errors.city && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.city}</span>}
+          {errors.city && <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.city}</span>}
         </div>
 
-        <div>
-          <Label className={labelStyle}>State</Label>
+        <div className="w-full">
+          <Label className={cn("text-sm md:text-base", labelStyle)}>State</Label>
           <div className="relative">
             <Input
               value={formData.state || ''}
               onChange={(e) => onChange('state', e.target.value)}
-              className={`pl-10 ${inputBg}`}
+              className={cn("pl-8 sm:pl-10 h-10 sm:h-12", inputBg)}
               placeholder="Enter state"
             />
-            <Flag className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
+            <Flag className={cn(
+              "w-4 h-4 sm:w-5 sm:h-5 absolute left-2 sm:left-3 top-3 sm:top-3.5",
+              iconStyle
+            )} />
           </div>
-          {errors.state && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.state}</span>}
+          {errors.state && <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.state}</span>}
         </div>
 
-        <div>
-          <Label className={labelStyle}>Country</Label>
+        <div className="w-full">
+          <Label className={cn("text-sm md:text-base", labelStyle)}>Country</Label>
           <div className="relative">
             <Input
               value={formData.country || ''}
               onChange={(e) => onChange('country', e.target.value)}
-              className={`pl-10 ${inputBg}`}
+              className={cn("pl-8 sm:pl-10 h-10 sm:h-12", inputBg)}
               placeholder="Enter country"
             />
-            <Globe className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
+            <Globe className={cn(
+              "w-4 h-4 sm:w-5 sm:h-5 absolute left-2 sm:left-3 top-3 sm:top-3.5",
+              iconStyle
+            )} />
           </div>
-          {errors.country && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.country}</span>}
+          {errors.country && <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.country}</span>}
         </div>
 
-        <div>
-          <Label className={labelStyle}>Postal Code</Label>
+        <div className="w-full">
+          <Label className={cn("text-sm md:text-base", labelStyle)}>Postal Code</Label>
           <div className="relative">
             <Input
               value={formData.postal_code || ''}
               onChange={(e) => onChange('postal_code', e.target.value)}
-              className={`pl-10 ${inputBg}`}
+              className={cn("pl-8 sm:pl-10 h-10 sm:h-12", inputBg)}
               placeholder="Enter postal code"
             />
-            <MapPin className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
+            <MapPin className={cn(
+              "w-4 h-4 sm:w-5 sm:h-5 absolute left-2 sm:left-3 top-3 sm:top-3.5",
+              iconStyle
+            )} />
           </div>
-          {errors.postal_code && <span className={`text-sm mt-1 ${errorStyle}`}>{errors.postal_code}</span>}
+          {errors.postal_code && <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.postal_code}</span>}
         </div>
       </div>
     </div>

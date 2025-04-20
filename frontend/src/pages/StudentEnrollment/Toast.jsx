@@ -42,20 +42,21 @@ const Toast = ({ toast, setToast }) => {
   return (
     <div
       className={cn(
-        "fixed bottom-4 right-4 z-50",
-        "animate-in slide-in-from-right-full fade-in duration-300",
-        "flex items-center gap-3 px-6 py-4 rounded-lg shadow-lg backdrop-blur-sm",
+        "fixed bottom-4 w-[calc(100%-2rem)] sm:w-auto mx-4 sm:mx-0 sm:right-4 z-50",
+        "animate-in slide-in-from-bottom-4 sm:slide-in-from-right-full fade-in duration-300",
+        "flex items-center gap-2 sm:gap-3 px-4 py-3 rounded-lg shadow-lg backdrop-blur-sm",
         "border",
-        toast.type === 'error' ? errorStyle : successStyle
+        toast.type === 'error' ? errorStyle : successStyle,
+        "max-w-sm sm:max-w-md"
       )}
     >
       {toast.type === 'error' ? (
-        <AlertCircle className={`w-5 h-5 flex-shrink-0 ${iconStyle}`} />
+        <AlertCircle className={cn("w-5 h-5 flex-shrink-0", iconStyle)} />
       ) : (
-        <CheckCircle className={`w-5 h-5 flex-shrink-0 ${iconStyle}`} />
+        <CheckCircle className={cn("w-5 h-5 flex-shrink-0", iconStyle)} />
       )}
       
-      <span className="text-sm font-medium">
+      <span className="text-sm sm:text-base font-medium flex-1">
         {typeof toast.message === 'string' ? toast.message : 'An error occurred'}
       </span>
       

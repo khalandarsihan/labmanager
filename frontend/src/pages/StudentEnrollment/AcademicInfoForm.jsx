@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Building2, Calendar } from 'lucide-react';
+import { cn } from "@/lib/utils";
 
 const AcademicInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
   // Fetch API data
@@ -64,16 +65,16 @@ const AcademicInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
     : "text-amber-100/70";
 
   return (
-    <div className="space-y-6">
-      {/* Desired Program & Islamic Studies Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Label className={labelStyle}>Desired Academic Program</Label>
+    <div className="space-y-4 md:space-y-6 w-full">
+      {/* Desired Program & Islamic Studies Row - Stack on mobile, grid on larger screens */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+        <div className="w-full">
+          <Label className={cn("text-sm md:text-base", labelStyle)}>Desired Academic Program</Label>
           <Select
             value={formData.desired_academic_program || ""}
             onValueChange={(value) => onChange('desired_academic_program', value)}
           >
-            <SelectTrigger className={selectBg}>
+            <SelectTrigger className={cn("h-10 sm:h-12", selectBg)}>
               <SelectValue placeholder="Select desired program" />
             </SelectTrigger>
             <SelectContent className={selectContent}>
@@ -89,17 +90,17 @@ const AcademicInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
             </SelectContent>
           </Select>
           {errors.desired_academic_program && (
-            <span className={`text-sm mt-1 ${errorStyle}`}>{errors.desired_academic_program}</span>
+            <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.desired_academic_program}</span>
           )}
         </div>
 
-        <div>
-          <Label className={labelStyle}>Islamic Studies Specialization</Label>
+        <div className="w-full">
+          <Label className={cn("text-sm md:text-base", labelStyle)}>Islamic Studies Specialization</Label>
           <Select
             value={formData.islamic_studies_specialization || ""}
             onValueChange={(value) => onChange('islamic_studies_specialization', value)}
           >
-            <SelectTrigger className={selectBg}>
+            <SelectTrigger className={cn("h-10 sm:h-12", selectBg)}>
               <SelectValue placeholder="Select specialization" />
             </SelectTrigger>
             <SelectContent className={selectContent}>
@@ -115,22 +116,22 @@ const AcademicInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
             </SelectContent>
           </Select>
           {errors.islamic_studies_specialization && (
-            <span className={`text-sm mt-1 ${errorStyle}`}>
+            <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>
               {errors.islamic_studies_specialization}
             </span>
           )}
         </div>
       </div>
 
-      {/* Previous Education & Year Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Label className={labelStyle}>Previous Education</Label>
+      {/* Previous Education & Year Row - Stack on mobile, grid on larger screens */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+        <div className="w-full">
+          <Label className={cn("text-sm md:text-base", labelStyle)}>Previous Education</Label>
           <Select
             value={formData.previous_education || ""}
             onValueChange={(value) => onChange('previous_education', value)}
           >
-            <SelectTrigger className={selectBg}>
+            <SelectTrigger className={cn("h-10 sm:h-12", selectBg)}>
               <SelectValue placeholder="Select previous education" />
             </SelectTrigger>
             <SelectContent className={selectContent}>
@@ -146,54 +147,63 @@ const AcademicInfoForm = ({ formData, onChange, errors, useLightTheme }) => {
             </SelectContent>
           </Select>
           {errors.previous_education && (
-            <span className={`text-sm mt-1 ${errorStyle}`}>{errors.previous_education}</span>
+            <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.previous_education}</span>
           )}
         </div>
 
-        <div>
-          <Label className={labelStyle}>Year of Completion</Label>
+        <div className="w-full">
+          <Label className={cn("text-sm md:text-base", labelStyle)}>Year of Completion</Label>
           <div className="relative">
             <Input
               type="number"
               value={formData.year_of_completion || ""}
               onChange={(e) => onChange('year_of_completion', e.target.value)}
-              className={`pl-10 ${inputBg}`}
+              className={cn("pl-8 sm:pl-10 h-10 sm:h-12", inputBg)}
               placeholder="YYYY"
               min="1900"
               max="2024"
             />
-            <Calendar className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
+            <Calendar className={cn(
+              "w-4 h-4 sm:w-5 sm:h-5 absolute left-2 sm:left-3 top-3 sm:top-3.5",
+              iconStyle
+            )} />
           </div>
           {errors.year_of_completion && (
-            <span className={`text-sm mt-1 ${errorStyle}`}>{errors.year_of_completion}</span>
+            <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.year_of_completion}</span>
           )}
         </div>
       </div>
 
-      {/* Previous Institution */}
-      <div>
-        <Label className={labelStyle}>Previous Institution</Label>
+      {/* Previous Institution - Full width on all screens */}
+      <div className="w-full">
+        <Label className={cn("text-sm md:text-base", labelStyle)}>Previous Institution</Label>
         <div className="relative">
           <Input
             value={formData.institution || ""}
             onChange={(e) => onChange('institution', e.target.value)}
-            className={`pl-10 ${inputBg}`}
+            className={cn("pl-8 sm:pl-10 h-10 sm:h-12", inputBg)}
             placeholder="Enter your previous institution"
           />
-          <Building2 className={`w-5 h-5 absolute left-3 top-2.5 ${iconStyle}`} />
+          <Building2 className={cn(
+            "w-4 h-4 sm:w-5 sm:h-5 absolute left-2 sm:left-3 top-3 sm:top-3.5",
+            iconStyle
+          )} />
         </div>
         {errors.institution && (
-          <span className={`text-sm mt-1 ${errorStyle}`}>{errors.institution}</span>
+          <span className={cn("text-xs sm:text-sm mt-1", errorStyle)}>{errors.institution}</span>
         )}
       </div>
 
-      {/* Educational Journey Info Box */}
-      <div className={`mt-8 p-4 ${infoBgStyle} rounded-lg backdrop-blur-sm`}>
+      {/* Educational Journey Info Box - Adjusted padding and text size for mobile */}
+      <div className={cn(
+        "mt-6 sm:mt-8 p-4 sm:p-6 rounded-lg backdrop-blur-sm",
+        infoBgStyle
+      )}>
         <div className="flex items-center mb-2">
-          <Building2 className={`w-5 h-5 ${iconStyle} mr-2`} />
-          <span className={`${infoTitleStyle} font-medium`}>Educational Journey</span>
+          <Building2 className={cn("w-4 h-4 sm:w-5 sm:h-5 mr-2", iconStyle)} />
+          <span className={cn("text-sm sm:text-base font-medium", infoTitleStyle)}>Educational Journey</span>
         </div>
-        <p className={`text-sm ${infoTextStyle}`}>
+        <p className={cn("text-xs sm:text-sm", infoTextStyle)}>
           Your academic background helps us tailor the learning experience to your needs.
           Make sure to provide accurate information about your previous studies.
         </p>
