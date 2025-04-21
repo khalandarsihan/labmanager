@@ -203,41 +203,6 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         color: rgb(0.1, 0.1, 0.1),
       });
       
-      // Add reference number with background
-      // const refNumberY = contentStartY - 90;
-      
-      // // Draw ref number box
-      // page.drawRectangle({
-      //   x: margin - 10,
-      //   y: refNumberY - 10,
-      //   width: 400,
-      //   height: 40,
-      //   color: rgb(0.97, 0.97, 0.97),
-      //   borderColor: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-      //   borderWidth: 1.5,
-      // });
-      
-      // page.drawText('Application Reference Number:', {
-      //   x: margin,
-      //   y: refNumberY + 15,
-      //   size: textSize,
-      //   font: helveticaFont,
-      //   color: rgb(0.3, 0.3, 0.3),
-      // });
-      
-      // page.drawText(registrationId, {
-      //   x: margin + 200,
-      //   y: refNumberY + 15,
-      //   size: textSize + 4,
-      //   font: helveticaBold,
-      //   color: rgb(0.1, 0.1, 0.1),
-      // });
-
-      
-      
-      // Student information section
-      // const studentInfoY = refNumberY - 75;
-
       // More consistent spacing from date to ref box
         const refNumberY = contentStartY - 80; // Adjusted for consistent spacing
 
@@ -453,7 +418,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         });
       });
       
-      // Next steps section
+      // Next steps section - UPDATED
       const nextStepsY = tableStartY - tableHeight - 50;
       
       page.drawText('Next Steps', {
@@ -471,10 +436,12 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
+      // Updated steps to match new workflow
       const steps = [
-        'Our admissions team will review your application within 5-7 business days.',
-        'You will receive an email notification about your application status.',
-        'For any queries, contact our admissions office at admin@techethica.in'
+        'Please upload the required documents through your application tracking page.',
+        'Once your documents are received, our team will review them within 5-7 business days.',
+        'After document verification, if eligible, you will be scheduled for an interview.',
+        'Following the interview, you will receive a final decision on your application.'
       ];
       
       steps.forEach((step, index) => {
@@ -497,33 +464,6 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         });
       });
       
-      // Footer
-      // const footerY = 70;
-      
-      // page.drawLine({
-      //   start: { x: margin, y: footerY + 20 },
-      //   end: { x: page.getWidth() - margin, y: footerY + 20 },
-      //   thickness: 1,
-      //   color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-      // });
-      
-      // page.drawText('TechEthica Institute', {
-      //   x: margin,
-      //   y: footerY,
-      //   size: textSize,
-      //   font: helveticaBold,
-      //   color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-      // });
-      
-      // page.drawText('www.techethica.edu | +1 (555) 123-4567', {
-      //   x: margin,
-      //   y: footerY - 20,
-      //   size: textSize - 2,
-      //   font: helveticaFont,
-      //   color: rgb(0.3, 0.3, 0.3),
-      // });
-
-      // Replace the existing footer code with this single-line format
       // Footer with centered text
       const footerY = 70;
 
@@ -613,6 +553,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
               email: localStudentData.email,
               pdf_data: base64Pdf,
               first_name: localStudentData.first_name || '',
+              middle_name: localStudentData.middle_name || '', // Added middle name
               last_name: localStudentData.last_name || ''
             }),
             // Set a timeout to handle potential hanging requests
@@ -644,6 +585,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
               email: localStudentData.email,
               pdf_data: null, // Skip the PDF
               first_name: localStudentData.first_name || '',
+              middle_name: localStudentData.middle_name || '', // Added middle name
               last_name: localStudentData.last_name || ''
             });
             
@@ -741,17 +683,21 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
                 </div>
               </div>
 
-              {/* Next Steps */}
+              {/* Next Steps - UPDATED */}
               <div className={`${sectionBg} rounded-lg p-6 backdrop-blur-sm border`}>
                 <h3 className={`text-lg font-semibold ${headerText} mb-4`}>Next Steps</h3>
                 <ul className={`space-y-4 ${valueText}`}>
                   <li className="flex items-start">
                     <FileText className={`w-5 h-5 mr-3 ${iconColor} mt-1 flex-shrink-0`} />
-                    <span>Our admissions team will review your application within 5-7 business days.</span>
+                    <span>Please upload the required documents through your application tracking page.</span>
+                  </li>
+                  <li className="flex items-start">
+                    <CheckCircle className={`w-5 h-5 mr-3 ${iconColor} mt-1 flex-shrink-0`} />
+                    <span>Our team will review your documents within 5-7 business days.</span>
                   </li>
                   <li className="flex items-start">
                     <Mail className={`w-5 h-5 mr-3 ${iconColor} mt-1 flex-shrink-0`} />
-                    <span>You will receive an email notification about your application status.</span>
+                    <span>If eligible, you will be scheduled for an interview.</span>
                   </li>
                   <li className="flex items-start">
                     <Phone className={`w-5 h-5 mr-3 ${iconColor} mt-1 flex-shrink-0`} />

@@ -2,6 +2,7 @@ import frappe
 from frappe import _
 import requests
 import json
+import os
 from datetime import datetime
 from frappe.utils.file_manager import save_file
 from labmanager.timeline_service import create_timeline_entry, get_application_timeline, ensure_initial_timeline_entry
@@ -2641,214 +2642,135 @@ def get_timeline_entries(registration_id):
             "status": "error",
             "message": str(e)
         }
-        
+
+
+
 @frappe.whitelist(allow_guest=True)
-def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', last_name=''):
-    """Send the registration PDF to the provided email address
-    
-    If pdf_data is None, it will send an email without the PDF attachment
-    as a fallback mechanism.
-    """
+def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', middle_name='', last_name=''):
     try:
-        import base64
-        import os
-        from frappe.utils import get_files_path
+        # Create email subject
+        subject = f"TechEthica Application Confirmation - {registration_id}"
         
-        # Log the request
-        frappe.logger().debug(f"Attempting to send PDF for registration {registration_id} to {email}")
+        # Base URL for tracking
+        site_url = frappe.utils.get_url()
+        tracking_url = f"{site_url}/track-application?id={registration_id}"
         
-        # Validate input
-        if not registration_id or not email:
-            frappe.logger().error("Missing required parameters for PDF email")
-            return {
-                "status": "error",
-                "message": "Missing required parameters (registration_id or email)"
-            }
+        # Format full name with middle name if available
+        full_name = first_name
+        if middle_name:
+            full_name += f" {middle_name}"
+        if last_name:
+            full_name += f" {last_name}"
+        
+        # # Create email content
+        # message = f"""
+        # <h2 style="color: #6d28d9;">Application Confirmation</h2>
+        # <p>Dear {full_name},</p>
+        
+        # <p>Thank you for submitting your application to TechEthica. Your application has been successfully received and is now in our system.</p>
+        
+        # <p><strong>Application Reference Number:</strong> {registration_id}</p>
+        
+        # <p>Please find attached your application confirmation PDF for your records.</p>
+        
+        # <h3 style="color: #6d28d9;">Next Steps:</h3>
+        # <ol>
+        #     <li>Please upload the required documents at your earliest convenience through your application tracking page.</li>
+        #     <li>Once your documents are received, our team will review them within 5-7 business days.</li>
+        #     <li>After document verification, if eligible, you will be scheduled for an interview.</li>
+        #     <li>Following the interview, you will receive a final decision on your application.</li>
+        # </ol>
+        
+        # <p>You can track your application status and upload the required documents anytime by visiting:<br>
+        # <a href="{tracking_url}">{tracking_url}</a></p>
+        
+        # <p>If you have any questions, please contact our admissions office at admin@techethica.in or call +91 90745 11600.</p>
+        
+        # <p>Best regards,<br>
+        # The TechEthica Admissions Team</p>
+        
+        # <hr>
+        # <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
+        # """
+        
+        # Create email content
+        message = f"""
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px;">
+            <h2 style="color: #6d28d9; margin-bottom: 10px;">🌟 Application Confirmation</h2>
+
+            <p>Dear <strong>{full_name}</strong>,</p>
+
+            <p>Thank you for applying to <strong>TechEthica</strong>. We’re excited to inform you that we have successfully received your application!</p>
+
+            <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
+                <strong>Application Reference ID:</strong> {registration_id}
+            </p>
+
+            <p>Your application confirmation PDF is attached for your records.</p>
+
+            <h3 style="color: #6d28d9; margin-top: 30px;">🧭 What Happens Next?</h3>
+            <ol style="padding-left: 20px;">
+                <li>Upload the required documents via your application tracking page.</li>
+                <li>Our admissions team will review them within <strong>5–7 business days</strong>.</li>
+                <li>If eligible, you'll be invited for an interview.</li>
+                <li>After the interview, a final decision will be communicated to you.</li>
+            </ol>
+
+            <p style="margin-top: 20px;">
+                🔗 <strong>Track your application and upload documents here:</strong><br>
+                <a href="{tracking_url}" style="color: #6d28d9; text-decoration: none;">{tracking_url}</a>
+            </p>
+
+            <p>If you have any questions, feel free to reach out to us at 
+                <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at 
+                <a href="tel:+919074511600" style="color: #6d28d9;">+91 90745 11600</a>.
+            </p>
+
+            <p style="margin-top: 30px;">Warm regards,<br>
+            <strong>The TechEthica Admissions Team</strong></p>
+
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+
+            <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
+        </div>
+        """
+
+        
+        # Check if PDF data is provided
+        attachments = []
+        if pdf_data:
+            # Convert base64 to file
+            pdf_file_name = f"TechEthica_Application_{registration_id}.pdf"
+            pdf_file_path = '/tmp/' + pdf_file_name
             
-        # Log whether this is a normal send or fallback without PDF
-        if pdf_data is None:
-            frappe.logger().debug(f"Using fallback email without PDF for {registration_id}")
-            fallback_mode = True
-        else:
-            fallback_mode = False
+            # Save base64 data to file
+            import base64
+            with open(pdf_file_path, 'wb') as f:
+                f.write(base64.b64decode(pdf_data))
+            
+            # Add to attachments
+            attachments.append({
+                'fname': pdf_file_name,
+                'fcontent': open(pdf_file_path, 'rb').read()
+            })
         
-        # Verify the registration exists
-        registrations = frappe.get_all(
-            "Student Registration",
-            filters={"registration_id": registration_id},
-            fields=["name"],
-            limit=1
+        # Send email
+        frappe.sendmail(
+            recipients=[email],
+            subject=subject,
+            message=message,
+            attachments=attachments
         )
         
-        if not registrations:
-            frappe.logger().error(f"Registration {registration_id} not found")
-            return {
-                "status": "error",
-                "message": f"Registration with ID {registration_id} not found"
-            }
-            
-                    # Decode PDF data from base64 if present
-        pdf_content = None
-        if not fallback_mode and pdf_data:
-            try:
-                # Handle potential padding issues in base64 string
-                if len(pdf_data) % 4:
-                    # Add padding if needed
-                    pdf_data += '=' * (4 - len(pdf_data) % 4)
-                    
-                pdf_content = base64.b64decode(pdf_data)
-                frappe.logger().debug(f"Successfully decoded PDF data, size: {len(pdf_content) / 1024:.2f} KB")
-            except Exception as e:
-                frappe.logger().error(f"Error decoding PDF data: {str(e)}")
-                return {
-                    "status": "error",
-                    "message": "Invalid PDF data format"
-                }
-            
-        # Format student name
-        student_name = ' '.join(filter(None, [first_name, last_name]))
-        if not student_name:
-            student_name = "Student"
+        # Cleanup temporary file if needed
+        if pdf_data and os.path.exists(pdf_file_path):
+            os.remove(pdf_file_path)
         
-        # Set ignore permissions flag to allow guest to send email
-        frappe.flags.ignore_permissions = True
-            
-        # Send the email with PDF attachment
-        try:
-            # Get email account configuration
-            email_account = frappe.get_doc("Email Account", "Admission Team")
-            
-            # Get the absolute URL for the logo
-            site_url = frappe.utils.get_url()
-            logo_url = f"{site_url}/assets/labmanager/images/logo.jpeg"
-            
-            # Get the notification email template
-            email_template = f"""
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                <div style="text-align: center; padding: 20px 0;">
-                    <img src="{logo_url}" alt="TechEthica Logo" style="max-width: 100%; height: auto;">
-                </div>
-                
-                <div style="padding: 20px; background-color: #f9f9f9; border-radius: 5px;">
-                    <h2 style="color: #4a2c82; margin-top: 0;">Application Confirmation</h2>
-                    
-                    <p>Dear {{name}},</p>
-                    
-                    <p>Thank you for submitting your application to TechEthica Institute. 
-                    Your application has been successfully received and is currently being processed.</p>
-                    
-                    <p><strong>Application Reference Number:</strong> {{registration_id}}</p>
-                    
-                    <p>Please find attached your application confirmation PDF for your records.
-                    You can use your reference number to track the status of your application on our website.</p>
-                    
-                    <h3 style="color: #4a2c82;">What happens next:</h3>
-                    <ol>
-                        <li>Our admissions team will review your application within 5-7 business days.</li>
-                        <li>You will receive email notifications as your application progresses.</li>
-                        <li>You may be asked to submit additional documents or schedule an interview.</li>
-                    </ol>
-                    
-                    <p>If you have any questions, please contact our admissions office at <a href="mailto:admissions@techethica.edu">admissions@techethica.edu</a>.</p>
-                </div>
-                
-                <div style="padding: 15px; text-align: center; font-size: 12px; color: #666;">
-                    <p>Best regards,<br>The TechEthica Admissions Team</p>
-                    <p>&copy; {{year}} TechEthica Institute. All rights reserved.</p>
-                </div>
-            </div>
-            """
-            
-            # Format the email with student details
-            from datetime import datetime
-            current_year = datetime.now().year
-            
-            formatted_email = email_template.format(
-                name=student_name,
-                registration_id=registration_id,
-                year=current_year
-            )
-            
-            # Smaller chunk size for attachment to avoid memory issues
-            file_name = f"TechEthica_Application_{registration_id}.pdf"
-            
-            # Send mail directly with specific sender
-            if not fallback_mode and pdf_content:
-                # Send with PDF attachment
-                file_name = f"TechEthica_Application_{registration_id}.pdf"
-                frappe.sendmail(
-                    sender=email_account.email_id,
-                    recipients=[email],
-                    subject=f"Your TechEthica Application Confirmation - {registration_id}",
-                    message=formatted_email,
-                    attachments=[{
-                        'fname': file_name,
-                        'fcontent': pdf_content
-                    }],
-                    retry=3
-                )
-                frappe.logger().debug(f"Email sent with PDF attachment to {email}")
-            else:
-                # Fallback: Send without PDF attachment but add a note in the email
-                fallback_note = """
-                <div style="padding: 15px; background-color: #fef8e8; border-left: 4px solid #f0ad4e; margin: 20px 0;">
-                    <p><strong>Note:</strong> For your convenience, you can download your application PDF 
-                    directly from your application confirmation page or by tracking your application status
-                    using your reference number.</p>
-                </div>
-                """
-                # Insert the fallback note before the closing div
-                formatted_email = formatted_email.replace('</div>\n            </div>', f'{fallback_note}</div>\n            </div>')
-                
-                frappe.sendmail(
-                    sender=email_account.email_id,
-                    recipients=[email],
-                    subject=f"Your TechEthica Application Confirmation - {registration_id}",
-                    message=formatted_email,
-                    retry=3
-                )
-                frappe.logger().debug(f"Fallback email sent without PDF attachment to {email}")
-            
-            frappe.logger().debug(f"Email with PDF successfully sent to {email}")
-            
-            # Log the email event for tracking
-            try:
-                # Create a simple log entry for the email
-                frappe.get_doc({
-                    "doctype": "Communication",
-                    "communication_type": "Email",
-                    "content": f"Application confirmation email sent with PDF attachment",
-                    "subject": f"Application Confirmation - {registration_id}",
-                    "sender": email_account.email_id,
-                    "recipients": email,
-                    "reference_doctype": "Student Registration",
-                    "reference_name": registrations[0].name,
-                    "status": "Sent"
-                }).insert(ignore_permissions=True)
-            except Exception as log_error:
-                # Don't fail if logging fails
-                frappe.logger().error(f"Error creating email log: {str(log_error)}")
-                
-            return {
-                "status": "success",
-                "message": "Application confirmation PDF has been sent to your email"
-            }
-            
-        except Exception as email_error:
-            frappe.logger().error(f"Email sending error: {str(email_error)}\n{frappe.get_traceback()}")
-            
-            return {
-                "status": "error",
-                "message": "Failed to send confirmation email"
-            }
-        finally:
-            # Reset permissions flag
-            frappe.flags.ignore_permissions = False
-            
+        return {"status": "success", "message": "Email sent successfully"}
+    
     except Exception as e:
-        frappe.log_error(frappe.get_traceback(), "PDF Email Sending Error")
-        frappe.logger().error(f"Overall error in send_registration_pdf: {str(e)}")
-        return {
-            "status": "error",
-            "message": str(e)
-        }
+        frappe.log_error(f"Error sending registration email: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+
+
