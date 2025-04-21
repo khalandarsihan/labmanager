@@ -949,6 +949,10 @@ video {
   right: 1.5rem;
 }
 
+.right-7 {
+  right: 1.75rem;
+}
+
 .right-8 {
   right: 2rem;
 }
@@ -1099,6 +1103,14 @@ video {
 
 .top-full {
   top: 100%;
+}
+
+.left-6 {
+  left: 1.5rem;
+}
+
+.left-8 {
+  left: 2rem;
 }
 
 .-z-10 {
