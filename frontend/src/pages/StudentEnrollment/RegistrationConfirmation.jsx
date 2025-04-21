@@ -99,12 +99,12 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       
       // Set basic properties
-      const textSize = 11;
-      const titleSize = 18;
-      const headerSize = 14;
+      const textSize = 14;
+      const titleSize = 24;
+      const headerSize = 18;
       const margin = 50;
       const tableMargin = 60;
-      const lineHeight = textSize * 1.5;
+      const lineHeight = textSize * 1.7;
       
       // Use different colors based on theme
       const primaryColor = useLightTheme
@@ -178,7 +178,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       // Adjust vertical positions to account for logo
       // const contentStartY = page.getHeight() - margin - 100; // Moved down to account for logo
       // Adjust vertical positions to account for larger logo
-        const contentStartY = page.getHeight() - margin - logoHeight - 50; // Added more space
+        const contentStartY = page.getHeight() - margin - logoHeight - 40; // Added more space
       
       page.drawText('Application Confirmation', {
         x: margin,
@@ -197,44 +197,85 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       
       page.drawText(`Date: ${currentDate}`, {
         x: margin,
-        y: contentStartY - 30,
+        y: contentStartY - 35,
         size: textSize,
         font: helveticaFont,
         color: rgb(0.1, 0.1, 0.1),
       });
       
       // Add reference number with background
-      const refNumberY = contentStartY - 60;
+      // const refNumberY = contentStartY - 90;
       
-      // Draw ref number box
-      page.drawRectangle({
-        x: margin - 10,
-        y: refNumberY - 10,
-        width: 400,
-        height: 40,
-        color: rgb(0.95, 0.95, 0.95),
-        borderColor: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-        borderWidth: 1,
-      });
+      // // Draw ref number box
+      // page.drawRectangle({
+      //   x: margin - 10,
+      //   y: refNumberY - 10,
+      //   width: 400,
+      //   height: 40,
+      //   color: rgb(0.97, 0.97, 0.97),
+      //   borderColor: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+      //   borderWidth: 1.5,
+      // });
       
-      page.drawText('Application Reference Number:', {
-        x: margin,
-        y: refNumberY + 10,
-        size: textSize,
-        font: helveticaFont,
-        color: rgb(0.3, 0.3, 0.3),
-      });
+      // page.drawText('Application Reference Number:', {
+      //   x: margin,
+      //   y: refNumberY + 15,
+      //   size: textSize,
+      //   font: helveticaFont,
+      //   color: rgb(0.3, 0.3, 0.3),
+      // });
       
-      page.drawText(registrationId, {
-        x: margin + 200,
-        y: refNumberY + 10,
-        size: textSize + 2,
-        font: helveticaBold,
-        color: rgb(0.1, 0.1, 0.1),
-      });
+      // page.drawText(registrationId, {
+      //   x: margin + 200,
+      //   y: refNumberY + 15,
+      //   size: textSize + 4,
+      //   font: helveticaBold,
+      //   color: rgb(0.1, 0.1, 0.1),
+      // });
+
+      
       
       // Student information section
-      const studentInfoY = refNumberY - 60;
+      // const studentInfoY = refNumberY - 75;
+
+      // More consistent spacing from date to ref box
+        const refNumberY = contentStartY - 80; // Adjusted for consistent spacing
+
+        // Draw the box
+        const boxHeight = 40;
+        page.drawRectangle({
+          x: margin - 10,
+          y: refNumberY - boxHeight,
+          width: 400,
+          height: boxHeight,
+          color: rgb(0.97, 0.97, 0.97),
+          borderColor: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+          borderWidth: 1.5,
+        });
+
+        // True center of the box
+        const boxCenterY = refNumberY - (boxHeight / 2);
+
+        // Center both text elements vertically
+        page.drawText('Application Reference Number:', {
+          x: margin,
+          y: boxCenterY - (textSize/2), // This centers text vertically
+          size: textSize,
+          font: helveticaFont,
+          color: rgb(0.3, 0.3, 0.3),
+        });
+
+        page.drawText(registrationId, {
+          x: margin + 200,
+          y: boxCenterY - (textSize/2), // Same vertical position as label
+          size: textSize,
+          font: helveticaBold,
+          color: rgb(0.1, 0.1, 0.1),
+        });
+
+        // Make spacing to student info section consistent
+        const studentInfoY = refNumberY - boxHeight - 60; // Even spacing after the box
+      
       
       page.drawText('Student Information', {
         x: margin,
@@ -247,7 +288,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       page.drawLine({
         start: { x: margin, y: studentInfoY - 10 },
         end: { x: page.getWidth() - margin, y: studentInfoY - 10 },
-        thickness: 1,
+        thickness: 1.5,
         color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
       
@@ -294,7 +335,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       // Function to calculate row height based on content
       const calculateRowHeight = (value, colWidth, fontSize, font) => {
         const lines = wrapText(value, colWidth - 20, fontSize, font); // 20px padding
-        return Math.max(24, lines.length * (fontSize + 4)); // minimum 24px, or increase based on lines
+        return Math.max(30, lines.length * (fontSize + 6)); // minimum 24px, or increase based on lines
       };
       
       // Reorganized table data in logical groups
@@ -317,7 +358,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         
         // Program Information Group
         { label: 'Desired Program:', value: localStudentData.desired_academic_program || 'Not provided' },
-        { label: 'Islamic Studies Specialization:', value: localStudentData.islamic_studies_specialization || 'Not provided' }
+        { label: 'Islamic Specialization:', value: localStudentData.islamic_studies_specialization || 'Not provided' }
       ];
       
       // Calculate dynamic row heights and total table height
@@ -337,7 +378,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         totalHeight += height;
       });
       
-      const tableStartY = studentInfoY - 45;
+      const tableStartY = studentInfoY - 40;
       const tableWidth = page.getWidth() - (tableMargin * 2);
       const tableHeight = totalHeight;
       
@@ -347,8 +388,8 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
         y: tableStartY - tableHeight,
         width: tableWidth,
         height: tableHeight,
-        borderColor: rgb(0.8, 0.8, 0.8),
-        borderWidth: 0.5,
+        borderColor: rgb(0.7, 0.7, 0.7),
+        borderWidth: 1,
         color: rgb(1, 1, 1, 0), // Transparent fill
       });
       
@@ -413,7 +454,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       });
       
       // Next steps section
-      const nextStepsY = tableStartY - tableHeight - 40;
+      const nextStepsY = tableStartY - tableHeight - 50;
       
       page.drawText('Next Steps', {
         x: margin,
@@ -433,11 +474,11 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       const steps = [
         'Our admissions team will review your application within 5-7 business days.',
         'You will receive an email notification about your application status.',
-        'For any queries, contact our admissions office at admissions@techethica.edu'
+        'For any queries, contact our admissions office at admin@techethica.in'
       ];
       
       steps.forEach((step, index) => {
-        const y = nextStepsY - 40 - (index * lineHeight * 1.2);
+        const y = nextStepsY - 40 - (index * lineHeight * 1.3);
         
         page.drawText((index + 1) + '.', {
           x: margin,
@@ -457,30 +498,56 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       });
       
       // Footer
-      const footerY = 70;
+      // const footerY = 70;
       
+      // page.drawLine({
+      //   start: { x: margin, y: footerY + 20 },
+      //   end: { x: page.getWidth() - margin, y: footerY + 20 },
+      //   thickness: 1,
+      //   color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+      // });
+      
+      // page.drawText('TechEthica Institute', {
+      //   x: margin,
+      //   y: footerY,
+      //   size: textSize,
+      //   font: helveticaBold,
+      //   color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+      // });
+      
+      // page.drawText('www.techethica.edu | +1 (555) 123-4567', {
+      //   x: margin,
+      //   y: footerY - 20,
+      //   size: textSize - 2,
+      //   font: helveticaFont,
+      //   color: rgb(0.3, 0.3, 0.3),
+      // });
+
+      // Replace the existing footer code with this single-line format
+      // Footer with centered text
+      const footerY = 70;
+
+      // Draw the line above the footer
       page.drawLine({
         start: { x: margin, y: footerY + 20 },
         end: { x: page.getWidth() - margin, y: footerY + 20 },
         thickness: 1,
         color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
       });
-      
-      page.drawText('TechEthica Institute', {
-        x: margin,
+
+      // Centered footer text with updated information
+      const footerText = 'TechEthica | Sunnah & Science Research Labs | www.techethica.in | +91 90745 11600 | Bidarahalli, Bengaluru, KA, India';
+      const textWidth = helveticaFont.widthOfTextAtSize(footerText, textSize - 1);
+      const centerX = (page.getWidth() - textWidth) / 2;
+
+      page.drawText(footerText, {
+        x: centerX,
         y: footerY,
-        size: textSize,
-        font: helveticaBold,
-        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-      });
-      
-      page.drawText('www.techethica.edu | +1 (555) 123-4567', {
-        x: margin,
-        y: footerY - 20,
-        size: textSize - 2,
+        size: textSize - 1,
         font: helveticaFont,
-        color: rgb(0.3, 0.3, 0.3),
+        color: rgb(primaryColor.r, primaryColor.g, primaryColor.b), // Using primary color
       });
+
       
       // Serialize the PDFDocument to bytes
       const pdfBytes = await pdfDoc.save();
@@ -688,7 +755,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
                   </li>
                   <li className="flex items-start">
                     <Phone className={`w-5 h-5 mr-3 ${iconColor} mt-1 flex-shrink-0`} />
-                    <span>For any queries, contact our admissions office at admissions@techethica.edu</span>
+                    <span>For any queries, contact our admissions office at admin@techethica.in</span>
                   </li>
                 </ul>
               </div>
