@@ -37,17 +37,17 @@ const ContactBar = () => {
     <div className={`relative ${bgStyle} text-center py-2 sm:py-4 px-3 sm:px-6 transition-all duration-700 ease-in-out shadow-lg z-50`}>
       {/* For regular layout */}
       <div className={`${isLandscape ? 'hidden' : 'block'}`}>
-        <h1 className={`text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide ${titleStyle} drop-shadow-lg`}>
+        <h1 className={`text-3xl sm:text-4xl md:text-5xl font-bold tracking-wide ${titleStyle} drop-shadow-lg`}>
           Let's Connect
         </h1>
-        <div className="contact-info mt-2 sm:mt-4 text-sm sm:text-lg flex flex-col sm:flex-row justify-center sm:gap-6 items-center">
+        <div className="contact-info mt-2 sm:mt-4 text-lg sm:text-2xl flex flex-col sm:flex-row justify-center sm:gap-6 items-center">
           <a
             href="tel:+91 90745 91600"
             className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2"
+              className="h-6 w-6 sm:h-7 sm:w-7 mr-1 sm:mr-2"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -68,7 +68,7 @@ const ContactBar = () => {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2"
+              className="h-5 w-5 sm:h-6 sm:w-6 mr-1 sm:mr-2"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -87,17 +87,17 @@ const ContactBar = () => {
 
       {/* For landscape mobile layout - compact version */}
       <div className={`${!isLandscape ? 'hidden' : 'block'} flex justify-center items-center`}>
-        <h1 className={`text-xl font-bold ${titleStyle} drop-shadow-lg mr-4`}>
+        <h1 className={`text-2xl font-bold ${titleStyle} drop-shadow-lg mr-4`}>
           Let's Connect:
         </h1>
         <div className="flex items-center space-x-6">
           <a
             href="tel:+91 90745 91600"
-            className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none text-sm`}
+            className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none text-lg`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
+              className="h-6 w-6 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -114,11 +114,11 @@ const ContactBar = () => {
           <span className={useLightTheme ? "text-gray-500" : "text-gray-400"}>|</span>
           <a
             href="mailto:info@techethica.in"
-            className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none text-sm`}
+            className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none text-lg`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
+              className="h-5 w-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
