@@ -382,7 +382,10 @@ const AboutUs = () => {
       {/* Desktop Timeline */}
       <div className="hidden md:block relative">
         {/* Timeline line */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700"></div>
+        {/* <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700"></div> */}
+        {/* Timeline line */}
+<div className="timeline-line absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700"></div>
+        
         
         <div className="space-y-24 relative z-10">
           {/* Timeline Item 1 */}
@@ -646,7 +649,7 @@ const AboutUs = () => {
             <div className="flex justify-center">
               <div className="font-arabic text-xl sm:text-2xl text-amber-600/80 mb-4 sm:mb-6">نموذج التعليم الفريد</div>
             </div>
-            <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-4 w-16 sm:w-24 h-1 bg-amber-400/60 rounded-full"></div>
+            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 -bottom-4 w-16 sm:w-24 h-1 bg-amber-400/60 rounded-full"></div>
           </div>
           
           {/* Replaced the grid with a flex column layout for better mobile display */}

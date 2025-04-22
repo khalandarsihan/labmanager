@@ -1134,11 +1134,6 @@ video {
   margin-right: -0.25rem;
 }
 
-.-mx-4 {
-  margin-left: -1rem;
-  margin-right: -1rem;
-}
-
 .-mx-6 {
   margin-left: -1.5rem;
   margin-right: -1.5rem;
@@ -1637,10 +1632,6 @@ video {
   width: 16rem;
 }
 
-.w-72 {
-  width: 18rem;
-}
-
 .w-8 {
   width: 2rem;
 }
@@ -1868,12 +1859,6 @@ video {
 
 .skew-y-12 {
   --tw-skew-y: 12deg;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.scale-125 {
-  --tw-scale-x: 1.25;
-  --tw-scale-y: 1.25;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -3183,18 +3168,6 @@ video {
 .bg-yellow-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(254 249 195 / var(--tw-bg-opacity, 1));
-}
-
-.bg-amber-100\/80 {
-  background-color: rgb(254 243 199 / 0.8);
-}
-
-.bg-amber-200\/50 {
-  background-color: rgb(253 230 138 / 0.5);
-}
-
-.bg-opacity-50 {
-  --tw-bg-opacity: 0.5;
 }
 
 .bg-\[url\(\'\/assets\/labmanager\/images\/dark-pattern\.png\'\)\] {
@@ -5084,6 +5057,20 @@ video {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Fix for the vertical line in Philosophy section */
+
+@media (max-width: 768px) {
+  .md\:w-1\/3.relative .border.border-amber-500\/30 {
+    border: none !important;
+  }
+
+  /* Target the specific gradient that might be creating the line */
+
+  .md\:w-1\/3.relative .absolute.inset-0 {
+    background: none !important;
+  }
+}
+
 .file\:border-0::file-selector-button {
   border-width: 0px;
 }
@@ -5159,10 +5146,6 @@ video {
 
 .hover\:border-2:hover {
   border-width: 2px;
-}
-
-.hover\:border-amber-200\/20:hover {
-  border-color: rgb(253 230 138 / 0.2);
 }
 
 .hover\:border-amber-300:hover {
@@ -5874,34 +5857,6 @@ video {
 .dark\:border-gray-700:is(.dark *) {
   --tw-border-opacity: 1;
   border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));
-}
-
-.dark\:bg-amber-700\/30:is(.dark *) {
-  background-color: rgb(180 83 9 / 0.3);
-}
-
-.dark\:bg-gray-800:is(.dark *) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
-}
-
-.dark\:bg-gray-800\/80:is(.dark *) {
-  background-color: rgb(31 41 55 / 0.8);
-}
-
-.dark\:text-amber-200:is(.dark *) {
-  --tw-text-opacity: 1;
-  color: rgb(253 230 138 / var(--tw-text-opacity, 1));
-}
-
-.dark\:text-gray-600:is(.dark *) {
-  --tw-text-opacity: 1;
-  color: rgb(75 85 99 / var(--tw-text-opacity, 1));
-}
-
-.dark\:hover\:bg-gray-700:hover:is(.dark *) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1));
 }
 
 @media not all and (min-width: 640px) {

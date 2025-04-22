@@ -299,3 +299,15 @@
 .arabic-text-shadow {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* Fix for the vertical line in Philosophy section */
+@media (max-width: 768px) {
+  .md\:w-1\/3.relative .border.border-amber-500\/30 {
+    border: none !important;
+  }
+  
+  /* Target the specific gradient that might be creating the line */
+  .md\:w-1\/3.relative .absolute.inset-0 {
+    background: none !important;
+  }
+}
