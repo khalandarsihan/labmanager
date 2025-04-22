@@ -15,9 +15,10 @@ const AboutUsAdditionalSections = ({ themeStyles, useLightTheme, StarPattern, He
       {/* Vision and Student Life Section */}
       <section className="relative py-10 sm:py-16 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12 md:mb-24">
+          {/* Changed to flex-col on mobile */}
+          <div className="flex flex-col md:grid md:grid-cols-3 gap-6 sm:gap-8 mb-12 md:mb-24">
             {/* Vision for the Future */}
-            <div className={`${themeStyles.card.bg} rounded-lg p-5 sm:p-8 col-span-1 relative overflow-hidden border ${themeStyles.card.border} ${themeStyles.card.hoverBorder} transition-all duration-300 group hover:shadow-lg`}>
+            <div className={`${themeStyles.card.bg} rounded-lg p-5 sm:p-8 md:col-span-1 relative overflow-hidden border ${themeStyles.card.border} ${themeStyles.card.hoverBorder} transition-all duration-300 group hover:shadow-lg`}>
               <div className={`absolute top-0 right-0 w-20 h-20 sm:w-32 sm:h-32 ${themeStyles.accent.light} rounded-bl-full`}></div>
               <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading} mb-4 sm:mb-6 relative z-10`}>Vision for the Future</h2>
               <div className="flex justify-end mb-3 sm:mb-4">
@@ -25,7 +26,7 @@ const AboutUsAdditionalSections = ({ themeStyles, useLightTheme, StarPattern, He
               </div>
               
               <div className="relative mb-4 sm:mb-6">
-                <HexagonPattern className={`absolute -right-20 top-0 ${themeStyles.pattern}`} />
+                <HexagonPattern className={`absolute -right-20 top-0 ${themeStyles.pattern} hidden sm:block`} />
                 <p className={`${themeStyles.text.primary} mb-3 sm:mb-4 relative z-10 text-sm sm:text-base`}>TechEthica aims to become:</p>
                 <ul className={`list-disc pl-4 sm:pl-6 ${themeStyles.text.primary} space-y-2 sm:space-y-3 relative z-10 text-sm sm:text-base`}>
                   <li className="group-hover:translate-x-1 transition-transform duration-300">
@@ -60,9 +61,9 @@ const AboutUsAdditionalSections = ({ themeStyles, useLightTheme, StarPattern, He
             <div className={`${themeStyles.card.bg} rounded-lg p-5 sm:p-8 md:col-span-2 relative overflow-hidden border ${themeStyles.card.border} ${themeStyles.card.hoverBorder} transition-all duration-300 hover:shadow-lg`}>
               <div className={`absolute top-0 right-0 w-24 h-24 sm:w-40 sm:h-40 ${themeStyles.accent.light} rounded-bl-full`}></div>
               <div className="relative z-10">
-                <div className="flex justify-between items-center mb-4 sm:mb-6">
-                  <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading}`}>Student Life at TechEthica</h2>
-                  <div className="font-arabic text-base sm:text-lg text-amber-600/70">الحياة الطلابية</div>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
+                  <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading} text-center sm:text-left mb-2 sm:mb-0`}>Student Life at TechEthica</h2>
+                  <div className="font-arabic text-base sm:text-lg text-amber-600/70 text-center sm:text-right">الحياة الطلابية</div>
                 </div>
                 
                 <p className={`${themeStyles.text.primary} mb-4 sm:mb-6 relative z-10 text-sm sm:text-base`}>
@@ -70,37 +71,38 @@ const AboutUsAdditionalSections = ({ themeStyles, useLightTheme, StarPattern, He
                   Student life includes:
                 </p>
                 
+                {/* Modified grid for better display on small screens */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 relative z-10">
                   <div className={`${useLightTheme ? 'bg-amber-100/50' : 'bg-gray-900/30'} p-3 sm:p-4 rounded-lg border ${themeStyles.card.border} hover:transform hover:scale-105 transition-all duration-300`}>
-                    <div className="flex justify-between items-center mb-1 sm:mb-2">
-                      <h3 className={`${themeStyles.subheading} font-semibold text-base sm:text-lg`}>Mentorship Circles</h3>
-                      <span className="font-arabic text-xs sm:text-sm text-amber-600/70">حلقات التوجيه</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-1 sm:mb-2">
+                      <h3 className={`${themeStyles.subheading} font-semibold text-base sm:text-lg text-center sm:text-left`}>Mentorship Circles</h3>
+                      <span className="font-arabic text-xs sm:text-sm text-amber-600/70 text-center sm:text-right">حلقات التوجيه</span>
                     </div>
-                    <p className={`${themeStyles.text.secondary} text-xs sm:text-sm`}>Regular sessions with scholars and senior technologists</p>
+                    <p className={`${themeStyles.text.secondary} text-xs sm:text-sm text-center sm:text-left`}>Regular sessions with scholars and senior technologists</p>
                   </div>
                   
                   <div className={`${useLightTheme ? 'bg-amber-100/50' : 'bg-gray-900/30'} p-3 sm:p-4 rounded-lg border ${themeStyles.card.border} hover:transform hover:scale-105 transition-all duration-300`}>
-                    <div className="flex justify-between items-center mb-1 sm:mb-2">
-                      <h3 className={`${themeStyles.subheading} font-semibold text-base sm:text-lg`}>Workshops & Hackathons</h3>
-                      <span className="font-arabic text-xs sm:text-sm text-amber-600/70">ورش العمل</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-1 sm:mb-2">
+                      <h3 className={`${themeStyles.subheading} font-semibold text-base sm:text-lg text-center sm:text-left`}>Workshops & Hackathons</h3>
+                      <span className="font-arabic text-xs sm:text-sm text-amber-600/70 text-center sm:text-right">ورش العمل</span>
                     </div>
-                    <p className={`${themeStyles.text.secondary} text-xs sm:text-sm`}>Hands-on events with an ethical lens</p>
+                    <p className={`${themeStyles.text.secondary} text-xs sm:text-sm text-center sm:text-left`}>Hands-on events with an ethical lens</p>
                   </div>
                   
                   <div className={`${useLightTheme ? 'bg-amber-100/50' : 'bg-gray-900/30'} p-3 sm:p-4 rounded-lg border ${themeStyles.card.border} hover:transform hover:scale-105 transition-all duration-300`}>
-                    <div className="flex justify-between items-center mb-1 sm:mb-2">
-                      <h3 className={`${themeStyles.subheading} font-semibold text-base sm:text-lg`}>Community Service</h3>
-                      <span className="font-arabic text-xs sm:text-sm text-amber-600/70">خدمة المجتمع</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-1 sm:mb-2">
+                      <h3 className={`${themeStyles.subheading} font-semibold text-base sm:text-lg text-center sm:text-left`}>Community Service</h3>
+                      <span className="font-arabic text-xs sm:text-sm text-amber-600/70 text-center sm:text-right">خدمة المجتمع</span>
                     </div>
-                    <p className={`${themeStyles.text.secondary} text-xs sm:text-sm`}>Projects grounded in Islamic social responsibility</p>
+                    <p className={`${themeStyles.text.secondary} text-xs sm:text-sm text-center sm:text-left`}>Projects grounded in Islamic social responsibility</p>
                   </div>
                   
                   <div className={`${useLightTheme ? 'bg-amber-100/50' : 'bg-gray-900/30'} p-3 sm:p-4 rounded-lg border ${themeStyles.card.border} hover:transform hover:scale-105 transition-all duration-300`}>
-                    <div className="flex justify-between items-center mb-1 sm:mb-2">
-                      <h3 className={`${themeStyles.subheading} font-semibold text-base sm:text-lg`}>Tazkiyah Sessions</h3>
-                      <span className="font-arabic text-xs sm:text-sm text-amber-600/70">جلسات التزكية</span>
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-1 sm:mb-2">
+                      <h3 className={`${themeStyles.subheading} font-semibold text-base sm:text-lg text-center sm:text-left`}>Tazkiyah Sessions</h3>
+                      <span className="font-arabic text-xs sm:text-sm text-amber-600/70 text-center sm:text-right">جلسات التزكية</span>
                     </div>
-                    <p className={`${themeStyles.text.secondary} text-xs sm:text-sm`}>Focused on personal development and growth</p>
+                    <p className={`${themeStyles.text.secondary} text-xs sm:text-sm text-center sm:text-left`}>Focused on personal development and growth</p>
                   </div>
                 </div>
                 
@@ -124,15 +126,16 @@ const AboutUsAdditionalSections = ({ themeStyles, useLightTheme, StarPattern, He
       {/* Career and Testimonials Section */}
       <section className="relative py-10 sm:py-16 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-24">
+          {/* Modified grid for better mobile layout */}
+          <div className="flex flex-col lg:grid lg:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-24">
             {/* Career Support Column */}
             <div className={`${themeStyles.card.bg} backdrop-blur-sm rounded-lg p-5 sm:p-8 border ${themeStyles.card.border} ${themeStyles.card.hoverBorder} transition-all duration-300 hover:shadow-lg`}>
-              <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading} mb-4 sm:mb-6`}>Career Support & Certification</h2>
-              <div className="flex justify-end mb-3 sm:mb-4">
+              <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading} mb-4 sm:mb-6 text-center lg:text-left`}>Career Support & Certification</h2>
+              <div className="flex justify-center lg:justify-end mb-3 sm:mb-4">
                 <div className="font-arabic text-base sm:text-lg text-amber-600/70">الدعم المهني والشهادات</div>
               </div>
               
-              <p className={`${themeStyles.text.primary} mb-3 sm:mb-4 text-sm sm:text-base`}>
+              <p className={`${themeStyles.text.primary} mb-3 sm:mb-4 text-sm sm:text-base text-center lg:text-left`}>
                 We offer career-oriented certifications and preparation for:
               </p>
               
@@ -163,7 +166,7 @@ const AboutUsAdditionalSections = ({ themeStyles, useLightTheme, StarPattern, He
                 </li>
               </ul>
               
-              <div className="mt-4 sm:mt-6 flex justify-center">
+              {/* <div className="mt-4 sm:mt-6 flex justify-center">
                 <a 
                   href="/careers" 
                   className={`inline-flex items-center ${themeStyles.text.primary} hover:text-amber-600 transition-colors duration-300 text-sm sm:text-base`}
@@ -173,17 +176,18 @@ const AboutUsAdditionalSections = ({ themeStyles, useLightTheme, StarPattern, He
                     <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </a>
-              </div>
+              </div> */}
             </div>
             
             {/* Testimonials Column */}
             <div className="lg:col-span-2">
-              <div className="flex justify-between items-center mb-4 sm:mb-6">
-                <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading}`}>What Our Students Say</h2>
-                <div className="font-arabic text-base sm:text-lg text-amber-600/70">شهادات الطلاب</div>
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6">
+                <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading} text-center sm:text-left mb-2 sm:mb-0`}>What Our Students Say</h2>
+                <div className="font-arabic text-base sm:text-lg text-amber-600/70 text-center sm:text-right">شهادات الطلاب</div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              {/* Redesigned testimonials grid for better mobile display */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div className={`${themeStyles.quote} p-4 sm:p-6 rounded-lg border ${themeStyles.card.border} relative group hover:shadow-lg transition-all duration-300`}>
                   {/* Quote mark */}
                   <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 text-3xl sm:text-5xl text-amber-500/20 group-hover:text-amber-500/40 transition-colors duration-300">"</div>

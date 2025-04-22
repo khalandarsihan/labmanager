@@ -1,7 +1,9 @@
+// frontend/src/pages/AboutUs/index.jsx
 import React from 'react';
 import { useTheme } from '../../components/ui/ThemeContext';
 import BackgroundPattern from '../../components/ui/BackgroundPattern';
 import AboutUsAdditionalSections from './AdditionalSections'; // Import the additional sections
+
 
 const AboutUs = () => {
   // Use theme context
@@ -37,8 +39,6 @@ const AboutUs = () => {
 
   return (
     <div className={`min-h-screen ${themeStyles.background} relative overflow-x-hidden`}>
-      {/* REMOVED ThemeSwitcher button from here - we'll let AppWrapper handle this */}
-      
       {/* Background Pattern */}
       <BackgroundPattern />
       
@@ -117,6 +117,7 @@ const AboutUs = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-10 sm:mb-16">
+            {/* Value cards - Keeping these the same */}
             {/* Value 1: Excellence */}
             <div className={`${themeStyles.card.bg} rounded-lg p-4 sm:p-6 border ${themeStyles.card.border} transition-all duration-300 text-center group hover:transform hover:scale-105`}>
               <div className={`w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full ${themeStyles.accent.medium} flex items-center justify-center text-xl sm:text-2xl`}>
@@ -213,8 +214,8 @@ const AboutUs = () => {
       <section className="relative py-8 sm:py-12 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="flex flex-col md:flex-row items-center mb-12 sm:mb-24 gap-8 sm:gap-12">
-            {/* Decorative Element */}
-            <div className={`hidden md:block absolute left-0 top-1/2 transform -translate-y-1/2 w-32 h-32 lg:w-64 lg:h-64 ${themeStyles.accent.light} rounded-full blur-3xl`}></div>
+            {/* Decorative Element - Made sure it doesn't interfere on small screens */}
+            <div className={`hidden md:block absolute left-0 top-1/2 transform -translate-y-1/2 w-32 h-32 lg:w-64 lg:h-64 ${themeStyles.accent.light} rounded-full blur-3xl opacity-70`}></div>
             
             {/* Content Side */}
             <div className="md:w-2/3 relative z-10">
@@ -224,8 +225,8 @@ const AboutUs = () => {
                 We draw inspiration from the rich Islamic intellectual tradition while keeping pace with the ever-evolving world of technology.
               </p>
               <blockquote className={`border-l-4 border-amber-500 pl-3 sm:pl-4 italic text-sm sm:text-base ${themeStyles.text.secondary} my-4 sm:my-6`}>
-                "Indeed, the scholars are the inheritors of the Prophets." – Prophet Muhammad ﷺ
-              </blockquote>
+                "Indeed, the scholars are the inheritors of the Prophets." – Prophet Muhammad <span className="font-arabic not-italic">صلى الله عليه وسلم</span>
+                              </blockquote>
               <p className={`${themeStyles.text.primary} mb-3 sm:mb-4 text-base sm:text-lg`}>Our students are trained to:</p>
               <ul className={`list-disc pl-4 sm:pl-6 ${themeStyles.text.primary} space-y-1 sm:space-y-2 text-base sm:text-lg`}>
                 <li>Think critically and solve real-world problems</li>
@@ -255,127 +256,324 @@ const AboutUs = () => {
         </div>
       </section>
       
-      {/* Historical Timeline Section */}
-      <section className="relative py-10 sm:py-16 overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading} mb-3 sm:mb-4`}>Islamic Legacy in Knowledge</h2>
-            <div className="font-arabic text-xl sm:text-2xl text-amber-600/80 mb-4 sm:mb-6">ميراث العلم الإسلامي</div>
-            <p className={`${themeStyles.text.secondary} max-w-3xl mx-auto mb-4 sm:mb-8 text-sm sm:text-base`}>
-              We draw inspiration from the rich history of Islamic scholarship that has contributed significantly to human knowledge.
-            </p>
-            <GeometricPattern className={themeStyles.pattern} />
+{/* Historical Timeline Section */}
+<section className="relative py-10 sm:py-16 overflow-hidden">
+  {/* Decorative background elements */}
+  <div className="absolute inset-0 z-0 opacity-10">
+    <div className="absolute top-0 left-0 w-64 h-64 bg-amber-600 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
+    <div className="absolute bottom-0 right-0 w-64 h-64 bg-amber-600 rounded-full blur-3xl transform translate-x-1/2 translate-y-1/2"></div>
+  </div>
+
+  <div className="container mx-auto px-4 sm:px-6 relative z-10">
+    <div className="text-center mb-8 sm:mb-12">
+      <h2 className={`text-2xl sm:text-3xl lg:text-4xl font-serif font-bold ${themeStyles.heading} mb-3 sm:mb-4`}>
+        Islamic Legacy in Knowledge
+      </h2>
+      <div className="font-arabic text-xl sm:text-2xl text-amber-600/80 mb-4 sm:mb-6">ميراث العلم الإسلامي</div>
+      <p className={`${themeStyles.text.secondary} max-w-3xl mx-auto mb-4 sm:mb-8 text-sm sm:text-base`}>
+        We draw inspiration from the rich history of Islamic scholarship that has contributed significantly to human knowledge and shaped modern science and technology.
+      </p>
+      <GeometricPattern className={themeStyles.pattern} />
+    </div>
+    
+    {/* Timeline Section - Mobile scrollable, desktop beautiful timeline */}
+    <div className="mb-12">
+      {/* Mobile Card Layout */}
+      <div className="md:hidden mb-8">
+        <div className="grid grid-cols-1 gap-6">
+          {/* Scholar 1 */}
+          <div 
+            className={`${themeStyles.card.bg} rounded-xl p-5 border ${themeStyles.card.border} shadow-md flex flex-col w-full mx-auto max-w-sm`}
+          >
+            <div className="rounded-lg overflow-hidden mb-4 h-48">
+              <img
+                src="/assets/labmanager/images/algebraic_manuscript_300x200.png"
+                alt="Historical manuscript of algebraic principles"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="font-arabic text-lg text-amber-600 mb-1">الخوارزمي</div>
+              <h3 className={`text-xl font-bold ${themeStyles.subheading} mb-2 flex items-center`}>
+                <span className="mr-2 text-amber-500">📊</span>
+                Al-Khwarizmi
+              </h3>
+              <div className="text-sm text-amber-700/70 mb-3">780-850 CE</div>
+              <p className={`${themeStyles.text.secondary} text-sm`}>
+                The father of algebra whose name gave us the word "algorithm." His work laid the foundation for modern computing.
+              </p>
+            </div>
           </div>
-          
-          <div className="relative">
-            {/* Timeline Line - Hidden on small screens */}
-            <div className="hidden md:block absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-amber-500/20"></div>
+
+          {/* Scholar 2 */}
+          <div 
+            className={`${themeStyles.card.bg} rounded-xl p-5 border ${themeStyles.card.border} shadow-md flex flex-col w-full mx-auto max-w-sm`}
+          >
+            <div className="rounded-lg overflow-hidden mb-4 h-48">
+              <img
+                src="/assets/labmanager/images/medical_manuscript_300x200.png"
+                alt="Historical medical manuscript"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="font-arabic text-lg text-amber-600 mb-1">ابن سينا</div>
+              <h3 className={`text-xl font-bold ${themeStyles.subheading} mb-2 flex items-center`}>
+                <span className="mr-2 text-amber-500">🧬</span>
+                Ibn Sina
+              </h3>
+              <div className="text-sm text-amber-700/70 mb-3">980-1037 CE</div>
+              <p className={`${themeStyles.text.secondary} text-sm`}>
+                Known as Avicenna in the West, his "Canon of Medicine" was a standard medical text in Europe for centuries.
+              </p>
+            </div>
+          </div>
+
+          {/* Scholar 3 */}
+          <div 
+            className={`${themeStyles.card.bg} rounded-xl p-5 border ${themeStyles.card.border} shadow-md flex flex-col w-full mx-auto max-w-sm`}
+          >
+            <div className="rounded-lg overflow-hidden mb-4 h-48">
+              <img
+                src="/assets/labmanager/images/engineering_manuscript_300x200.png"
+                alt="Historical engineering manuscript"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="font-arabic text-lg text-amber-600 mb-1">الجزري</div>
+              <h3 className={`text-xl font-bold ${themeStyles.subheading} mb-2 flex items-center`}>
+                <span className="mr-2 text-amber-500">⚙️</span>
+                Al-Jazari
+              </h3>
+              <div className="text-sm text-amber-700/70 mb-3">1136-1206 CE</div>
+              <p className={`${themeStyles.text.secondary} text-sm`}>
+                An engineering genius who created the first programmable humanoid robot and numerous automated machines.
+              </p>
+            </div>
+          </div>
+
+          {/* Scholar 4 */}
+          <div 
+            className={`${themeStyles.card.bg} rounded-xl p-5 border ${themeStyles.card.border} shadow-md flex flex-col w-full mx-auto max-w-sm`}
+          >
+            <div className="rounded-lg overflow-hidden mb-4 h-48">
+              <img
+                src="/assets/labmanager/images/optics_manuscript_300x200.png"
+                alt="Historical optics manuscript"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1">
+              <div className="font-arabic text-lg text-amber-600 mb-1">ابن الهيثم</div>
+              <h3 className={`text-xl font-bold ${themeStyles.subheading} mb-2 flex items-center`}>
+                <span className="mr-2 text-amber-500">👁️</span>
+                Ibn Al-Haytham
+              </h3>
+              <div className="text-sm text-amber-700/70 mb-3">965-1040 CE</div>
+              <p className={`${themeStyles.text.secondary} text-sm`}>
+                Pioneer in optics who developed the first accurate theory of vision and made significant contributions to astronomy and mathematics.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Timeline */}
+      <div className="hidden md:block relative">
+        {/* Timeline line */}
+        <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-amber-300 via-amber-500 to-amber-700"></div>
+        
+        <div className="space-y-24 relative z-10">
+          {/* Timeline Item 1 */}
+          <div className="flex items-center">
+            {/* Left content */}
+            <div className="w-1/2 pr-12 text-right">
+              <div 
+                className={`${themeStyles.card.bg} rounded-xl p-6 border ${themeStyles.card.border} shadow-lg transition-all duration-300 hover:shadow-xl`}
+              >
+                <div className="font-arabic text-xl text-amber-600 mb-2">الخوارزمي</div>
+                <h3 className={`text-2xl font-bold ${themeStyles.subheading} mb-2 flex justify-end items-center`}>
+                  Al-Khwarizmi
+                  <span className="ml-2 text-amber-500">📊</span>
+                </h3>
+                <div className="text-sm text-amber-700/70 mb-3 text-right">780-850 CE</div>
+                <p className={`${themeStyles.text.secondary} text-base`}>
+                  The father of algebra whose name gave us the word "algorithm." His work laid the foundation for modern computing and mathematical thinking.
+                </p>
+              </div>
+            </div>
             
-            {/* Timeline Items */}
-            <div className="grid grid-cols-1 gap-8 md:gap-12 relative z-10">
-              {/* Timeline Item 1 */}
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="md:w-1/2 md:pr-6 lg:pr-12 md:text-right mb-4 md:mb-0">
-                  <div className={`${themeStyles.card.bg} rounded-lg p-4 sm:p-6 border ${themeStyles.card.border} transition-all duration-300`}>
-                    <div className="font-arabic text-base sm:text-lg text-amber-600/70 mb-1 sm:mb-2">الخوارزمي</div>
-                    <h3 className={`text-lg sm:text-xl font-bold ${themeStyles.subheading} mb-1 sm:mb-2`}>Al-Khwarizmi (780-850 CE)</h3>
-                    <p className={`${themeStyles.text.secondary} text-sm sm:text-base`}>
-                      The father of algebra whose name gave us the word "algorithm." His work laid the foundation for modern computing.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="md:hidden w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center z-10">
-                  <div className="w-4 h-4 rounded-full bg-white"></div>
-                </div>
-                
-                <div className="hidden md:block absolute left-1/2 top-12 transform -translate-x-1/2 w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center z-10">
-                  <div className="w-4 h-4 rounded-full bg-white"></div>
-                </div>
-                
-                <div className="md:w-1/2 md:pl-6 lg:pl-12">
-                  <img
-                    src="/assets/labmanager/images/algebraic_manuscript_300x200.png"
-                    alt="Historical manuscript of algebraic principles"
-                    className="w-full h-36 sm:h-48 object-cover rounded-lg shadow-lg"
-                  />
+            {/* Timeline node */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center z-20">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 p-1 shadow-lg">
+                <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                  <span className="text-amber-600 text-sm">📊</span>
                 </div>
               </div>
-              
-              {/* Timeline Item 2 */}
-              <div className="flex flex-col md:flex-row-reverse items-center">
-                <div className="md:w-1/2 md:pl-6 lg:pl-12 md:text-left mb-4 md:mb-0">
-                  <div className={`${themeStyles.card.bg} rounded-lg p-4 sm:p-6 border ${themeStyles.card.border} transition-all duration-300`}>
-                    <div className="font-arabic text-base sm:text-lg text-amber-600/70 mb-1 sm:mb-2">ابن سينا</div>
-                    <h3 className={`text-lg sm:text-xl font-bold ${themeStyles.subheading} mb-1 sm:mb-2`}>Ibn Sina (980-1037 CE)</h3>
-                    <p className={`${themeStyles.text.secondary} text-sm sm:text-base`}>
-                      Known as Avicenna in the West, his "Canon of Medicine" was a standard medical text in Europe for centuries.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="md:hidden w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center z-10">
-                  <div className="w-4 h-4 rounded-full bg-white"></div>
-                </div>
-                
-                <div className="hidden md:block absolute left-1/2 top-[200px] transform -translate-x-1/2 w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center z-10">
-                  <div className="w-4 h-4 rounded-full bg-white"></div>
-                </div>
-                
-                <div className="md:w-1/2 md:pr-6 lg:pr-12">
-                  <img
-                    src="/assets/labmanager/images/medical_manuscript_300x200.png"
-                    alt="Historical medical manuscript"
-                    className="w-full h-36 sm:h-48 object-cover rounded-lg shadow-lg"
-                  />
-                </div>
-              </div>
-              
-              {/* Timeline Item 3 */}
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="md:w-1/2 md:pr-6 lg:pr-12 md:text-right mb-4 md:mb-0">
-                  <div className={`${themeStyles.card.bg} rounded-lg p-4 sm:p-6 border ${themeStyles.card.border} transition-all duration-300`}>
-                    <div className="font-arabic text-base sm:text-lg text-amber-600/70 mb-1 sm:mb-2">الجزري</div>
-                    <h3 className={`text-lg sm:text-xl font-bold ${themeStyles.subheading} mb-1 sm:mb-2`}>Al-Jazari (1136-1206 CE)</h3>
-                    <p className={`${themeStyles.text.secondary} text-sm sm:text-base`}>
-                      An engineering genius who created the first programmable humanoid robot and numerous automated machines.
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="md:hidden w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center z-10">
-                  <div className="w-4 h-4 rounded-full bg-white"></div>
-                </div>
-                
-                <div className="hidden md:block absolute left-1/2 top-[380px] transform -translate-x-1/2 w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center z-10">
-                  <div className="w-4 h-4 rounded-full bg-white"></div>
-                </div>
-                
-                <div className="md:w-1/2 md:pl-6 lg:pl-12">
-                  <img
-                    src="/assets/labmanager/images/engineering_manuscript_300x200.png"
-                    alt="Historical engineering manuscript"
-                    className="w-full h-36 sm:h-48 object-cover rounded-lg shadow-lg"
-                  />
-                </div>
+            </div>
+            
+            {/* Right image */}
+            <div className="w-1/2 pl-12">
+              <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+                <img
+                  src="/assets/labmanager/images/algebraic_manuscript_300x200.png"
+                  alt="Historical manuscript of algebraic principles"
+                  className="w-full h-56 object-cover"
+                />
               </div>
             </div>
           </div>
           
-          <div className="mt-8 sm:mt-16 text-center">
-            <p className={`${themeStyles.text.secondary} italic mb-2 sm:mb-4 text-sm sm:text-base`}>
-              At TechEthica, we strive to continue this legacy of innovation and ethical knowledge pursuit.
-            </p>
-            <div className="font-arabic text-lg sm:text-xl text-amber-600/70">نسعى لمواصلة هذا الإرث من الابتكار والمعرفة الأخلاقية</div>
+          {/* Timeline Item 2 */}
+          <div className="flex items-center">
+            {/* Left image for even items */}
+            <div className="w-1/2 pr-12 text-right">
+              <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+                <img
+                  src="/assets/labmanager/images/medical_manuscript_300x200.png"
+                  alt="Historical medical manuscript"
+                  className="w-full h-56 object-cover"
+                />
+              </div>
+            </div>
+            
+            {/* Timeline node */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center z-20">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 p-1 shadow-lg">
+                <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                  <span className="text-amber-600 text-sm">🧬</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right content for even items */}
+            <div className="w-1/2 pl-12">
+              <div 
+                className={`${themeStyles.card.bg} rounded-xl p-6 border ${themeStyles.card.border} shadow-lg transition-all duration-300 hover:shadow-xl`}
+              >
+                <div className="font-arabic text-xl text-amber-600 mb-2">ابن سينا</div>
+                <h3 className={`text-2xl font-bold ${themeStyles.subheading} mb-2 flex items-center`}>
+                  <span className="mr-2 text-amber-500">🧬</span>
+                  Ibn Sina
+                </h3>
+                <div className="text-sm text-amber-700/70 mb-3">980-1037 CE</div>
+                <p className={`${themeStyles.text.secondary} text-base`}>
+                  Known as Avicenna in the West, his "Canon of Medicine" was a standard medical text in Europe for centuries. His contributions to medicine, philosophy, and astronomy continue to influence these fields today.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Timeline Item 3 */}
+          <div className="flex items-center">
+            {/* Left content */}
+            <div className="w-1/2 pr-12 text-right">
+              <div 
+                className={`${themeStyles.card.bg} rounded-xl p-6 border ${themeStyles.card.border} shadow-lg transition-all duration-300 hover:shadow-xl`}
+              >
+                <div className="font-arabic text-xl text-amber-600 mb-2">الجزري</div>
+                <h3 className={`text-2xl font-bold ${themeStyles.subheading} mb-2 flex justify-end items-center`}>
+                  Al-Jazari
+                  <span className="ml-2 text-amber-500">⚙️</span>
+                </h3>
+                <div className="text-sm text-amber-700/70 mb-3 text-right">1136-1206 CE</div>
+                <p className={`${themeStyles.text.secondary} text-base`}>
+                  An engineering genius who created the first programmable humanoid robot and numerous automated machines. His mechanical innovations were centuries ahead of their time.
+                </p>
+              </div>
+            </div>
+            
+            {/* Timeline node */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center z-20">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 p-1 shadow-lg">
+                <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                  <span className="text-amber-600 text-sm">⚙️</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right image */}
+            <div className="w-1/2 pl-12">
+              <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+                <img
+                  src="/assets/labmanager/images/engineering_manuscript_300x200.png"
+                  alt="Historical engineering manuscript"
+                  className="w-full h-56 object-cover"
+                />
+              </div>
+            </div>
+          </div>
+          
+          {/* Timeline Item 4 - New scholar */}
+          <div className="flex items-center">
+            {/* Left image for even items */}
+            <div className="w-1/2 pr-12 text-right">
+              <div className="rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+                <img
+                  src="/assets/labmanager/images/optics_manuscript_300x200.png"
+                  alt="Historical optics manuscript"
+                  className="w-full h-56 object-cover"
+                />
+              </div>
+            </div>
+            
+            {/* Timeline node */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center z-20">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 p-1 shadow-lg">
+                <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                  <span className="text-amber-600 text-sm">👁️</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right content for even items */}
+            <div className="w-1/2 pl-12">
+              <div 
+                className={`${themeStyles.card.bg} rounded-xl p-6 border ${themeStyles.card.border} shadow-lg transition-all duration-300 hover:shadow-xl`}
+              >
+                <div className="font-arabic text-xl text-amber-600 mb-2">ابن الهيثم</div>
+                <h3 className={`text-2xl font-bold ${themeStyles.subheading} mb-2 flex items-center`}>
+                  <span className="mr-2 text-amber-500">👁️</span>
+                  Ibn Al-Haytham
+                </h3>
+                <div className="text-sm text-amber-700/70 mb-3">965-1040 CE</div>
+                <p className={`${themeStyles.text.secondary} text-base`}>
+                  Pioneer in optics who developed the first accurate theory of vision. His Book of Optics revolutionized our understanding of light and perception. He's also considered the father of the scientific method.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+    
+    {/* Call to Action */}
+    {/* <div className="mt-8 sm:mt-16 text-center">
+      <p className={`${themeStyles.text.secondary} italic mb-4 text-base max-w-2xl mx-auto`}>
+        At TechEthica, we strive to continue this legacy of innovation and ethical knowledge pursuit, 
+        blending ancient wisdom with modern technological advancements.
+      </p>
+      <div className="font-arabic text-xl text-amber-600/70 mb-8">نسعى لمواصلة هذا الإرث من الابتكار والمعرفة الأخلاقية</div>
+      
+      <a 
+        href="/islamic-knowledge" 
+        className={`inline-flex items-center px-6 py-3 rounded-lg bg-amber-600 hover:bg-amber-700 text-white shadow-md transition-all duration-300`}
+      >
+        <span>Explore Our Research</span>
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+        </svg>
+      </a>
+    </div> */}
+  </div>
+</section>
       
       {/* Core Domains Section with Horizontal Cards */}
       <section className="relative py-10 sm:py-16 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          {/* Decorative Element */}
-          <div className={`hidden md:block absolute right-0 top-1/3 transform w-48 h-48 lg:w-96 lg:h-96 ${themeStyles.accent.light} rounded-full blur-3xl`}></div>
+          {/* Decorative Element - Modified for better mobile display */}
+          <div className={`hidden md:block absolute right-0 top-1/3 transform w-48 h-48 lg:w-96 lg:h-96 ${themeStyles.accent.light} rounded-full blur-3xl opacity-70`}></div>
           
           <div className="text-center mb-8 sm:mb-12">
             <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading} mb-3 sm:mb-4`}>Core Domains of Study</h2>
@@ -384,7 +582,7 @@ const AboutUs = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
-            {/* Tech Domain Card */}
+            {/* Tech Domain Card - Improved padding and spacing for mobile */}
             <div className={`${themeStyles.card.bg} backdrop-blur-sm border ${themeStyles.card.border} ${themeStyles.card.hoverBorder} transition-all duration-300 p-4 sm:p-6 rounded-lg overflow-hidden relative group hover:shadow-lg`}>
               <div className={`absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 ${themeStyles.accent.medium} rounded-bl-full`}></div>
               <div className="absolute top-4 right-4 sm:top-6 sm:right-6 font-arabic text-lg sm:text-xl text-amber-600/40">تكنولوجيا</div>
@@ -392,12 +590,16 @@ const AboutUs = () => {
                 <span className="text-2xl sm:text-3xl mr-2 sm:mr-3 group-hover:rotate-12 transition-transform duration-300">🧠</span> Modern Technologies
               </h3>
               <ul className={`list-disc pl-4 sm:pl-6 ${themeStyles.text.primary} space-y-1 sm:space-y-2 mb-3 sm:mb-4 text-sm sm:text-base`}>
-                <li>Artificial Intelligence & Machine Learning</li>
-                <li>Data Science & Analytics</li>
-                <li>Cloud Computing (AWS, GCP, Azure)</li>
-                <li>DevOps & CI/CD</li>
-                <li>Full-Stack Development (React, Node.js, Python)</li>
-                <li>Frappe/ERPNext & Open-Source ERP</li>
+                
+              <li>Artificial Intelligence & Machine Learning</li>
+              <li>Generative AI, Agentic AI & Internet of Things (IoT)</li>
+              <li>Data Science & Big Data Analytics</li>
+              <li>Cybersecurity & Information Assurance</li>
+              <li>Cloud Computing & Infrastructure</li>
+              <li>DevOps & Continuous Integration/Deployment (CI/CD)</li>
+              <li>Full-Stack Web Development</li>
+              <li>Enterprise Systems & Business Process Automation</li>
+
               </ul>
               <div className="mt-3 sm:mt-4 flex justify-end">
                 <div className="text-amber-600/80 text-xs sm:text-sm italic">
@@ -406,7 +608,7 @@ const AboutUs = () => {
               </div>
             </div>
             
-            {/* Islamic Studies Card */}
+            {/* Islamic Studies Card - Improved padding and spacing for mobile */}
             <div className={`${themeStyles.card.bg} backdrop-blur-sm border ${themeStyles.card.border} ${themeStyles.card.hoverBorder} transition-all duration-300 p-4 sm:p-6 rounded-lg overflow-hidden relative group hover:shadow-lg`}>
               <div className={`absolute top-0 right-0 w-16 h-16 sm:w-20 sm:h-20 ${themeStyles.accent.medium} rounded-bl-full`}></div>
               <div className="absolute top-4 right-4 sm:top-6 sm:right-6 font-arabic text-lg sm:text-xl text-amber-600/40">شرعية</div>
@@ -417,9 +619,13 @@ const AboutUs = () => {
                 <li>Quran with Tajweed & Tafsir</li>
                 <li>Hadith Sciences (with focus on Sahih traditions)</li>
                 <li>Usul al-Fiqh (Principles of Islamic Jurisprudence)</li>
-                <li>Seerah of the Prophet ﷺ</li>
+                <li>Seerah of the Prophet <span className="font-arabic">صلى الله عليه وسلم</span></li>
+
+                {/* <li>Seerah of the Prophet <span className="font-arabic">صلى الله عليه وسلم</span></li> */}
+
                 <li>Islamic History (Tariqh) & Contributions to Science</li>
                 <li>Tasawwuf: Ethics, Ihsan & Tazkiyah</li>
+                <li>Adab & Islamic Literature</li>
                 <li>Arabic Language & Grammar</li>
               </ul>
               <div className="mt-3 sm:mt-4 flex justify-end">
@@ -432,7 +638,7 @@ const AboutUs = () => {
         </div>
       </section>
       
-      {/* Learning Model Section with Visual Elements */}
+      {/* Learning Model Section with Visual Elements - Improved for mobile */}
       <section className="relative py-10 sm:py-16 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="relative mb-8 sm:mb-12">
@@ -443,12 +649,16 @@ const AboutUs = () => {
             <div className="absolute left-1/2 transform -translate-x-1/2 -bottom-4 w-16 sm:w-24 h-1 bg-amber-400/60 rounded-full"></div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-12 relative">
-            {/* Decorative Elements */}
-            <div className="hidden md:block absolute left-1/2 top-0 transform -translate-x-1/2 w-1 h-full bg-amber-500/20"></div>
+          {/* Replaced the grid with a flex column layout for better mobile display */}
+          <div className="flex flex-col gap-6 sm:gap-8 md:gap-12 relative">
+            {/* Decorative Element - Only visible on larger screens */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 w-1 bg-amber-500/20"></div>
             
             {/* Integrated Curriculum */}
-            <div className={`${themeStyles.card.bg} backdrop-blur-sm rounded-lg p-4 sm:p-8 border-l-4 border-amber-500/50 hover:shadow-amber-500/10 hover:shadow-lg transition-all duration-300 group`}>
+            <div className={`${themeStyles.card.bg} backdrop-blur-sm rounded-lg p-4 sm:p-8 border-l-4 border-amber-500/50 hover:shadow-amber-500/10 hover:shadow-lg transition-all duration-300 group relative`}>
+              {/* Circle marker for desktop */}
+              <div className="hidden md:block absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full bg-amber-500/80 z-10"></div>
+              
               <div className="flex flex-col sm:flex-row sm:items-center mb-3 sm:mb-4">
                 <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${themeStyles.accent.medium} flex items-center justify-center text-2xl sm:text-3xl mx-auto sm:mx-0 sm:mr-4 mb-2 sm:mb-0 transition-all duration-300 group-hover:scale-110`}>
                   💡
@@ -478,7 +688,10 @@ const AboutUs = () => {
             </div>
             
             {/* Blended Delivery Modes */}
-            <div className={`${themeStyles.card.bg} backdrop-blur-sm rounded-lg p-4 sm:p-8 border-l-4 border-amber-500/50 hover:shadow-amber-500/10 hover:shadow-lg transition-all duration-300 group`}>
+            <div className={`${themeStyles.card.bg} backdrop-blur-sm rounded-lg p-4 sm:p-8 border-l-4 border-amber-500/50 hover:shadow-amber-500/10 hover:shadow-lg transition-all duration-300 group relative`}>
+              {/* Circle marker for desktop */}
+              <div className="hidden md:block absolute -left-3 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full bg-amber-500/80 z-10"></div>
+              
               <div className="flex flex-col sm:flex-row sm:items-center mb-3 sm:mb-4">
                 <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full ${themeStyles.accent.medium} flex items-center justify-center text-2xl sm:text-3xl mx-auto sm:mx-0 sm:mr-4 mb-2 sm:mb-0 transition-all duration-300 group-hover:scale-110`}>
                   🏫
@@ -514,59 +727,9 @@ const AboutUs = () => {
       </section>
       
       {/* Global Perspective Section */}
-      <section className="relative py-10 sm:py-16 overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className={`text-2xl sm:text-3xl font-serif font-bold ${themeStyles.heading} mb-3 sm:mb-4`}>Our Global Perspective</h2>
-            <div className="font-arabic text-xl sm:text-2xl text-amber-600/80 mb-3 sm:mb-6">نظرتنا العالمية</div>
-            <p className={`${themeStyles.text.secondary} max-w-3xl mx-auto text-sm sm:text-base`}>
-              TechEthica connects with the global Ummah and technology ecosystem to provide students with world-class education.
-            </p>
-          </div>
-          
-          <div className={`${themeStyles.card.bg} rounded-lg p-4 sm:p-8 border ${themeStyles.card.border} relative overflow-hidden mb-10 sm:mb-16`}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-8">
-              {/* Global Network */}
-              <div className="text-center p-3 sm:p-4">
-                <div className={`w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full ${themeStyles.accent.medium} flex items-center justify-center text-2xl sm:text-3xl`}>
-                  🌐
-                </div>
-                <h3 className={`text-lg sm:text-xl font-bold ${themeStyles.subheading} mb-1 sm:mb-2`}>Global Network</h3>
-                <div className="font-arabic text-amber-600/70 mb-2 sm:mb-3">شبكة عالمية</div>
-                <p className={`${themeStyles.text.secondary} text-sm`}>
-                  Partnerships with Islamic institutions across 15+ countries and major tech companies
-                </p>
-              </div>
-              
-              {/* Virtual Exchange */}
-              <div className="text-center p-3 sm:p-4">
-                <div className={`w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full ${themeStyles.accent.medium} flex items-center justify-center text-2xl sm:text-3xl`}>
-                  🔄
-                </div>
-                <h3 className={`text-lg sm:text-xl font-bold ${themeStyles.subheading} mb-1 sm:mb-2`}>Virtual Exchange</h3>
-                <div className="font-arabic text-amber-600/70 mb-2 sm:mb-3">التبادل الافتراضي</div>
-                <p className={`${themeStyles.text.secondary} text-sm`}>
-                  Collaborative projects with students from Malaysia to Morocco, enhancing global perspective
-                </p>
-              </div>
-              
-              {/* Industry Connections */}
-              <div className="text-center p-3 sm:p-4">
-                <div className={`w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 rounded-full ${themeStyles.accent.medium} flex items-center justify-center text-2xl sm:text-3xl`}>
-                  🔗
-                </div>
-                <h3 className={`text-lg sm:text-xl font-bold ${themeStyles.subheading} mb-1 sm:mb-2`}>Industry Connections</h3>
-                <div className="font-arabic text-amber-600/70 mb-2 sm:mb-3">روابط صناعية</div>
-                <p className={`${themeStyles.text.secondary} text-sm`}>
-                  Direct connections to both Islamic finance firms and leading technology companies
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
       
-      {/* Add the Additional Sections here */}
+      
+      {/* Now let's add in the AdditionalSections component integration */}
       <AboutUsAdditionalSections 
         themeStyles={themeStyles} 
         useLightTheme={useLightTheme} 
@@ -574,7 +737,7 @@ const AboutUs = () => {
         HexagonPattern={HexagonPattern} 
       />
       
-      {/* Contact & Admissions Call-to-Action */}
+      {/* Contact & Admissions Call-to-Action - Enhanced for mobile */}
       <section className="relative py-10 sm:py-16 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="relative overflow-hidden rounded-xl">
@@ -593,46 +756,47 @@ const AboutUs = () => {
               </svg>
             </div>
             
-            <div className="relative z-10 p-5 sm:p-10 md:p-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
+            <div className="relative z-10 p-4 sm:p-6 md:p-8 lg:p-12">
+              {/* Changed from grid to flex-col on mobile for better alignment */}
+              <div className="flex flex-col md:grid md:grid-cols-2 gap-6 sm:gap-8 items-center">
                 <div>
-                  <div className="flex justify-between items-center mb-3 sm:mb-4">
-                    <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white mb-0">Contact & Admissions</h2>
-                    <span className="font-arabic text-base sm:text-lg text-amber-200/90">التواصل والقبول</span>
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 sm:mb-4">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-bold text-white mb-2 sm:mb-0 text-center sm:text-left">Contact & Admissions</h2>
+                    <span className="font-arabic text-base sm:text-lg text-amber-200/90 text-center sm:text-right">التواصل والقبول</span>
                   </div>
                   <div className="text-amber-100 space-y-2 sm:space-y-4 mb-4 sm:mb-6 text-sm sm:text-base">
                     <p className="font-bold text-base sm:text-lg">🗓️ Admissions 2025-26 Now Open</p>
                     <p>🚀 Start your journey in tech and Deen today.</p>
-                    <p>📞 <strong>Call Us:</strong> +91 9074591600</p>
-                    <p>🌐 <strong>Visit Us:</strong> techethica.edu.in</p>
-                    <p>✉️ <strong>Email:</strong> info@techethica.edu.in</p>
+                    <p>📞 <strong>Call Us:</strong> +91 90745 91600</p>
+                    <p>🌐 <strong>Visit Us:</strong> www.techethica.in</p>
+                    <p>✉️ <strong>Email:</strong> info@techethica.in</p>
                   </div>
                   
-                  {/* Admissions Timeline */}
+                  {/* Admissions Timeline - Improved for mobile */}
                   <div className={`mt-6 sm:mt-8 p-3 sm:p-4 bg-white/10 rounded-lg backdrop-blur-sm`}>
                     <h3 className="text-lg sm:text-xl font-bold text-amber-200 mb-2 sm:mb-3">Admissions Timeline</h3>
                     <div className="space-y-1 sm:space-y-2 text-sm sm:text-base">
-                      <div className="flex justify-between">
-                        <span className="text-amber-100">Application Deadline</span>
-                        <span className="text-white">June 30, 2025</span>
+                      <div className="flex flex-col sm:flex-row sm:justify-between">
+                        <span className="text-amber-100 font-medium">Application Deadline</span>
+                        <span className="text-white">May 30, 2025</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-amber-100">Interviews</span>
-                        <span className="text-white">July 10-25, 2025</span>
+                      <div className="flex flex-col sm:flex-row sm:justify-between">
+                        <span className="text-amber-100 font-medium">Interviews</span>
+                        <span className="text-white">June 1-10, 2025</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-amber-100">Results</span>
-                        <span className="text-white">August 5, 2025</span>
+                      <div className="flex flex-col sm:flex-row sm:justify-between">
+                        <span className="text-amber-100 font-medium">Results & Offer Letters</span>
+                        <span className="text-white">June 12, 2025</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-amber-100">Classes Begin</span>
-                        <span className="text-white">September 1, 2025</span>
+                      <div className="flex flex-col sm:flex-row sm:justify-between">
+                        <span className="text-amber-100 font-medium">Classes Begin</span>
+                        <span className="text-white">June 15, 2025</span>
                       </div>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex flex-col items-center justify-center">
+                <div className="flex flex-col items-center justify-center mt-6 md:mt-0">
                   <div className={`p-4 sm:p-6 bg-white/10 rounded-lg backdrop-blur-sm mb-4 sm:mb-6 w-full`}>
                     <p className="text-amber-100 mb-4 sm:mb-6 text-center text-base sm:text-lg">
                       Ready to embark on a transformative educational journey that combines technical excellence with ethical foundation?
@@ -649,7 +813,7 @@ const AboutUs = () => {
                   
                   <a 
                     href="/student-registration/new" 
-                    className={`block w-full md:w-2/3 ${themeStyles.cta.bg} ${themeStyles.cta.hover} text-white text-center py-3 sm:py-4 px-4 sm:px-6 rounded-lg font-bold transition duration-300 text-base sm:text-lg shadow-lg hover:shadow-amber-600/20 group`}
+                    className={`block w-full sm:w-2/3 ${themeStyles.cta.bg} ${themeStyles.cta.hover} text-white text-center py-3 sm:py-4 px-4 sm:px-6 rounded-lg font-bold transition duration-300 text-base sm:text-lg shadow-lg hover:shadow-amber-600/20 group`}
                   >
                     <div className="flex justify-center items-center">
                       <span className="mr-2 group-hover:translate-x-1 transition-transform duration-300">Apply Now</span>

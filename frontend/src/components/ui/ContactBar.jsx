@@ -42,7 +42,7 @@ const ContactBar = () => {
         </h1>
         <div className="contact-info mt-2 sm:mt-4 text-sm sm:text-lg flex flex-col sm:flex-row justify-center sm:gap-6 items-center">
           <a
-            href="tel:9074591600"
+            href="tel:+91 90745 91600"
             className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none`}
           >
             <svg
@@ -59,11 +59,11 @@ const ContactBar = () => {
                 d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
               />
             </svg>
-            907-459-1600
+            +91 90745 91600
           </a>
           <span className={`hidden sm:block ${useLightTheme ? "text-gray-500" : "text-gray-400"}`}>|</span>
           <a
-            href="mailto:khasihan@asoa.com"
+            href="mailto:info@techethica.in"
             className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none mt-1 sm:mt-0`}
           >
             <svg
@@ -80,7 +80,7 @@ const ContactBar = () => {
                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
             </svg>
-            khasihan@asoa.com
+            info@techethica.in
           </a>
         </div>
       </div>
@@ -92,7 +92,7 @@ const ContactBar = () => {
         </h1>
         <div className="flex items-center space-x-6">
           <a
-            href="tel:9074591600"
+            href="tel:+91 90745 91600"
             className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none text-sm`}
           >
             <svg
@@ -109,11 +109,11 @@ const ContactBar = () => {
                 d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
               />
             </svg>
-            907-459-1600
+            +91 90745 91600
           </a>
           <span className={useLightTheme ? "text-gray-500" : "text-gray-400"}>|</span>
           <a
-            href="mailto:khasihan@asoa.com"
+            href="mailto:info@techethica.in"
             className={`inline-flex items-center ${linkStyle} font-semibold transition duration-300 ease-in-out hover:scale-110 focus:ring-0 focus:outline-none text-sm`}
           >
             <svg
@@ -130,7 +130,7 @@ const ContactBar = () => {
                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
               />
             </svg>
-            khasihan@asoa.com
+            info@techethica.in
           </a>
         </div>
       </div>
