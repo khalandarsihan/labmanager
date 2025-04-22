@@ -192,66 +192,75 @@ const AboutUsAdditionalSections = ({ themeStyles, useLightTheme, StarPattern, He
                   {/* Quote mark */}
                   <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 text-3xl sm:text-5xl text-amber-500/20 group-hover:text-amber-500/40 transition-colors duration-300">"</div>
                   <p className={`italic ${themeStyles.text.secondary} mb-3 sm:mb-4 relative z-10 text-xs sm:text-sm`}>
-                    "At TechEthica, I didn't just learn code—I learned character. The community and mentorship has transformed my approach to technology."
+                    ""I came to TechEthica with a clear intention: to study nahw and draw closer to Allah through His words. What I found was more than grammar—it was a path of tazkiyah, discipline, and awe. The structure of language opened the structure of the soul."
+                  </p>
+                  <div className="flex items-center">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${themeStyles.accent.medium} flex items-center justify-center ${useLightTheme ? 'text-amber-800' : 'text-amber-200'} font-bold mr-2 sm:mr-3`}>
+                      <span className="text-sm">SK</span>
+                    </div>
+                    {/* <div>
+                      <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>Shabeer KA</p>
+                      <p className={`text-xs ${themeStyles.text.light}`}>Regional Director at LuLu Group International</p>
+                    </div> */}
+                      <div className="mb-4 sm:mb-0">
+                        <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>Shabeer KA</p>
+                        <p className={`text-xs ${themeStyles.text.light}`}>Regional Director at LuLu Group International</p>
+                        <p className={`text-xs ${themeStyles.text.light} mt-1 text-sm`}>Muscat, Oman</p>
+                      </div>
+
+                  </div>
+                </div>
+                
+                <div className={`${themeStyles.quote} p-4 sm:p-6 rounded-lg border ${themeStyles.card.border} relative group hover:shadow-lg transition-all duration-300`}>
+                  {/* Quote mark */}
+                  <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 text-3xl sm:text-5xl text-amber-500/20 group-hover:text-amber-500/40 transition-colors duration-300">"</div>
+                  <p className={`italic ${themeStyles.text.secondary} mb-3 sm:mb-4 relative z-10 text-xs sm:text-sm`}>
+                    "As a Principal Software Architect, I’ve spent decades mastering the syntax of machines. But at TechEthica, nahw taught me the syntax of revelation. Studying advanced grammar and adab has been humbling. I now dedicate time to translating classical Arabic texts, hoping to bridge centuries of ilm for the English-speaking world."
+                  </p>
+                  <div className="flex items-center">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${themeStyles.accent.medium} flex items-center justify-center ${useLightTheme ? 'text-amber-800' : 'text-amber-200'} font-bold mr-2 sm:mr-3`}>
+                      <span className="text-sm">AR</span>
+                    </div>
+                    <div className="mb-4 sm:mb-0">
+                      <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>Abdul Rasheed</p>
+                      <p className={`text-xs ${themeStyles.text.light}`}>Principal Software Architect at Miami International Holdings</p>
+                      <p className={`text-xs ${themeStyles.text.light} mt-1 text-sm`}>New Jersey, USA</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={`${themeStyles.quote} p-4 sm:p-6 rounded-lg border ${themeStyles.card.border} relative group hover:shadow-lg transition-all duration-300`}>
+                  {/* Quote mark */}
+                  <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 text-3xl sm:text-5xl text-amber-500/20 group-hover:text-amber-500/40 transition-colors duration-300">"</div>
+                  <p className={`italic ${themeStyles.text.secondary} mb-3 sm:mb-4 relative z-10 text-xs sm:text-sm`}>
+                    "With a solid foundation in nahw, I came to TechEthica seeking refinement—not just in grammar, but in the understanding of revelation. The advanced studies opened doors I never knew existed. Paired with my love for fiqh, the journey has become one of discovering the harmony between language and law, form and meaning. Every session brings me closer to clarity—and to Allah."
+                  </p>
+                  <div className="flex items-center">
+                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${themeStyles.accent.medium} flex items-center justify-center ${useLightTheme ? 'text-amber-800' : 'text-amber-200'} font-bold mr-2 sm:mr-3`}>
+                      <span className="text-sm">SM</span>
+                    </div>
+                    <div>
+                      <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>Dr. Salahudheen Methukayil</p>
+                      <p className={`text-xs ${themeStyles.text.light}`}>General Surgeon</p>
+                      <p className={`text-xs ${themeStyles.text.light} mt-1 text-sm`}>Kerala, Inida</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className={`${themeStyles.quote} p-4 sm:p-6 rounded-lg border ${themeStyles.card.border} relative group hover:shadow-lg transition-all duration-300`}>
+                  {/* Quote mark */}
+                  <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 text-3xl sm:text-5xl text-amber-500/20 group-hover:text-amber-500/40 transition-colors duration-300">"</div>
+                  <p className={`italic ${themeStyles.text.secondary} mb-3 sm:mb-4 relative z-10 text-xs sm:text-sm`}>
+                    "As an engineer, I’ve always appreciated precision—but studying nahw and fiqh at TechEthica showed me the divine precision of our Deen. Grammar clarified the Qur’an; fiqh clarified life. What began as a quest for understanding turned into a journey of transformation."
                   </p>
                   <div className="flex items-center">
                     <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${themeStyles.accent.medium} flex items-center justify-center ${useLightTheme ? 'text-amber-800' : 'text-amber-200'} font-bold mr-2 sm:mr-3`}>
                       <span className="text-sm">AS</span>
                     </div>
                     <div>
-                      <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>Aisha S.</p>
-                      <p className={`text-xs ${themeStyles.text.light}`}>Full-Stack Developer & Hafidha</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className={`${themeStyles.quote} p-4 sm:p-6 rounded-lg border ${themeStyles.card.border} relative group hover:shadow-lg transition-all duration-300`}>
-                  {/* Quote mark */}
-                  <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 text-3xl sm:text-5xl text-amber-500/20 group-hover:text-amber-500/40 transition-colors duration-300">"</div>
-                  <p className={`italic ${themeStyles.text.secondary} mb-3 sm:mb-4 relative z-10 text-xs sm:text-sm`}>
-                    "The blend of Fiqh and DevOps gave me a new perspective on responsibility and trust in the digital age. I now approach every project with both technical excellence and ethical considerations."
-                  </p>
-                  <div className="flex items-center">
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${themeStyles.accent.medium} flex items-center justify-center ${useLightTheme ? 'text-amber-800' : 'text-amber-200'} font-bold mr-2 sm:mr-3`}>
-                      <span className="text-sm">YR</span>
-                    </div>
-                    <div>
-                      <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>Yusuf R.</p>
-                      <p className={`text-xs ${themeStyles.text.light}`}>Cloud Engineer</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className={`${themeStyles.quote} p-4 sm:p-6 rounded-lg border ${themeStyles.card.border} relative group hover:shadow-lg transition-all duration-300`}>
-                  {/* Quote mark */}
-                  <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 text-3xl sm:text-5xl text-amber-500/20 group-hover:text-amber-500/40 transition-colors duration-300">"</div>
-                  <p className={`italic ${themeStyles.text.secondary} mb-3 sm:mb-4 relative z-10 text-xs sm:text-sm`}>
-                    "Coming from a traditional Islamic background, I was hesitant about tech education. TechEthica provided the perfect bridge, allowing me to excel in AI while strengthening my Islamic identity."
-                  </p>
-                  <div className="flex items-center">
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${themeStyles.accent.medium} flex items-center justify-center ${useLightTheme ? 'text-amber-800' : 'text-amber-200'} font-bold mr-2 sm:mr-3`}>
-                      <span className="text-sm">OK</span>
-                    </div>
-                    <div>
-                      <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>Omar K.</p>
-                      <p className={`text-xs ${themeStyles.text.light}`}>AI Research Assistant</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className={`${themeStyles.quote} p-4 sm:p-6 rounded-lg border ${themeStyles.card.border} relative group hover:shadow-lg transition-all duration-300`}>
-                  {/* Quote mark */}
-                  <div className="absolute -top-3 -left-3 sm:-top-4 sm:-left-4 text-3xl sm:text-5xl text-amber-500/20 group-hover:text-amber-500/40 transition-colors duration-300">"</div>
-                  <p className={`italic ${themeStyles.text.secondary} mb-3 sm:mb-4 relative z-10 text-xs sm:text-sm`}>
-                    "The global community at TechEthica connected me with Muslims in tech across the world. I now lead an international open-source project with team members from four continents."
-                  </p>
-                  <div className="flex items-center">
-                    <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full ${themeStyles.accent.medium} flex items-center justify-center ${useLightTheme ? 'text-amber-800' : 'text-amber-200'} font-bold mr-2 sm:mr-3`}>
-                      <span className="text-sm">ZM</span>
-                    </div>
-                    <div>
-                      <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>Zahra M.</p>
-                      <p className={`text-xs ${themeStyles.text.light}`}>Open Source Contributor & Data Scientist</p>
+                      <p className={`${themeStyles.subheading} font-semibold text-sm sm:text-base`}>AbuBakr Siddique</p>
+                      <p className={`text-xs ${themeStyles.text.light}`}>Project Engineer at Kuwait Oil Company (KOC)</p>
+                      <p className={`text-xs ${themeStyles.text.light} mt-1 text-sm`}>Kuwait</p>
                     </div>
                   </div>
                 </div>
