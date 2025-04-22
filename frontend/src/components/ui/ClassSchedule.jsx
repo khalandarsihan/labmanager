@@ -35,8 +35,64 @@ const ClassSchedule = () => {
     { id: 'night', name: 'Night (9:00 - 10:00 PM)' },
   ];
 
+  // Direct mapping function for subject colors
+  // const getSubjectColor = (code) => {
+  //   // Map colors directly based on subject code
+  //   switch(code) {
+  //     case 'QIR': return 'bg-emerald-700';
+  //     case 'ADK': return 'bg-amber-700';
+  //     case 'CAR': return 'bg-fuchsia-700';
+  //     case 'PHY': return 'bg-blue-700';
+  //     case 'MTH': return 'bg-yellow-700';
+  //     case 'ENG': return 'bg-pink-700';
+  //     case 'CS': return 'bg-purple-700';
+  //     case 'CHM': return 'bg-green-700';
+  //     case 'AEE': return 'bg-cyan-700';
+  //     case 'FQS': return 'bg-lime-700';
+  //     case 'AQD': return 'bg-rose-600';
+  //     case 'PE': return 'bg-orange-700';
+  //     case 'FQH': return 'bg-teal-700';
+  //     case 'SRH': return 'bg-red-700';
+  //     case 'TRK': return 'bg-sky-700';
+  //     case 'ADB': return 'bg-violet-700';
+  //     case 'SL': return 'bg-indigo-700';
+  //     case 'MAS': return 'bg-pink-600';
+  //     case 'ELF': return 'bg-sky-600';
+  //     case 'AMA': return 'bg-fuchsia-600';
+  //     case 'AEA': return 'bg-rose-600';
+  //     default: return 'bg-gray-700';
+  //   }
+  // };
+
+  const getSubjectColor = (code) => {
+    // Map colors directly based on subject code with opacity
+    switch(code) {
+      case 'QIR': return 'bg-emerald-500/90';
+      case 'ADK': return 'bg-amber-500/90';
+      case 'CAR': return 'bg-fuchsia-400/90';
+      case 'PHY': return 'bg-blue-500/90';
+      case 'MTH': return 'bg-yellow-500/90';
+      case 'ENG': return 'bg-pink-500/90';
+      case 'CS': return 'bg-purple-500/90';
+      case 'CHM': return 'bg-green-500/90';
+      case 'AEE': return 'bg-cyan-500/90';
+      case 'FQS': return 'bg-lime-500/90';
+      case 'AQD': return 'bg-rose-500/90';
+      case 'PE': return 'bg-orange-500/90';
+      case 'FQH': return 'bg-teal-500/90';
+      case 'SRH': return 'bg-red-500/90';
+      case 'TRK': return 'bg-sky-500/90';
+      case 'ADB': return 'bg-violet-500/90';
+      case 'SL': return 'bg-indigo-500/90';
+      case 'MAS': return 'bg-pink-400/90';
+      case 'ELF': return 'bg-sky-400/90';
+      case 'AMA': return 'bg-fuchsia-600/90';
+      case 'AEA': return 'bg-rose-400/90';
+      default: return 'bg-gray-700/90';
+    }
+  };
  
-useEffect(() => {
+  useEffect(() => {
     const fetchSections = async () => {
       try {
         const response = await fetch('/api/method/labmanager.api.api.get_all_sections', {
@@ -202,6 +258,9 @@ useEffect(() => {
         
       const responseData = await response.json();
       
+      // Debug log
+      console.log("API Response Data:", responseData);
+      
       // The data is nested inside message
       if (responseData && responseData.message) {
         const data = responseData.message;
@@ -252,12 +311,9 @@ useEffect(() => {
         
         // Set subjects and teachers
         if (data.subjects) {
-          // Ensure all subjects have color property
-          const processedSubjects = data.subjects.map(subject => ({
-            ...subject,
-            color: subject.color || getDefaultSubjectColor(subject.category || 'Core')
-          }));
-          setSubjects(processedSubjects);
+          // Just set subjects without modifying them, we'll use getSubjectColor instead
+          setSubjects(data.subjects);
+          console.log("Loaded subjects:", data.subjects);
         }
         
         if (data.teachers) setTeachers(data.teachers);
@@ -370,7 +426,7 @@ useEffect(() => {
                     </td>
                     <td className="p-3">
                       {classDetails && classDetails.subject ? (
-                        <div className={`inline-flex items-center px-2 py-1 rounded-md ${classDetails.subject.color} text-white`}>
+                        <div className={`inline-flex items-center px-2 py-1 rounded-md ${getSubjectColor(classDetails.subject.code)} text-white`}>
                           <span className="font-medium">{classDetails.subject.name}</span>
                           <span className="ml-2 text-xs bg-white/20 px-1.5 py-0.5 rounded">
                             {classDetails.subject.code}
@@ -447,7 +503,7 @@ useEffect(() => {
                         onClick={() => classDetails && setSelectedClass(classDetails)}
                       >
                         {classDetails && classDetails.subject ? (
-                          <div className={`p-2 rounded-md ${classDetails.subject.color} text-white cursor-pointer hover:shadow-md transition-shadow`}>
+                          <div className={`p-2 rounded-md ${getSubjectColor(classDetails.subject.code)} text-white cursor-pointer hover:shadow-md transition-shadow`}>
                             <div className="font-medium text-sm flex items-center justify-between">
                               <span>{classDetails.subject.name}</span>
                               <span className="bg-white/20 text-white text-xs px-1.5 py-0.5 rounded ml-1">
@@ -596,7 +652,7 @@ useEffect(() => {
               className="bg-gray-800 p-6 rounded-lg max-w-md w-full border border-gray-600 shadow-xl"
               onClick={e => e.stopPropagation()}
             >
-              <div className={`w-full h-1 ${selectedClass.subject?.color || 'bg-gray-500'} rounded-full mb-4`}></div>
+              <div className={`w-full h-1 ${selectedClass.subject ? getSubjectColor(selectedClass.subject.code) : 'bg-gray-500'} rounded-full mb-4`}></div>
                 
               <h3 className="text-xl font-semibold text-amber-300 mb-2">{selectedClass.subject?.name || 'Subject'}</h3>
               <p className="text-gray-200 mb-4">
@@ -669,63 +725,58 @@ useEffect(() => {
           </div>
         </div>
           
-            {/* Schedule View Container */}
-            <div className="transition-all duration-300 ease-in-out">
-            {/* View mode switcher */}
-            <div className="flex justify-end mb-4">
-                <div className="flex border border-gray-700 rounded-md overflow-hidden">
-                <button
-                    className={`px-3 py-1 text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
-                    onClick={() => setViewMode('daily')}
-                >
-                    Daily View
-                </button>
-                <button
-                    className={`px-3 py-1 text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
-                    onClick={() => setViewMode('weekly')}
-                >
-                    Weekly View
-                </button>
-                </div>
-            </div>
-           
-            {/* Schedule Content */}
-            {hasValidSelection ? (
-                viewMode === 'daily' ? renderDailySchedule() : renderWeeklySchedule()
-            ) : (
-                <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
-                <div className="text-lg text-gray-500 text-center">
-                    <p>Please select both Grade and Section to view schedule</p>
-                </div>
-                </div>
-            )}
-
-          {/* Subject Legend */}
-            {/* Subject Legend - only show when valid selection */}
-  {hasValidSelection && (
-    <div className="bg-white/95 rounded-lg p-4 mt-4 shadow-inner">
-
-          <div className="bg-white/95 rounded-lg p-4 mt-4 shadow-inner">
-            <h3 className="text-lg font-medium text-gray-800 mb-3">
-              Subject Legend
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-              {subjects.map(subject => (
-                <div
-                  key={subject.id}
-                  className="flex items-center p-1 rounded hover:bg-gray-100"
-                >
-                  <div className={`w-4 h-4 rounded ${subject.color} mr-2`}></div>
-                  <span className="text-sm">{subject.name}</span>
-                  <span className="text-xs bg-gray-200 rounded px-1 ml-1">{subject.code}</span>
-                </div>
-              ))}
+        {/* Schedule View Container */}
+        <div className="transition-all duration-300 ease-in-out">
+          {/* View mode switcher */}
+          <div className="flex justify-end mb-4">
+            <div className="flex border border-gray-700 rounded-md overflow-hidden">
+              <button
+                className={`px-3 py-1 text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                onClick={() => setViewMode('daily')}
+              >
+                Daily View
+              </button>
+              <button
+                className={`px-3 py-1 text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                onClick={() => setViewMode('weekly')}
+              >
+                Weekly View
+              </button>
             </div>
           </div>
+         
+          {/* Schedule Content */}
+          {hasValidSelection ? (
+            viewMode === 'daily' ? renderDailySchedule() : renderWeeklySchedule()
+          ) : (
+            <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
+              <div className="text-lg text-gray-500 text-center">
+                <p>Please select both Grade and Section to view schedule</p>
+              </div>
+            </div>
+          )}
+
+          {/* Subject Legend - only show when valid selection */}
+          {hasValidSelection && (
+            <div className="bg-white/95 rounded-lg p-4 mt-4 shadow-inner">
+              <h3 className="text-lg font-medium text-gray-800 mb-3">
+                Subject Legend
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {subjects.map(subject => (
+<div
+                    key={subject.id}
+                    className="flex items-center p-1 rounded hover:bg-gray-100"
+                  >
+                    <div className={`w-4 h-4 rounded ${getSubjectColor(subject.code)} mr-2`}></div>
+                    <span className="text-sm">{subject.name}</span>
+                    <span className="text-xs bg-gray-200 rounded px-1 ml-1">{subject.code}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
-        
-    )}
-    </div>
       </div>
     </div>
   );
