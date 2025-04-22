@@ -2,6 +2,7 @@
 import React from 'react';
 import { useTheme } from '../../components/ui/ThemeContext';
 import BackgroundPattern from '../../components/ui/BackgroundPattern';
+import ScrollToTop from "../../components/ui/ScrollToTop";
 import AboutUsAdditionalSections from './AdditionalSections'; // Import the additional sections
 
 
@@ -41,6 +42,10 @@ const AboutUs = () => {
     <div className={`min-h-screen ${themeStyles.background} relative overflow-x-hidden`}>
       {/* Background Pattern */}
       <BackgroundPattern />
+
+            
+    {/* Add ScrollToTop component here */}
+    <ScrollToTop />
       
       {/* Islamic Geometric Patterns Background */}
       <div className="absolute inset-0 bg-repeat opacity-5 pointer-events-none" 
