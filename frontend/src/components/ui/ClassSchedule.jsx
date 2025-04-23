@@ -24,6 +24,21 @@ const ClassSchedule = () => {
   const [error, setError] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
   const [viewMode, setViewMode] = useState('daily');
+  // Add viewport width detection (true mobile only - under 640px)
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Track screen width changes
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    // Set initial value
+    handleResize();
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Time blocks for filtering
   const timeBlocks = [
@@ -34,35 +49,6 @@ const ClassSchedule = () => {
     { id: 'evening', name: 'Evening (6:30 - 8:00 PM)' },
     { id: 'night', name: 'Night (9:00 - 10:00 PM)' },
   ];
-
-  // Direct mapping function for subject colors
-  // const getSubjectColor = (code) => {
-  //   // Map colors directly based on subject code
-  //   switch(code) {
-  //     case 'QIR': return 'bg-emerald-700';
-  //     case 'ADK': return 'bg-amber-700';
-  //     case 'CAR': return 'bg-fuchsia-700';
-  //     case 'PHY': return 'bg-blue-700';
-  //     case 'MTH': return 'bg-yellow-700';
-  //     case 'ENG': return 'bg-pink-700';
-  //     case 'CS': return 'bg-purple-700';
-  //     case 'CHM': return 'bg-green-700';
-  //     case 'AEE': return 'bg-cyan-700';
-  //     case 'FQS': return 'bg-lime-700';
-  //     case 'AQD': return 'bg-rose-600';
-  //     case 'PE': return 'bg-orange-700';
-  //     case 'FQH': return 'bg-teal-700';
-  //     case 'SRH': return 'bg-red-700';
-  //     case 'TRK': return 'bg-sky-700';
-  //     case 'ADB': return 'bg-violet-700';
-  //     case 'SL': return 'bg-indigo-700';
-  //     case 'MAS': return 'bg-pink-600';
-  //     case 'ELF': return 'bg-sky-600';
-  //     case 'AMA': return 'bg-fuchsia-600';
-  //     case 'AEA': return 'bg-rose-600';
-  //     default: return 'bg-gray-700';
-  //   }
-  // };
 
   const getSubjectColor = (code) => {
     // Map colors directly based on subject code with opacity
@@ -395,10 +381,65 @@ const ClassSchedule = () => {
     window.print();
   };
 
-  // Render the daily schedule view
+  // Render the daily schedule view - mobile optimized
   const renderDailySchedule = () => {
     const filteredTimeSlots = getFilteredTimeSlots();
-      
+    
+    if (isMobile) {
+      // Mobile view with cards instead of table
+      return (
+        <div className="bg-white/95 rounded-lg p-2 shadow-inner">
+          <div className="space-y-2">
+            {filteredTimeSlots.map((timeSlot) => {
+              const classDetails = getClassDetails(timeSlot.id, selectedDay);
+              
+              return (
+                <div
+                  key={timeSlot.id}
+                  className={`border rounded-lg overflow-hidden ${classDetails ? 'shadow-sm' : 'border-dashed'}`}
+                  onClick={() => classDetails && setSelectedClass(classDetails)}
+                >
+                  <div className="bg-gray-100 py-1.5 px-3 flex justify-between items-center">
+                    <span className="text-xs font-medium">{timeSlot.start} - {timeSlot.end}</span>
+                    {classDetails && classDetails.subject && (
+                      <span className="text-xs bg-gray-200 rounded-full px-2 py-0.5">{classDetails.subject.code}</span>
+                    )}
+                  </div>
+                  
+                  <div className="p-2">
+                    {classDetails && classDetails.subject ? (
+                      <div>
+                        <div className={`inline-flex mb-1.5 items-center px-2 py-1 rounded-md ${getSubjectColor(classDetails.subject.code)} text-white`}>
+                          <span className="font-medium text-sm">{classDetails.subject.name}</span>
+                        </div>
+                        
+                        <div className="flex flex-col text-xs space-y-1">
+                          <div className="flex items-center">
+                            <Users className="w-3 h-3 mr-1 text-gray-500" />
+                            <span className="text-gray-800">{classDetails.teacher ? classDetails.teacher.name : 'TBA'}</span>
+                          </div>
+                          
+                          <div className="flex items-center">
+                            <MapPin className="w-3 h-3 mr-1 text-gray-500" />
+                            <span className="text-gray-800">{classDetails.room ? classDetails.room.name : 'TBA'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center h-16 text-sm text-gray-400">
+                        No class scheduled
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    }
+    
+    // Desktop view with table
     return (
       <div className="bg-white/95 rounded-lg p-4 shadow-inner">
         <div className="overflow-x-auto">
@@ -466,11 +507,87 @@ const ClassSchedule = () => {
     );
   };
 
-  // Render the weekly schedule view
+  // Render the weekly schedule view - mobile optimized
   const renderWeeklySchedule = () => {
     const filteredTimeSlots = getFilteredTimeSlots();
     const days = scheduleData.days || [];
-      
+    
+    if (isMobile) {
+      // Mobile view with accordion-style days
+      return (
+        <div className="bg-white/95 rounded-lg p-2 shadow-inner">
+          <div className="space-y-2">
+            {days.map(day => (
+              <div 
+                key={day}
+                className={`border rounded-lg overflow-hidden ${selectedDay === day ? 'ring-2 ring-amber-400' : ''}`}
+              >
+                <div 
+                  className={`py-2 px-3 flex justify-between items-center cursor-pointer ${
+                    selectedDay === day ? 'bg-amber-100' : 'bg-gray-100'
+                  }`}
+                  onClick={() => setSelectedDay(day)}
+                >
+                  <span className={`font-medium ${selectedDay === day ? 'text-amber-900' : 'text-gray-700'}`}>
+                    {day}
+                  </span>
+                  <span className="text-xs bg-white rounded-full px-2 py-0.5 text-gray-700">
+                    {filteredTimeSlots.length} periods
+                  </span>
+                </div>
+                
+                {selectedDay === day && (
+                  <div className="p-2 space-y-2">
+                    {filteredTimeSlots.map(timeSlot => {
+                      const classDetails = getClassDetails(timeSlot.id, day);
+                      
+                      return (
+                        <div
+                          key={`${day}-${timeSlot.id}`}
+                          className={`border rounded-lg overflow-hidden ${classDetails ? 'shadow-sm' : 'border-dashed'}`}
+                          onClick={() => classDetails && setSelectedClass(classDetails)}
+                        >
+                          <div className="bg-gray-50 py-1 px-2 text-xs font-medium">
+                            {timeSlot.start} - {timeSlot.end}
+                          </div>
+                          
+                          <div className="p-2">
+                            {classDetails && classDetails.subject ? (
+                              <div className={`p-2 rounded-md ${getSubjectColor(classDetails.subject.code)} text-white`}>
+                                <div className="font-medium text-sm flex items-center justify-between">
+                                  <span>{classDetails.subject.name}</span>
+                                  <span className="bg-white/20 text-white text-xs px-1.5 py-0.5 rounded ml-1">
+                                    {classDetails.subject.code}
+                                  </span>
+                                </div>
+                                <div className="text-xs text-white/90 mt-1 flex items-center">
+                                  <Users className="w-3 h-3 mr-1" />
+                                  {classDetails.teacher ? classDetails.teacher.name : 'TBD'}
+                                </div>
+                                <div className="text-xs text-white/80 flex items-center">
+                                  <MapPin className="w-3 h-3 mr-1" />
+                                  {classDetails.room ? classDetails.room.name : 'TBD'}
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="text-xs text-gray-400 h-12 flex items-center justify-center">
+                                No class scheduled
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    
+    // Desktop view with table
     return (
       <div className="bg-white/95 rounded-lg p-4 shadow-inner">
         <div className="overflow-x-auto">
@@ -539,7 +656,7 @@ const ClassSchedule = () => {
     return (
       <div className="relative">
         <BackgroundPattern />
-        <div className="relative z-10 min-h-[500px] bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-lg flex items-center justify-center">
+        <div className="relative z-10 min-h-[300px] md:min-h-[500px] bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-lg flex items-center justify-center">
           <div className="text-amber-200">Loading schedule...</div>
         </div>
       </div>
@@ -551,7 +668,7 @@ const ClassSchedule = () => {
     return (
       <div className="relative">
         <BackgroundPattern />
-        <div className="relative z-10 min-h-[500px] bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-lg flex items-center justify-center">
+        <div className="relative z-10 min-h-[300px] md:min-h-[500px] bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-lg flex items-center justify-center">
           <div className="text-red-400">{error}</div>
         </div>
       </div>
@@ -562,40 +679,40 @@ const ClassSchedule = () => {
     <div className="relative">
       <BackgroundPattern />
         
-      <div className="relative z-10 bg-gray-800/80 backdrop-blur-sm border border-gray-600 rounded-lg p-6 shadow-xl">
+      <div className="relative z-10 bg-gray-800/80 backdrop-blur-sm border border-gray-600 rounded-lg p-4 md:p-6 shadow-xl">
         {/* Header section */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <h2 className="text-2xl font-bold text-amber-200 flex items-center">
-            <Calendar className="w-6 h-6 mr-2" />
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6 gap-3">
+          <h2 className="text-xl md:text-2xl font-bold text-amber-200 flex items-center">
+            <Calendar className="w-5 h-5 md:w-6 md:h-6 mr-1 md:mr-2" />
             Class Schedule
           </h2>
             
           {/* Controls */}
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
             {/* Grade and Section Selection */}
-            <div className="flex space-x-2">
-            <select
-            className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-1 outline-none focus:ring-2 focus:ring-amber-300"
-            value={currentGrade}
-            onChange={handleGradeChange}
-            >
-            <option value="Select Grade">Select Grade</option>
-            {gradesList.map(grade => (
-                <option key={grade.id} value={grade.id}>{grade.name}</option>
-            ))}
-            </select>
+            <div className="flex gap-2 w-full md:w-auto">
+              <select
+                className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 text-sm p-1 outline-none focus:ring-2 focus:ring-amber-300 md:w-auto"
+                value={currentGrade}
+                onChange={handleGradeChange}
+              >
+                <option value="Select Grade">Select Grade</option>
+                {gradesList.map(grade => (
+                  <option key={grade.id} value={grade.id}>{grade.name}</option>
+                ))}
+              </select>
 
-            <select
-            className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-1 outline-none focus:ring-2 focus:ring-amber-300"
-            value={currentSection}
-            onChange={handleSectionChange}
-            >
-            <option value="Select Section">Select Section</option>
-            {sectionsList.map(section => (
-                <option key={section.id} value={section.id}>{section.name}</option>
-            ))}
-            </select>
-                
+              <select
+                className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 text-sm p-1 outline-none focus:ring-2 focus:ring-amber-300 md:w-auto"
+                value={currentSection}
+                onChange={handleSectionChange}
+              >
+                <option value="Select Section">Select Section</option>
+                {sectionsList.map(section => (
+                  <option key={section.id} value={section.id}>{section.name}</option>
+                ))}
+              </select>
+                  
               <button
                 className="bg-gray-700 text-gray-200 p-1 rounded-md border border-gray-600 hover:bg-amber-300 hover:text-gray-900 transition-colors duration-200 flex items-center"
                 onClick={handlePrint}
@@ -606,7 +723,7 @@ const ClassSchedule = () => {
           </div>
         </div>
           
-        {/* Add print styles */}
+       {/* Add print styles */}
         <style jsx global>{`
           @media print {
             body * {
@@ -642,19 +759,19 @@ const ClassSchedule = () => {
           }
         `}</style>
           
-        {/* Class Details Modal */}
+        {/* Class Details Modal - mobile optimized */}
         {selectedClass && (
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
             onClick={() => setSelectedClass(null)}
           >
             <div
-              className="bg-gray-800 p-6 rounded-lg max-w-md w-full border border-gray-600 shadow-xl"
+              className="bg-gray-800 p-4 md:p-6 rounded-lg max-w-md w-full border border-gray-600 shadow-xl"
               onClick={e => e.stopPropagation()}
             >
-              <div className={`w-full h-1 ${selectedClass.subject ? getSubjectColor(selectedClass.subject.code) : 'bg-gray-500'} rounded-full mb-4`}></div>
+              <div className={`w-full h-1 ${selectedClass.subject ? getSubjectColor(selectedClass.subject.code) : 'bg-gray-500'} rounded-full mb-3 md:mb-4`}></div>
                 
-              <h3 className="text-xl font-semibold text-amber-300 mb-2">{selectedClass.subject?.name || 'Subject'}</h3>
+              <h3 className="text-lg md:text-xl font-semibold text-amber-300 mb-2">{selectedClass.subject?.name || 'Subject'}</h3>
               <p className="text-gray-200 mb-4">
                 Course Code: <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded">{selectedClass.subject?.code || 'N/A'}</span>
               </p>
@@ -680,7 +797,7 @@ const ClassSchedule = () => {
                 
               <div className="flex justify-end gap-2 mt-6">
                 <button
-                  className="px-4 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors"
+                  className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors text-sm"
                   onClick={() => setSelectedClass(null)}
                 >
                   Close
@@ -690,57 +807,113 @@ const ClassSchedule = () => {
           </div>
         )}
           
-        {/* Day and Time Block Selection */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <div className="flex flex-wrap gap-2">
-            {(scheduleData.days || []).map(day => (
-              <button
-                key={day}
-                className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                  selectedDay === day
-                    ? 'bg-amber-300 text-gray-900'
-                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                }`}
-                onClick={() => setSelectedDay(day)}
-              >
-                {day}
-              </button>
-            ))}
-          </div>
-            
-          <div className="flex flex-wrap gap-2">
-            {timeBlocks.map(block => (
-              <button
-                key={block.id}
-                className={`px-3 py-1 text-sm rounded-md transition-colors ${
-                  selectedTimeBlock === block.id
-                    ? 'bg-amber-300 text-gray-900'
-                    : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                }`}
-                onClick={() => setSelectedTimeBlock(block.id)}
-              >
-                {block.id === 'all' ? block.name : <span className="flex items-center"><Clock className="w-3 h-3 mr-1" />{block.name}</span>}
-              </button>
-            ))}
-          </div>
-        </div>
-          
+        {/* Day and Time Block Selection - mobile optimized */}
+      
+
+{/* Day and Time Block Selection - improved desktop/landscape spacing */}
+<div className="mb-4 md:mb-6">
+  {/* Desktop layout - use flex-row directly on wider screens */}
+  <div className="hidden md:flex md:flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+    {/* Days row */}
+    <div className="flex flex-wrap gap-2 w-full lg:w-auto">
+      {(scheduleData.days || []).map(day => (
+        <button
+          key={day}
+          className={`px-3 py-1 text-sm rounded-md transition-colors ${
+            selectedDay === day
+              ? 'bg-amber-300 text-gray-900'
+              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+          }`}
+          onClick={() => setSelectedDay(day)}
+        >
+          {day}
+        </button>
+      ))}
+    </div>
+      
+    {/* Time blocks row */}
+    <div className="flex flex-wrap gap-2 mt-2 lg:mt-0">
+      {timeBlocks.map(block => (
+        <button
+          key={block.id}
+          className={`px-3 py-1 text-sm rounded-md transition-colors ${
+            selectedTimeBlock === block.id
+              ? 'bg-amber-300 text-gray-900'
+              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+          }`}
+          onClick={() => setSelectedTimeBlock(block.id)}
+        >
+          {block.id === 'all' ? block.name : <span className="flex items-center"><Clock className="w-3 h-3 mr-1" />{block.name}</span>}
+        </button>
+      ))}
+    </div>
+  </div>
+  
+  {/* Mobile layout - stacked with scrolling days */}
+  <div className="md:hidden space-y-3">
+    {/* Day selection - horizontal scrollable on mobile with wider container */}
+    <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1 -mx-4 px-4">
+      {(scheduleData.days || []).map(day => (
+        <button
+          key={day}
+          className={`px-3 py-2 text-xs rounded-md transition-colors whitespace-nowrap flex-shrink-0 ${
+            selectedDay === day
+              ? 'bg-amber-300 text-gray-900'
+              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+          }`}
+          onClick={() => setSelectedDay(day)}
+        >
+          {day}
+        </button>
+      ))}
+    </div>
+    
+    {/* Time blocks as dropdown on mobile */}
+    <div className="w-full">
+      <select 
+        className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-2 text-sm outline-none focus:ring-2 focus:ring-amber-300 w-full"
+        value={selectedTimeBlock}
+        onChange={(e) => setSelectedTimeBlock(e.target.value)}
+      >
+        {timeBlocks.map(block => (
+          <option key={block.id} value={block.id}>
+            {block.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  </div>
+</div>
+
+
+<style jsx global>{`
+  /* Hide scrollbar but maintain functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
+  }
+`}</style>
+
+
         {/* Schedule View Container */}
         <div className="transition-all duration-300 ease-in-out">
           {/* View mode switcher */}
-          <div className="flex justify-end mb-4">
+          <div className="flex justify-end mb-3 md:mb-4">
             <div className="flex border border-gray-700 rounded-md overflow-hidden">
               <button
-                className={`px-3 py-1 text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
                 onClick={() => setViewMode('daily')}
               >
-                Daily View
+                {isMobile ? 'Daily' : 'Daily View'}
               </button>
               <button
-                className={`px-3 py-1 text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
                 onClick={() => setViewMode('weekly')}
               >
-                Weekly View
+                {isMobile ? 'Weekly' : 'Weekly View'}
               </button>
             </div>
           </div>
@@ -749,28 +922,28 @@ const ClassSchedule = () => {
           {hasValidSelection ? (
             viewMode === 'daily' ? renderDailySchedule() : renderWeeklySchedule()
           ) : (
-            <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
-              <div className="text-lg text-gray-500 text-center">
+            <div className="bg-white/95 rounded-lg p-4 md:p-8 shadow-inner flex items-center justify-center">
+              <div className="text-sm md:text-lg text-gray-500 text-center">
                 <p>Please select both Grade and Section to view schedule</p>
               </div>
             </div>
           )}
 
-          {/* Subject Legend - only show when valid selection */}
+          {/* Subject Legend - only show when valid selection, mobile optimized */}
           {hasValidSelection && (
-            <div className="bg-white/95 rounded-lg p-4 mt-4 shadow-inner">
-              <h3 className="text-lg font-medium text-gray-800 mb-3">
+            <div className="bg-white/95 rounded-lg p-3 md:p-4 mt-3 md:mt-4 shadow-inner">
+              <h3 className="text-base md:text-lg font-medium text-gray-800 mb-2 md:mb-3">
                 Subject Legend
               </h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-1 md:gap-2">
                 {subjects.map(subject => (
-<div
+                  <div
                     key={subject.id}
                     className="flex items-center p-1 rounded hover:bg-gray-100"
                   >
-                    <div className={`w-4 h-4 rounded ${getSubjectColor(subject.code)} mr-2`}></div>
-                    <span className="text-sm">{subject.name}</span>
-                    <span className="text-xs bg-gray-200 rounded px-1 ml-1">{subject.code}</span>
+                    <div className={`w-3 h-3 md:w-4 md:h-4 rounded ${getSubjectColor(subject.code)} mr-1 md:mr-2`}></div>
+                    <span className="text-xs md:text-sm">{subject.name}</span>
+                    <span className="text-[10px] md:text-xs bg-gray-200 rounded px-1 ml-1">{subject.code}</span>
                   </div>
                 ))}
               </div>
