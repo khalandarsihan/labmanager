@@ -775,7 +775,7 @@ const AboutUs = () => {
                   <div className="text-amber-100 space-y-2 sm:space-y-4 mb-4 sm:mb-6 text-sm sm:text-base">
                     <p className="font-bold text-base sm:text-lg">🗓️ Admissions 2025-26 Now Open</p>
                     <p>🚀 Start your journey in tech and Deen today.</p>
-                    <p>📞 <strong>Call Us:</strong> +91 90745 91600</p>
+                    <p>📞 <strong>Call Us:</strong> +91 95913 82400</p>
                     <p>🌐 <strong>Visit Us:</strong> www.techethica.in</p>
                     <p>✉️ <strong>Email:</strong> info@techethica.in</p>
                   </div>

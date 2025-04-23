@@ -71,7 +71,7 @@ const Footer = () => {
                 <i className={`far fa-envelope ${headingStyle} w-4`} /> info@techethica.in
               </a>
               <a href="tel:+919876543210" className={`${textStyle} ${linkHoverStyle} transition-colors duration-200 flex items-center gap-2 mt-2`}>
-                <i className={`fas fa-phone ${headingStyle} w-4`} /> +91 90745 91600
+                <i className={`fas fa-phone ${headingStyle} w-4`} /> +91 95913 82400
               </a>
             </address>
           </div>

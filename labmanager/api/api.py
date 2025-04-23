@@ -2402,7 +2402,7 @@ def send_interview_notification(email, student_name, registration_id, date, time
                 <a href="{tracking_url}" style="display: inline-block; background-color: #6d28d9; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">Track Your Application</a>
             </p>
             
-            <p>If you need to reschedule or have any questions, please contact our admissions office as soon as possible at <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at <a href="tel:+919074511600" style="color: #6d28d9;">+91 90745 11600</a>.</p>
+            <p>If you need to reschedule or have any questions, please contact our admissions office as soon as possible at <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at <a href="tel:+91 95913 82400" style="color: #6d28d9;">+91 95913 82400</a>.</p>
             
             <p style="margin-top: 30px;">We look forward to meeting you!</p>
             
@@ -2843,7 +2843,7 @@ def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', 
         # <p>You can track your application status and upload the required documents anytime by visiting:<br>
         # <a href="{tracking_url}">{tracking_url}</a></p>
         
-        # <p>If you have any questions, please contact our admissions office at admin@techethica.in or call +91 90745 11600.</p>
+        # <p>If you have any questions, please contact our admissions office at admin@techethica.in or call +91 95913 82400.</p>
         
         # <p>Best regards,<br>
         # The TechEthica Admissions Team</p>
@@ -2882,7 +2882,7 @@ def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', 
 
             <p>If you have any questions, feel free to reach out to us at 
                 <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at 
-                <a href="tel:+919074511600" style="color: #6d28d9;">+91 90745 11600</a>.
+                <a href="tel:+91 95913 82400" style="color: #6d28d9;">+91 95913 82400</a>.
             </p>
 
             <p style="margin-top: 30px;">Warm regards,<br>

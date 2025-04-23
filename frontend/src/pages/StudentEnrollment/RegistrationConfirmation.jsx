@@ -476,7 +476,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       });
 
       // Centered footer text with updated information
-      const footerText = 'TechEthica | Sunnah & Science Research Labs | www.techethica.in | +91 90745 11600 | Bidarahalli, Bengaluru, KA, India';
+      const footerText = 'TechEthica | Sunnah & Science Research Labs | www.techethica.in | +91 95913 82400 | Bidarahalli, Bengaluru, KA, India';
       const textWidth = helveticaFont.widthOfTextAtSize(footerText, textSize - 1);
       const centerX = (page.getWidth() - textWidth) / 2;
 

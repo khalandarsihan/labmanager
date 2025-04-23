@@ -762,7 +762,7 @@ const TrackApplication = ({ initialRegistrationId }) => {
               <FileText className={`w-12 h-12 mx-auto mb-4 ${useLightTheme ? 'text-gray-400' : 'text-gray-500'}`} />
               <h3 className={`text-lg font-semibold ${headerText} mb-2`}>Track Your Progress</h3>
               <p>Enter your registration ID to check your application status. Your registration ID was provided to you when you submitted your application.</p>
-              <p className={`mt-2 text-sm ${useLightTheme ? 'text-gray-600' : 'text-gray-400'}`}>If you've lost your registration ID, please contact our admissions office at admissions@techethica.edu</p>
+              <p className={`mt-2 text-sm ${useLightTheme ? 'text-gray-600' : 'text-gray-400'}`}>If you've lost your registration ID, please contact our admissions office at admin@techethica.in</p>
             </div>
           )}
           </CardContent>

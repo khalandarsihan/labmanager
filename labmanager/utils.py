@@ -102,7 +102,7 @@ def get_default_next_steps(status):
 1. Please check back regularly for updates on your application status.
 2. Our admissions team will review your application within 5-7 business days.
 3. You may be requested to provide additional documents or attend an interview.
-4. For any questions, please contact admissions@techethica.edu
+4. For any questions, please contact admin@techethica.in
         """,
         
         "Under Review": """
@@ -116,7 +116,7 @@ def get_default_next_steps(status):
 1. Please upload the requested documents as soon as possible.
 2. Make sure all documents are clear, complete, and in PDF format.
 3. Your application will continue to be processed once all documents are received.
-4. If you have any questions about the required documents, please contact admissions@techethica.edu
+4. If you have any questions about the required documents, please contact admin@techethica.in
         """,
         
         "Interview Scheduled": """
@@ -145,7 +145,7 @@ def get_default_next_steps(status):
 1. We regret to inform you that your application was not successful at this time.
 2. You may apply again for the next academic term.
 3. Consider improving areas mentioned in the feedback.
-4. Contact admissions@techethica.edu for more detailed feedback.
+4. Contact admin@techethica.in for more detailed feedback.
         """
     }
     
