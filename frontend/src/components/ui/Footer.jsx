@@ -102,13 +102,17 @@ const Footer = () => {
 
       {/* Copyright Section */}
       <div className={`mt-6 ${copyrightBgStyle} transition-all duration-700`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-          <p className={`${copyrightTextStyle} text-sm text-center`}>
-            Copyright © 2017–{new Date().getFullYear()} - <span className={`${highlightStyle} transition-colors duration-200`}>TechEthica</span> |
-            Powered by <span className={`${highlightStyle} transition-colors duration-200`}>TechEthica</span>
-          </p>
-        </div>
-      </div>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+    <p className={`${copyrightTextStyle} text-sm text-center`}>
+      © {new Date().getFullYear()}&nbsp;
+      <span className={`${highlightStyle} transition-colors duration-200`}>TechEthica</span> |
+      <span className={`${highlightStyle} transition-colors duration-200`}>Sunnah &amp; Science Research Labs</span> |
+      Powered by <span className={`${highlightStyle} transition-colors duration-200`}>TechEthica</span> |
+      All rights reserved
+    </p>
+  </div>
+</div>
+
     </footer>
   );
 };

@@ -62,18 +62,18 @@ const ContactPage = () => {
     setSubmitMessage({ text: '', isError: false });
     
     try {
-      // Direct fetch to Frappe's built-in contact API
-      const response = await fetch('/api/method/frappe.www.contact.send_message', {
+      // Use our custom API endpoint
+      const response = await fetch('/api/method/labmanager.api.api.save_contact_message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Frappe-CSRF-Token': frappe.csrf_token
+          'X-Frappe-CSRF-Token': window.frappe?.csrf_token || ''
         },
         body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
           subject: formData.subject,
-          sender: formData.email,
-          message: formData.message,
-          sender_name: formData.name
+          message: formData.message
         })
       });
 
@@ -81,11 +81,19 @@ const ContactPage = () => {
         throw new Error('Failed to submit message');
       }
 
+      const data = await response.json();
+      const result = data.message || {};
+      
+      if (result.success === false) {
+        throw new Error(result.message || 'Failed to submit message');
+      }
+
       setSubmitMessage({ 
-        text: 'Your message has been sent successfully! We will get back to you soon.',
+        text: result.message || 'Your message has been sent successfully! We will get back to you soon.',
         isError: false 
       });
       
+      // Clear form on success
       setFormData({
         name: '',
         email: '',
@@ -93,11 +101,11 @@ const ContactPage = () => {
         message: ''
       });
     } catch (error) {
+      console.error("Error submitting form:", error);
       setSubmitMessage({ 
-        text: 'There was an error sending your message. Please try again later.',
+        text: error.message || 'There was an error sending your message. Please try again later.',
         isError: true 
       });
-      console.error("Error submitting form:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -229,7 +237,8 @@ const ContactPage = () => {
           
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <div className={`${themeStyles.card.bg} ${themeStyles.card.border} rounded-lg shadow-md p-6 border`}>
+            {/* <div className={`${themeStyles.card.bg} ${themeStyles.card.border} rounded-lg shadow-md p-6 border`}> */}
+            <div className={`${themeStyles.card.bg} ${themeStyles.card.border} rounded-lg shadow-md p-6 border min-h-[600px]`}>
               <h2 className={`text-2xl font-semibold ${themeStyles.subheading} mb-6`}>Send Us a Message</h2>
               
               {submitMessage.text && (
@@ -275,7 +284,7 @@ const ContactPage = () => {
                   </div>
                 </div>
                 
-                <div className="mb-6">
+                <div className="mb-7">
                   <label htmlFor="subject" className={`block ${themeStyles.text.secondary} font-medium mb-2`}>
                     Subject
                   </label>
@@ -299,7 +308,7 @@ const ContactPage = () => {
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
-                    rows="6"
+                    rows="8"
                     className={`w-full px-4 py-2 ${useLightTheme ? 'border-gray-300 focus:ring-purple-500' : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400'} rounded-md focus:outline-none focus:ring-2 border`}
                     required
                   ></textarea>
@@ -351,10 +360,7 @@ const ContactPage = () => {
           </div>
         </div>
         
-        {/* Footer */}
-        <div className={`mt-12 text-center ${themeStyles.text.light}`}>
-          <p>© {new Date().getFullYear()} TechEthica | Sunnah & Science Research Labs | All rights reserved</p>
-        </div>
+
       </div>
     </div>
   );

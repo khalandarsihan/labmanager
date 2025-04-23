@@ -2821,37 +2821,6 @@ def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', 
         if last_name:
             full_name += f" {last_name}"
         
-        # # Create email content
-        # message = f"""
-        # <h2 style="color: #6d28d9;">Application Confirmation</h2>
-        # <p>Dear {full_name},</p>
-        
-        # <p>Thank you for submitting your application to TechEthica. Your application has been successfully received and is now in our system.</p>
-        
-        # <p><strong>Application Reference Number:</strong> {registration_id}</p>
-        
-        # <p>Please find attached your application confirmation PDF for your records.</p>
-        
-        # <h3 style="color: #6d28d9;">Next Steps:</h3>
-        # <ol>
-        #     <li>Please upload the required documents at your earliest convenience through your application tracking page.</li>
-        #     <li>Once your documents are received, our team will review them within 5-7 business days.</li>
-        #     <li>After document verification, if eligible, you will be scheduled for an interview.</li>
-        #     <li>Following the interview, you will receive a final decision on your application.</li>
-        # </ol>
-        
-        # <p>You can track your application status and upload the required documents anytime by visiting:<br>
-        # <a href="{tracking_url}">{tracking_url}</a></p>
-        
-        # <p>If you have any questions, please contact our admissions office at admin@techethica.in or call +91 95913 82400.</p>
-        
-        # <p>Best regards,<br>
-        # The TechEthica Admissions Team</p>
-        
-        # <hr>
-        # <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
-        # """
-        
         # Create email content
         message = f"""
         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px;">
@@ -2932,23 +2901,49 @@ def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', 
         return {"status": "error", "message": str(e)}
 
 
-
-
 @frappe.whitelist(allow_guest=True)
 def get_contact_info():
     """Get contact information for the organization"""
     try:
-        # Try to fetch from website settings or custom doctype if available
+        # Try to fetch from a dedicated Contact Information doctype if it exists
+        if frappe.db.exists("DocType", "Contact Information"):
+            contact_info = frappe.get_all(
+                "Contact Information",
+                filters={"is_active": 1},
+                fields=["address", "email", "phone", "office_hours", "about"],
+                order_by="creation desc",
+                limit=1
+            )
+            
+            if contact_info:
+                return contact_info[0]
+                
+        # Fallback to Website Settings and Company info
         website_settings = frappe.get_doc("Website Settings")
-        company = frappe.get_doc("Company", website_settings.get("company") or frappe.defaults.get_defaults().get("company"))
         
-        return {
-            "address": company.address or "Bidarahalli, Bengaluru, KA, India",
-            "email": website_settings.get("contact_email") or "info@techethica.in",
-            "phone": company.phone_no or "+91 95913 82400",
-            "office_hours": "Monday - Friday: 9AM - 5PM",  # Could come from custom field
+        # Try to get the company
+        company_name = website_settings.get("company") or frappe.defaults.get_defaults().get("company")
+        company_data = {}
+        
+        if company_name and frappe.db.exists("Company", company_name):
+            company = frappe.get_doc("Company", company_name)
+            company_data = {
+                "address": company.address or "",
+                "email": company.email or "",
+                "phone": company.phone_no or ""
+            }
+        
+        # Combine data with website settings, prioritizing Website Settings
+        contact_data = {
+            "address": website_settings.get("address") or company_data.get("address") or "Bidarahalli, Bengaluru, KA, India",
+            "email": website_settings.get("contact_email") or company_data.get("email") or "info@techethica.in",
+            "phone": website_settings.get("contact_phone") or company_data.get("phone") or "+91 95913 82400",
+            "office_hours": website_settings.get("office_hours") or "Monday - Friday: 9AM - 5PM",
             "about": website_settings.get("about_us_text") or "TechEthica is a pioneering research laboratory dedicated to exploring the intersection of Sunnah and Science."
         }
+        
+        return contact_data
+        
     except Exception as e:
         frappe.log_error(f"Error in get_contact_info: {str(e)}")
         # Return default values if anything fails
@@ -2959,3 +2954,98 @@ def get_contact_info():
             "office_hours": "Monday - Friday: 9AM - 5PM",
             "about": "TechEthica is a pioneering research laboratory dedicated to exploring the intersection of Sunnah and Science."
         }
+        
+@frappe.whitelist(allow_guest=True)
+def save_contact_message(**kwargs):
+    """
+    Save a contact form submission to a Contact Message DocType
+    
+    Args:
+        name (str): Sender's name
+        email (str): Sender's email
+        subject (str): Message subject
+        message (str): Message content
+        
+    Returns:
+        dict: Status of the operation
+    """
+    try:
+        # Check for required fields
+        required_fields = ['name', 'email', 'subject', 'message']
+        missing_fields = []
+        
+        for field in required_fields:
+            if not kwargs.get(field):
+                missing_fields.append(field)
+        
+        if missing_fields:
+            return {
+                "success": False,
+                "message": f"Missing required fields: {', '.join(missing_fields)}"
+            }
+        
+        # Create a new Contact Message document
+        doc = frappe.get_doc({
+            "doctype": "Contact Message",
+            "sender_name": kwargs.get('name'),
+            "email": kwargs.get('email'),
+            "subject": kwargs.get('subject'),
+            "message": kwargs.get('message'),
+            "status": "New"
+        })
+        
+        doc.insert(ignore_permissions=True)
+        frappe.db.commit()
+        
+        # Also send an email notification to the admin if configured
+        try:
+            notify_admin(doc)
+        except Exception as email_error:
+            frappe.log_error(f"Failed to send admin notification: {str(email_error)}", "Contact Form")
+        
+        return {
+            "success": True,
+            "message": "Your message has been sent successfully! We will get back to you soon."
+        }
+        
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "Contact Message Submission Error")
+        return {
+            "success": False,
+            "message": "There was an error sending your message. Please try again later."
+        }
+
+def notify_admin(contact_message):
+    """Send an email notification to the admin about a new contact message"""
+    try:
+        # Get admin email from settings
+        admin_email = frappe.db.get_single_value("Website Settings", "contact_email") or \
+                     frappe.db.get_value("User", "Administrator", "email")
+        
+        if not admin_email:
+            frappe.log_error("No admin email found for contact form notifications", "Contact Form")
+            return
+            
+        subject = f"New Contact Message: {contact_message.subject}"
+        
+        message = f"""
+        <h3>New Contact Message Received</h3>
+        <p><strong>From:</strong> {contact_message.sender_name} ({contact_message.email})</p>
+        <p><strong>Subject:</strong> {contact_message.subject}</p>
+        <p><strong>Message:</strong></p>
+        <div style="padding: 10px; border-left: 3px solid #ccc; margin-top: 10px;">
+            {contact_message.message}
+        </div>
+        <p>You can view this message in your system at:</p>
+        <p>{frappe.utils.get_url()}/app/contact-message/{contact_message.name}</p>
+        """
+        
+        frappe.sendmail(
+            recipients=[admin_email],
+            subject=subject,
+            message=message,
+            delayed=False
+        )
+        
+    except Exception as e:
+        frappe.log_error(f"Failed to send admin notification: {str(e)}", "Contact Form")

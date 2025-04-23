@@ -283,6 +283,8 @@ whitelisted_methods = {
     "labmanager.api.api.schedule_interview": True,  
     "labmanager.api.api.send_interview_notification": True,
     "labmanager.api.api.get_contact_info": True,
+    "labmanager.api.api.save_contact_message": True,
+       
 }
 
 # Add CORS configuration for your frontend

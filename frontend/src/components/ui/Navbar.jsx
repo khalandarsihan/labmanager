@@ -334,7 +334,7 @@ const Navbar = () => {
 
           {/* Contact link */}
           <li className="w-full md:w-auto">
-            <a href="#" className={`flex items-center no-underline ${linkTextStyle} ${textSizeClass} hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2`}>
+            <a href="/contact-us" className={`flex items-center no-underline ${linkTextStyle} ${textSizeClass} hover:scale-105 transition-all duration-300 px-2 py-1 md:px-2 md:py-2`}>
               <i className={`fa fa-envelope mr-1 ${iconSize}`}></i> Contact
             </a>
           </li>
