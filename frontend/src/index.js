@@ -414,7 +414,8 @@ import AcademicCalendarPage from "./pages/AcademicCalendar";
 import ClassSchedulePage from "./pages/ClassSchedule";
 import ExamDatesPage from "./pages/ExamDates";
 import TrackApplication from "./pages/TrackApplication";
-import StudentLifePage from "./pages/StudentLife"; // Import the new StudentLife page
+import StudentLifePage from "./pages/StudentLife";
+import ContactPage from "./pages/ContactPage";
 import AppWrapper from "./components/AppWrapper";
 
 // Function to render with FrappeProvider wrapper
@@ -520,4 +521,10 @@ if (enrollmentContainer) {
 const dashboardContainer = document.getElementById("student-dashboard-app");
 if (dashboardContainer) {
 	renderWithProvider(<StudentDashboardPage />, dashboardContainer);
+}
+
+// Contact Page
+const contactPageContainer = document.getElementById("contact-page-root");
+if (contactPageContainer) {
+	renderWithProvider(<ContactPage />, contactPageContainer);
 }

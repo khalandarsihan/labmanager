@@ -281,7 +281,8 @@ whitelisted_methods = {
     "labmanager.api.api.get_application_status": True,
     "labmanager.api.api.send_registration_pdf": True,
     "labmanager.api.api.schedule_interview": True,  
-    "labmanager.api.api.send_interview_notification": True,  
+    "labmanager.api.api.send_interview_notification": True,
+    "labmanager.api.api.get_contact_info": True,
 }
 
 # Add CORS configuration for your frontend
@@ -354,6 +355,7 @@ website_route_rules = [
     {"from_route": "/track-application", "to_route": "track-application"},
     {"from_route": "/about-us", "to_route": "about-us"},
     {"from_route": "/student-life", "to_route": "student-life"},
+    {"from_route": "/contact-us", "to_route": "contact-us"},
     # {"from_route": "/admin/applications", "to_route": "admin/applications"},
     # {"from_route": "/admin/applications/<id>", "to_route": "admin/applications/details"},
     # {"from_route": "/enroll", "to_route": "enroll"},

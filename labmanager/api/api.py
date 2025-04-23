@@ -2933,3 +2933,29 @@ def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', 
 
 
 
+
+@frappe.whitelist(allow_guest=True)
+def get_contact_info():
+    """Get contact information for the organization"""
+    try:
+        # Try to fetch from website settings or custom doctype if available
+        website_settings = frappe.get_doc("Website Settings")
+        company = frappe.get_doc("Company", website_settings.get("company") or frappe.defaults.get_defaults().get("company"))
+        
+        return {
+            "address": company.address or "Bidarahalli, Bengaluru, KA, India",
+            "email": website_settings.get("contact_email") or "info@techethica.in",
+            "phone": company.phone_no or "+91 95913 82400",
+            "office_hours": "Monday - Friday: 9AM - 5PM",  # Could come from custom field
+            "about": website_settings.get("about_us_text") or "TechEthica is a pioneering research laboratory dedicated to exploring the intersection of Sunnah and Science."
+        }
+    except Exception as e:
+        frappe.log_error(f"Error in get_contact_info: {str(e)}")
+        # Return default values if anything fails
+        return {
+            "address": "Bidarahalli, Bengaluru, KA, India",
+            "email": "info@techethica.in",
+            "phone": "+91 95913 82400",
+            "office_hours": "Monday - Friday: 9AM - 5PM",
+            "about": "TechEthica is a pioneering research laboratory dedicated to exploring the intersection of Sunnah and Science."
+        }
