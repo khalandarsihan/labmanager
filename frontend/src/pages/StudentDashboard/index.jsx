@@ -8,10 +8,11 @@ const StudentDashboardPage = () => {
   const { useLightTheme, toggleTheme, themeStyles } = useTheme();
   
   return (
-    <div className={`min-h-screen ${themeStyles.background} py-12 px-4`}>
+    <div className={`min-h-screen ${themeStyles.background} py-12 px-4 relative`}>
       <BackgroundPattern />
       <ThemeSwitcher useLightTheme={useLightTheme} toggleTheme={toggleTheme} />
-      <div className="max-w-7xl mx-auto">
+      {/* Added z-10 to position the content above the background patterns */}
+      <div className="max-w-7xl mx-auto relative z-10">
         <StudentDashboard />
       </div>
     </div>
