@@ -596,7 +596,7 @@ const TrackApplication = ({ initialRegistrationId }) => {
                   </TabsContent>
                   
                   {/* Interviews Tab */}
-                  // This is a partial update for the Interviews tab in TrackApplication/index.jsx
+                
 
 {/* Interviews Tab */}
 <TabsContent value="interviews" className="border-none p-0 mt-4">
