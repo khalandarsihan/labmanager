@@ -4,6 +4,9 @@ from frappe.model.document import Document
 from labmanager.timeline_service import create_timeline_entry
 from labmanager.utils import create_default_document_requirements, get_default_next_steps
 
+# Import the email notification function
+from labmanager.api.api import send_interview_notification
+
 class InterviewSchedule(Document):
     def validate(self):
         self.validate_registration_id()
@@ -34,6 +37,37 @@ class InterviewSchedule(Document):
             registration_doc.status = "Interview Scheduled"
             registration_doc.next_steps = get_default_next_steps("Interview Scheduled")
             registration_doc.save()
+        
+        # Send email notification to the student
+        try:
+            # Get student's email and name for notification
+            student_email = registration_doc.email
+            student_name = " ".join(filter(None, [
+                registration_doc.first_name,
+                registration_doc.middle_name,
+                registration_doc.last_name
+            ]))
+            
+            # Get registration ID (encoded ID for user reference)
+            registration_id = registration_doc.registration_id
+            
+            # Send the notification
+            if student_email:
+                send_interview_notification(
+                    student_email,
+                    student_name,
+                    registration_id,
+                    self.date,
+                    self.time,
+                    self.location,
+                    self.meeting_link,
+                    self.notes
+                )
+                frappe.logger().info(f"Interview notification sent to {student_email}")
+            else:
+                frappe.logger().warning(f"No email found for registration {self.registration_id}, notification not sent")
+        except Exception as email_error:
+            frappe.log_error(f"Failed to send interview notification: {str(email_error)}\n{frappe.get_traceback()}")
 
     def on_update(self):
         """
@@ -41,6 +75,48 @@ class InterviewSchedule(Document):
         """
         # Track if this was a new record being created - don't create redundant entries
         is_new_record = self.is_new()
+        
+        # Only send email notification if meeting link was updated after creation
+        if not is_new_record and self.has_value_changed("meeting_link") and self.meeting_link:
+            try:
+                # Get registration document
+                registration_doc = frappe.get_doc("Student Registration", self.registration_id)
+                
+                # Get student's email and name
+                student_email = registration_doc.email
+                student_name = " ".join(filter(None, [
+                    registration_doc.first_name,
+                    registration_doc.middle_name,
+                    registration_doc.last_name
+                ]))
+                
+                # Get registration ID (encoded ID for user reference)
+                registration_id = registration_doc.registration_id
+                
+                # Send updated notification with meeting link
+                if student_email:
+                    send_interview_notification(
+                        student_email,
+                        student_name,
+                        registration_id,
+                        self.date,
+                        self.time,
+                        self.location,
+                        self.meeting_link,
+                        self.notes
+                    )
+                    
+                    # Add timeline entry for meeting link update
+                    create_timeline_entry(
+                        self.registration_id,
+                        "Interview Updated",
+                        "Meeting link was updated. Please check your email for details.",
+                        "Admissions Team"
+                    )
+                    
+                    frappe.logger().info(f"Updated interview notification with meeting link sent to {student_email}")
+            except Exception as email_error:
+                frappe.log_error(f"Failed to send updated interview notification: {str(email_error)}\n{frappe.get_traceback()}")
         
         # Check if date or time has changed
         if not is_new_record and (self.has_value_changed("date") or self.has_value_changed("time") or self.has_value_changed("location")):
@@ -53,7 +129,6 @@ class InterviewSchedule(Document):
             date_changed = self.has_value_changed("date")
             time_changed = self.has_value_changed("time")
             location_changed = self.location != old_location
-            
             
             if date_changed or time_changed or location_changed:
                 # Create a new timeline entry with updated information
@@ -71,6 +146,38 @@ class InterviewSchedule(Document):
                     description,
                     created_by
                 )
+                
+                # Send updated notification email
+                try:
+                    # Get registration document
+                    registration_doc = frappe.get_doc("Student Registration", self.registration_id)
+                    
+                    # Get student's email and name
+                    student_email = registration_doc.email
+                    student_name = " ".join(filter(None, [
+                        registration_doc.first_name,
+                        registration_doc.middle_name,
+                        registration_doc.last_name
+                    ]))
+                    
+                    # Get registration ID (encoded ID for user reference)
+                    registration_id = registration_doc.registration_id
+                    
+                    # Send updated notification with rescheduling info
+                    if student_email:
+                        send_interview_notification(
+                            student_email,
+                            student_name,
+                            registration_id,
+                            self.date,
+                            self.time,
+                            self.location,
+                            self.meeting_link,
+                            "Your interview has been rescheduled. " + (self.notes or "")
+                        )
+                        frappe.logger().info(f"Rescheduled interview notification sent to {student_email}")
+                except Exception as email_error:
+                    frappe.log_error(f"Failed to send rescheduled interview notification: {str(email_error)}\n{frappe.get_traceback()}")
         
         # Handle status changes - but not for initial "Scheduled" status which is handled in after_insert
         if not is_new_record and self.has_value_changed("status"):

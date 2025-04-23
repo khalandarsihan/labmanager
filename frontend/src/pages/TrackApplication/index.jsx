@@ -596,73 +596,108 @@ const TrackApplication = ({ initialRegistrationId }) => {
                   </TabsContent>
                   
                   {/* Interviews Tab */}
-                  <TabsContent value="interviews" className="border-none p-0 mt-4">
-                    <div className={`${useLightTheme ? 'border-purple-200/50 bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} border rounded-lg`}>
-                      <div className="p-6">
-                        {statusData.interviews && statusData.interviews.length > 0 ? (
-                          <div className="space-y-4">
-                            {statusData.interviews.map((interview, index) => (
-                              <div key={index} className={`${sectionBg} rounded-lg p-4 backdrop-blur-sm border`}>
-                                <div className="flex justify-between items-start mb-3">
-                                  <h4 className={`font-medium ${headerText}`}>Interview {index + 1}</h4>
-                                  <Badge className={
-                                    interview.status === 'Scheduled' ? 'bg-blue-600' :
-                                    interview.status === 'Completed' ? 'bg-emerald-600' :
-                                    interview.status === 'Missed' ? 'bg-red-600' :
-                                    'bg-gray-600'
-                                  }>
-                                    {interview.status}
-                                  </Badge>
-                                </div>
-                                
-                                <div className={`grid grid-cols-1 md:grid-cols-2 gap-2 text-sm ${bodyText}`}>
-                                <div className="flex items-center">
-                                <Calendar className={`w-4 h-4 mr-2 ${iconColor}`} />
-                                <span>Date: {formatDateOnly(interview.date)}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <Clock className={`w-4 h-4 mr-2 ${iconColor}`} />
-                                <span>Time: {formatTime(interview.time)}</span>
-                              </div>
-                                  <div className="flex items-center">
-                                    <User className={`w-4 h-4 mr-2 ${iconColor}`} />
-                                    <span>Interviewer: {interview.interviewer}</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <MapPin className={`w-4 h-4 mr-2 ${iconColor}`} />
-                                    <span>Location: {interview.location}</span>
-                                  </div>
-                                </div>
-                                
-                                {interview.notes && (
-                                  <div className={`mt-3 text-sm ${bodyText} ${useLightTheme ? 'bg-purple-50' : 'bg-gray-700'} p-3 rounded-md`}>
-                                    <MessageSquare className={`w-4 h-4 inline-block mr-2 ${iconColor}`} />
-                                    {interview.notes}
-                                  </div>
-                                )}
-                                
-                                {/* Join interview button (only shown if online and within 15 minutes of start time) */}
-                                {interview.status === 'Scheduled' &&
-                                interview.location && interview.location.toLowerCase().includes('online') && (
-                                  <div className="mt-4">
-                                    <Button className={buttonPrimary}>
-                                      <Video className="w-4 h-4 mr-2" />
-                                      Join Interview
-                                    </Button>
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className={`text-center py-8 ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`}>
-                            <Calendar className={`w-12 h-12 mx-auto mb-4 ${useLightTheme ? 'text-gray-400' : 'text-gray-600'}`} />
-                            <p>No interviews have been scheduled yet.</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    </TabsContent>
+                  // This is a partial update for the Interviews tab in TrackApplication/index.jsx
+
+{/* Interviews Tab */}
+<TabsContent value="interviews" className="border-none p-0 mt-4">
+  <div className={`${useLightTheme ? 'border-purple-200/50 bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} border rounded-lg`}>
+    <div className="p-6">
+      {statusData.interviews && statusData.interviews.length > 0 ? (
+        <div className="space-y-4">
+          {statusData.interviews.map((interview, index) => (
+            <div key={index} className={`${sectionBg} rounded-lg p-4 backdrop-blur-sm border`}>
+              <div className="flex justify-between items-start mb-3">
+                <h4 className={`font-medium ${headerText}`}>Interview {index + 1}</h4>
+                <Badge className={
+                  interview.status === 'Scheduled' ? 'bg-blue-600' :
+                  interview.status === 'Completed' ? 'bg-emerald-600' :
+                  interview.status === 'Missed' ? 'bg-red-600' :
+                  'bg-gray-600'
+                }>
+                  {interview.status}
+                </Badge>
+              </div>
+              
+              <div className={`grid grid-cols-1 md:grid-cols-2 gap-2 text-sm ${bodyText}`}>
+                <div className="flex items-center">
+                  <Calendar className={`w-4 h-4 mr-2 ${iconColor}`} />
+                  <span>Date: {formatDateOnly(interview.date)}</span>
+                </div>
+                <div className="flex items-center">
+                  <Clock className={`w-4 h-4 mr-2 ${iconColor}`} />
+                  <span>Time: {formatTime(interview.time)}</span>
+                </div>
+                <div className="flex items-center">
+                  <User className={`w-4 h-4 mr-2 ${iconColor}`} />
+                  <span>Interviewer: {interview.interviewer}</span>
+                </div>
+                <div className="flex items-center">
+                  <MapPin className={`w-4 h-4 mr-2 ${iconColor}`} />
+                  <span>Location: {interview.location}</span>
+                </div>
+              </div>
+              
+              {interview.notes && (
+                <div className={`mt-3 text-sm ${bodyText} ${useLightTheme ? 'bg-purple-50' : 'bg-gray-700'} p-3 rounded-md`}>
+                  <MessageSquare className={`w-4 h-4 inline-block mr-2 ${iconColor}`} />
+                  {interview.notes}
+                </div>
+              )}
+              
+              {/* Meeting Link - Show if available and status is Scheduled */}
+              {interview.meeting_link && interview.status === 'Scheduled' && (
+                <div className={`mt-3 text-sm ${bodyText} ${useLightTheme ? 'bg-blue-50' : 'bg-blue-900/20'} p-3 rounded-md border ${useLightTheme ? 'border-blue-200' : 'border-blue-800/50'}`}>
+                  <div className="flex items-center mb-1">
+                    <Video className={`w-4 h-4 mr-2 ${useLightTheme ? 'text-blue-600' : 'text-blue-400'}`} />
+                    <span className={`${useLightTheme ? 'text-blue-700' : 'text-blue-300'} font-medium`}>Online Interview Link:</span>
+                  </div>
+                  <div className="break-all">
+                    <a 
+                      href={interview.meeting_link} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className={`${useLightTheme ? 'text-blue-600 hover:text-blue-800' : 'text-blue-400 hover:text-blue-300'} underline`}
+                    >
+                      {interview.meeting_link}
+                    </a>
+                  </div>
+                  <div className="mt-3">
+                    <Button 
+                      onClick={() => window.open(interview.meeting_link, '_blank')}
+                      className={`${useLightTheme ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-600 hover:bg-blue-700'} text-white`}
+                    >
+                      <Video className="w-4 h-4 mr-2" />
+                      Join Interview
+                    </Button>
+                  </div>
+                </div>
+              )}
+              
+              {/* Join interview button (show if online but no meeting link is provided) */}
+              {!interview.meeting_link && 
+               interview.status === 'Scheduled' &&
+               interview.location && 
+               interview.location.toLowerCase().includes('online') && (
+                <div className="mt-4">
+                  <div className={`text-sm ${bodyText} ${useLightTheme ? 'bg-blue-50' : 'bg-blue-900/20'} p-3 rounded-md border ${useLightTheme ? 'border-blue-200' : 'border-blue-800/50'} mb-3`}>
+                    <Info className={`w-4 h-4 inline-block mr-2 ${useLightTheme ? 'text-blue-600' : 'text-blue-400'}`} />
+                    <span>The interview link will be sent to your email before the interview.</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className={`text-center py-8 ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`}>
+          <Calendar className={`w-12 h-12 mx-auto mb-4 ${useLightTheme ? 'text-gray-400' : 'text-gray-600'}`} />
+          <p>No interviews have been scheduled yet.</p>
+        </div>
+      )}
+    </div>
+  </div>
+</TabsContent>
+                    
                     {/* Next Steps Tab */}
                 <TabsContent value="next-steps" className="border-none p-0 mt-4">
                   <div className={`${useLightTheme ? 'border-purple-200/50 bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'border-gray-700/50 bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'} border rounded-lg`}>

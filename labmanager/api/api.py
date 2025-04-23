@@ -1920,7 +1920,6 @@ def get_exam_dates(**kwargs):
             "success": False,
             "error": str(e)
         }
-        
 @frappe.whitelist(allow_guest=True)
 def get_application_status(registration_id=None):
     """Get detailed status of a student registration application"""
@@ -2013,11 +2012,11 @@ def get_application_status(registration_id=None):
             # Return empty list instead of creating documents
             documents = []
         
-        # Get scheduled interviews
+        # Get scheduled interviews - Updated to include meeting_link field
         interviews = frappe.get_all(
             "Interview Schedule",
             filters={"registration_id": doc.name},
-            fields=["date", "time", "interviewer", "location", "status", "notes"],
+            fields=["date", "time", "interviewer", "location", "status", "notes", "meeting_link"],
             order_by="date"
         )
         
@@ -2211,10 +2210,8 @@ def request_document(registration_id, document_type, notes=None):
             "status": "error",
             "message": str(e)
         }
-
-
-@frappe.whitelist()
-def schedule_interview(registration_id, date, time, interviewer=None, location=None, notes=None):
+@frappe.whitelist(allow_guest=True)
+def schedule_interview(registration_id, date, time, interviewer=None, location=None, meeting_link=None, notes=None):
     """Schedule an interview for a student"""
     try:
         if not registration_id or not date or not time:
@@ -2227,7 +2224,7 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
         registrations = frappe.get_all(
             "Student Registration",
             filters={"registration_id": registration_id},
-            fields=["name"],
+            fields=["name", "email", "first_name", "middle_name", "last_name"],
             limit=1
         )
         
@@ -2237,6 +2234,14 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
                 "message": f"Application with ID {registration_id} not found"
             }
             
+        # Get student's email and name for notification
+        student_email = registrations[0].get("email")
+        student_name = " ".join(filter(None, [
+            registrations[0].get("first_name"),
+            registrations[0].get("middle_name"),
+            registrations[0].get("last_name")
+        ]))
+            
         # Create the interview schedule
         interview_doc = frappe.get_doc({
             "doctype": "Interview Schedule",
@@ -2245,6 +2250,7 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
             "time": time,
             "interviewer": interviewer,
             "location": location or "Online (Zoom)",
+            "meeting_link": meeting_link,
             "status": "Scheduled",
             "notes": notes or "Please be prepared to discuss your academic background and goals"
         })
@@ -2259,7 +2265,22 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
             registration_doc.next_steps = get_default_next_steps("Interview Scheduled")
             registration_doc.save()
             status_updated = True
-        
+            
+        # Send email notification to the student
+        if student_email:
+            try:
+                send_interview_notification(
+                    student_email,
+                    student_name,
+                    registration_id,
+                    date,
+                    time,
+                    location or "Online (Zoom)",
+                    meeting_link,
+                    notes
+                )
+            except Exception as email_error:
+                frappe.log_error(f"Failed to send interview notification: {str(email_error)}")
         
         return {
             "status": "success",
@@ -2272,6 +2293,144 @@ def schedule_interview(registration_id, date, time, interviewer=None, location=N
             "status": "error",
             "message": str(e)
         }
+
+def send_interview_notification(email, student_name, registration_id, date, time, location, meeting_link=None, notes=None):
+    """
+    Send an email notification to the student about the scheduled interview
+    
+    Args:
+        email (str): Student's email address
+        student_name (str): Student's full name
+        registration_id (str): Registration ID
+        date (str): Interview date
+        time (str): Interview time
+        location (str): Interview location
+        meeting_link (str, optional): URL for online interview
+        notes (str, optional): Additional notes about the interview
+    """
+    try:
+        # Format date for display
+        formatted_date = frappe.utils.format_date(date)
+        
+        # Format time for display (convert from 24h to 12h format)
+        try:
+            hours, minutes = time.split(':')
+            hour = int(hours)
+            formatted_time = f"{hour if hour <= 12 else hour - 12}:{minutes} {'AM' if hour < 12 else 'PM'}"
+        except:
+            formatted_time = time  # Fallback to original time format
+        
+        # Base URL for tracking application
+        site_url = frappe.utils.get_url()
+        tracking_url = f"{site_url}/track-application?id={registration_id}"
+        
+        # Create subject line
+        subject = f"TechEthica - Your Interview is Scheduled for {formatted_date}"
+        
+        # Create a location display string
+        location_display = location
+        if "online" in location.lower() and meeting_link:
+            location_display = "Online Interview (Link provided below)"
+        
+        # Create HTML message with nicely formatted content
+        message = f"""
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px;">
+            <h2 style="color: #6d28d9; margin-bottom: 20px;">🎯 Your TechEthica Interview is Scheduled</h2>
+            
+            <p>Dear <strong>{student_name}</strong>,</p>
+            
+            <p>We're pleased to inform you that your interview for admission to TechEthica has been scheduled.</p>
+            
+            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #6d28d9;">
+                <h3 style="color: #6d28d9; margin-top: 0;">Interview Details</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; width: 120px;"><strong>Date:</strong></td>
+                        <td style="padding: 8px 0;">{formatted_date}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Time:</strong></td>
+                        <td style="padding: 8px 0;">{formatted_time}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><strong>Location:</strong></td>
+                        <td style="padding: 8px 0;">{location_display}</td>
+                    </tr>
+                </table>
+        """
+        
+        # Add meeting link section if available
+        if meeting_link:
+            message += f"""
+                <div style="margin-top: 15px; background-color: #e0f2fe; padding: 15px; border-radius: 6px; border: 1px solid #bae6fd;">
+                    <h4 style="color: #0369a1; margin-top: 0; margin-bottom: 10px;">Online Meeting Link</h4>
+                    <p style="margin-bottom: 10px;">Please use the link below to join your interview at the scheduled time:</p>
+                    <a href="{meeting_link}" style="display: inline-block; background-color: #0284c7; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">Join Interview</a>
+                    <p style="margin-top: 10px; font-size: 13px;">Or copy this link if the button doesn't work: <br><a href="{meeting_link}" style="color: #0369a1; word-break: break-all;">{meeting_link}</a></p>
+                </div>
+            """
+        
+        # Close the interview details box
+        message += """
+            </div>
+        """
+        
+        # Add notes if available
+        if notes:
+            message += f"""
+            <div style="margin: 20px 0;">
+                <h3 style="color: #6d28d9;">Important Notes</h3>
+                <p>{notes}</p>
+            </div>
+            """
+        
+        # Add preparation tips
+        message += f"""
+            <div style="margin: 20px 0;">
+                <h3 style="color: #6d28d9;">Preparation Tips</h3>
+                <ul style="padding-left: 20px;">
+                    <li>Have your ID ready for verification.</li>
+                    <li>Be prepared to discuss your academic background and goals.</li>
+                    <li>Think about why you're interested in TechEthica and your chosen program.</li>
+                    <li>Consider questions you might want to ask about the institute or program.</li>
+                    <li>Ensure you have a stable internet connection if it's an online interview.</li>
+                </ul>
+            </div>
+            
+            <p>You can track all updates to your application status by visiting your application tracking page:</p>
+            <p style="margin: 20px 0;">
+                <a href="{tracking_url}" style="display: inline-block; background-color: #6d28d9; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">Track Your Application</a>
+            </p>
+            
+            <p>If you need to reschedule or have any questions, please contact our admissions office as soon as possible at <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at <a href="tel:+919074511600" style="color: #6d28d9;">+91 90745 11600</a>.</p>
+            
+            <p style="margin-top: 30px;">We look forward to meeting you!</p>
+            
+            <p>Warm regards,<br>
+            <strong>The TechEthica Admissions Team</strong></p>
+            
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+            
+            <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
+        </div>
+        """
+        
+        # Send the email
+        frappe.sendmail(
+            recipients=[email],
+            subject=subject,
+            message=message,
+            now=True
+        )
+        
+        # Log successful email sending
+        frappe.logger().info(f"Interview notification sent to {email} for registration {registration_id}")
+        
+        return True
+        
+    except Exception as e:
+        frappe.log_error(f"Failed to send interview notification: {str(e)}\n{frappe.get_traceback()}")
+        raise
 
 
 @frappe.whitelist(allow_guest=True)

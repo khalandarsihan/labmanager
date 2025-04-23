@@ -13,7 +13,9 @@
   "location",
   "status",
   "column_break_zlyi",
-  "notes"
+  "notes",
+  "section_break_ssvc",
+  "meeting_link"
  ],
  "fields": [
   {
@@ -57,11 +59,21 @@
    "fieldname": "notes",
    "fieldtype": "Text",
    "label": "Notes"
+  },
+  {
+   "description": "URL for online interview (e.g. Zoom, Google Meet, etc.",
+   "fieldname": "meeting_link",
+   "fieldtype": "Data",
+   "label": "Meeting Link"
+  },
+  {
+   "fieldname": "section_break_ssvc",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-03 07:15:59.572171",
+ "modified": "2025-04-23 00:02:43.029893",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Interview Schedule",

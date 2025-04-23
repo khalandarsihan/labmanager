@@ -279,7 +279,9 @@ whitelisted_methods = {
     "labmanager.api.api.get_course_catalog": True,
     "labmanager.api.api.get_exam_dates": True,
     "labmanager.api.api.get_application_status": True,
-    "labmanager.api.api.send_registration_pdf": True, 
+    "labmanager.api.api.send_registration_pdf": True,
+    "labmanager.api.api.schedule_interview": True,  
+    "labmanager.api.api.send_interview_notification": True,  
 }
 
 # Add CORS configuration for your frontend

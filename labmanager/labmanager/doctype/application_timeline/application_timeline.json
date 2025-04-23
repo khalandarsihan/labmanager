@@ -34,7 +34,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Submitted\nUnder Review\nDocuments Requested\nDocuments Uploaded\nDocument Deleted\nInterview Scheduled\nAccepted\nWaitlisted\nRejected"
+   "options": "Submitted\nUnder Review\nDocuments Requested\nDocuments Uploaded\nDocument Deleted\nInterview Scheduled\nInterview Updated\nAccepted\nWaitlisted\nRejected"
   },
   {
    "fieldname": "created_by",
@@ -55,7 +55,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-03 16:53:21.405212",
+ "modified": "2025-04-23 00:11:56.787525",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Application Timeline",
