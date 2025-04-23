@@ -25,7 +25,7 @@ export const StudentDashboard = () => {
     name: "Ansir Nihal",  
     grade: "7th Grade",  
     section: "Section A",  
-    teachers: ["Mr. Shafi Sa'adi (Faith Advisor)", "Mr. Khalandar Sihan Saquafi (Islamic Studies)"],  
+    teachers: ["Mr. Abu Mueen (Faith Advisor)", "Mr. Khalandar Sihan Saquafi (Islamic Studies)"],  
     schoolYear: "2024-2025",  
     semester: "Spring Semester",  
     contactInfo: {  
