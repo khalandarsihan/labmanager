@@ -1,13 +1,81 @@
+/* Stats.css */
+.zigzag-pattern {
+  background: 
+    linear-gradient(135deg, transparent 45%, currentColor 45%, currentColor 55%, transparent 55%) 0 0,
+    linear-gradient(45deg, transparent 45%, currentColor 45%, currentColor 55%, transparent 55%) 0 0;
+  background-size: 10px 10px;
+  background-repeat: repeat-x;
+}
+
+/* Animation keyframes for floating elements */
+@keyframes float-diagonal {
+  0%, 100% { transform: translate(0, 0) rotate(45deg); }
+  50% { transform: translate(10px, 10px) rotate(45deg); }
+}
+
+@keyframes float-up {
+  0%, 100% { transform: translateY(0) rotate(-12deg); }
+  50% { transform: translateY(-10px) rotate(-12deg); }
+}
+
+@keyframes float-circle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes float-side {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(10px); }
+}
+
+@keyframes float-diagonal-reverse {
+  0%, 100% { transform: translate(0, 0) rotate(12deg); }
+  50% { transform: translate(-10px, 10px) rotate(12deg); }
+}
+
+@keyframes float-up-slow {
+  0%, 100% { transform: translateY(0) rotate(45deg); }
+  50% { transform: translateY(-15px) rotate(45deg); }
+}
+
+/* Apply animations to elements */
+.animate-float-diagonal {
+  animation: float-diagonal 6s ease-in-out infinite;
+}
+
+.animate-float-up {
+  animation: float-up 4s ease-in-out infinite;
+}
+
+.animate-float-circle {
+  animation: float-circle 7s ease-in-out infinite;
+}
+
+.animate-float-side {
+  animation: float-side 5s ease-in-out infinite;
+}
+
+.animate-float-diagonal-reverse {
+  animation: float-diagonal-reverse 6s ease-in-out infinite;
+}
+
+.animate-float-up-slow {
+  animation: float-up-slow 8s ease-in-out infinite;
+}
+
+/* Stats card hover effects */
 .stat-card {
-  transform: translateY(0);
+  backface-visibility: hidden;
+  transform: translateZ(0);
   transition: all 0.3s ease-in-out;
 }
 
 .stat-card:hover {
   transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Smooth icon animation */
+/* Smooth icon animation - from original CSS */
 .stat-card i {
   transition: transform 0.3s ease-in-out;
 }
@@ -15,3 +83,13 @@
 .stat-card:hover i {
   transform: scale(1.1);
 }
+
+/* Delay animations for visual interest */
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+.delay-700 { animation-delay: 0.7s; }
+.delay-800 { animation-delay: 0.8s; }
+.delay-900 { animation-delay: 0.9s; }
+.delay-1000 { animation-delay: 1s; }
