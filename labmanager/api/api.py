@@ -1081,8 +1081,25 @@ def register_student(**kwargs):
         
        
         # Send confirmation email with the encoded registration ID
+        # try:
+        #     send_registration_confirmation(doc)
+        # except Exception as email_error:
+        #     frappe.logger().error(f"Email sending failed: {str(email_error)}")
+        
+        # Send confirmation email with the encoded registration ID
         try:
-            send_registration_confirmation(doc)
+            # Build full name
+            full_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
+            
+            # Send email using the PDF capable function (without PDF for now)
+            send_registration_pdf(
+                registration_id=doc.registration_id,
+                email=doc.email,
+                pdf_data=None,  # No PDF at this stage
+                first_name=doc.first_name,
+                middle_name=doc.middle_name,
+                last_name=doc.last_name
+            )
         except Exception as email_error:
             frappe.logger().error(f"Email sending failed: {str(email_error)}")
 
@@ -1119,68 +1136,68 @@ def register_student(**kwargs):
 #         frappe.log_error(frappe.get_traceback(), _("Student Registration Email Failed"))
 
 
-def send_registration_confirmation(doc):
-    """Send confirmation email to student"""
-    try:
-        # Create direct email content instead of using a template
-        # Get student's full name
-        full_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
+# def send_registration_confirmation(doc):
+#     """Send confirmation email to student"""
+#     try:
+#         # Create direct email content instead of using a template
+#         # Get student's full name
+#         full_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
         
-        # Create tracking URL
-        site_url = frappe.utils.get_url()
-        tracking_url = f"{site_url}/track-application?id={doc.registration_id}"
+#         # Create tracking URL
+#         site_url = frappe.utils.get_url()
+#         tracking_url = f"{site_url}/track-application?id={doc.registration_id}"
         
-        # Create email subject
-        subject = f"TechEthica Application Confirmation - {doc.registration_id}"
+#         # Create email subject
+#         subject = f"TechEthica Application Confirmation - {doc.registration_id}"
         
-        # Create email content
-        message = f"""
-        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px;">
-            <h2 style="color: #6d28d9; margin-bottom: 10px;">🌟 Application Confirmation</h2>
-            <p>Dear <strong>{full_name}</strong>,</p>
-            <p>Thank you for applying to <strong>TechEthica</strong>. We're excited to inform you that we have successfully received your application!</p>
-            <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
-                <strong>Application Reference ID:</strong> {doc.registration_id}
-            </p>
-            <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
-                <strong>Program:</strong> {doc.desired_academic_program}
-            </p>
-            <h3 style="color: #6d28d9; margin-top: 30px;">🧭 What Happens Next?</h3>
-            <ol style="padding-left: 20px;">
-                <li>Upload the required documents via your application tracking page.</li>
-                <li>Our admissions team will review them within <strong>5–7 business days</strong>.</li>
-                <li>If eligible, you'll be invited for an interview.</li>
-                <li>After the interview, a final decision will be communicated to you.</li>
-            </ol>
-            <p style="margin-top: 20px;">
-                🔗 <strong>Track your application and upload documents here:</strong><br>
-                <a href="{tracking_url}" style="color: #6d28d9; text-decoration: none;">{tracking_url}</a>
-            </p>
-            <p>If you have any questions, feel free to reach out to us at 
-                <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at 
-                <a href="tel:+919074511600" style="color: #6d28d9;">+91 90745 11600</a>.
-            </p>
-            <p style="margin-top: 30px;">Warm regards,<br>
-            <strong>The TechEthica Admissions Team</strong></p>
-            <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
-            <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
-        </div>
-        """
+#         # Create email content
+#         message = f"""
+#         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px;">
+#             <h2 style="color: #6d28d9; margin-bottom: 10px;">🌟 Application Confirmation</h2>
+#             <p>Dear <strong>{full_name}</strong>,</p>
+#             <p>Thank you for applying to <strong>TechEthica</strong>. We're excited to inform you that we have successfully received your application!</p>
+#             <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
+#                 <strong>Application Reference ID:</strong> {doc.registration_id}
+#             </p>
+#             <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
+#                 <strong>Program:</strong> {doc.desired_academic_program}
+#             </p>
+#             <h3 style="color: #6d28d9; margin-top: 30px;">🧭 What Happens Next?</h3>
+#             <ol style="padding-left: 20px;">
+#                 <li>Upload the required documents via your application tracking page.</li>
+#                 <li>Our admissions team will review them within <strong>5–7 business days</strong>.</li>
+#                 <li>If eligible, you'll be invited for an interview.</li>
+#                 <li>After the interview, a final decision will be communicated to you.</li>
+#             </ol>
+#             <p style="margin-top: 20px;">
+#                 🔗 <strong>Track your application and upload documents here:</strong><br>
+#                 <a href="{tracking_url}" style="color: #6d28d9; text-decoration: none;">{tracking_url}</a>
+#             </p>
+#             <p>If you have any questions, feel free to reach out to us at 
+#                 <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at 
+#                 <a href="tel:+919074511600" style="color: #6d28d9;">+91 90745 11600</a>.
+#             </p>
+#             <p style="margin-top: 30px;">Warm regards,<br>
+#             <strong>The TechEthica Admissions Team</strong></p>
+#             <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+#             <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
+#         </div>
+#         """
         
-        # Send email directly without using a template
-        frappe.sendmail(
-            recipients=[doc.email],
-            subject=subject,
-            message=message,
-            now=True  # Send immediately
-        )
+#         # Send email directly without using a template
+#         frappe.sendmail(
+#             recipients=[doc.email],
+#             subject=subject,
+#             message=message,
+#             now=True  # Send immediately
+#         )
         
-        # Log successful email sending
-        frappe.logger().debug(f"Registration confirmation email sent to {doc.email}")
+#         # Log successful email sending
+#         frappe.logger().debug(f"Registration confirmation email sent to {doc.email}")
         
-    except Exception as e:
-        frappe.log_error(frappe.get_traceback(), _("Student Registration Email Failed"))
-        # Continue the registration process despite email errors
+#     except Exception as e:
+#         frappe.log_error(frappe.get_traceback(), _("Student Registration Email Failed"))
+#         # Continue the registration process despite email errors
 
 
 @frappe.whitelist(allow_guest=True)
