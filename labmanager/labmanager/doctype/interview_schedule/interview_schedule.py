@@ -68,16 +68,20 @@ class InterviewSchedule(Document):
                 frappe.logger().warning(f"No email found for registration {self.registration_id}, notification not sent")
         except Exception as email_error:
             frappe.log_error(f"Failed to send interview notification: {str(email_error)}\n{frappe.get_traceback()}")
-
+            
+            
     def on_update(self):
         """
         Update timeline when interview details change, but only when actual changes occur
         """
-        # Track if this was a new record being created - don't create redundant entries
-        is_new_record = self.is_new()
-        
-        # Only send email notification if meeting link was updated after creation
-        if not is_new_record and self.has_value_changed("meeting_link") and self.meeting_link:
+        # Only run this logic for EXISTING records (not new ones being created)
+        # This prevents duplicate emails when a new interview is created
+        if self.get("__islocal") or self.flags.in_insert:
+            # Skip all update logic for new records - after_insert will handle it
+            return
+            
+        # Meeting link update logic - only for EXISTING records
+        if self.has_value_changed("meeting_link") and self.meeting_link:
             try:
                 # Get registration document
                 registration_doc = frappe.get_doc("Student Registration", self.registration_id)
@@ -119,7 +123,7 @@ class InterviewSchedule(Document):
                 frappe.log_error(f"Failed to send updated interview notification: {str(email_error)}\n{frappe.get_traceback()}")
         
         # Check if date or time has changed
-        if not is_new_record and (self.has_value_changed("date") or self.has_value_changed("time") or self.has_value_changed("location")):
+        if (self.has_value_changed("date") or self.has_value_changed("time") or self.has_value_changed("location")):
             # Get old values
             old_date = self.get_db_value("date")
             old_time = self.get_db_value("time")
@@ -180,7 +184,7 @@ class InterviewSchedule(Document):
                     frappe.log_error(f"Failed to send rescheduled interview notification: {str(email_error)}\n{frappe.get_traceback()}")
         
         # Handle status changes - but not for initial "Scheduled" status which is handled in after_insert
-        if not is_new_record and self.has_value_changed("status"):
+        if self.has_value_changed("status"):
             # We want timeline entries for all status changes EXCEPT when setting to "Scheduled" 
             # during creation (that's handled in after_insert)
             old_status = self.get_db_value("status") or ""
@@ -203,3 +207,4 @@ class InterviewSchedule(Document):
                     description,
                     "Admissions Team"
                 )
+        
