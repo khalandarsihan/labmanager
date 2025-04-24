@@ -94,6 +94,7 @@ def create_default_document_requirements(registration_doc):
         frappe.log_error(f"Error creating document requirements: {str(e)}")
         return False
 
+
 def get_default_next_steps(status):
     """Get default next steps text based on application status"""
     
@@ -106,7 +107,7 @@ def get_default_next_steps(status):
         """,
         
         "Under Review": """
-1. Your application is currently being reviewed by our admissions committee.
+1. Your application is currently being reviewed by our admissions team.
 2. This process typically takes 5-7 business days.
 3. You will be notified of any additional requirements or next steps.
 4. Please check back regularly for updates.
@@ -127,11 +128,10 @@ def get_default_next_steps(status):
         """,
         
         "Accepted": """
-1. Congratulations on your acceptance!
-2. Please complete the enrollment process within the next 2 weeks.
-3. Submit any pending documents.
-4. Pay the enrollment fee to secure your place.
-5. Attend the orientation session (details will be provided via email).
+1. Congratulations! We're pleased to accept you into our program.
+2. Your official offer letter will been sent to your registered email address.
+3. Complete your enrollment by making the payment through the link provided in your email.
+4. Class schedule and start date details will follow in a separate email.
         """,
         
         "Waitlisted": """

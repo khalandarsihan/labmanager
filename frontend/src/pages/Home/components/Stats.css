@@ -1,11 +1,11 @@
 /* Stats.css */
-.zigzag-pattern {
+/* .zigzag-pattern {
   background: 
     linear-gradient(135deg, transparent 45%, currentColor 45%, currentColor 55%, transparent 55%) 0 0,
     linear-gradient(45deg, transparent 45%, currentColor 45%, currentColor 55%, transparent 55%) 0 0;
   background-size: 10px 10px;
   background-repeat: repeat-x;
-}
+} */
 
 /* Animation keyframes for floating elements */
 @keyframes float-diagonal {

@@ -150,17 +150,17 @@ const Stats = () => {
   const stats = [
     {
       icon: 'fas fa-user-graduate',
-      value: '10,00+',
+      value: '500+',
       label: 'Students'
     },
     {
       icon: 'fas fa-book-open',
-      value: '200+',
+      value: '20+',
       label: 'Courses'
     },
     {
       icon: 'fas fa-chalkboard-teacher',
-      value: '50+',
+      value: '15+',
       label: 'Expert Instructors'
     },
     {
@@ -225,11 +225,11 @@ const Stats = () => {
       </section>
       
       {/* Spacer with gradient and geo pattern */}
-      <div className={`h-20 relative overflow-hidden ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'}`}>
+      <div className={`h-20 relative overflow-hidden ${useLightTheme ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50' : 'bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900'}`}>
         {/* Horizontal zigzag pattern */}
-        <div className={`absolute inset-0 ${linesOpacity} pointer-events-none`}>
+        {/* <div className={`absolute inset-0 ${linesOpacity} pointer-events-none`}>
           <div className={`absolute left-0 right-0 h-px ${lineColor}/70 top-1/2 transform -translate-y-1/2 zigzag-pattern`} />
-        </div>
+        </div> */}
         
         {/* Geo corner accents */}
         <div className={`absolute left-0 top-0 w-16 h-16 border-l-2 border-t-2 ${borderColor}${elementsOpacity}`} />

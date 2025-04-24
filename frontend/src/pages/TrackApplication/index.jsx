@@ -719,7 +719,7 @@ const TrackApplication = ({ initialRegistrationId }) => {
                           )}
                           
                           {/* Show enrollment button for accepted applications */}
-                          {statusData.current_status === 'Accepted' && (
+                          {/* {statusData.current_status === 'Accepted' && (
                             <div className="mt-6 text-center">
                               <Button
                                 className={useLightTheme ? "bg-emerald-600 hover:bg-emerald-700 text-white" : "bg-emerald-600 hover:bg-emerald-700 text-white"}
@@ -728,7 +728,7 @@ const TrackApplication = ({ initialRegistrationId }) => {
                                 Complete Enrollment
                               </Button>
                             </div>
-                          )}
+                          )} */}
                         </div>
                       ) : (
                         <div className={`text-center py-8 ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`}>

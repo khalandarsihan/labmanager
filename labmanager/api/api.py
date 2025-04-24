@@ -2097,6 +2097,13 @@ def update_application_status(registration_id, status, description=None, next_st
         if status_changed:
             timeline_description = description or f"Application status updated to {status}"
             create_timeline_entry(doc.name, status, timeline_description, frappe.session.user)
+            
+            # Send acceptance notification if status changed to Accepted
+            if status == "Accepted":
+                try:
+                    send_acceptance_notification(registration_id)
+                except Exception as email_error:
+                    frappe.log_error(f"Failed to send acceptance notification: {str(email_error)}")
         
         return {
             "status": "success",
@@ -2109,7 +2116,6 @@ def update_application_status(registration_id, status, description=None, next_st
             "status": "error",
             "message": str(e)
         }
-
 
 @frappe.whitelist()
 def request_document(registration_id, document_type, notes=None):
@@ -3049,3 +3055,100 @@ def notify_admin(contact_message):
         
     except Exception as e:
         frappe.log_error(f"Failed to send admin notification: {str(e)}", "Contact Form")
+        
+@frappe.whitelist()
+def send_acceptance_notification(registration_id):
+    """Send acceptance notification email to the student"""
+    try:
+        # Find the registration by registration_id
+        registrations = frappe.get_all(
+            "Student Registration",
+            filters={"registration_id": registration_id},
+            fields=["name", "email", "first_name", "middle_name", "last_name", 
+                   "desired_academic_program", "islamic_studies_specialization"],
+            limit=1
+        )
+        
+        if not registrations:
+            return {
+                "status": "error",
+                "message": f"Application with ID {registration_id} not found"
+            }
+            
+        # Get student's details
+        doc = frappe.get_doc("Student Registration", registrations[0].name)
+        student_email = doc.email
+        student_name = " ".join(filter(None, [
+            doc.first_name,
+            doc.middle_name,
+            doc.last_name
+        ]))
+        program = doc.desired_academic_program
+        specialization = doc.islamic_studies_specialization
+            
+        # Create subject line
+        subject = f"Congratulations! Your Application to TechEthica has been Accepted"
+        
+        # Base URL for tracking application
+        site_url = frappe.utils.get_url()
+        tracking_url = f"{site_url}/track-application?id={registration_id}"
+        
+        # Create HTML message with nicely formatted content
+        message = f"""
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px;">
+            <h2 style="color: #6d28d9; margin-bottom: 20px;">🎉 Congratulations on Your Acceptance!</h2>
+            
+            <p>Dear <strong>{student_name}</strong>,</p>
+            
+            <p>We are delighted to inform you that your application to TechEthica has been <strong>accepted</strong>!</p>
+            
+            <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #6d28d9;">
+                <h3 style="color: #6d28d9; margin-top: 0;">Next Steps</h3>
+                <ol style="padding-left: 20px; margin-bottom: 0;">
+                    <li>Congratulations! We're pleased to accept you into our program.</li>
+                    <li>Your official offer letter has been sent to your registered email address.</li>
+                    <li>Complete your enrollment by making the payment through the link provided in your email.</li>
+                    <li>Class schedule and start date details will follow in a separate email.</li>
+                </ol>
+            </div>
+
+            <p>We are excited to welcome you to the TechEthica community and look forward to your academic journey with us in the <strong>{program}</strong> program{f" with specialization in {specialization}" if specialization else ""}.</p>
+            
+            <p>You can track all updates to your application status by visiting your application tracking page:</p>
+            <p style="margin: 20px 0;">
+                <a href="{tracking_url}" style="display: inline-block; background-color: #6d28d9; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">Track Your Application</a>
+            </p>
+            
+            <p>If you have any questions, please contact our admissions office at <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at <a href="tel:+91 95913 82400" style="color: #6d28d9;">+91 95913 82400</a>.</p>
+            
+            <p style="margin-top: 30px;">Warm regards,<br>
+            <strong>The TechEthica Admissions Team</strong></p>
+            
+            <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+            
+            <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
+        </div>
+        """
+        
+        # Send the email
+        frappe.sendmail(
+            recipients=[student_email],
+            subject=subject,
+            message=message,
+            now=True
+        )
+        
+        # Log successful email sending
+        frappe.logger().info(f"Acceptance notification sent to {student_email} for registration {registration_id}")
+        
+        return {
+            "status": "success",
+            "message": f"Acceptance notification sent to {student_email}"
+        }
+        
+    except Exception as e:
+        frappe.log_error(f"Failed to send acceptance notification: {str(e)}\n{frappe.get_traceback()}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
