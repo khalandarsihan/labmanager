@@ -4,9 +4,10 @@ import { useTheme } from './ThemeContext';
 const Footer = () => {
   const { useLightTheme } = useTheme();
   
-  const footerBgStyle = useLightTheme
+
+    const footerBgStyle = useLightTheme
     ? "bg-gradient-to-r from-purple-100 via-purple-200 to-purple-100"
-    : "bg-gradient-to-r from-[#1a1f2e]/90 via-[#131720]/90 to-[#1a1f2e]/90";
+    : "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900";
 
   const headingStyle = useLightTheme
     ? "text-purple-700"

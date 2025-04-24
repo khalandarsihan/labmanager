@@ -9,7 +9,7 @@ import AnnouncementsAndFAQs from './components/AnnouncementsAndFAQs';
 // import AdmissionAnnouncement from './components/AdmissionAnnouncement';
 import { useHomepageData } from '@/hooks/useHomepageData';
 import { useTheme } from '../../components/ui/ThemeContext';
-import ScrollToTop from "../../components/ui/ScrollToTop";
+// import ScrollToTop from "../../components/ui/ScrollToTop";
 
 const HomePage = () => {
   const { 
@@ -56,7 +56,7 @@ const HomePage = () => {
       <FeaturedCourses courses={featuredCourses} />
       <Stats />
       {/* Add ScrollToTop component here */}
-      <ScrollToTop />
+      {/* <ScrollToTop /> */}
     </div>
   );
 };
