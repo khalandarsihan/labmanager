@@ -115,125 +115,6 @@ def get_course_details(course_code):
         frappe.flags.ignore_permissions = False
         
 
-# @frappe.whitelist(allow_guest=True)  
-# def get_course_catalog(filters=None):  
-#     try:  
-#         frappe.logger().debug(f"Received filters parameter: {filters}")
-        
-#         # Parse filters if they're passed as a string  
-#         if isinstance(filters, str):  
-#             try:
-#                 filters = json.loads(filters)
-#                 frappe.logger().debug(f"Successfully parsed filters: {filters}")
-#             except json.JSONDecodeError as e:
-#                 frappe.logger().error(f"Error parsing filters JSON: {str(e)}")
-#                 filters = {}
-#         else:
-#             filters = filters or {}
-        
-#         # Check if there's a search term
-#         search_term = None
-#         if isinstance(filters, dict) and 'search' in filters:
-#             search_term = filters.get('search')
-#             if not (isinstance(search_term, str) and search_term.strip()):
-#                 search_term = None
-        
-#         if search_term:
-#             # Use SQL for more advanced search capabilities with instructor join
-#             search_term = f"%{search_term}%"
-#             frappe.logger().debug(f"Searching for: '{search_term}'")
-            
-#             # Get courses with title, description, and instructor matches
-#             # Order by relevance: title matches first, then instructor, then description
-#             courses = frappe.db.sql("""
-#                 SELECT 
-#                     c.name, c.course_code, c.title, c.short_description, 
-#                     c.duration, c.unit, c.level, c.price, 
-#                     c.total_lessons, c.total_projects,
-#                     c.featured_image_catalog, c.instructor, c.show_in_featured_section,
-#                     CASE 
-#                         WHEN c.title LIKE %(term)s THEN 1
-#                         WHEN i.full_name LIKE %(term)s THEN 2
-#                         WHEN c.short_description LIKE %(term)s THEN 3
-#                         WHEN c.level LIKE %(term)s THEN 4
-#                         ELSE 5
-#                     END as relevance
-#                 FROM `tabCourse` c
-#                 LEFT JOIN `tabCourse Instructor` i ON c.instructor = i.name
-#                 WHERE c.status = 'Active'
-#                 AND (
-#                     c.title LIKE %(term)s 
-#                     OR c.short_description LIKE %(term)s
-#                     OR i.full_name LIKE %(term)s
-#                     OR c.level LIKE %(term)s
-#                 )
-#                 ORDER BY relevance, c.title
-#             """, {"term": search_term}, as_dict=1)
-            
-#             frappe.logger().debug(f"Found {len(courses)} courses matching search term")
-#         else:
-#             # Base filters - ensure only active courses  
-#             base_filters = {"status": "Active"}
-            
-#             # Apply other filters here...
-            
-#             frappe.logger().debug(f"Using standard query filters: {base_filters}")
-#             courses = frappe.get_all(
-#                 "Course",
-#                 fields=[
-#                     "name", "course_code", "title", "short_description", "duration",
-#                     "unit", "level", "price", "total_lessons", "total_projects",
-#                     "featured_image_catalog", "instructor", "show_in_featured_section"
-#                 ],
-#                 filters=base_filters
-#             )
-#             frappe.logger().debug(f"Found {len(courses)} courses")
-        
-#         # Process course data...
-#         for course in courses:  
-#             # Get instructor details if available  
-#             if course.get('instructor'):  
-#                 try:
-#                     instructor = frappe.get_doc("Course Instructor", course.get('instructor'))  
-#                     course["instructor"] = {  
-#                         "name": instructor.full_name,  
-#                         "title": instructor.title,  
-#                         "image": instructor.image  
-#                     }
-#                 except Exception as e:
-#                     frappe.logger().error(f"Error getting instructor: {str(e)}")
-#                     course["instructor"] = {"name": "Unknown"}
-             
-#             # Get course tags  
-#             try:
-#                 course_features = frappe.get_all(  
-#                     "Course Features",  
-#                     fields=["feature_name"],  
-#                     filters={"course": course.get('course_code')},  
-#                     order_by="sequence"  
-#                 )  
-#                 course["tags"] = [feature.get("feature_name") for feature in course_features]
-#             except Exception as e:
-#                 frappe.logger().error(f"Error getting course features: {str(e)}")
-#                 course["tags"] = []
-            
-#             # Remove relevance field if it exists
-#             if 'relevance' in course:
-#                 del course['relevance']
-        
-#         frappe.logger().debug(f"Returning {len(courses)} processed courses")
-#         return {  
-#             "message": {  
-#                 "courses": courses  
-#             }  
-#         }
-
-#     except Exception as e:  
-#         frappe.logger().error(f"Course Catalog API Error: {str(e)}\n{frappe.get_traceback()}")  
-#         return {  
-#             "error": str(e)  
-#         }
-
 @frappe.whitelist(allow_guest=True)    
 def get_course_catalog(filters=None):    
    try:    
@@ -1028,6 +909,95 @@ def generate_registration_id(academic_program):
             "decoded_id": f"REG-D-{fallback_hash}"
         }
 
+# @frappe.whitelist(allow_guest=True)
+# def register_student(**kwargs):
+#     """API endpoint to register a new student"""
+#     try:
+#         # Generate both encoded and decoded registration IDs
+#         registration_ids = generate_registration_id(kwargs.get('desired_academic_program'))
+        
+#         # Validate required fields
+#         required_fields = [
+#             'first_name', 'email', 'desired_academic_program',
+#             'islamic_studies_specialization', 'previous_education'
+#         ]
+        
+#         missing_fields = [field for field in required_fields if not kwargs.get(field)]
+#         if missing_fields:
+#             return {
+#                 "status": "error",
+#                 "message": f"Missing required fields: {', '.join(missing_fields)}"
+#             }
+
+#         # Create student registration document
+#         doc = frappe.get_doc({
+#             "doctype": "Student Registration",
+#             "registration_id": registration_ids["encoded_id"],
+#             "decoded_registration_id": registration_ids["decoded_id"],
+#             "first_name": kwargs.get('first_name'),
+#             "middle_name": kwargs.get('middle_name'),
+#             "last_name": kwargs.get('last_name'),
+#             "date_of_birth": kwargs.get('date_of_birth'),
+#             "gender": kwargs.get('gender'),
+#             "email": kwargs.get('email'),
+#             "phone": kwargs.get('phone'),
+#             "address": kwargs.get('address'),
+#             "city": kwargs.get('city'),
+#             "state": kwargs.get('state'),
+#             "country": kwargs.get('country'),
+#             "postal_code": kwargs.get('postal_code'),
+#             "previous_education": kwargs.get('previous_education'),
+#             "desired_academic_program": kwargs.get('desired_academic_program'),
+#             "institution": kwargs.get('institution'),
+#             "islamic_studies_specialization": kwargs.get('islamic_studies_specialization'),
+#             "year_of_completion": kwargs.get('year_of_completion'),
+#             "status": "Submitted",
+#             "next_steps": get_default_next_steps("Submitted")
+#         })
+
+#         if kwargs.get('profile_image'):
+#             doc.profile_image = kwargs.get('profile_image')
+
+#         doc.insert(ignore_permissions=True)
+        
+       
+#         # Send confirmation email with the encoded registration ID
+#         # try:
+#         #     send_registration_confirmation(doc)
+#         # except Exception as email_error:
+#         #     frappe.logger().error(f"Email sending failed: {str(email_error)}")
+        
+#         # Send confirmation email with the encoded registration ID
+#         try:
+#             # Build full name
+#             full_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
+            
+#             # Send email using the PDF capable function (without PDF for now)
+#             send_registration_pdf(
+#                 registration_id=doc.registration_id,
+#                 email=doc.email,
+#                 pdf_data=None,  # No PDF at this stage
+#                 first_name=doc.first_name,
+#                 middle_name=doc.middle_name,
+#                 last_name=doc.last_name
+#             )
+#         except Exception as email_error:
+#             frappe.logger().error(f"Email sending failed: {str(email_error)}")
+
+#         # Return only the encoded ID to the frontend
+#         return {
+#             "status": "success",
+#             "message": "Registration successful",
+#             "registration_id": registration_ids["encoded_id"]
+#         }
+
+#     except Exception as e:
+#         frappe.logger().error(f"Registration failed: {str(e)}\n{frappe.get_traceback()}")
+#         return {
+#             "status": "error",
+#             "message": f"Registration failed: {str(e)}"
+#         }  
+    
 @frappe.whitelist(allow_guest=True)
 def register_student(**kwargs):
     """API endpoint to register a new student"""
@@ -1079,29 +1049,8 @@ def register_student(**kwargs):
 
         doc.insert(ignore_permissions=True)
         
-       
-        # Send confirmation email with the encoded registration ID
-        # try:
-        #     send_registration_confirmation(doc)
-        # except Exception as email_error:
-        #     frappe.logger().error(f"Email sending failed: {str(email_error)}")
-        
-        # Send confirmation email with the encoded registration ID
-        try:
-            # Build full name
-            full_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
-            
-            # Send email using the PDF capable function (without PDF for now)
-            send_registration_pdf(
-                registration_id=doc.registration_id,
-                email=doc.email,
-                pdf_data=None,  # No PDF at this stage
-                first_name=doc.first_name,
-                middle_name=doc.middle_name,
-                last_name=doc.last_name
-            )
-        except Exception as email_error:
-            frappe.logger().error(f"Email sending failed: {str(email_error)}")
+        # NOTE: Removed the email sending call from here to avoid duplication
+        # Let the frontend handle it with the PDF attachment
 
         # Return only the encoded ID to the frontend
         return {
@@ -1115,89 +1064,9 @@ def register_student(**kwargs):
         return {
             "status": "error",
             "message": f"Registration failed: {str(e)}"
-        }  
-    
-
-# def send_registration_confirmation(doc):
-#     """Send confirmation email to student"""
-#     try:
-#         frappe.sendmail(
-#             recipients=[doc.email],
-#             subject=_("Registration Confirmation - TechEthica"),
-#             template="student_registration_confirmation",
-#             args={
-#                 "first_name": doc.first_name,
-#                 "registration_id": doc.registration_id,  # Using encoded ID in email
-#                 "program": doc.desired_academic_program,
-#                 "support_email": frappe.get_value("Education Settings", None, "support_email")
-#             }
-#         )
-#     except Exception as e:
-#         frappe.log_error(frappe.get_traceback(), _("Student Registration Email Failed"))
+        }
 
 
-# def send_registration_confirmation(doc):
-#     """Send confirmation email to student"""
-#     try:
-#         # Create direct email content instead of using a template
-#         # Get student's full name
-#         full_name = " ".join(filter(None, [doc.first_name, doc.middle_name, doc.last_name]))
-        
-#         # Create tracking URL
-#         site_url = frappe.utils.get_url()
-#         tracking_url = f"{site_url}/track-application?id={doc.registration_id}"
-        
-#         # Create email subject
-#         subject = f"TechEthica Application Confirmation - {doc.registration_id}"
-        
-#         # Create email content
-#         message = f"""
-#         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px;">
-#             <h2 style="color: #6d28d9; margin-bottom: 10px;">🌟 Application Confirmation</h2>
-#             <p>Dear <strong>{full_name}</strong>,</p>
-#             <p>Thank you for applying to <strong>TechEthica</strong>. We're excited to inform you that we have successfully received your application!</p>
-#             <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
-#                 <strong>Application Reference ID:</strong> {doc.registration_id}
-#             </p>
-#             <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
-#                 <strong>Program:</strong> {doc.desired_academic_program}
-#             </p>
-#             <h3 style="color: #6d28d9; margin-top: 30px;">🧭 What Happens Next?</h3>
-#             <ol style="padding-left: 20px;">
-#                 <li>Upload the required documents via your application tracking page.</li>
-#                 <li>Our admissions team will review them within <strong>5–7 business days</strong>.</li>
-#                 <li>If eligible, you'll be invited for an interview.</li>
-#                 <li>After the interview, a final decision will be communicated to you.</li>
-#             </ol>
-#             <p style="margin-top: 20px;">
-#                 🔗 <strong>Track your application and upload documents here:</strong><br>
-#                 <a href="{tracking_url}" style="color: #6d28d9; text-decoration: none;">{tracking_url}</a>
-#             </p>
-#             <p>If you have any questions, feel free to reach out to us at 
-#                 <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at 
-#                 <a href="tel:+919074511600" style="color: #6d28d9;">+91 90745 11600</a>.
-#             </p>
-#             <p style="margin-top: 30px;">Warm regards,<br>
-#             <strong>The TechEthica Admissions Team</strong></p>
-#             <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
-#             <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
-#         </div>
-#         """
-        
-#         # Send email directly without using a template
-#         frappe.sendmail(
-#             recipients=[doc.email],
-#             subject=subject,
-#             message=message,
-#             now=True  # Send immediately
-#         )
-        
-#         # Log successful email sending
-#         frappe.logger().debug(f"Registration confirmation email sent to {doc.email}")
-        
-#     except Exception as e:
-#         frappe.log_error(frappe.get_traceback(), _("Student Registration Email Failed"))
-#         # Continue the registration process despite email errors
 
 
 @frappe.whitelist(allow_guest=True)
@@ -2892,6 +2761,103 @@ def get_timeline_entries(registration_id):
 
 
 
+# @frappe.whitelist(allow_guest=True)
+# def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', middle_name='', last_name=''):
+#     try:
+#         # Create email subject
+#         subject = f"TechEthica Application Confirmation - {registration_id}"
+        
+#         # Base URL for tracking
+#         site_url = frappe.utils.get_url()
+#         tracking_url = f"{site_url}/track-application?id={registration_id}"
+        
+#         # Format full name with middle name if available
+#         full_name = first_name
+#         if middle_name:
+#             full_name += f" {middle_name}"
+#         if last_name:
+#             full_name += f" {last_name}"
+        
+#         # Create email content
+#         message = f"""
+#         <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; padding: 20px;">
+#             <h2 style="color: #6d28d9; margin-bottom: 10px;">🌟 Application Confirmation</h2>
+
+#             <p>Dear <strong>{full_name}</strong>,</p>
+
+#             <p>Thank you for applying to <strong>TechEthica</strong>. We’re excited to inform you that we have successfully received your application!</p>
+
+#             <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
+#                 <strong>Application Reference ID:</strong> {registration_id}
+#             </p>
+
+#             <p>Your application confirmation PDF is attached for your records.</p>
+
+#             <h3 style="color: #6d28d9; margin-top: 30px;">🧭 What Happens Next?</h3>
+#             <ol style="padding-left: 20px;">
+#                 <li>Upload the required documents via your application tracking page.</li>
+#                 <li>Our admissions team will review them within <strong>5–7 business days</strong>.</li>
+#                 <li>If eligible, you'll be invited for an interview.</li>
+#                 <li>After the interview, a final decision will be communicated to you.</li>
+#             </ol>
+
+#             <p style="margin-top: 20px;">
+#                 🔗 <strong>Track your application and upload documents here:</strong><br>
+#                 <a href="{tracking_url}" style="color: #6d28d9; text-decoration: none;">{tracking_url}</a>
+#             </p>
+
+#             <p>If you have any questions, feel free to reach out to us at 
+#                 <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at 
+#                 <a href="tel:+91 95913 82400" style="color: #6d28d9;">+91 95913 82400</a>.
+#             </p>
+
+#             <p style="margin-top: 30px;">Warm regards,<br>
+#             <strong>The TechEthica Admissions Team</strong></p>
+
+#             <hr style="margin: 40px 0; border: none; border-top: 1px solid #ddd;">
+
+#             <p style="font-size: 12px; color: #888;">© 2025 TechEthica | Sunnah & Science Research Labs | Bidarahalli, Bengaluru</p>
+#         </div>
+#         """
+
+        
+#         # Check if PDF data is provided
+#         attachments = []
+#         if pdf_data:
+#             # Convert base64 to file
+#             pdf_file_name = f"TechEthica_Application_{registration_id}.pdf"
+#             pdf_file_path = '/tmp/' + pdf_file_name
+            
+#             # Save base64 data to file
+#             import base64
+#             with open(pdf_file_path, 'wb') as f:
+#                 f.write(base64.b64decode(pdf_data))
+            
+#             # Add to attachments
+#             attachments.append({
+#                 'fname': pdf_file_name,
+#                 'fcontent': open(pdf_file_path, 'rb').read()
+#             })
+        
+#         # Send email
+#         frappe.sendmail(
+#             recipients=[email],
+#             subject=subject,
+#             message=message,
+#             attachments=attachments
+#         )
+        
+#         # Cleanup temporary file if needed
+#         if pdf_data and os.path.exists(pdf_file_path):
+#             os.remove(pdf_file_path)
+        
+#         return {"status": "success", "message": "Email sent successfully"}
+    
+#     except Exception as e:
+#         frappe.log_error(f"Error sending registration email: {str(e)}")
+#         return {"status": "error", "message": str(e)}
+
+
 @frappe.whitelist(allow_guest=True)
 def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', middle_name='', last_name=''):
     try:
@@ -2916,7 +2882,7 @@ def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', 
 
             <p>Dear <strong>{full_name}</strong>,</p>
 
-            <p>Thank you for applying to <strong>TechEthica</strong>. We’re excited to inform you that we have successfully received your application!</p>
+            <p>Thank you for applying to <strong>TechEthica</strong>. We're excited to inform you that we have successfully received your application!</p>
 
             <p style="background-color: #f3f4f6; padding: 10px 15px; border-left: 4px solid #6d28d9;">
                 <strong>Application Reference ID:</strong> {registration_id}
@@ -2951,43 +2917,61 @@ def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', 
         </div>
         """
 
-        
         # Check if PDF data is provided
         attachments = []
+        pdf_file_path = None
+        
         if pdf_data:
-            # Convert base64 to file
+            # Convert base64 to file - more efficient conversion
             pdf_file_name = f"TechEthica_Application_{registration_id}.pdf"
             pdf_file_path = '/tmp/' + pdf_file_name
             
-            # Save base64 data to file
-            import base64
-            with open(pdf_file_path, 'wb') as f:
-                f.write(base64.b64decode(pdf_data))
-            
-            # Add to attachments
-            attachments.append({
-                'fname': pdf_file_name,
-                'fcontent': open(pdf_file_path, 'rb').read()
-            })
+            try:
+                # More efficient base64 decoding
+                import base64
+                from io import BytesIO
+                
+                # Convert base64 to binary in memory first
+                pdf_binary = base64.b64decode(pdf_data)
+                
+                # Write to disk in one operation
+                with open(pdf_file_path, 'wb') as f:
+                    f.write(pdf_binary)
+                
+                # Add to attachments - read file only once
+                with open(pdf_file_path, 'rb') as f:
+                    file_content = f.read()
+                
+                attachments.append({
+                    'fname': pdf_file_name,
+                    'fcontent': file_content
+                })
+                
+                frappe.logger().debug(f"PDF processed successfully: {len(pdf_binary)} bytes")
+            except Exception as pdf_error:
+                frappe.logger().error(f"Error processing PDF: {str(pdf_error)}")
+                # Continue without attachment if PDF processing fails
         
-        # Send email
+        # Send email - set a reasonable timeout and use now=True for immediate sending
         frappe.sendmail(
             recipients=[email],
             subject=subject,
             message=message,
-            attachments=attachments
+            attachments=attachments,
+            now=True
         )
         
         # Cleanup temporary file if needed
-        if pdf_data and os.path.exists(pdf_file_path):
+        import os
+        if pdf_data and pdf_file_path and os.path.exists(pdf_file_path):
             os.remove(pdf_file_path)
         
+        frappe.logger().info(f"Registration confirmation email sent to {email}")
         return {"status": "success", "message": "Email sent successfully"}
     
     except Exception as e:
         frappe.log_error(f"Error sending registration email: {str(e)}")
         return {"status": "error", "message": str(e)}
-
 
 @frappe.whitelist(allow_guest=True)
 def get_contact_info():
