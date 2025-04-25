@@ -18,7 +18,7 @@ const Carousel = ({ slides = [] }) => {
       clearInterval(intervalRef.current);
     }
     // Start a new interval
-    intervalRef.current = setInterval(nextSlide, 3000);
+    intervalRef.current = setInterval(nextSlide, 5000);
   }, [nextSlide]);
 
   const prevSlide = useCallback(() => {

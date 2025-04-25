@@ -87,131 +87,173 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
     ? "border-purple-300/50 text-purple-600 hover:bg-purple-500/10"
     : "border-amber-300/50 text-amber-300 hover:bg-amber-300/10";
 
-  // New function - handle PDF generation and email sending in one function
-  const handleGenerateAndSendPdf = async () => {
-    if (pdfGenerating || emailSending || emailSent) return;
-    
-    setPdfGenerating(true);
-    try {
-      // Generate the PDF
-      const pdfBytes = await generatePdf();
-      
-      // Convert the PDF bytes to base64
-      const base64Pdf = arrayBufferToBase64(pdfBytes);
-      
-      // Download PDF locally
-      downloadPdf(pdfBytes);
-      
-      // Only send email if we have a valid email and registration ID
-      if (localStudentData.email && registrationId) {
-        try {
-          // Send the PDF via email API
-          const response = await sendPdfEmail({
-            registration_id: registrationId,
-            email: localStudentData.email,
-            pdf_data: base64Pdf,
-            first_name: localStudentData.first_name || '',
-            middle_name: localStudentData.middle_name || '',
-            last_name: localStudentData.last_name || ''
-          });
-          
-          if (response?.status === 'success') {
-            setEmailSent(true);
-            toast({
-              title: 'Success',
-              description: 'Confirmation PDF also sent to your email'
-            });
-          } else {
-            console.error('Email sending failed:', response?.message);
-            toast({
-              title: 'Note',
-              description: 'PDF downloaded successfully.'
-            });
-          }
-        } catch (emailError) {
-          console.error('Error sending PDF via email:', emailError);
-          toast({
-            title: 'PDF Downloaded',
-            description: 'Email delivery could not be completed at this time.'
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast({
-        title: 'Error',
-        description: 'Could not generate PDF confirmation. Please try the download button.',
-        variant: 'destructive'
-      });
-    } finally {
-      setPdfGenerating(false);
-    }
-  };
-
-  // Modified for specific manual download only
-  const handleDownloadConfirmation = async () => {
-    try {
-      const pdfBytes = await generatePdf();
-      downloadPdf(pdfBytes);
-      
-      toast({
-        title: 'Success',
-        description: 'PDF downloaded successfully'
-      });
-    } catch (error) {
-      console.error('Error generating PDF:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to generate PDF confirmation',
-        variant: 'destructive'
-      });
-    }
-  };
+const handleGenerateAndSendPdf = async () => {
+  if (pdfGenerating || emailSending || emailSent) return;
   
-  // Helper function to download PDF
-  const downloadPdf = (pdfBytes) => {
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = blobUrl;
-    link.download = `TechEthica_Application_${registrationId}.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  setPdfGenerating(true);
+  try {
+    // Generate the PDF
+    const pdfBytes = await generatePdf();
     
-    // Clean up object URL
-    setTimeout(() => {
-      URL.revokeObjectURL(blobUrl);
-    }, 1000);
-  };
+    // Convert the PDF bytes to base64
+    const base64Pdf = arrayBufferToBase64(pdfBytes);
+    
+    // Download PDF locally without showing any toast
+    downloadPdf(pdfBytes);
+    
+    // Only send email if we have a valid email and registration ID
+    // No toast messages at all
+    if (localStudentData.email && registrationId) {
+      try {
+        // Send the PDF via email API
+        const response = await sendPdfEmail({
+          registration_id: registrationId,
+          email: localStudentData.email,
+          pdf_data: base64Pdf,
+          first_name: localStudentData.first_name || '',
+          middle_name: localStudentData.middle_name || '',
+          last_name: localStudentData.last_name || ''
+        });
+        
+        // Just log the response for debugging
+        console.log('Email API response:', response);
+        
+        // Update state if successful
+        if (response && response.status === 'success') {
+          setEmailSent(true);
+        }
+      } catch (emailError) {
+        // Just log the error
+        console.error('Email sending error:', emailError);
+      }
+    }
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    // Only show a toast for critical PDF generation errors
+    toast({
+      title: 'Error',
+      description: 'Could not generate PDF. Please try again.',
+      variant: 'destructive'
+    });
+  } finally {
+    setPdfGenerating(false);
+  }
+};
 
-  // Function to generate PDF - extracted from the main function for better organization
-  const generatePdf = async () => {
-    // Create a new PDF document
-    const pdfDoc = await PDFDocument.create();
+// Also update the downloadPdf function to remove any toast message there
+const downloadPdf = (pdfBytes) => {
+  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const blobUrl = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = blobUrl;
+  link.download = `TechEthica_Application_${registrationId}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  // Clean up object URL
+  setTimeout(() => {
+    URL.revokeObjectURL(blobUrl);
+  }, 1000);
+  
+  // No toast message here
+};
+
+// Also check for and remove any toast message in handleDownloadConfirmation
+const handleDownloadConfirmation = async () => {
+  try {
+    const pdfBytes = await generatePdf();
+    downloadPdf(pdfBytes);
     
-    // Add a new page - A4 size (595 x 842 points) instead of A3 for faster processing
-    const page = pdfDoc.addPage([595, 842]);
+    // No toast message here
+  } catch (error) {
+    console.error('Error generating PDF:', error);
+    // Only keep critical error toasts
+    toast({
+      title: 'Error',
+      description: 'Failed to generate PDF. Please try again.',
+      variant: 'destructive'
+    });
+  }
+};
+  
+
+const generatePdf = async () => {
+  // Create a new PDF document
+  const pdfDoc = await PDFDocument.create();
+  
+  // Switch back to A3 size (842 x 1191 points) for more space
+  const page = pdfDoc.addPage([842, 1191]);
+  
+  // Get the standard font
+  const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  
+  // Set basic properties
+  const textSize = 14;
+  const titleSize = 24;
+  const headerSize = 18;
+  const margin = 50;
+  const tableMargin = 60;
+  const lineHeight = textSize * 1.7;
+  
+  // Use different colors based on theme
+  const primaryColor = useLightTheme
+    ? { r: 0.5, g: 0.3, b: 0.8 } // purple for light theme
+    : { r: 0.85, g: 0.65, b: 0.13 }; // amber for dark theme
+  
+  // Try to fetch and embed the logo
+  let logoHeight = 0;
+  try {
+    // Try different paths for the logo
+    const logoUrls = [
+      '/assets/labmanager/images/techethica_letterhead.jpeg',
+      '/files/logo.jpeg',
+      '/assets/images/logo.jpeg',
+      '/public/images/logo.jpeg',
+      '/images/logo.jpeg',
+      'labmanager/public/images/logo.jpeg'
+    ];
     
-    // Get the standard font
-    const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    let logoBytes = null;
+    let successUrl = null;
     
-    // Set basic properties
-    const textSize = 12;
-    const titleSize = 20;
-    const headerSize = 16;
-    const margin = 40;
-    const tableMargin = 50;
-    const lineHeight = textSize * 1.7;
+    for (const url of logoUrls) {
+      try {
+        const response = await fetch(url);
+        if (response.ok) {
+          logoBytes = await response.arrayBuffer();
+          successUrl = url;
+          break;
+        }
+      } catch (err) {
+        console.log(`Logo not found at ${url}`);
+      }
+    }
     
-    // Use different colors based on theme
-    const primaryColor = useLightTheme
-      ? { r: 0.5, g: 0.3, b: 0.8 } // purple for light theme
-      : { r: 0.85, g: 0.65, b: 0.13 }; // amber for dark theme
-    
-    // Simplified logo handling - skip logo loading to speed up PDF generation
-    // Just use text header instead
+    if (logoBytes) {
+      const logo = await pdfDoc.embedJpg(logoBytes);
+      
+      // Calculate logo dimensions (maintaining aspect ratio)
+      const logoWidth = page.getWidth() * 0.9; // 90% of page width for a letterhead style
+      logoHeight = (logo.height / logo.width) * logoWidth;
+      
+      // Draw the logo
+      page.drawImage(logo, {
+        x: (page.getWidth() - logoWidth) / 2,  // This centers the logo horizontally
+        y: page.getHeight() - margin - logoHeight,
+        width: logoWidth,
+        height: logoHeight,
+      });
+
+      console.log(`Logo successfully loaded from ${successUrl}`);
+    } 
+    else {
+      throw new Error('No logo found at any expected path');
+    }
+  } catch (logoError) {
+    console.warn('Logo loading failed, continuing without logo:', logoError);
+    // Fallback to text-only header if logo fails to load
     page.drawText('TechEthica Institute', {
       x: margin,
       y: page.getHeight() - margin - 40,
@@ -219,250 +261,257 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
       font: helveticaBold,
       color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
     });
-    
-    // Set vertical positions
-    const contentStartY = page.getHeight() - margin - 80;
-    
-    page.drawText('Application Confirmation', {
-      x: margin,
-      y: contentStartY,
-      size: titleSize,
-      font: helveticaBold,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    
-    // Add current date
-    const currentDate = new Date().toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    
-    page.drawText(`Date: ${currentDate}`, {
-      x: margin,
-      y: contentStartY - 30,
-      size: textSize,
-      font: helveticaFont,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    
-    // Registration ID box
-    const refNumberY = contentStartY - 70;
-    const boxHeight = 40;
-    
-    page.drawRectangle({
-      x: margin - 10,
-      y: refNumberY - boxHeight,
-      width: 400,
-      height: boxHeight,
-      color: rgb(0.97, 0.97, 0.97),
-      borderColor: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-      borderWidth: 1.5,
-    });
-    
-    const boxCenterY = refNumberY - (boxHeight / 2);
-    
-    page.drawText('Application Reference Number:', {
-      x: margin,
-      y: boxCenterY - (textSize/2),
-      size: textSize,
-      font: helveticaFont,
-      color: rgb(0.3, 0.3, 0.3),
-    });
-    
-    page.drawText(registrationId, {
-      x: margin + 200,
-      y: boxCenterY - (textSize/2),
-      size: textSize,
-      font: helveticaBold,
-      color: rgb(0.1, 0.1, 0.1),
-    });
-    
-    // Student information section
-    const studentInfoY = refNumberY - boxHeight - 50;
-    
-    page.drawText('Student Information', {
-      x: margin,
-      y: studentInfoY,
-      size: headerSize,
-      font: helveticaBold,
-      color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-    });
-    
-    page.drawLine({
-      start: { x: margin, y: studentInfoY - 10 },
-      end: { x: page.getWidth() - margin, y: studentInfoY - 10 },
-      thickness: 1.5,
-      color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-    });
-    
-    // Format student data
-    const fullName = [
-      localStudentData.first_name || '',
-      localStudentData.middle_name || '',
-      localStudentData.last_name || ''
-    ].filter(Boolean).join(' ') || 'Not provided';
-    
-    const cityStateCountry = [
-      localStudentData.city || '',
-      localStudentData.state || '',
-      localStudentData.country || ''
-    ].filter(Boolean).join(', ') || 'Not provided';
+    logoHeight = 40;
+  }
+  
+  // Adjust vertical positions to account for logo
+  const contentStartY = page.getHeight() - margin - logoHeight - 40;
+  
+  page.drawText('Application Confirmation', {
+    x: margin,
+    y: contentStartY,
+    size: titleSize,
+    font: helveticaBold,
+    color: rgb(0.1, 0.1, 0.1),
+  });
+  
+  // Add current date
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+  
+  page.drawText(`Date: ${currentDate}`, {
+    x: margin,
+    y: contentStartY - 35,
+    size: textSize,
+    font: helveticaFont,
+    color: rgb(0.1, 0.1, 0.1),
+  });
+  
+  // Registration ID box
+  const refNumberY = contentStartY - 80;
+  const boxHeight = 40;
+  
+  page.drawRectangle({
+    x: margin - 10,
+    y: refNumberY - boxHeight,
+    width: 400,
+    height: boxHeight,
+    color: rgb(0.97, 0.97, 0.97),
+    borderColor: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+    borderWidth: 1.5,
+  });
+  
+  const boxCenterY = refNumberY - (boxHeight / 2);
+  
+  page.drawText('Application Reference Number:', {
+    x: margin,
+    y: boxCenterY - (textSize/2),
+    size: textSize,
+    font: helveticaFont,
+    color: rgb(0.3, 0.3, 0.3),
+  });
+  
+  page.drawText(registrationId, {
+    x: margin + 200,
+    y: boxCenterY - (textSize/2),
+    size: textSize,
+    font: helveticaBold,
+    color: rgb(0.1, 0.1, 0.1),
+  });
+  
+  // Student information section
+  const studentInfoY = refNumberY - boxHeight - 60;
+  
+  page.drawText('Student Information', {
+    x: margin,
+    y: studentInfoY,
+    size: headerSize,
+    font: helveticaBold,
+    color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+  });
+  
+  page.drawLine({
+    start: { x: margin, y: studentInfoY - 10 },
+    end: { x: page.getWidth() - margin, y: studentInfoY - 10 },
+    thickness: 1.5,
+    color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+  });
+  
+  // Format student data with better handling of optional fields
+  const fullName = [
+    localStudentData.first_name || '',
+    localStudentData.middle_name || '',
+    localStudentData.last_name || ''
+  ].filter(Boolean).join(' ') || 'Not provided';
+  
+  const cityStateCountry = [
+    localStudentData.city || '',
+    localStudentData.state || '',
+    localStudentData.country || ''
+  ].filter(Boolean).join(', ') || 'Not provided';
 
-    // Build simplified table data focusing on core information
-    const tableData = [
-      { label: 'Full Name:', value: fullName },
-      { label: 'Email:', value: localStudentData.email || 'Not provided' },
-      { label: 'Phone:', value: localStudentData.phone || 'Not provided' },
-      { label: 'Address:', value: localStudentData.address || 'Not provided' },
-      { label: 'City, State, Country:', value: cityStateCountry },
-      { label: 'Desired Program:', value: localStudentData.desired_academic_program || 'Not provided' },
-      { label: 'Islamic Specialization:', value: localStudentData.islamic_studies_specialization || 'Not provided' },
-      { label: 'Previous Education:', value: localStudentData.previous_education || 'Not provided' },
-    ];
+  // Build table data with all required fields
+  const tableData = [
+    { label: 'Full Name:', value: fullName },
+    { label: 'Email:', value: localStudentData.email || 'Not provided' },
+    { label: 'Phone:', value: localStudentData.phone || 'Not provided' },
+    { label: 'Address:', value: localStudentData.address || 'Not provided' },
+    { label: 'City, State, Country:', value: cityStateCountry },
+    { label: 'Desired Program:', value: localStudentData.desired_academic_program || 'Not provided' },
+    { label: 'Islamic Specialization:', value: localStudentData.islamic_studies_specialization || 'Not provided' },
+    { label: 'Previous Education:', value: localStudentData.previous_education || 'Not provided' },
+  ];
+  
+  // Calculate row heights and total table height
+  const labelColWidth = 170;
+  const valueColWidth = page.getWidth() - tableMargin * 2 - labelColWidth;
+  const rowHeight = 40; // Increased row height
+  const tableHeight = rowHeight * tableData.length;
+  
+  const tableStartY = studentInfoY - 40;
+  const tableWidth = page.getWidth() - (tableMargin * 2);
+  
+  // Draw table border
+  page.drawRectangle({
+    x: tableMargin,
+    y: tableStartY - tableHeight,
+    width: tableWidth,
+    height: tableHeight,
+    borderColor: rgb(0.7, 0.7, 0.7),
+    borderWidth: 1,
+    color: rgb(1, 1, 1, 0), // Transparent fill
+  });
+  
+  // Draw table rows
+  tableData.forEach((row, index) => {
+    const rowY = tableStartY - (index * rowHeight);
+    const isEvenRow = index % 2 === 0;
     
-    // Simplified table drawing with fixed row height for faster processing
-    const tableStartY = studentInfoY - 40;
-    const tableWidth = page.getWidth() - (tableMargin * 2);
-    const rowHeight = 30;
-    const tableHeight = rowHeight * tableData.length;
-    const labelColWidth = 170;
+    // Draw row background for even rows
+    if (isEvenRow) {
+      page.drawRectangle({
+        x: tableMargin,
+        y: rowY - rowHeight,
+        width: tableWidth,
+        height: rowHeight,
+        color: rgb(0.95, 0.95, 0.95),
+      });
+    }
     
-    // Draw table border
-    page.drawRectangle({
-      x: tableMargin,
-      y: tableStartY - tableHeight,
-      width: tableWidth,
-      height: tableHeight,
-      borderColor: rgb(0.7, 0.7, 0.7),
-      borderWidth: 1,
-      color: rgb(1, 1, 1, 0), // Transparent fill
-    });
-    
-    // Draw table rows with simplified approach
-    tableData.forEach((row, index) => {
-      const rowY = tableStartY - (index * rowHeight);
-      const isEvenRow = index % 2 === 0;
-      
-      // Draw row background for even rows
-      if (isEvenRow) {
-        page.drawRectangle({
-          x: tableMargin,
-          y: rowY - rowHeight,
-          width: tableWidth,
-          height: rowHeight,
-          color: rgb(0.95, 0.95, 0.95),
-        });
-      }
-      
-      // Draw horizontal line (except for the last row)
-      if (index < tableData.length - 1) {
-        page.drawLine({
-          start: { x: tableMargin, y: rowY - rowHeight },
-          end: { x: tableMargin + tableWidth, y: rowY - rowHeight },
-          thickness: 0.5,
-          color: rgb(0.8, 0.8, 0.8),
-        });
-      }
-      
-      // Draw vertical line between label and value
+    // Draw horizontal line (except for the last row)
+    if (index < tableData.length - 1) {
       page.drawLine({
-        start: { x: tableMargin + labelColWidth, y: rowY },
-        end: { x: tableMargin + labelColWidth, y: rowY - rowHeight },
+        start: { x: tableMargin, y: rowY - rowHeight },
+        end: { x: tableMargin + tableWidth, y: rowY - rowHeight },
         thickness: 0.5,
         color: rgb(0.8, 0.8, 0.8),
       });
-      
-      // Draw label text (left column)
-      page.drawText(row.label, {
-        x: tableMargin + 10,
-        y: rowY - (rowHeight/2) - (textSize/2),
-        size: textSize,
-        font: helveticaBold,
-        color: rgb(0.3, 0.3, 0.3),
-      });
-      
-      // Draw value text - simplified to show only one line
-      page.drawText(row.value.slice(0, 50) + (row.value.length > 50 ? '...' : ''), {
-        x: tableMargin + labelColWidth + 10,
-        y: rowY - (rowHeight/2) - (textSize/2),
-        size: textSize,
-        font: helveticaFont,
-        color: rgb(0.1, 0.1, 0.1),
-      });
+    }
+    
+    // Draw vertical line between label and value
+    page.drawLine({
+      start: { x: tableMargin + labelColWidth, y: rowY },
+      end: { x: tableMargin + labelColWidth, y: rowY - rowHeight },
+      thickness: 0.5,
+      color: rgb(0.8, 0.8, 0.8),
     });
     
-    // Next steps section
-    const nextStepsY = tableStartY - tableHeight - 40;
-    
-    page.drawText('Next Steps', {
-      x: margin,
-      y: nextStepsY,
-      size: headerSize,
+    // Draw label text (left column)
+    page.drawText(row.label, {
+      x: tableMargin + 10,
+      y: rowY - (rowHeight/2) - (textSize/2),
+      size: textSize,
       font: helveticaBold,
-      color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+      color: rgb(0.3, 0.3, 0.3),
     });
     
-    page.drawLine({
-      start: { x: margin, y: nextStepsY - 10 },
-      end: { x: page.getWidth() - margin, y: nextStepsY - 10 },
-      thickness: 1,
-      color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-    });
-    
-    // Updated steps
-    const steps = [
-      'Upload the required documents through your application tracking page.',
-      'Our team will review them within 5-7 business days.',
-      'If eligible, you will be scheduled for an interview.',
-      'Following the interview, you will receive a final decision.'
-    ];
-    
-    steps.forEach((step, index) => {
-      const y = nextStepsY - 40 - (index * lineHeight);
-      
-      page.drawText((index + 1) + '.', {
-        x: margin,
-        y: y,
-        size: textSize,
-        font: helveticaBold,
-        color: rgb(0.1, 0.1, 0.1),
-      });
-      
-      page.drawText(step, {
-        x: margin + 20,
-        y: y,
-        size: textSize,
-        font: helveticaFont,
-        color: rgb(0.1, 0.1, 0.1),
-      });
-    });
-    
-    // Footer with centered text
-    const footerY = 60;
-    
-    page.drawLine({
-      start: { x: margin, y: footerY + 20 },
-      end: { x: page.getWidth() - margin, y: footerY + 20 },
-      thickness: 1,
-      color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
-    });
-    
-    const footerText = 'TechEthica | Sunnah & Science Research Labs | admin@techethica.in | +91 95913 82400';
-    const textWidth = helveticaFont.widthOfTextAtSize(footerText, textSize - 1);
-    const centerX = (page.getWidth() - textWidth) / 2;
-    
-    page.drawText(footerText, {
-      x: centerX,
-      y: footerY,
-      size: textSize - 1,
+    // Draw value text
+    page.drawText(row.value, {
+      x: tableMargin + labelColWidth + 10,
+      y: rowY - (rowHeight/2) - (textSize/2),
+      size: textSize,
       font: helveticaFont,
-      color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+      color: rgb(0.1, 0.1, 0.1),
+    });
+  });
+  
+  // Next steps section - Ensure enough space after the table
+  const nextStepsY = tableStartY - tableHeight - 60;
+  
+  page.drawText('Next Steps', {
+    x: margin,
+    y: nextStepsY,
+    size: headerSize,
+    font: helveticaBold,
+    color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+  });
+  
+  page.drawLine({
+    start: { x: margin, y: nextStepsY - 10 },
+    end: { x: page.getWidth() - margin, y: nextStepsY - 10 },
+    thickness: 1,
+    color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+  });
+  
+  // Updated steps to match new workflow
+  const steps = [
+    'Upload the required documents through your application tracking page.',
+    'Our team will review them within 5-7 business days.',
+    'If eligible, you will be scheduled for an interview.',
+    'Following the interview, you will receive a final decision on your application.'
+  ];
+  
+  steps.forEach((step, index) => {
+    const y = nextStepsY - 40 - (index * lineHeight * 1.3);
+    
+    page.drawText((index + 1) + '.', {
+      x: margin,
+      y: y,
+      size: textSize,
+      font: helveticaBold,
+      color: rgb(0.1, 0.1, 0.1),
     });
     
-    // Return the PDF bytes
-    return await pdfDoc.save();
-  };
+    page.drawText(step, {
+      x: margin + 20,
+      y: y,
+      size: textSize,
+      font: helveticaFont,
+      color: rgb(0.1, 0.1, 0.1),
+    });
+  });
+  
+  // Add more space before the footer to ensure no overlap
+  const footerY = 80;
+
+  // Draw the line above the footer
+  page.drawLine({
+    start: { x: margin, y: footerY + 20 },
+    end: { x: page.getWidth() - margin, y: footerY + 20 },
+    thickness: 1,
+    color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+  });
+
+  // Centered footer text with updated information
+  const footerText = 'TechEthica | Sunnah & Science Research Labs | admin@techethica.in | +91 95913 82400';
+  const textWidth = helveticaFont.widthOfTextAtSize(footerText, textSize - 1);
+  const centerX = (page.getWidth() - textWidth) / 2;
+
+  page.drawText(footerText, {
+    x: centerX,
+    y: footerY,
+    size: textSize - 1,
+    font: helveticaFont,
+    color: rgb(primaryColor.r, primaryColor.g, primaryColor.b),
+  });
+  
+  // Return the PDF bytes
+  return await pdfDoc.save();
+};
+
 
   // Helper function to convert ArrayBuffer to base64 - optimized version
   const arrayBufferToBase64 = (buffer) => {
