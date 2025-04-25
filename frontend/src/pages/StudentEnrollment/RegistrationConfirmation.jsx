@@ -125,7 +125,7 @@ const RegistrationConfirmation = ({ registrationId, studentData = {} }) => {
             console.error('Email sending failed:', response?.message);
             toast({
               title: 'Note',
-              description: 'PDF downloaded successfully. Email delivery may be delayed.'
+              description: 'PDF downloaded successfully.'
             });
           }
         } catch (emailError) {
