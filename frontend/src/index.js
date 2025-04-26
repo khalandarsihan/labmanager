@@ -661,6 +661,21 @@ if (contactPageContainer) {
 	renderWithProvider(<ContactPage />, contactPageContainer);
 }
 
+// // Events Page
+// const eventsContainer = document.getElementById("events-root");
+// if (eventsContainer) {
+// 	renderWithProvider(<EventsPage />, eventsContainer);
+// }
+
+// // Event Details Page
+// const eventDetailsContainer = document.getElementById("event-details-root");
+// if (eventDetailsContainer) {
+// 	// Get event ID from URL parameters
+// 	const urlParams = new URLSearchParams(window.location.search);
+// 	const eventId = urlParams.get("id");
+// 	renderWithProvider(<EventDetails eventId={eventId} />, eventDetailsContainer);
+// }
+
 // Events Page
 const eventsContainer = document.getElementById("events-root");
 if (eventsContainer) {
@@ -670,8 +685,5 @@ if (eventsContainer) {
 // Event Details Page
 const eventDetailsContainer = document.getElementById("event-details-root");
 if (eventDetailsContainer) {
-	// Get event ID from URL parameters
-	const urlParams = new URLSearchParams(window.location.search);
-	const eventId = urlParams.get("id");
-	renderWithProvider(<EventDetails eventId={eventId} />, eventDetailsContainer);
+	renderWithProvider(<EventDetails />, eventDetailsContainer);
 }

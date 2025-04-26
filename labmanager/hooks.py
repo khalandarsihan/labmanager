@@ -360,6 +360,7 @@ website_route_rules = [
     {"from_route": "/contact-us", "to_route": "contact-us"},
     {"from_route": "/events", "to_route": "events"},
     {"from_route": "/event-details", "to_route": "event-details"},
+    {"from_route": "/event-details", "to_route": "www/event-details.html"},
     # {"from_route": "/admin/applications", "to_route": "admin/applications"},
     # {"from_route": "/admin/applications/<id>", "to_route": "admin/applications/details"},
     # {"from_route": "/enroll", "to_route": "enroll"},

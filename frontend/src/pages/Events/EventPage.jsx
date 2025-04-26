@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, Clock, MapPin, User, Users, ExternalLink, Search, Filter, X, Calendar } from 'lucide-react';
-import BackgroundPattern from '../../components/ui/BackgroundPattern';
-import { Badge } from '../../components/ui/badge';
-import { Card, CardHeader, CardContent, CardFooter } from '../../components/ui/card';
-import { useTheme } from '../../components/ui/ThemeContext';
-import EventCard from './components/EventCard';
-import EventFilter from './components/EventFilter';
-import NewsletterSignup from './components/NewsletterSignup';
-import AttendeesList from './components/AttendeesList';
+import { ArrowRight, ArrowLeft, Clock, Calendar, MapPin, Search, Filter, X } from 'lucide-react';
 
 const EventsPage = () => {
   // State for events data
@@ -22,15 +14,12 @@ const EventsPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const eventsPerPage = 6;
   
-  // Access theme context
-  const { useLightTheme, themeStyles } = useTheme();
-  
   // Fetch events from backend
   useEffect(() => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        // Replace with your actual API endpoint
+        // Use the Frappe API endpoint for events
         const response = await fetch('/api/method/labmanager.api.events.get_events');
         
         if (!response.ok) {
@@ -38,27 +27,22 @@ const EventsPage = () => {
         }
         
         const data = await response.json();
-        
-        // Check if we have events, if not use sample data
-        if (data.message && data.message.events && data.message.events.length > 0) {
+        console.log("API Response:", data); // Debugging
+
+        // Check if we have events from the API
+        if (data.message && data.message.status === 'success' && data.message.events) {
           setEvents(data.message.events);
           // Set the first event as featured or pick one marked as featured
-          const featured = data.message.events.find(event => event.is_featured) || data.message.events[0];
+          const featured = data.message.events.find(event => event.is_featured) || 
+                           (data.message.events.length > 0 ? data.message.events[0] : null);
           setFeaturedEvent(featured);
         } else {
-          // Use sample data if no events are returned
-          const sampleEvents = generateSampleEvents();
-          setEvents(sampleEvents);
-          setFeaturedEvent(sampleEvents[0]);
+          // Show error if no events found
+          setError('No events found or API returned an unexpected response');
         }
       } catch (err) {
         console.error("Error fetching events:", err);
         setError(err.message);
-        
-        // Use sample data on error
-        const sampleEvents = generateSampleEvents();
-        setEvents(sampleEvents);
-        setFeaturedEvent(sampleEvents[0]);
       } finally {
         setLoading(false);
       }
@@ -72,11 +56,11 @@ const EventsPage = () => {
     const matchesSearch = 
       searchTerm === '' || 
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase());
+      (event.description && event.description.toLowerCase().includes(searchTerm.toLowerCase()));
       
     const matchesFilter = 
       activeFilter === 'all' || 
-      event.category.toLowerCase() === activeFilter.toLowerCase();
+      (event.category && event.category.toLowerCase() === activeFilter.toLowerCase());
       
     return matchesSearch && matchesFilter;
   });
@@ -88,128 +72,27 @@ const EventsPage = () => {
   const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
   
   // Generate category list from events
-  const categories = ['all', ...new Set(events.map(event => event.category.toLowerCase()))];
+  const categories = ['all', ...new Set(events
+    .filter(event => event.category) // Filter out events without category
+    .map(event => event.category.toLowerCase()))
+  ];
   
   // Format date function
   const formatDate = (dateString) => {
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    if (!dateString) return 'Date TBD';
+    
+    try {
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString('en-US', options);
+    } catch (e) {
+      console.error("Date formatting error:", e);
+      return dateString; // Return the original string if formatting fails
+    }
   };
   
   // Function to change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   
-  // Sample data generator
-  const generateSampleEvents = () => {
-    return [
-      {
-        id: '1',
-        title: 'Logo and Website Launch of TechEthica',
-        date: '2025-04-26',
-        time: '10:00 AM',
-        location: 'Main Campus, Bidarahalli',
-        category: 'Launch',
-        is_featured: true,
-        image: '/api/placeholder/800/400',
-        description: 'A momentous occasion marking the official launch of the TechEthica Logo and Website — a pioneering initiative that fuses cutting-edge technology education with deep Islamic learning.',
-        organizer: 'TechEthica Administration',
-        attendees: [
-          { name: 'Janab B. Zameer Ahmad Khan Sahib', title: 'Honourable Minister for Housing, Wakf, and Minority Welfare' },
-          { name: 'Maulana N.K.M. Shafi Saadi', title: 'Chairman & Co-Founder, TechEthica' },
-          { name: 'Janab Zulfikar Ali Tippu Sahib', title: 'Chairman, Karnataka State Haj Committee' },
-          { name: 'Janab Iftikhar Ahmed Sahib', title: 'Former Chairman, Karnataka State Board of Auqaf' },
-          { name: 'Janab Advocate Rahul Riyaz Khan Sahib', title: 'Former Chairman, Karnataka State Board of Auqaf' },
-          { name: 'Janab Sarfaraz Ahmed Khan Sahib', title: 'Executive Officer, Karnataka State Haj Committee' },
-          { name: 'Mr. Khalandar Sihan Saquafi', title: 'CEO & Co-Founder, TechEthica' }
-        ]
-      },
-      {
-        id: '2',
-        title: 'Islamic Data Science Workshop',
-        date: '2025-05-15',
-        time: '9:00 AM',
-        location: 'TechEthica Learning Center',
-        category: 'Workshop',
-        image: '/api/placeholder/800/400',
-        description: 'Learn how data science can be applied to Islamic studies for research and analysis. This workshop will cover techniques for analyzing Hadith collections, Quranic text analysis, and more.',
-        organizer: 'Dr. Ahmed Hassan',
-        attendees: []
-      },
-      {
-        id: '3',
-        title: 'Tech & Taqwa: Balancing Digital Life',
-        date: '2025-05-22',
-        time: '5:30 PM',
-        location: 'Virtual Event',
-        category: 'Seminar',
-        image: '/api/placeholder/800/400',
-        description: 'This seminar explores the balance between technological advancement and Islamic spirituality in modern life. Learn practical tips for maintaining Taqwa while navigating the digital world.',
-        organizer: 'Islamic Technology Forum',
-        attendees: []
-      },
-      {
-        id: '4',
-        title: 'Hackathon: Ethical Tech Solutions',
-        date: '2025-06-10',
-        time: '10:00 AM',
-        location: 'TechEthica Innovation Hub',
-        category: 'Competition',
-        image: '/api/placeholder/800/400',
-        description: 'A 48-hour hackathon focused on developing technology solutions that align with Islamic ethical frameworks. Prizes for the most innovative projects addressing community needs.',
-        organizer: 'TechEthica Development Team',
-        attendees: []
-      },
-      {
-        id: '5',
-        title: 'Arabic Natural Language Processing Conference',
-        date: '2025-07-05',
-        time: '9:00 AM',
-        location: 'International Convention Center',
-        category: 'Conference',
-        image: '/api/placeholder/800/400',
-        description: 'An international conference on advancements in Arabic NLP, featuring speakers from leading research institutions and tech companies working on Arabic language technology.',
-        organizer: 'Arabic Technology Association',
-        attendees: []
-      },
-      {
-        id: '6',
-        title: 'Summer Coding Camp for Muslim Youth',
-        date: '2025-07-15',
-        time: '8:30 AM',
-        location: 'TechEthica Campus',
-        category: 'Education',
-        image: '/api/placeholder/800/400',
-        description: 'A two-week intensive coding boot camp designed for Muslim youth ages 13-18, teaching programming fundamentals while integrating Islamic principles of ethics and responsibility.',
-        organizer: 'TechEthica Education Department',
-        attendees: []
-      },
-      {
-        id: '7',
-        title: 'Blockchain & Islamic Finance Symposium',
-        date: '2025-08-12',
-        time: '10:00 AM',
-        location: 'Financial District Conference Center',
-        category: 'Symposium',
-        image: '/api/placeholder/800/400',
-        description: 'Experts discuss the intersection of blockchain technology and Islamic finance principles, including smart contracts for Sukuk, Zakat distribution systems, and Shariah-compliant cryptocurrencies.',
-        organizer: 'Islamic Fintech Consortium',
-        attendees: []
-      },
-      {
-        id: '8',
-        title: 'Tech Ethics from Islamic Perspective',
-        date: '2025-09-05',
-        time: '4:00 PM',
-        location: 'Central Mosque Auditorium',
-        category: 'Lecture',
-        image: '/api/placeholder/800/400',
-        description: 'A series of lectures exploring the ethical dimensions of emerging technologies from an Islamic perspective, addressing AI ethics, data privacy, and responsible innovation.',
-        organizer: 'Islamic Scholars Council',
-        attendees: []
-      }
-    ];
-  };
-
   // Handle search input change
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
@@ -229,6 +112,106 @@ const EventsPage = () => {
     setCurrentPage(1);
   };
 
+  // Event Card Component
+  const EventCard = ({ event }) => {
+    return (
+      <div className="overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-100 bg-white flex flex-col h-full transform hover:-translate-y-1 duration-300 rounded-lg">
+        <div className="relative h-48">
+          <img
+            src={event.image || '/api/placeholder/600/400'}
+            alt={event.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute top-3 right-3">
+            <span className="px-2 py-1 bg-gray-200 text-gray-800 text-xs font-medium rounded">
+              {event.category || 'Event'}
+            </span>
+          </div>
+        </div>
+        
+        <div className="p-5 flex-grow flex flex-col">
+          <div className="flex items-center mb-3 text-gray-500">
+            <Calendar size={16} className="mr-2" />
+            <span className="text-sm">{formatDate(event.date)}</span>
+          </div>
+          
+          <h3 className="text-xl font-bold mb-3 text-gray-800">
+            {event.title}
+          </h3>
+          
+          <p className="mb-4 flex-grow line-clamp-3 text-gray-600">
+            {event.description || 'No description available for this event.'}
+          </p>
+          
+          <div className="flex items-center mb-4 text-gray-500">
+            <MapPin size={16} className="mr-2" />
+            <span className="text-sm">{event.location || 'Location TBD'}</span>
+          </div>
+          
+          <button
+            onClick={() => window.location.href = `/event-details?id=${event.id || event.name}`}
+            className="mt-auto inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            View Details
+            <ArrowRight size={16} className="ml-2" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  // Event Filter Component
+  const EventFilter = () => {
+    return (
+      <div className="bg-white border-b border-gray-200">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="relative flex-grow max-w-md">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Search size={20} className="text-gray-400" />
+              </div>
+              <input
+                type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 p-2.5 focus:ring-green-500 focus:border-green-500"
+                placeholder="Search events..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
+            
+            <div className="flex items-center overflow-x-auto gap-2 py-2">
+              <span className="flex items-center text-sm text-gray-500 mr-2">
+                <Filter size={16} className="mr-1" /> Filter:
+              </span>
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => handleFilterChange(category)}
+                  className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
+                    activeFilter === category
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                </button>
+              ))}
+              
+              {(searchTerm || activeFilter !== 'all') && (
+                <button
+                  onClick={clearFilters}
+                  className="px-3 py-1 rounded-full text-sm bg-red-100 text-red-700 hover:bg-red-200 whitespace-nowrap flex items-center"
+                >
+                  <X size={14} className="mr-1" /> Clear
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
@@ -240,7 +223,7 @@ const EventsPage = () => {
     );
   }
 
-  if (error && events.length === 0) {
+  if (error) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gray-50">
         <div className="text-center max-w-md p-6 bg-white rounded-lg shadow-md">
@@ -262,8 +245,8 @@ const EventsPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Using the BackgroundPattern component */}
-      <BackgroundPattern />
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-pattern opacity-5 pointer-events-none"></div>
       
       <div className="relative z-10">
         {/* Hero Section with Featured Event */}
@@ -282,7 +265,7 @@ const EventsPage = () => {
             </div>
             
             {featuredEvent && (
-              <Card className={`mt-12 bg-white/10 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-white/20 ${useLightTheme ? 'bg-white/80 text-gray-800' : ''}`}>
+              <div className="mt-12 bg-white/10 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-white/20 rounded-lg">
                 <div className="md:flex">
                   <div className="md:w-1/2">
                     <img 
@@ -293,8 +276,8 @@ const EventsPage = () => {
                   </div>
                   <div className="md:w-1/2 p-6 md:p-8">
                     <div className="flex items-center mb-4">
-                      <Badge className="bg-emerald-600 text-white mr-3">Featured Event</Badge>
-                      <Badge variant="secondary">{featuredEvent.category}</Badge>
+                      <span className="bg-emerald-600 text-white px-3 py-1 rounded-full text-sm mr-3">Featured Event</span>
+                      <span className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm">{featuredEvent.category || 'Event'}</span>
                     </div>
                     
                     <h2 className="text-2xl font-bold mb-3">{featuredEvent.title}</h2>
@@ -304,20 +287,24 @@ const EventsPage = () => {
                       <span>{formatDate(featuredEvent.date)}</span>
                     </div>
                     
-                    <div className="flex items-center mb-3 text-green-100">
-                      <Clock size={18} className="mr-2" />
-                      <span>{featuredEvent.time}</span>
-                    </div>
+                    {featuredEvent.time && (
+                      <div className="flex items-center mb-3 text-green-100">
+                        <Clock size={18} className="mr-2" />
+                        <span>{featuredEvent.time}</span>
+                      </div>
+                    )}
                     
                     <div className="flex items-center mb-6 text-green-100">
                       <MapPin size={18} className="mr-2" />
-                      <span>{featuredEvent.location}</span>
+                      <span>{featuredEvent.location || 'Location TBD'}</span>
                     </div>
                     
-                    <p className={`mb-6 ${useLightTheme ? 'text-gray-600' : 'text-green-50'} line-clamp-3`}>{featuredEvent.description}</p>
+                    <p className="mb-6 text-green-50 line-clamp-3">
+                      {featuredEvent.description || 'No description available for this featured event.'}
+                    </p>
                     
                     <button 
-                      onClick={() => window.location.href = `/event-details?id=${featuredEvent.id}`}
+                      onClick={() => window.location.href = `/event-details?id=${featuredEvent.id || featuredEvent.name}`}
                       className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all shadow-md hover:shadow-lg flex items-center"
                     >
                       View Details
@@ -325,21 +312,13 @@ const EventsPage = () => {
                     </button>
                   </div>
                 </div>
-              </Card>
+              </div>
             )}
           </div>
         </div>
         
         {/* Search and Filter Section */}
-        <EventFilter 
-          searchTerm={searchTerm} 
-          handleSearchChange={handleSearchChange}
-          activeFilter={activeFilter}
-          handleFilterChange={handleFilterChange}
-          categories={categories}
-          clearFilters={clearFilters}
-          hasFilters={searchTerm || activeFilter !== 'all'}
-        />
+        <EventFilter />
         
         {/* Events Grid */}
         <div className="container mx-auto px-4 py-12">
@@ -361,11 +340,7 @@ const EventsPage = () => {
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {currentEvents.map((event) => (
-                  <EventCard 
-                    key={event.id}
-                    event={event}
-                    formatDate={formatDate}
-                  />
+                  <EventCard key={event.id || event.name} event={event} />
                 ))}
               </div>
               
@@ -417,49 +392,33 @@ const EventsPage = () => {
           )}
         </div>
         
-        {/* Event Details Display for Featured Event */}
-        {featuredEvent && featuredEvent.attendees && featuredEvent.attendees.length > 0 && (
-          <div className="bg-gray-50 border-t border-gray-200 py-12">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto">
-                <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">Featured Event Highlight</h2>
+        {/* Newsletter Section */}
+        <div className="bg-gradient-to-r from-teal-800 to-green-900 text-white">
+          <div className="container mx-auto px-4 py-16">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
+              <p className="text-teal-100 mb-8">Subscribe to our newsletter to receive notifications about upcoming events and latest news</p>
+              
+              <form>
+                <div className="flex flex-col sm:flex-row sm:items-center max-w-md mx-auto gap-3">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="flex-grow px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400 text-gray-800"
+                  />
+                  <button 
+                    type="submit"
+                    className="px-6 py-3 bg-amber-500 text-gray-900 font-semibold rounded-lg hover:bg-amber-400 transition-colors"
+                  >
+                    Subscribe
+                  </button>
+                </div>
                 
-                <Card className={`overflow-hidden ${useLightTheme ? '' : 'bg-gray-800'}`}>
-                  <CardContent className="p-6 md:p-8">
-                    <h3 className={`text-2xl font-bold ${useLightTheme ? 'text-gray-800' : 'text-gray-100'} mb-4`}>{featuredEvent.title}</h3>
-                    
-                    <div className={`flex items-center mb-6 ${useLightTheme ? 'text-gray-600' : 'text-gray-300'}`}>
-                      <User size={20} className="mr-2" />
-                      <span>Organized by: <strong>{featuredEvent.organizer}</strong></span>
-                    </div>
-                    
-                    <div className="mb-8">
-                      <h4 className={`flex items-center text-xl font-semibold ${useLightTheme ? 'text-gray-700' : 'text-gray-200'} mb-4`}>
-                        <Users size={22} className="mr-2" />
-                        Distinguished Guests
-                      </h4>
-                      
-                      <AttendeesList attendees={featuredEvent.attendees} />
-                    </div>
-                    
-                    <div className="text-center">
-                      <button 
-                        onClick={() => window.location.href = `/event-details?id=${featuredEvent.id}`}
-                        className="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                      >
-                        View Complete Details
-                        <ExternalLink size={18} className="ml-2" />
-                      </button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+                <p className="text-teal-200 text-sm mt-4">We respect your privacy. Unsubscribe at any time.</p>
+              </form>
             </div>
           </div>
-        )}
-        
-        {/* Newsletter Section */}
-        <NewsletterSignup />
+        </div>
       </div>
     </div>
   );

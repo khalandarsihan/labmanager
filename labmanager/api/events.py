@@ -15,7 +15,7 @@ def get_events():
         events = frappe.get_all(
             "Events",  # Replace with your actual doctype name for events
             fields=[
-                "name", "title", "description", "date", "time", 
+                "name", "title", "description", "date", 
                 "location", "organizer", "category", "image", "is_featured"
             ],
             filters={
@@ -81,7 +81,6 @@ def get_event_details(event_id):
             "title": event.title,
             "description": event.description,
             "date": event.date.isoformat() if hasattr(event.date, "isoformat") else str(event.date),
-            "time": event.time,
             "location": event.location,
             "organizer": event.organizer,
             "category": event.category,
@@ -157,7 +156,6 @@ def create_event(**kwargs):
         event.title = kwargs.get("title")
         event.description = kwargs.get("description", "")
         event.date = kwargs.get("date")
-        event.time = kwargs.get("time", "")
         event.location = kwargs.get("location", "")
         event.organizer = kwargs.get("organizer", "")
         event.category = kwargs.get("category")
