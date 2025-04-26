@@ -13,7 +13,7 @@ def get_events():
         # Get upcoming and recent events
         # You could choose to filter by date range or just get the latest/upcoming
         events = frappe.get_all(
-            "Event",  # Replace with your actual doctype name for events
+            "Events",  # Replace with your actual doctype name for events
             fields=[
                 "name", "title", "description", "date", "time", 
                 "location", "organizer", "category", "image", "is_featured"
@@ -38,7 +38,7 @@ def get_events():
                 attendees = frappe.get_all(
                     "Event Attendee",
                     filters={"event": event.name},
-                    fields=["name", "title"]
+                    fields=["name1", "title"]
                 )
                 event["attendees"] = attendees
             
@@ -73,7 +73,7 @@ def get_event_details(event_id):
             }
             
         # Get the event
-        event = frappe.get_doc("Event", event_id)
+        event = frappe.get_doc("Events", event_id)
         
         # Format the response
         response = {
@@ -94,7 +94,7 @@ def get_event_details(event_id):
             attendees = frappe.get_all(
                 "Event Attendee",
                 filters={"event": event_id},
-                fields=["name", "title"],
+                fields=["name1", "title"],
                 order_by="sequence"
             )
             response["attendees"] = attendees
@@ -151,7 +151,7 @@ def create_event(**kwargs):
             }
             
         # Create event document
-        event = frappe.new_doc("Event")
+        event = frappe.new_doc("Events")
         
         # Set fields
         event.title = kwargs.get("title")
@@ -180,7 +180,7 @@ def create_event(**kwargs):
             for i, attendee in enumerate(attendees):
                 doc = frappe.new_doc("Event Attendee")
                 doc.event = event.name
-                doc.name = attendee.get("name", "")
+                doc.name = attendee.get("name1", "")
                 doc.title = attendee.get("title", "")
                 doc.sequence = i + 1
                 doc.insert(ignore_permissions=True)
