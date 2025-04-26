@@ -673,5 +673,5 @@ if (eventDetailsContainer) {
 	// Get event ID from URL parameters
 	const urlParams = new URLSearchParams(window.location.search);
 	const eventId = urlParams.get("id");
-	renderWithProvider(<EventDetails />, eventDetailsContainer);
+	renderWithProvider(<EventDetails eventId={eventId} />, eventDetailsContainer);
 }
