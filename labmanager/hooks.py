@@ -358,6 +358,8 @@ website_route_rules = [
     {"from_route": "/about-us", "to_route": "about-us"},
     {"from_route": "/student-life", "to_route": "student-life"},
     {"from_route": "/contact-us", "to_route": "contact-us"},
+    {"from_route": "/events", "to_route": "events"},
+    {"from_route": "/event-details", "to_route": "event-details"},
     # {"from_route": "/admin/applications", "to_route": "admin/applications"},
     # {"from_route": "/admin/applications/<id>", "to_route": "admin/applications/details"},
     # {"from_route": "/enroll", "to_route": "enroll"},
@@ -407,6 +409,18 @@ api_spec = {
     'labmanager.api.api.get_application_status': {
         'methods': ['GET'],
         'auth_required': False
+    },
+    'labmanager.api.events.get_events': {
+        'methods': ['GET'],
+        'auth_required': False
+    },
+    'labmanager.api.events.get_event_details': {
+        'methods': ['GET'],
+        'auth_required': False
+    },
+    'labmanager.api.events.create_event': {
+        'methods': ['POST'],
+        'auth_required': True
     },
 
 }
