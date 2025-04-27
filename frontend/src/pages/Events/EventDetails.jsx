@@ -344,13 +344,44 @@ const EventDetails = ({ eventId: propEventId }) => {
   };
   
   // Related Event Card Component
-  const RelatedEventCard = ({ event }) => {
+//   const RelatedEventCard = ({ event }) => {
+//     if (!event) return null;
+    
+//     return (
+//       <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
+//         <img 
+//           src={event.image || '/api/placeholder/100/100'} 
+//           alt={event.title}
+//           className="w-16 h-16 object-cover rounded mr-3 flex-shrink-0"
+//         />
+//         <div className="flex-grow">
+//           <h5 className="font-medium text-gray-800 line-clamp-1">{event.title}</h5>
+//           <div className="flex items-center text-sm text-gray-500">
+//             <Calendar size={14} className="mr-1" />
+//             {formatDate(event.date)}
+//           </div>
+//           <a 
+//             href={`/event-details?id=${encodeURIComponent(event.id || event.name)}`}
+//             className="text-green-600 text-sm font-medium hover:underline"
+//           >
+//             View details
+//           </a>
+//         </div>
+//       </div>
+//     );
+//   };
+
+// RelatedEventCard Component from EventDetails.jsx
+const RelatedEventCard = ({ event }) => {
     if (!event) return null;
+    
+    // Use card_image if available, fall back to main image
+    const imageUrl = event.card_image || event.image || '/api/placeholder/100/100';
     
     return (
       <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
         <img 
-          src={event.image || '/api/placeholder/100/100'} 
+          src={imageUrl} 
           alt={event.title}
           className="w-16 h-16 object-cover rounded mr-3 flex-shrink-0"
         />
@@ -433,65 +464,65 @@ const EventDetails = ({ eventId: propEventId }) => {
       <div className="relative z-10">
         {/* Header Section with Hero Image */}
         <div className="relative">
-          <div className="h-96 overflow-hidden relative">
-            <div className="absolute inset-0 bg-black/40 z-10"></div>
-            <img 
-              src={event.image || '/api/placeholder/1200/600'} 
-              alt={event.title} 
-              className="w-full h-full object-cover"
-            />
+  <div className="h-96 overflow-hidden relative">
+    <div className="absolute inset-0 bg-black/40 z-10"></div>
+    <img 
+      src={event.detail_hero_image || event.image || '/api/placeholder/1200/600'} 
+      alt={event.title} 
+      className="w-full h-full object-cover"
+    />
+  </div>
+  
+  <div className="container mx-auto px-4">
+    <div className="relative -mt-24 mb-8 z-20">
+      <div className="bg-white shadow-xl mx-auto max-w-4xl rounded-lg">
+        <div className="p-8">
+          <button 
+            onClick={() => window.location.href = '/events'}
+            className="inline-flex items-center text-sm text-green-600 mb-4 hover:underline"
+          >
+            <ArrowLeft size={16} className="mr-1" />
+            Back to All Events
+          </button>
+          
+          <div className="flex flex-wrap gap-2 mb-4">
+            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">{event.category || 'Event'}</span>
+            {event.is_featured && (
+              <span className="border border-amber-400 text-amber-600 px-3 py-1 rounded-full text-sm">Featured Event</span>
+            )}
           </div>
           
-          <div className="container mx-auto px-4">
-            <div className="relative -mt-24 mb-8 z-20">
-              <div className="bg-white shadow-xl mx-auto max-w-4xl rounded-lg">
-                <div className="p-8">
-                  <button 
-                    onClick={() => window.location.href = '/events'}
-                    className="inline-flex items-center text-sm text-green-600 mb-4 hover:underline"
-                  >
-                    <ArrowLeft size={16} className="mr-1" />
-                    Back to All Events
-                  </button>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">{event.category || 'Event'}</span>
-                    {event.is_featured && (
-                      <span className="border border-amber-400 text-amber-600 px-3 py-1 rounded-full text-sm">Featured Event</span>
-                    )}
-                  </div>
-                  
-                  <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
-                    {event.title}
-                  </h1>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="flex items-center text-gray-700">
-                      <Calendar size={20} className="mr-3 text-green-600" />
-                      <div>
-                        <h3 className="text-sm text-gray-500 mb-1">Date</h3>
-                        <p>{formatDate(event.date)}</p>
-                      </div>
-                    </div>
-                    
-                    {event.time && (
-                      <div className="flex items-center text-gray-700">
-                        <Clock size={20} className="mr-3 text-green-600" />
-                        <div>
-                          <h3 className="text-sm text-gray-500 mb-1">Time</h3>
-                          <p>{event.time}</p>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center text-gray-700">
-                      <MapPin size={20} className="mr-3 text-green-600" />
-                      <div>
-                        <h3 className="text-sm text-gray-500 mb-1">Location</h3>
-                        <p>{event.location || 'Location TBD'}</p>
-                      </div>
-                    </div>
-                  </div>
+          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
+            {event.title}
+          </h1>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="flex items-center text-gray-700">
+              <Calendar size={20} className="mr-3 text-green-600" />
+              <div>
+                <h3 className="text-sm text-gray-500 mb-1">Date</h3>
+                <p>{formatDate(event.date)}</p>
+              </div>
+            </div>
+            
+            {event.time && (
+              <div className="flex items-center text-gray-700">
+                <Clock size={20} className="mr-3 text-green-600" />
+                <div>
+                  <h3 className="text-sm text-gray-500 mb-1">Time</h3>
+                  <p>{event.time}</p>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex items-center text-gray-700">
+              <MapPin size={20} className="mr-3 text-green-600" />
+              <div>
+                <h3 className="text-sm text-gray-500 mb-1">Location</h3>
+                <p>{event.location || 'Location TBD'}</p>
+              </div>
+            </div>
+          </div>
                   
                   {/* Enhanced Action Buttons */}
                   <div className="flex flex-wrap gap-3 mb-8">

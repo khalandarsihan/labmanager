@@ -264,56 +264,57 @@ const EventsPage = () => {
               <p className="text-xl text-green-100">Stay updated with the latest happenings at TechEthica</p>
             </div>
             
-            {featuredEvent && (
-              <div className="mt-12 bg-white/10 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-white/20 rounded-lg">
-                <div className="md:flex">
-                  <div className="md:w-1/2">
-                    <img 
-                      src={featuredEvent.image || '/api/placeholder/800/400'} 
-                      alt={featuredEvent.title}
-                      className="h-64 md:h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="md:w-1/2 p-6 md:p-8">
-                    <div className="flex items-center mb-4">
-                      <span className="bg-emerald-600 text-white px-3 py-1 rounded-full text-sm mr-3">Featured Event</span>
-                      <span className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm">{featuredEvent.category || 'Event'}</span>
-                    </div>
-                    
-                    <h2 className="text-2xl font-bold mb-3">{featuredEvent.title}</h2>
-                    
-                    <div className="flex items-center mb-3 text-green-100">
-                      <Calendar size={18} className="mr-2" />
-                      <span>{formatDate(featuredEvent.date)}</span>
-                    </div>
-                    
-                    {featuredEvent.time && (
-                      <div className="flex items-center mb-3 text-green-100">
-                        <Clock size={18} className="mr-2" />
-                        <span>{featuredEvent.time}</span>
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center mb-6 text-green-100">
-                      <MapPin size={18} className="mr-2" />
-                      <span>{featuredEvent.location || 'Location TBD'}</span>
-                    </div>
-                    
-                    <p className="mb-6 text-green-50 line-clamp-3">
-                      {featuredEvent.description || 'No description available for this featured event.'}
-                    </p>
-                    
-                    <button 
-                      onClick={() => window.location.href = `/event-details?id=${featuredEvent.id || featuredEvent.name}`}
-                      className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all shadow-md hover:shadow-lg flex items-center"
-                    >
-                      View Details
-                      <ArrowRight size={18} className="ml-2" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+
+{featuredEvent && (
+  <div className="mt-12 bg-white/10 backdrop-blur-sm overflow-hidden shadow-lg hover:shadow-xl transition-shadow border border-white/20 rounded-lg">
+    <div className="md:flex">
+      <div className="md:w-1/2">
+        <img 
+          src={featuredEvent.image || '/api/placeholder/800/400'} 
+          alt={featuredEvent.title}
+          className="h-64 md:h-full w-full object-cover"
+        />
+      </div>
+      <div className="md:w-1/2 p-6 md:p-8">
+        <div className="flex items-center mb-4">
+          <span className="bg-emerald-600 text-white px-3 py-1 rounded-full text-sm mr-3">Featured Event</span>
+          <span className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm">{featuredEvent.category || 'Event'}</span>
+        </div>
+        
+        <h2 className="text-2xl font-bold mb-3">{featuredEvent.title}</h2>
+        
+        <div className="flex items-center mb-3 text-green-100">
+          <Calendar size={18} className="mr-2" />
+          <span>{formatDate(featuredEvent.date)}</span>
+        </div>
+        
+        {featuredEvent.time && (
+          <div className="flex items-center mb-3 text-green-100">
+            <Clock size={18} className="mr-2" />
+            <span>{featuredEvent.time}</span>
+          </div>
+        )}
+        
+        <div className="flex items-center mb-6 text-green-100">
+          <MapPin size={18} className="mr-2" />
+          <span>{featuredEvent.location || 'Location TBD'}</span>
+        </div>
+        
+        <p className="mb-6 text-green-50 line-clamp-3">
+          {featuredEvent.description || 'No description available for this featured event.'}
+        </p>
+        
+        <button 
+          onClick={() => window.location.href = `/event-details?id=${featuredEvent.id || featuredEvent.name}`}
+          className="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all shadow-md hover:shadow-lg flex items-center"
+        >
+          View Details
+          <ArrowRight size={18} className="ml-2" />
+        </button>
+      </div>
+    </div>
+  </div>
+)}
           </div>
         </div>
         

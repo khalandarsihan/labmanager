@@ -9,6 +9,8 @@
   "title",
   "category",
   "image",
+  "card_image",
+  "detail_hero_image",
   "is_featured",
   "is_active",
   "column_break_nvdu",
@@ -98,11 +100,21 @@
    "fieldname": "time",
    "fieldtype": "Data",
    "label": "Event Time"
+  },
+  {
+   "fieldname": "card_image",
+   "fieldtype": "Attach Image",
+   "label": "Card Thumbnail Image"
+  },
+  {
+   "fieldname": "detail_hero_image",
+   "fieldtype": "Attach Image",
+   "label": "Detail Page Hero Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-27 06:32:48.336175",
+ "modified": "2025-04-27 10:09:46.211475",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Events",
