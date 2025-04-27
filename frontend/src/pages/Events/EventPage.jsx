@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Search, Filter, X, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
 import BackgroundPattern from '../../components/ui/BackgroundPattern';
 import EventCard from './components/EventCard'; // Import the EventCard component
+import ThemeSwitcher from '../../components/ui/ThemeSwitcher'; // Import ThemeSwitcher
+import { useTheme } from '../../components/ui/ThemeContext'; // Import useTheme
 
 const EventsPage = () => {
   // State for filtering, searching and data loading
@@ -13,6 +15,9 @@ const EventsPage = () => {
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState(['all']); // Initialize with 'all'
   const eventsPerPage = 6;
+  
+  // Get theme from context
+  const { useLightTheme, toggleTheme } = useTheme();
   
   // Fetch events from the API
   useEffect(() => {
@@ -102,9 +107,12 @@ const EventsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Background Pattern */}
       <BackgroundPattern />
+      
+      {/* Theme Switcher */}
+      <ThemeSwitcher useLightTheme={useLightTheme} toggleTheme={toggleTheme} />
       
       <div className="relative z-10">
         {/* Hero Section with Institutional Branding */}
@@ -224,7 +232,7 @@ const EventsPage = () => {
                     onClick={() => handleFilterChange(category)}
                     className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
                       activeFilter === category
-                        ? 'bg-teal-600 text-white' 
+                        ? useLightTheme ? 'bg-purple-600 text-white' : 'bg-amber-600 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
@@ -328,7 +336,7 @@ const EventsPage = () => {
                         onClick={() => setCurrentPage(index + 1)}
                         className={`px-3 py-1 rounded-md ${
                           currentPage === index + 1
-                            ? 'bg-teal-600 text-white'
+                            ? useLightTheme ? 'bg-purple-600 text-white' : 'bg-amber-600 text-white'
                             : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                         }`}
                       >

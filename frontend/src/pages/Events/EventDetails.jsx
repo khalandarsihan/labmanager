@@ -14,8 +14,13 @@ import {
 import BackgroundPattern from '../../components/ui/BackgroundPattern';
 import EventGallery from './components/EventGallery';
 import AttendeesList from './components/AttendeesList';
+import ThemeSwitcher from '../../components/ui/ThemeSwitcher'; // Import ThemeSwitcher
+import { useTheme } from '../../components/ui/ThemeContext'; // Import useTheme
 
 const EventDetails = () => {
+  // Get theme from context
+  const { useLightTheme, toggleTheme, themeStyles } = useTheme();
+  
   // State management for gallery and data
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -139,10 +144,12 @@ const EventDetails = () => {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-teal-600 mx-auto mb-4"></div>
-          <h2 className="text-xl text-gray-700">Loading event details...</h2>
+      <div className="min-h-screen flex items-center justify-center">
+        <BackgroundPattern />
+        <ThemeSwitcher useLightTheme={useLightTheme} toggleTheme={toggleTheme} />
+        <div className="text-center relative z-10">
+          <div className={`animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 ${useLightTheme ? 'border-teal-600' : 'border-amber-500'} mx-auto mb-4`}></div>
+          <h2 className={`text-xl ${useLightTheme ? 'text-gray-700' : 'text-gray-200'}`}>Loading event details...</h2>
         </div>
       </div>
     );
@@ -151,14 +158,16 @@ const EventDetails = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
-          <AlertTriangle size={48} className="text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Event</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <BackgroundPattern />
+        <ThemeSwitcher useLightTheme={useLightTheme} toggleTheme={toggleTheme} />
+        <div className={`max-w-md w-full ${useLightTheme ? 'bg-white' : 'bg-gray-800'} rounded-lg shadow-md p-6 text-center relative z-10`}>
+          <AlertTriangle size={48} className={`${useLightTheme ? 'text-red-500' : 'text-red-400'} mx-auto mb-4`} />
+          <h2 className={`text-2xl font-bold ${useLightTheme ? 'text-gray-800' : 'text-white'} mb-2`}>Error Loading Event</h2>
+          <p className={`${useLightTheme ? 'text-gray-600' : 'text-gray-300'} mb-4`}>{error}</p>
           <button 
             onClick={() => window.location.href = '/events'}
-            className="inline-flex items-center text-teal-600 hover:underline"
+            className={`inline-flex items-center ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
           >
             <ArrowLeft size={18} className="mr-2" />
             Back to All Events
@@ -171,14 +180,16 @@ const EventDetails = () => {
   // No event found
   if (!event) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
-          <Calendar size={48} className="text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Event Not Found</h2>
-          <p className="text-gray-600 mb-4">The event you're looking for doesn't exist or has been removed.</p>
+      <div className={`min-h-screen ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'} flex items-center justify-center`}>
+        <BackgroundPattern />
+        <ThemeSwitcher useLightTheme={useLightTheme} toggleTheme={toggleTheme} />
+        <div className={`max-w-md w-full ${useLightTheme ? 'bg-white' : 'bg-gray-800'} rounded-lg shadow-md p-6 text-center relative z-10`}>
+          <Calendar size={48} className={`${useLightTheme ? 'text-gray-400' : 'text-gray-500'} mx-auto mb-4`} />
+          <h2 className={`text-2xl font-bold ${useLightTheme ? 'text-gray-800' : 'text-white'} mb-2`}>Event Not Found</h2>
+          <p className={`${useLightTheme ? 'text-gray-600' : 'text-gray-300'} mb-4`}>The event you're looking for doesn't exist or has been removed.</p>
           <button 
             onClick={() => window.location.href = '/events'}
-            className="inline-flex items-center text-teal-600 hover:underline"
+            className={`inline-flex items-center ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
           >
             <ArrowLeft size={18} className="mr-2" />
             Back to All Events
@@ -189,8 +200,12 @@ const EventDetails = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    
+    <div className="min-h-screen">
       <BackgroundPattern />
+      
+      {/* Theme Switcher */}
+      <ThemeSwitcher useLightTheme={useLightTheme} toggleTheme={toggleTheme} />
       
       <div className="relative z-10">
         {/* Header with event title */}
@@ -256,7 +271,7 @@ const EventDetails = () => {
           <div className="max-w-4xl mx-auto">
             {/* Gallery Section */}
             {event.gallery && event.gallery.length > 0 && (
-              <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+              <div className={`${themeStyles.card.bg} rounded-lg shadow-md overflow-hidden mb-8 ${themeStyles.card.border} border`}>
                 <EventGallery
                   gallery={event.gallery}
                   currentImageIndex={currentImageIndex}
@@ -270,12 +285,12 @@ const EventDetails = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
               {/* Main content - event description */}
               <div className="lg:col-span-2">
-                <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                  <h2 className="text-2xl font-bold mb-4 text-gray-800">
+                <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 mb-6 ${themeStyles.card.border} border`}>
+                  <h2 className={`text-2xl font-bold mb-4 ${themeStyles.subheading}`}>
                     About This Event
                   </h2>
                   
-                  <div className="prose max-w-none text-gray-700">
+                  <div className={`prose max-w-none ${themeStyles.text.secondary}`}>
                     {event.detailed_description ? (
                       <div dangerouslySetInnerHTML={renderHTML(event.detailed_description)} />
                     ) : event.description ? (
@@ -288,8 +303,8 @@ const EventDetails = () => {
                 
                 {/* Documents Section */}
                 {event.documents && event.documents.length > 0 && (
-                  <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                    <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
+                  <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 mb-6 ${themeStyles.card.border} border`}>
+                    <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading} flex items-center`}>
                       <Download size={20} className="mr-2 text-teal-600" />
                       Event Materials
                     </h2>
@@ -298,19 +313,19 @@ const EventDetails = () => {
                       {event.documents.map((doc, index) => (
                         <div 
                           key={index} 
-                          className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center"
+                          className={`p-4 rounded-lg ${useLightTheme ? 'bg-gray-50 hover:bg-gray-100' : 'bg-gray-700 hover:bg-gray-600'} transition-colors flex justify-between items-center`}
                         >
                           <div>
-                            <h3 className="font-medium text-gray-800">{doc.title}</h3>
-                            <p className="text-sm text-gray-500">{doc.description}</p>
+                            <h3 className={`font-medium ${themeStyles.text.primary}`}>{doc.title}</h3>
+                            <p className={`text-sm ${themeStyles.text.light}`}>{doc.description}</p>
                           </div>
                           <a 
                             href={doc.file} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                            className={`p-2 rounded-full ${useLightTheme ? 'hover:bg-gray-200' : 'hover:bg-gray-500'} transition-colors`}
                           >
-                            <Download size={18} className="text-teal-600" />
+                            <Download size={18} className={`${useLightTheme ? 'text-teal-600' : 'text-amber-400'}`} />
                           </a>
                         </div>
                       ))}
@@ -319,9 +334,9 @@ const EventDetails = () => {
                 )}
                 
                 {/* Social sharing */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
-                    <Share2 size={20} className="mr-2 text-teal-600" />
+                <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 ${themeStyles.card.border} border`}>
+                  <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading} flex items-center`}>
+                    <Share2 size={20} className={`mr-2 ${useLightTheme ? 'text-teal-600' : 'text-amber-400'}`} />
                     Share This Event
                   </h2>
                   
@@ -346,8 +361,8 @@ const EventDetails = () => {
               <div>
                 {/* Distinguished Guests/Attendees Section */}
                 {event.attendees && event.attendees.length > 0 && (
-                  <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-                    <h2 className="text-xl font-bold mb-4 text-gray-800">
+                  <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 mb-6 ${themeStyles.card.border} border`}>
+                    <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading}`}>
                       Distinguished Guests
                     </h2>
                     
@@ -356,75 +371,75 @@ const EventDetails = () => {
                 )}
                 
                 {/* Recent Events Section */}
-                <div className="bg-white rounded-lg shadow-md p-6">
-                  <h2 className="text-xl font-bold mb-4 text-gray-800">
+                <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 ${themeStyles.card.border} border`}>
+                  <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading}`}>
                     More Recent Events
                   </h2>
                   
                   <div className="space-y-4">
-                    <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 border border-gray-100">
+                    <div className={`flex items-center p-3 rounded-lg hover:bg-gray-50 border ${useLightTheme ? 'border-gray-100 hover:bg-gray-50' : 'border-gray-700 hover:bg-gray-700'}`}>
                       <img 
                         src="/api/placeholder/100/100" 
                         alt="Event thumbnail"
                         className="w-16 h-16 object-cover rounded mr-3"
                       />
                       <div>
-                        <h5 className="font-medium text-gray-800 line-clamp-1">
+                        <h5 className={`font-medium ${themeStyles.text.primary} line-clamp-1`}>
                           Annual Science Exhibition
                         </h5>
-                        <div className="flex items-center text-sm text-gray-500">
+                        <div className={`flex items-center text-sm ${themeStyles.text.light}`}>
                           <Calendar size={14} className="mr-1" />
                           March 15, 2025
                         </div>
                         <a 
                           href="/event-details?id=annual-science-exhibition"
-                          className="text-sm font-medium text-teal-600 hover:underline"
+                          className={`text-sm font-medium ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
                         >
                           View details
                         </a>
                       </div>
                     </div>
                     
-                    <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 border border-gray-100">
+                    <div className={`flex items-center p-3 rounded-lg hover:bg-gray-50 border ${useLightTheme ? 'border-gray-100 hover:bg-gray-50' : 'border-gray-700 hover:bg-gray-700'}`}>
                       <img 
                         src="/api/placeholder/100/100" 
                         alt="Event thumbnail"
                         className="w-16 h-16 object-cover rounded mr-3"
                       />
                       <div>
-                        <h5 className="font-medium text-gray-800 line-clamp-1">
+                        <h5 className={`font-medium ${themeStyles.text.primary} line-clamp-1`}>
                           Graduation Ceremony 2025
                         </h5>
-                        <div className="flex items-center text-sm text-gray-500">
+                        <div className={`flex items-center text-sm ${themeStyles.text.light}`}>
                           <Calendar size={14} className="mr-1" />
                           March 3, 2025
                         </div>
                         <a 
                           href="/event-details?id=graduation-ceremony"
-                          className="text-sm font-medium text-teal-600 hover:underline"
+                          className={`text-sm font-medium ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
                         >
                           View details
                         </a>
                       </div>
                     </div>
                     
-                    <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 border border-gray-100">
+                    <div className={`flex items-center p-3 rounded-lg hover:bg-gray-50 border ${useLightTheme ? 'border-gray-100 hover:bg-gray-50' : 'border-gray-700 hover:bg-gray-700'}`}>
                       <img 
                         src="/api/placeholder/100/100" 
                         alt="Event thumbnail"
                         className="w-16 h-16 object-cover rounded mr-3"
                       />
                       <div>
-                        <h5 className="font-medium text-gray-800 line-clamp-1">
+                        <h5 className={`font-medium ${themeStyles.text.primary} line-clamp-1`}>
                           Faculty Development Program
                         </h5>
-                        <div className="flex items-center text-sm text-gray-500">
+                        <div className={`flex items-center text-sm ${themeStyles.text.light}`}>
                           <Calendar size={14} className="mr-1" />
                           February 20, 2025
                         </div>
                         <a 
                           href="/event-details?id=faculty-development-program"
-                          className="text-sm font-medium text-teal-600 hover:underline"
+                          className={`text-sm font-medium ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
                         >
                           View details
                         </a>
@@ -433,7 +448,7 @@ const EventDetails = () => {
                     
                     <a
                       href="/events"
-                      className="inline-flex items-center text-teal-600 hover:underline"
+                      className={`inline-flex items-center ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
                     >
                       View all events
                     </a>
@@ -443,43 +458,45 @@ const EventDetails = () => {
             </div>
             
             {/* Comments Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-              <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
-                <MessageCircle size={20} className="mr-2 text-teal-600" />
+            <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 mb-8 ${themeStyles.card.border} border`}>
+              <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading} flex items-center`}>
+                <MessageCircle size={20} className={`mr-2 ${useLightTheme ? 'text-teal-600' : 'text-amber-400'}`} />
                 Comments & Feedback
               </h2>
               
               <div className="space-y-4">
                 {/* Example comments - These would come from API in a full implementation */}
-                <div className="border-b border-gray-100 pb-4">
+                <div className={`border-b ${useLightTheme ? 'border-gray-100' : 'border-gray-700'} pb-4`}>
                   <div className="flex justify-between mb-2">
                     <div>
-                      <span className="font-medium text-gray-800">Ravi Sharma</span>
-                      <span className="text-sm text-gray-500 ml-2">Student</span>
+                      <span className={`font-medium ${themeStyles.text.primary}`}>Ravi Sharma</span>
+                      <span className={`text-sm ${themeStyles.text.light} ml-2`}>Student</span>
                     </div>
-                    <span className="text-sm text-gray-500">April 26, 2025</span>
+                    <span className={`text-sm ${themeStyles.text.light}`}>April 26, 2025</span>
                   </div>
-                  <p className="text-gray-700">The new website looks amazing! It's much easier to navigate and find information about courses.</p>
+                  <p className={themeStyles.text.secondary}>The new website looks amazing! It's much easier to navigate and find information about courses.</p>
                 </div>
                 
-                <div className="border-b border-gray-100 pb-4">
+                <div className={`border-b ${useLightTheme ? 'border-gray-100' : 'border-gray-700'} pb-4`}>
                   <div className="flex justify-between mb-2">
                     <div>
-                      <span className="font-medium text-gray-800">Dr. Meena Patel</span>
-                      <span className="text-sm text-gray-500 ml-2">Faculty Member</span>
+                      <span className={`font-medium ${themeStyles.text.primary}`}>Dr. Meena Patel</span>
+                      <span className={`text-sm ${themeStyles.text.light} ml-2`}>Faculty Member</span>
                     </div>
-                    <span className="text-sm text-gray-500">April 25, 2025</span>
+                    <span className={`text-sm ${themeStyles.text.light}`}>April 25, 2025</span>
                   </div>
-                  <p className="text-gray-700">Congratulations on the successful launch! The new logo perfectly represents our institution's values.</p>
+                  <p className={themeStyles.text.secondary}>Congratulations on the successful launch! The new logo perfectly represents our institution's values.</p>
                 </div>
                 
                 {/* Add comment form */}
                 <div className="mt-6">
-                  <h3 className="text-lg font-medium text-gray-800 mb-3">Leave a Comment</h3>
+                  <h3 className={`text-lg font-medium ${themeStyles.text.primary} mb-3`}>Leave a Comment</h3>
                   
                   {submitStatus.message && (
                     <div className={`p-3 mb-4 rounded-lg ${
-                      submitStatus.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      submitStatus.success ? 
+                        useLightTheme ? 'bg-green-100 text-green-800' : 'bg-green-900/30 text-green-300'
+                        : useLightTheme ? 'bg-red-100 text-red-800' : 'bg-red-900/30 text-red-300'
                     }`}>
                       {submitStatus.message}
                     </div>
@@ -490,7 +507,11 @@ const EventDetails = () => {
                       name="comment"
                       value={commentForm.comment}
                       onChange={handleInputChange}
-                      className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      className={`w-full border ${
+                        useLightTheme 
+                          ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
+                          : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
+                      } rounded-lg p-3 focus:ring-2`}
                       rows="3"
                       placeholder="Share your thoughts about this event..."
                     ></textarea>
@@ -500,7 +521,11 @@ const EventDetails = () => {
                         name="name"
                         value={commentForm.name}
                         onChange={handleInputChange}
-                        className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                        className={`border ${
+                          useLightTheme 
+                            ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
+                            : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
+                        } rounded-lg p-2 focus:ring-2`}
                         placeholder="Your Name"
                       />
                       <input
@@ -508,14 +533,22 @@ const EventDetails = () => {
                         name="email"
                         value={commentForm.email}
                         onChange={handleInputChange}
-                        className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                        className={`border ${
+                          useLightTheme 
+                            ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
+                            : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
+                        } rounded-lg p-2 focus:ring-2`}
                         placeholder="Your Email"
                       />
                     </div>
                     <div className="mt-3 flex justify-end">
                       <button 
                         type="submit" 
-                        className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
+                        className={`px-4 py-2 ${
+                          useLightTheme 
+                            ? 'bg-teal-600 hover:bg-teal-700 focus:ring-teal-500' 
+                            : 'bg-amber-600 hover:bg-amber-500 focus:ring-amber-500'
+                        } text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2`}
                       >
                         Post Comment
                       </button>
