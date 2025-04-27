@@ -113,12 +113,62 @@ const EventsPage = () => {
   };
 
   // Event Card Component
-  const EventCard = ({ event }) => {
+//   const EventCard = ({ event }) => {
+//     return (
+//       <div className="overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-100 bg-white flex flex-col h-full transform hover:-translate-y-1 duration-300 rounded-lg">
+//         <div className="relative h-48">
+//           <img
+//             src={event.image || '/api/placeholder/600/400'}
+//             alt={event.title}
+//             className="w-full h-full object-cover"
+//           />
+//           <div className="absolute top-3 right-3">
+//             <span className="px-2 py-1 bg-gray-200 text-gray-800 text-xs font-medium rounded">
+//               {event.category || 'Event'}
+//             </span>
+//           </div>
+//         </div>
+        
+//         <div className="p-5 flex-grow flex flex-col">
+//           <div className="flex items-center mb-3 text-gray-500">
+//             <Calendar size={16} className="mr-2" />
+//             <span className="text-sm">{formatDate(event.date)}</span>
+//           </div>
+          
+//           <h3 className="text-xl font-bold mb-3 text-gray-800">
+//             {event.title}
+//           </h3>
+          
+//           <p className="mb-4 flex-grow line-clamp-3 text-gray-600">
+//             {event.description || 'No description available for this event.'}
+//           </p>
+          
+//           <div className="flex items-center mb-4 text-gray-500">
+//             <MapPin size={16} className="mr-2" />
+//             <span className="text-sm">{event.location || 'Location TBD'}</span>
+//           </div>
+          
+//           <button
+//             onClick={() => window.location.href = `/event-details?id=${event.id || event.name}`}
+//             className="mt-auto inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+//           >
+//             View Details
+//             <ArrowRight size={16} className="ml-2" />
+//           </button>
+//         </div>
+//       </div>
+//     );
+//   };
+
+// Update the EventCard component in EventPage.jsx to use card_image
+
+// EventCard Component
+const EventCard = ({ event }) => {
     return (
       <div className="overflow-hidden shadow-md hover:shadow-lg transition-all border border-gray-100 bg-white flex flex-col h-full transform hover:-translate-y-1 duration-300 rounded-lg">
         <div className="relative h-48">
           <img
-            src={event.image || '/api/placeholder/600/400'}
+            src={event.card_image || event.image || '/api/placeholder/600/400'}
             alt={event.title}
             className="w-full h-full object-cover"
           />

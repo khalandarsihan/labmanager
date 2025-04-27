@@ -80,6 +80,7 @@ def get_event_details(event_id):
             "id": event.name,
             "title": event.title,
             "description": event.description,
+            "detailed_description": event.detailed_description,
             "date": event.date.isoformat() if hasattr(event.date, "isoformat") else str(event.date),
             "location": event.location,
             "organizer": event.organizer,
