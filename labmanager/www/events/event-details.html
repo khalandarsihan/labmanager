@@ -1,14 +1,13 @@
-{% extends "templates/layout.html" %} 
-{% block title %}Event Details - TechEthica{% endblock %} 
-{% block head %}
+{% extends "templates/layout.html" %} {% block title %}Event Details - TechEthica{% endblock %} {%
+block head %}
 <!-- Any additional head elements specific to this page -->
-{% endblock %} 
-{% block content %}
+{% endblock %} {% block content %}
 <div id="event-details-root"></div>
-{% endblock %} 
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script type="text/javascript">
 	window.socketPort = "{{ socketPort }}";
+	// Make sure the URL parameters are available to the component
+	window.eventId = new URLSearchParams(window.location.search).get("id");
 </script>
 <script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
 {% endblock %}

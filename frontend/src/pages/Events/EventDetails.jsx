@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, User, ArrowLeft, Users, Share2, Download, ExternalLink, X } from 'lucide-react';
 
-const EventDetails = () => {
+const EventDetails = ({ eventId: propEventId }) => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   
-  // Get event ID from URL
+  // Get event ID from props or URL
   const searchParams = new URLSearchParams(window.location.search);
-  const eventId = searchParams.get('id');
+  const eventId = propEventId || searchParams.get('id') || window.eventId;
   
   useEffect(() => {
     const fetchEventDetails = async () => {
