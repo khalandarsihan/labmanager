@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTheme } from '../../../components/ui/ThemeContext';
 
-const EventGallery = ({ gallery }) => {
+const EventGallery = ({ gallery, currentImageIndex = 0, setCurrentImageIndex, galleryRef }) => {
+  const { useLightTheme, themeStyles } = useTheme();
   const [selectedImage, setSelectedImage] = useState(null);
 
   // Open image modal
@@ -16,28 +18,88 @@ const EventGallery = ({ gallery }) => {
     document.body.style.overflow = 'auto'; // Re-enable scrolling
   };
 
+  // Navigate images
+  const handlePrevImage = () => {
+    if (!gallery || gallery.length === 0) return;
+    setCurrentImageIndex(prev => (prev === 0 ? gallery.length - 1 : prev - 1));
+  };
+  
+  const handleNextImage = () => {
+    if (!gallery || gallery.length === 0) return;
+    setCurrentImageIndex(prev => (prev === gallery.length - 1 ? 0 : prev + 1));
+  };
+
+  // Scroll gallery to thumbnail
+  useEffect(() => {
+    if (gallery && gallery.length > 0 && galleryRef && galleryRef.current) {
+      const thumbnailWidth = 100; // Approximate width + margins
+      galleryRef.current.scrollLeft = currentImageIndex * thumbnailWidth - (galleryRef.current.clientWidth / 2) + (thumbnailWidth / 2);
+    }
+  }, [currentImageIndex, gallery, galleryRef]);
+
+  if (!gallery || gallery.length === 0) {
+    return null;
+  }
+
   return (
     <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {gallery.map((item, index) => (
-          <div 
-            key={index} 
-            className="relative rounded-lg overflow-hidden group cursor-pointer"
-            onClick={() => openModal(item)}
-          >
-            <img 
-              src={item.image} 
-              alt={item.caption || `Gallery image ${index + 1}`}
-              className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            {item.caption && (
-              <div className="absolute inset-x-0 bottom-0 bg-gray-900/70 text-white p-2 text-sm">
-                {item.caption}
-              </div>
-            )}
+      {/* Main image display with navigation */}
+      <div className="relative rounded-lg overflow-hidden mb-4">
+        <img 
+          src={gallery[currentImageIndex]?.image || '/api/placeholder/800/500'} 
+          alt={gallery[currentImageIndex]?.caption || `Gallery image`}
+          className="w-full h-96 object-cover"
+        />
+        
+        {gallery.length > 1 && (
+          <>
+            <button 
+              onClick={handlePrevImage}
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button 
+              onClick={handleNextImage}
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </>
+        )}
+        
+        {gallery[currentImageIndex]?.caption && (
+          <div className="absolute inset-x-0 bottom-0 bg-gray-900/70 text-white p-3">
+            {gallery[currentImageIndex].caption}
           </div>
-        ))}
+        )}
       </div>
+      
+      {/* Thumbnails */}
+      {gallery.length > 1 && (
+        <div 
+          ref={galleryRef}
+          className="flex space-x-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+        >
+          {gallery.map((item, index) => (
+            <div 
+              key={index}
+              onClick={() => setCurrentImageIndex(index)}
+              className={`flex-shrink-0 cursor-pointer relative ${
+                currentImageIndex === index 
+                  ? useLightTheme ? 'ring-2 ring-purple-500' : 'ring-2 ring-amber-500'
+                  : 'opacity-70 hover:opacity-100'
+              }`}
+            >
+              <img 
+                src={item.image || '/api/placeholder/100/100'} 
+                alt={item.caption || `Thumbnail ${index + 1}`}
+                className="w-24 h-16 object-cover rounded"
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Image Modal */}
       {selectedImage && (

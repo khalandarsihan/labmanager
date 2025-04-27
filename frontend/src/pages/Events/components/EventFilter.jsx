@@ -1,7 +1,6 @@
 import React from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { useTheme } from '../../../components/ui/ThemeContext';
-import { Badge } from '../../../components/ui/badge';
 
 const EventFilter = ({ 
   searchTerm, 
@@ -12,10 +11,10 @@ const EventFilter = ({
   clearFilters,
   hasFilters
 }) => {
-  const { useLightTheme } = useTheme();
+  const { useLightTheme, themeStyles } = useTheme();
   
   return (
-    <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} border-b ${useLightTheme ? 'border-gray-200' : 'border-gray-700'}`}>
+    <div className={`${useLightTheme ? 'bg-white border-gray-200' : 'bg-gray-800 border-gray-700'} border-b`}>
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="relative flex-grow max-w-md">
@@ -26,8 +25,8 @@ const EventFilter = ({
               type="text"
               className={`${
                 useLightTheme 
-                  ? 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-green-500 focus:border-green-500' 
-                  : 'bg-gray-700 border-gray-600 text-gray-100 focus:ring-green-500 focus:border-green-500'
+                  ? 'bg-gray-50 border-gray-300 text-gray-900 focus:ring-purple-500 focus:border-purple-500' 
+                  : 'bg-gray-700 border-gray-600 text-gray-100 focus:ring-amber-500 focus:border-amber-500'
               } border text-sm rounded-lg block w-full pl-10 p-2.5`}
               placeholder="Search events..."
               value={searchTerm}
@@ -45,7 +44,9 @@ const EventFilter = ({
                 onClick={() => handleFilterChange(category)}
                 className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
                   activeFilter === category
-                    ? 'bg-green-600 text-white'
+                    ? useLightTheme 
+                      ? 'bg-purple-600 text-white' 
+                      : 'bg-amber-600 text-white'
                     : useLightTheme
                       ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       : 'bg-gray-700 text-gray-200 hover:bg-gray-600'

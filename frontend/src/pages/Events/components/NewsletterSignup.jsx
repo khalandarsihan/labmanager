@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useTheme } from '../../../components/ui/ThemeContext';
 
 const NewsletterSignup = () => {
+  const { useLightTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');

@@ -21,8 +21,13 @@ import {
   MapIcon,
   MessageCircle
 } from 'lucide-react';
+import { useTheme } from '../../components/ui/ThemeContext';
+import BackgroundPattern from '../../components/ui/BackgroundPattern';
 
 const EventDetails = ({ eventId: propEventId }) => {
+  // Get theme context
+  const { useLightTheme, themeStyles } = useTheme();
+
   // State management
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -76,7 +81,7 @@ const EventDetails = ({ eventId: propEventId }) => {
       }
     };
     
-            const fetchRelatedEvents = async (category) => {
+    const fetchRelatedEvents = async (category) => {
       if (!category) return;
       
       try {
@@ -258,9 +263,17 @@ const EventDetails = ({ eventId: propEventId }) => {
       <div className="mb-8">
         <div className="space-y-3">
           {attendees.map((attendee, index) => (
-            <div key={index} className="p-4 rounded-lg bg-gray-50 border border-gray-100 hover:border-green-200 transition-colors">
-              <h5 className="font-semibold text-gray-800">{attendee.name1 || attendee.name}</h5>
-              <p className="text-gray-600 text-sm">{attendee.title}</p>
+            <div key={index} className={`p-4 rounded-lg ${
+              useLightTheme 
+                ? 'bg-gray-50 border border-gray-100 hover:border-purple-200' 
+                : 'bg-gray-800 border border-gray-700 hover:border-amber-400/30'
+              } transition-colors`}>
+              <h5 className={`font-semibold ${useLightTheme ? 'text-gray-800' : 'text-gray-200'}`}>
+                {attendee.name1 || attendee.name}
+              </h5>
+              <p className={`text-sm ${useLightTheme ? 'text-gray-600' : 'text-gray-400'}`}>
+                {attendee.title}
+              </p>
             </div>
           ))}
         </div>
@@ -326,7 +339,7 @@ const EventDetails = ({ eventId: propEventId }) => {
                 onClick={() => setCurrentImageIndex(index)}
                 className={`flex-shrink-0 cursor-pointer relative ${
                   currentImageIndex === index 
-                    ? 'ring-2 ring-green-500' 
+                    ? useLightTheme ? 'ring-2 ring-purple-500' : 'ring-2 ring-amber-500'
                     : 'opacity-70 hover:opacity-100'
                 }`}
               >
@@ -343,57 +356,37 @@ const EventDetails = ({ eventId: propEventId }) => {
     );
   };
   
-  // Related Event Card Component
-//   const RelatedEventCard = ({ event }) => {
-//     if (!event) return null;
-    
-//     return (
-//       <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
-//         <img 
-//           src={event.image || '/api/placeholder/100/100'} 
-//           alt={event.title}
-//           className="w-16 h-16 object-cover rounded mr-3 flex-shrink-0"
-//         />
-//         <div className="flex-grow">
-//           <h5 className="font-medium text-gray-800 line-clamp-1">{event.title}</h5>
-//           <div className="flex items-center text-sm text-gray-500">
-//             <Calendar size={14} className="mr-1" />
-//             {formatDate(event.date)}
-//           </div>
-//           <a 
-//             href={`/event-details?id=${encodeURIComponent(event.id || event.name)}`}
-//             className="text-green-600 text-sm font-medium hover:underline"
-//           >
-//             View details
-//           </a>
-//         </div>
-//       </div>
-//     );
-//   };
-
-// RelatedEventCard Component from EventDetails.jsx
-const RelatedEventCard = ({ event }) => {
+  // RelatedEventCard Component
+  const RelatedEventCard = ({ event }) => {
     if (!event) return null;
     
     // Use card_image if available, fall back to main image
     const imageUrl = event.card_image || event.image || '/api/placeholder/100/100';
     
     return (
-      <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
+      <div className={`flex items-center p-3 rounded-lg ${
+        useLightTheme 
+          ? 'hover:bg-gray-50 border border-gray-100' 
+          : 'hover:bg-gray-800 border border-gray-700'
+        } transition-colors`}>
         <img 
           src={imageUrl} 
           alt={event.title}
           className="w-16 h-16 object-cover rounded mr-3 flex-shrink-0"
         />
         <div className="flex-grow">
-          <h5 className="font-medium text-gray-800 line-clamp-1">{event.title}</h5>
+          <h5 className={`font-medium ${useLightTheme ? 'text-gray-800' : 'text-gray-200'} line-clamp-1`}>
+            {event.title}
+          </h5>
           <div className="flex items-center text-sm text-gray-500">
             <Calendar size={14} className="mr-1" />
             {formatDate(event.date)}
           </div>
           <a 
             href={`/event-details?id=${encodeURIComponent(event.id || event.name)}`}
-            className="text-green-600 text-sm font-medium hover:underline"
+            className={`text-sm font-medium hover:underline ${
+              useLightTheme ? 'text-purple-600' : 'text-amber-400'
+            }`}
           >
             View details
           </a>
@@ -404,10 +397,17 @@ const RelatedEventCard = ({ event }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-t-green-600 border-b-green-600 border-l-gray-200 border-r-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-lg text-gray-700">Loading event details...</p>
+    //   <div className={`min-h-screen flex justify-center items-center ${useLightTheme ? 'bg-purple-50' : 'bg-gray-900'}`}>
+    <div className={`min-h-screen relative ${useLightTheme ? '' : ''}`}>
+        <BackgroundPattern />
+        {/* <div className="text-center relative z-10"> */}
+        <div className="relative z-10">
+          <div className={`w-16 h-16 border-4 ${
+            useLightTheme 
+              ? 'border-t-purple-600 border-b-purple-600 border-l-gray-200 border-r-gray-200' 
+              : 'border-t-amber-600 border-b-amber-600 border-l-gray-600 border-r-gray-600'
+          } rounded-full animate-spin mx-auto mb-4`}></div>
+          <p className={`text-lg ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>Loading event details...</p>
         </div>
       </div>
     );
@@ -415,15 +415,20 @@ const RelatedEventCard = ({ event }) => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-50">
-        <div className="text-center max-w-md p-6 bg-white rounded-lg shadow-md">
+      <div className={`min-h-screen flex justify-center items-center ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
+        <BackgroundPattern />
+        <div className={`text-center max-w-md p-6 ${useLightTheme ? 'bg-white' : 'bg-gray-800'} rounded-lg shadow-md relative z-10`}>
           <div className="text-red-500 text-5xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Event</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h2 className={`text-2xl font-bold ${useLightTheme ? 'text-gray-800' : 'text-gray-100'} mb-2`}>Error Loading Event</h2>
+          <p className={`${useLightTheme ? 'text-gray-600' : 'text-gray-300'} mb-4`}>{error}</p>
           <div className="flex justify-center space-x-4">
             <button 
               onClick={() => window.location.reload()}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              className={`px-4 py-2 ${
+                useLightTheme 
+                  ? 'bg-purple-600 hover:bg-purple-700' 
+                  : 'bg-amber-600 hover:bg-amber-500'
+              } text-white rounded-md transition-colors`}
             >
               Try Again
             </button>
@@ -441,13 +446,18 @@ const RelatedEventCard = ({ event }) => {
 
   if (!event) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gray-50">
-        <div className="text-center max-w-md p-6 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Event Not Found</h2>
-          <p className="text-gray-600 mb-6">The event you're looking for doesn't exist or has been removed.</p>
+      <div className={`min-h-screen flex justify-center items-center ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
+        <BackgroundPattern />
+        <div className={`text-center max-w-md p-6 ${useLightTheme ? 'bg-white' : 'bg-gray-800'} rounded-lg shadow-md relative z-10`}>
+          <h2 className={`text-2xl font-bold ${useLightTheme ? 'text-gray-800' : 'text-gray-100'} mb-4`}>Event Not Found</h2>
+          <p className={`${useLightTheme ? 'text-gray-600' : 'text-gray-300'} mb-6`}>The event you're looking for doesn't exist or has been removed.</p>
           <button 
             onClick={() => window.location.href = '/events'}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+            className={`px-4 py-2 ${
+              useLightTheme 
+                ? 'bg-purple-600 hover:bg-purple-700' 
+                : 'bg-amber-600 hover:bg-amber-500'
+            } text-white rounded-md transition-colors`}
           >
             View All Events
           </button>
@@ -457,78 +467,92 @@ const RelatedEventCard = ({ event }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-pattern opacity-5 pointer-events-none"></div>
+      <BackgroundPattern />
       
       <div className="relative z-10">
         {/* Header Section with Hero Image */}
         <div className="relative">
-  <div className="h-96 overflow-hidden relative">
-    <div className="absolute inset-0 bg-black/40 z-10"></div>
-    <img 
-      src={event.detail_hero_image || event.image || '/api/placeholder/1200/600'} 
-      alt={event.title} 
-      className="w-full h-full object-cover"
-    />
-  </div>
-  
-  <div className="container mx-auto px-4">
-    <div className="relative -mt-24 mb-8 z-20">
-      <div className="bg-white shadow-xl mx-auto max-w-4xl rounded-lg">
-        <div className="p-8">
-          <button 
-            onClick={() => window.location.href = '/events'}
-            className="inline-flex items-center text-sm text-green-600 mb-4 hover:underline"
-          >
-            <ArrowLeft size={16} className="mr-1" />
-            Back to All Events
-          </button>
-          
-          <div className="flex flex-wrap gap-2 mb-4">
-            <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">{event.category || 'Event'}</span>
-            {event.is_featured && (
-              <span className="border border-amber-400 text-amber-600 px-3 py-1 rounded-full text-sm">Featured Event</span>
-            )}
+          <div className="h-96 overflow-hidden relative">
+            <div className="absolute inset-0 bg-black/40 z-10"></div>
+            <img 
+              src={event.detail_hero_image || event.image || '/api/placeholder/1200/600'} 
+              alt={event.title} 
+              className="w-full h-full object-cover"
+            />
           </div>
           
-          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
-            {event.title}
-          </h1>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="flex items-center text-gray-700">
-              <Calendar size={20} className="mr-3 text-green-600" />
-              <div>
-                <h3 className="text-sm text-gray-500 mb-1">Date</h3>
-                <p>{formatDate(event.date)}</p>
-              </div>
-            </div>
-            
-            {event.time && (
-              <div className="flex items-center text-gray-700">
-                <Clock size={20} className="mr-3 text-green-600" />
-                <div>
-                  <h3 className="text-sm text-gray-500 mb-1">Time</h3>
-                  <p>{event.time}</p>
-                </div>
-              </div>
-            )}
-            
-            <div className="flex items-center text-gray-700">
-              <MapPin size={20} className="mr-3 text-green-600" />
-              <div>
-                <h3 className="text-sm text-gray-500 mb-1">Location</h3>
-                <p>{event.location || 'Location TBD'}</p>
-              </div>
-            </div>
-          </div>
+          <div className="container mx-auto px-4">
+            <div className="relative -mt-24 mb-8 z-20">
+              <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} shadow-xl mx-auto max-w-4xl rounded-lg`}>
+                <div className="p-8">
+                  <button 
+                    onClick={() => window.location.href = '/events'}
+                    className={`inline-flex items-center text-sm ${
+                      useLightTheme ? 'text-purple-600' : 'text-amber-400'
+                    } mb-4 hover:underline`}
+                  >
+                    <ArrowLeft size={16} className="mr-1" />
+                    Back to All Events
+                  </button>
+                  
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <span className={`${
+                      useLightTheme ? 'bg-purple-600' : 'bg-amber-600'
+                    } text-white px-3 py-1 rounded-full text-sm`}>
+                      {event.category || 'Event'}
+                    </span>
+                    {event.is_featured && (
+                      <span className="border border-amber-400 text-amber-600 px-3 py-1 rounded-full text-sm">
+                        Featured Event
+                      </span>
+                    )}
+                  </div>
+                  
+                  <h1 className={`text-3xl md:text-4xl font-bold mb-6 ${
+                    useLightTheme ? 'text-gray-800' : 'text-gray-100'
+                  }`}>
+                    {event.title}
+                  </h1>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div className={`flex items-center ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>
+                      <Calendar size={20} className={`mr-3 ${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
+                      <div>
+                        <h3 className={`text-sm ${useLightTheme ? 'text-gray-500' : 'text-gray-400'} mb-1`}>Date</h3>
+                        <p>{formatDate(event.date)}</p>
+                      </div>
+                    </div>
+                    
+                    {event.time && (
+                      <div className={`flex items-center ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>
+                        <Clock size={20} className={`mr-3 ${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
+                        <div>
+                          <h3 className={`text-sm ${useLightTheme ? 'text-gray-500' : 'text-gray-400'} mb-1`}>Time</h3>
+                          <p>{event.time}</p>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className={`flex items-center ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>
+                      <MapPin size={20} className={`mr-3 ${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
+                      <div>
+                        <h3 className={`text-sm ${useLightTheme ? 'text-gray-500' : 'text-gray-400'} mb-1`}>Location</h3>
+                        <p>{event.location || 'Location TBD'}</p>
+                      </div>
+                    </div>
+                  </div>
                   
                   {/* Enhanced Action Buttons */}
                   <div className="flex flex-wrap gap-3 mb-8">
                     <button 
                       onClick={() => setShowRsvpForm(true)}
-                      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center"
+                      className={`px-4 py-2 ${
+                        useLightTheme 
+                          ? 'bg-purple-600 hover:bg-purple-700' 
+                          : 'bg-amber-600 hover:bg-amber-500'
+                      } text-white rounded-md transition-colors flex items-center`}
                     >
                       <Users size={18} className="mr-2" />
                       RSVP Now
@@ -536,24 +560,38 @@ const RelatedEventCard = ({ event }) => {
                     
                     <div className="relative group">
                       <button 
-                        className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors flex items-center"
+                        className={`px-4 py-2 ${
+                          useLightTheme 
+                            ? 'bg-gray-100 text-gray-800 hover:bg-gray-200' 
+                            : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                        } rounded-md transition-colors flex items-center`}
                       >
                         <CalendarIcon size={18} className="mr-2" />
                         Add to Calendar
                         <ChevronRight size={16} className="ml-1 group-hover:rotate-90 transition-transform" />
                       </button>
                       
-                      <div className="absolute left-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100">
+                      <div className={`absolute left-0 mt-1 w-48 rounded-md shadow-lg ${
+                        useLightTheme ? 'bg-white' : 'bg-gray-800'
+                      } ring-1 ring-black ring-opacity-5 z-10 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100`}>
                         <div className="py-1">
                           <button 
                             onClick={addToGoogleCalendar}
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center w-full text-left"
+                            className={`px-4 py-2 text-sm ${
+                              useLightTheme 
+                                ? 'text-gray-700 hover:bg-gray-100' 
+                                : 'text-gray-200 hover:bg-gray-700'
+                            } flex items-center w-full text-left`}
                           >
                             Google Calendar
                           </button>
                           <button 
                             onClick={generateIcsFile}
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center w-full text-left"
+                            className={`px-4 py-2 text-sm ${
+                              useLightTheme 
+                                ? 'text-gray-700 hover:bg-gray-100' 
+                                : 'text-gray-200 hover:bg-gray-700'
+                            } flex items-center w-full text-left`}
                           >
                             iCal / Outlook
                           </button>
@@ -563,20 +601,30 @@ const RelatedEventCard = ({ event }) => {
                     
                     <div className="relative group">
                       <button 
-                        className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors flex items-center"
+                        className={`px-4 py-2 ${
+                          useLightTheme 
+                            ? 'bg-gray-100 text-gray-800 hover:bg-gray-200' 
+                            : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                        } rounded-md transition-colors flex items-center`}
                       >
                         <Share2 size={18} className="mr-2" />
                         Share
                         <ChevronRight size={16} className="ml-1 group-hover:rotate-90 transition-transform" />
                       </button>
                       
-                      <div className="absolute left-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100">
+                      <div className={`absolute left-0 mt-1 w-48 rounded-md shadow-lg ${
+                        useLightTheme ? 'bg-white' : 'bg-gray-800'
+                      } ring-1 ring-black ring-opacity-5 z-10 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100`}>
                         <div className="py-1">
                           <a 
                             href={socialShareUrls.facebook}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                            className={`px-4 py-2 text-sm ${
+                              useLightTheme 
+                                ? 'text-gray-700 hover:bg-gray-100' 
+                                : 'text-gray-200 hover:bg-gray-700'
+                            } flex items-center`}
                           >
                             <Facebook size={16} className="mr-2" /> Facebook
                           </a>
@@ -584,7 +632,11 @@ const RelatedEventCard = ({ event }) => {
                             href={socialShareUrls.twitter}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                            className={`px-4 py-2 text-sm ${
+                              useLightTheme 
+                                ? 'text-gray-700 hover:bg-gray-100' 
+                                : 'text-gray-200 hover:bg-gray-700'
+                            } flex items-center`}
                           >
                             <Twitter size={16} className="mr-2" /> Twitter
                           </a>
@@ -592,16 +644,27 @@ const RelatedEventCard = ({ event }) => {
                             href={socialShareUrls.linkedin}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                            className={`px-4 py-2 text-sm ${
+                              useLightTheme 
+                                ? 'text-gray-700 hover:bg-gray-100' 
+                                : 'text-gray-200 hover:bg-gray-700'
+                            } flex items-center`}
                           >
                             <Linkedin size={16} className="mr-2" /> LinkedIn
                           </a>
                           <a 
                             href={socialShareUrls.email}
-                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                            className={`px-4 py-2 text-sm ${
+                              useLightTheme 
+                                ? 'text-gray-700 hover:bg-gray-100' 
+                                : 'text-gray-200 hover:bg-gray-700'
+                            } flex items-center`}
                           >
                             <Mail size={16} className="mr-2" /> Email
-                          </a>
+                            
+                            
+                            
+                            </a>
                         </div>
                       </div>
                     </div>
@@ -609,7 +672,11 @@ const RelatedEventCard = ({ event }) => {
                     {event.documents && event.documents.length > 0 && (
                       <button 
                         onClick={() => window.open(event.documents[0].file, '_blank')}
-                        className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors flex items-center"
+                        className={`px-4 py-2 ${
+                          useLightTheme 
+                            ? 'bg-gray-100 text-gray-800 hover:bg-gray-200' 
+                            : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                        } rounded-md transition-colors flex items-center`}
                       >
                         <Download size={18} className="mr-2" />
                         Download Agenda
@@ -627,14 +694,18 @@ const RelatedEventCard = ({ event }) => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              {/* <div className="bg-white mb-8 rounded-lg shadow">
+              <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                 <div className="p-6 md:p-8">
-                  <h2 className="text-2xl font-bold mb-4 text-gray-800">
+                  <h2 className={`text-2xl font-bold mb-4 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'}`}>
                     About This Event
                   </h2>
                   
-                  <div className="prose max-w-none text-gray-700">
-                    {event.description ? (
+                  <div className={`prose max-w-none ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>
+                    {event.detailed_description ? (
+                      // If a detailed description is available, render it directly as HTML
+                      <div dangerouslySetInnerHTML={renderHTML(event.detailed_description)} />
+                    ) : event.description ? (
+                      // Fall back to regular description if detailed description is not available
                       <div 
                         dangerouslySetInnerHTML={renderHTML(
                           event.description
@@ -648,40 +719,14 @@ const RelatedEventCard = ({ event }) => {
                     )}
                   </div>
                 </div>
-              </div> */}
-              <div className="bg-white mb-8 rounded-lg shadow">
-            <div className="p-6 md:p-8">
-                <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                About This Event
-                </h2>
-                
-                <div className="prose max-w-none text-gray-700">
-                {event.detailed_description ? (
-                    // If a detailed description is available, render it directly as HTML
-                    <div dangerouslySetInnerHTML={renderHTML(event.detailed_description)} />
-                ) : event.description ? (
-                    // Fall back to regular description if detailed description is not available
-                    <div 
-                    dangerouslySetInnerHTML={renderHTML(
-                        event.description
-                        .split('\n\n')
-                        .map(paragraph => `<p>${paragraph}</p>`)
-                        .join('')
-                    )} 
-                    />
-                ) : (
-                    <p>No detailed description available for this event.</p>
-                )}
-                </div>
-            </div>
-            </div>
+              </div>
               
               {/* Location Map */}
               {event.location && (
-                <div className="bg-white mb-8 rounded-lg shadow">
+                <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                   <div className="p-6 md:p-8">
-                    <h2 className="text-2xl font-bold mb-4 text-gray-800 flex items-center">
-                      <MapIcon size={24} className="mr-2 text-green-600" />
+                    <h2 className={`text-2xl font-bold mb-4 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'} flex items-center`}>
+                      <MapIcon size={24} className={`mr-2 ${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
                       Event Location
                     </h2>
                     
@@ -689,9 +734,13 @@ const RelatedEventCard = ({ event }) => {
                       <p className="mb-4">{event.location}</p>
                       
                       {/* Interactive Map Placeholder - In a real app, implement Google Maps or similar */}
-                      <div className="bg-gray-100 border border-gray-200 h-64 rounded-lg flex items-center justify-center">
-                        <MapPin size={48} className="text-gray-400" />
-                        <p className="ml-2 text-gray-500">Map view would be displayed here</p>
+                      <div className={`${
+                        useLightTheme 
+                          ? 'bg-gray-100 border-gray-200' 
+                          : 'bg-gray-700 border-gray-600'
+                        } border h-64 rounded-lg flex items-center justify-center`}>
+                        <MapPin size={48} className={`${useLightTheme ? 'text-gray-400' : 'text-gray-500'}`} />
+                        <p className={`ml-2 ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`}>Map view would be displayed here</p>
                       </div>
                       
                       <div className="mt-4">
@@ -699,7 +748,9 @@ const RelatedEventCard = ({ event }) => {
                           href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-green-600 hover:underline flex items-center"
+                          className={`${
+                            useLightTheme ? 'text-purple-600' : 'text-amber-400'
+                          } hover:underline flex items-center`}
                         >
                           <ExternalLink size={16} className="mr-2" />
                           View on Google Maps
@@ -712,9 +763,9 @@ const RelatedEventCard = ({ event }) => {
               
               {/* Gallery Section - Enhanced with carousel */}
               {event.gallery && event.gallery.length > 0 && (
-                <div className="bg-white mb-8 rounded-lg shadow">
+                <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                   <div className="p-6 md:p-8">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                    <h2 className={`text-2xl font-bold mb-6 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'}`}>
                       Event Gallery
                     </h2>
                     
@@ -725,9 +776,9 @@ const RelatedEventCard = ({ event }) => {
               
               {/* Documents Section */}
               {event.documents && event.documents.length > 0 && (
-                <div className="bg-white mb-8 rounded-lg shadow">
+                <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                   <div className="p-6 md:p-8">
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800">
+                    <h2 className={`text-2xl font-bold mb-6 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'}`}>
                       Related Documents
                     </h2>
                     
@@ -735,19 +786,25 @@ const RelatedEventCard = ({ event }) => {
                       {event.documents.map((doc, index) => (
                         <div 
                           key={index} 
-                          className="p-4 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors flex justify-between items-center"
+                          className={`p-4 rounded-lg ${
+                            useLightTheme 
+                              ? 'bg-gray-50 hover:bg-gray-100' 
+                              : 'bg-gray-700 hover:bg-gray-600'
+                            } transition-colors flex justify-between items-center`}
                         >
                           <div>
-                            <h3 className="font-medium text-gray-800">{doc.title}</h3>
-                            <p className="text-sm text-gray-500">{doc.description}</p>
+                            <h3 className={`font-medium ${useLightTheme ? 'text-gray-800' : 'text-gray-200'}`}>{doc.title}</h3>
+                            <p className={`text-sm ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`}>{doc.description}</p>
                           </div>
                           <a 
                             href={doc.file} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+                            className={`p-2 rounded-full ${
+                              useLightTheme ? 'hover:bg-gray-200' : 'hover:bg-gray-500'
+                            } transition-colors`}
                           >
-                            <Download size={18} className="text-green-600" />
+                            <Download size={18} className={`${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
                           </a>
                         </div>
                       ))}
@@ -757,28 +814,40 @@ const RelatedEventCard = ({ event }) => {
               )}
               
               {/* Comments Section - New */}
-              <div className="bg-white mb-8 rounded-lg shadow">
+              <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                 <div className="p-6 md:p-8">
-                  <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
-                    <MessageCircle size={24} className="mr-2 text-green-600" />
+                  <h2 className={`text-2xl font-bold mb-6 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'} flex items-center`}>
+                    <MessageCircle size={24} className={`mr-2 ${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
                     Discussion
                   </h2>
                   
                   <div className="mb-6">
                     <textarea
-                      className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                      className={`w-full border ${
+                        useLightTheme 
+                          ? 'border-gray-300 text-gray-700 focus:ring-purple-500 focus:border-purple-500' 
+                          : 'border-gray-600 bg-gray-700 text-gray-200 focus:ring-amber-500 focus:border-amber-500'
+                        } rounded-lg p-3 focus:ring-2`}
                       rows="3"
                       placeholder="Share your thoughts about this event..."
                     ></textarea>
                     <div className="mt-2 flex justify-end">
-                      <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                      <button className={`px-4 py-2 ${
+                        useLightTheme 
+                          ? 'bg-purple-600 hover:bg-purple-700' 
+                          : 'bg-amber-600 hover:bg-amber-500'
+                        } text-white rounded-md transition-colors`}>
                         Post Comment
                       </button>
                     </div>
                   </div>
                   
-                  <div className="space-y-4 border-t border-gray-100 pt-4">
-                    <p className="text-gray-500 text-center py-4">Be the first to comment on this event!</p>
+                  <div className={`space-y-4 border-t ${
+                    useLightTheme ? 'border-gray-100' : 'border-gray-700'
+                  } pt-4`}>
+                    <p className={`${
+                      useLightTheme ? 'text-gray-500' : 'text-gray-400'
+                    } text-center py-4`}>Be the first to comment on this event!</p>
                     {/* Comments would be displayed here */}
                   </div>
                 </div>
@@ -788,20 +857,24 @@ const RelatedEventCard = ({ event }) => {
             {/* Sidebar */}
             <div>
               {/* RSVP Card - New */}
-              <div className="bg-white mb-8 rounded-lg shadow">
+              <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                 <div className="p-6">
-                  <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
-                    <Users size={20} className="mr-2 text-green-600" />
+                  <h2 className={`text-xl font-bold mb-4 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'} flex items-center`}>
+                    <Users size={20} className={`mr-2 ${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
                     Join This Event
                   </h2>
                   
-                  <p className="mb-4 text-gray-700">
+                  <p className={`mb-4 ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>
                     Register your interest in attending this event. We'll send you updates and reminders.
                   </p>
                   
                   <button 
                     onClick={() => setShowRsvpForm(true)}
-                    className="w-full py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                    className={`w-full py-2 ${
+                      useLightTheme 
+                        ? 'bg-purple-600 hover:bg-purple-700' 
+                        : 'bg-amber-600 hover:bg-amber-500'
+                      } text-white rounded-md transition-colors`}
                   >
                     RSVP Now
                   </button>
@@ -809,18 +882,20 @@ const RelatedEventCard = ({ event }) => {
               </div>
               
               {/* Organizer Card */}
-              <div className="bg-white mb-8 rounded-lg shadow">
+              <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                 <div className="p-6">
-                  <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
-                    <User size={20} className="mr-2 text-green-600" />
+                  <h2 className={`text-xl font-bold mb-4 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'} flex items-center`}>
+                    <User size={20} className={`mr-2 ${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
                     Organizer
                   </h2>
                   
-                  <p className="mb-4 text-gray-700">{event.organizer || 'TechEthica'}</p>
+                  <p className={`mb-4 ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>{event.organizer || 'TechEthica'}</p>
                   
                   <a
                     href="/contact-us"
-                    className="inline-flex items-center text-sm text-green-600 hover:underline"
+                    className={`inline-flex items-center text-sm ${
+                      useLightTheme ? 'text-purple-600' : 'text-amber-400'
+                    } hover:underline`}
                   >
                     <ExternalLink size={16} className="mr-1" />
                     Contact Organizer
@@ -830,10 +905,10 @@ const RelatedEventCard = ({ event }) => {
               
               {/* Attendees Card */}
               {event.attendees && event.attendees.length > 0 && (
-                <div className="bg-white mb-8 rounded-lg shadow">
+                <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                   <div className="p-6">
-                    <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
-                      <Users size={20} className="mr-2 text-green-600" />
+                    <h2 className={`text-xl font-bold mb-4 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'} flex items-center`}>
+                      <Users size={20} className={`mr-2 ${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
                       Distinguished Guests
                     </h2>
                     
@@ -844,9 +919,9 @@ const RelatedEventCard = ({ event }) => {
               
               {/* Related Events - New */}
               {relatedEvents && relatedEvents.length > 0 && (
-                <div className="bg-white mb-8 rounded-lg shadow">
+                <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} mb-8 rounded-lg shadow`}>
                   <div className="p-6">
-                    <h2 className="text-xl font-bold mb-4 text-gray-800">
+                    <h2 className={`text-xl font-bold mb-4 ${useLightTheme ? 'text-gray-800' : 'text-gray-100'}`}>
                       Related Events
                     </h2>
                     
@@ -858,7 +933,9 @@ const RelatedEventCard = ({ event }) => {
                     
                     <a
                       href="/events"
-                      className="mt-4 inline-flex items-center text-sm text-green-600 hover:underline"
+                      className={`mt-4 inline-flex items-center text-sm ${
+                        useLightTheme ? 'text-purple-600' : 'text-amber-400'
+                      } hover:underline`}
                     >
                       <ArrowRight size={16} className="mr-1" />
                       View All Events
@@ -907,12 +984,18 @@ const RelatedEventCard = ({ event }) => {
             
             <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div className={`inline-block align-bottom ${
+              useLightTheme ? 'bg-white' : 'bg-gray-800'
+            } rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full`}>
+              <div className={`${
+                useLightTheme ? 'bg-white' : 'bg-gray-800'
+              } px-4 pt-5 pb-4 sm:p-6 sm:pb-4`}>
                 <div className="absolute top-0 right-0 pt-4 pr-4">
                   <button
                     type="button"
-                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                    className={`${
+                      useLightTheme ? 'bg-white text-gray-400 hover:text-gray-500' : 'bg-gray-800 text-gray-400 hover:text-gray-300'
+                    } rounded-md focus:outline-none`}
                     onClick={() => setShowRsvpForm(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -921,15 +1004,19 @@ const RelatedEventCard = ({ event }) => {
                 </div>
                 
                 <div className="sm:flex sm:items-start">
-                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <Users size={24} className="text-green-600" />
+                  <div className={`mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full ${
+                    useLightTheme ? 'bg-purple-100' : 'bg-amber-900/30'
+                  } sm:mx-0 sm:h-10 sm:w-10`}>
+                    <Users size={24} className={`${useLightTheme ? 'text-purple-600' : 'text-amber-400'}`} />
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                    <h3 className={`text-lg leading-6 font-medium ${
+                      useLightTheme ? 'text-gray-900' : 'text-gray-100'
+                    }`} id="modal-title">
                       RSVP for Event
                     </h3>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500">
+                      <p className={`text-sm ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`}>
                         Please fill out this form to register your interest in attending "{event.title}".
                       </p>
                     </div>
@@ -938,44 +1025,54 @@ const RelatedEventCard = ({ event }) => {
                 
                 {rsvpSubmitted ? (
                   <div className="mt-6 text-center">
-                    <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${
+                      useLightTheme ? 'bg-green-100' : 'bg-green-900/30'
+                    }`}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className={`h-6 w-6 ${useLightTheme ? 'text-green-600' : 'text-green-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <h3 className="mt-3 text-lg font-medium text-gray-900">Registration Successful!</h3>
-                    <p className="mt-2 text-sm text-gray-500">Thank you for your interest. We'll send you an email with further details.</p>
+                    <h3 className={`mt-3 text-lg font-medium ${useLightTheme ? 'text-gray-900' : 'text-gray-100'}`}>Registration Successful!</h3>
+                    <p className={`mt-2 text-sm ${useLightTheme ? 'text-gray-500' : 'text-gray-400'}`}>Thank you for your interest. We'll send you an email with further details.</p>
                   </div>
                 ) : (
                   <form onSubmit={handleRsvpSubmit} className="mt-6">
                     <div className="mb-4">
-                      <label htmlFor="name" className="block text-sm font-medium text-gray-700">Your Name</label>
+                      <label htmlFor="name" className={`block text-sm font-medium ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>Your Name</label>
                       <input
                         type="text"
                         id="name"
                         name="name"
                         value={rsvpData.name}
                         onChange={handleRsvpChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                        className={`mt-1 block w-full border ${
+                          useLightTheme 
+                            ? 'border-gray-300 focus:ring-purple-500 focus:border-purple-500' 
+                            : 'border-gray-600 bg-gray-700 text-white focus:ring-amber-500 focus:border-amber-500'
+                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 sm:text-sm`}
                         required
                       />
                     </div>
                     
                     <div className="mb-4">
-                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                      <label htmlFor="email" className={`block text-sm font-medium ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>Email Address</label>
                       <input
                         type="email"
                         id="email"
                         name="email"
                         value={rsvpData.email}
                         onChange={handleRsvpChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                        className={`mt-1 block w-full border ${
+                          useLightTheme 
+                            ? 'border-gray-300 focus:ring-purple-500 focus:border-purple-500' 
+                            : 'border-gray-600 bg-gray-700 text-white focus:ring-amber-500 focus:border-amber-500'
+                          } rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 sm:text-sm`}
                         required
                       />
                     </div>
                     
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700">Will you be attending?</label>
+                      <label className={`block text-sm font-medium ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>Will you be attending?</label>
                       <div className="mt-2 space-y-2">
                         <div className="flex items-center">
                           <input
@@ -985,9 +1082,13 @@ const RelatedEventCard = ({ event }) => {
                             value="yes"
                             checked={rsvpData.attending === 'yes'}
                             onChange={handleRsvpChange}
-                            className="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300"
+                            className={`focus:ring-2 h-4 w-4 ${
+                              useLightTheme 
+                                ? 'text-purple-600 focus:ring-purple-500 border-gray-300' 
+                                : 'text-amber-600 focus:ring-amber-500 border-gray-600'
+                            }`}
                           />
-                          <label htmlFor="attending-yes" className="ml-3 block text-sm text-gray-700">Yes, I'll be there</label>
+                          <label htmlFor="attending-yes" className={`ml-3 block text-sm ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>Yes, I'll be there</label>
                         </div>
                         <div className="flex items-center">
                           <input
@@ -997,23 +1098,37 @@ const RelatedEventCard = ({ event }) => {
                             value="maybe"
                             checked={rsvpData.attending === 'maybe'}
                             onChange={handleRsvpChange}
-                            className="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300"
+                            className={`focus:ring-2 h-4 w-4 ${
+                              useLightTheme 
+                                ? 'text-purple-600 focus:ring-purple-500 border-gray-300' 
+                                : 'text-amber-600 focus:ring-amber-500 border-gray-600'
+                            }`}
                           />
-                          <label htmlFor="attending-maybe" className="ml-3 block text-sm text-gray-700">I'm not sure yet</label>
+                          <label htmlFor="attending-maybe" className={`ml-3 block text-sm ${useLightTheme ? 'text-gray-700' : 'text-gray-300'}`}>I'm not sure yet</label>
                         </div>
                       </div>
                     </div>
                     
-                    <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <div className={`${
+                      useLightTheme ? 'bg-gray-50' : 'bg-gray-700'
+                    } px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse`}>
                       <button
                         type="submit"
-                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                        className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 ${
+                          useLightTheme 
+                            ? 'bg-purple-600 hover:bg-purple-700 focus:ring-purple-500' 
+                            : 'bg-amber-600 hover:bg-amber-500 focus:ring-amber-500'
+                          } text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm`}
                       >
                         Submit RSVP
                       </button>
                       <button
                         type="button"
-                        className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                        className={`mt-3 w-full inline-flex justify-center rounded-md border ${
+                          useLightTheme 
+                            ? 'border-gray-300 shadow-sm bg-white text-gray-700 hover:bg-gray-50' 
+                            : 'border-gray-600 shadow-sm bg-gray-800 text-gray-300 hover:bg-gray-700'
+                          } px-4 py-2 text-base font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm`}
                         onClick={() => setShowRsvpForm(false)}
                       >
                         Cancel
