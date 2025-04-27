@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Calendar, 
   Clock, 
@@ -8,50 +8,115 @@ import {
   ChevronRight, 
   Share2,
   Download,
-  MessageCircle
+  MessageCircle,
+  AlertTriangle
 } from 'lucide-react';
 import BackgroundPattern from '../../components/ui/BackgroundPattern';
+import EventGallery from './components/EventGallery';
+import AttendeesList from './components/AttendeesList';
 
-const EventDetails = ({ event }) => {
-  // State management for gallery
+const EventDetails = () => {
+  // State management for gallery and data
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [event, setEvent] = useState(null);
+  const [commentForm, setCommentForm] = useState({ name: '', email: '', comment: '' });
+  const [submitStatus, setSubmitStatus] = useState({ success: false, message: '' });
+  
   const galleryRef = useRef(null);
   
-  // For demo purposes - this would come from your API
-  event = {
-    id: "logo-and-website-launch",
-    title: "Logo and Website Launch of TechEthica",
-    category: "Launch",
-    date: "2025-04-25",
-    time: "9:00 AM - 12:00 PM",
-    location: "Main Campus, Bidarahalli",
-    is_featured: true,
-    image: "/api/placeholder/800/500",
-    detailed_description: `
-      <p>TechEthica successfully launched its new logo and website on April 25th, 2025. The event was attended by distinguished guests and key stakeholders from the educational community.</p>
+  // Get event ID from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const eventId = urlParams.get('id');
+  
+  // Fetch event details
+  useEffect(() => {
+    const fetchEventDetails = async () => {
+      if (!eventId) {
+        setError('Event ID not provided in URL');
+        setLoading(false);
+        return;
+      }
       
-      <p>The new logo represents our commitment to blending technology with ethical education practices, while the website offers a modern platform for students and parents to engage with our institution's resources.</p>
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/method/labmanager.api.events.get_event_details?event_id=${eventId}`);
+        const data = await response.json();
+        
+        if (data.message && data.message.status === 'success') {
+          setEvent(data.message.event);
+        } else {
+          setError(data.message?.message || 'Failed to load event details');
+        }
+      } catch (err) {
+        console.error('Error fetching event details:', err);
+        setError('Error fetching event details. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEventDetails();
+  }, [eventId]);
+  
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCommentForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+  
+  // Handle comment form submission
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!commentForm.name || !commentForm.email || !commentForm.comment) {
+      setSubmitStatus({
+        success: false,
+        message: 'Please fill in all fields'
+      });
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/method/labmanager.api.events.add_event_comment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          event_id: eventId,
+          name: commentForm.name,
+          email: commentForm.email,
+          comment: commentForm.comment
+        }),
+      });
       
-      <p>The ceremony began with a welcome address by the Principal, followed by the unveiling of the new logo by our Chief Guest. The website demonstration showcased the new features including the student portal, course catalog, and digital learning resources.</p>
+      const data = await response.json();
       
-      <p>We extend our gratitude to all attendees and participants who made this event a success.</p>
-    `,
-    attendees: [
-      { name: "Dr. Ahmed Khan", title: "Chief Guest, Education Minister" },
-      { name: "Mrs. Priya Sharma", title: "Principal, TechEthica" },
-      { name: "Mr. Rajiv Mehta", title: "Head of IT Department" },
-      { name: "Ms. Fatima Ali", title: "Student Council President" }
-    ],
-    gallery: [
-      { image: "/api/placeholder/800/500", caption: "Unveiling the new TechEthica logo" },
-      { image: "/api/placeholder/800/500", caption: "Website demonstration by IT team" },
-      { image: "/api/placeholder/800/500", caption: "Address by the Education Minister" },
-      { image: "/api/placeholder/800/500", caption: "Student representatives at the event" }
-    ],
-    documents: [
-      { title: "Event Brochure", description: "Details about the ceremony and participants", file: "#" },
-      { title: "Press Release", description: "Official announcement for media outlets", file: "#" }
-    ]
+      if (data.message && data.message.status === 'success') {
+        setSubmitStatus({
+          success: true,
+          message: 'Your comment has been submitted for review'
+        });
+        // Clear form
+        setCommentForm({ name: '', email: '', comment: '' });
+      } else {
+        setSubmitStatus({
+          success: false,
+          message: data.message?.message || 'Failed to submit comment'
+        });
+      }
+    } catch (err) {
+      console.error('Error submitting comment:', err);
+      setSubmitStatus({
+        success: false,
+        message: 'Error submitting comment. Please try again later.'
+      });
+    }
   };
 
   // Format date function
@@ -65,22 +130,63 @@ const EventDetails = ({ event }) => {
       return dateString;
     }
   };
-
-  // Gallery navigation functions
-  const handlePrevImage = () => {
-    if (!event?.gallery || event.gallery.length === 0) return;
-    setCurrentImageIndex(prev => (prev === 0 ? event.gallery.length - 1 : prev - 1));
-  };
-  
-  const handleNextImage = () => {
-    if (!event?.gallery || event.gallery.length === 0) return;
-    setCurrentImageIndex(prev => (prev === event.gallery.length - 1 ? 0 : prev + 1));
-  };
   
   // Render HTML content safely
   const renderHTML = (html) => {
     return { __html: html };
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          <h2 className="text-xl text-gray-700">Loading event details...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <AlertTriangle size={48} className="text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Event</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.href = '/events'}
+            className="inline-flex items-center text-teal-600 hover:underline"
+          >
+            <ArrowLeft size={18} className="mr-2" />
+            Back to All Events
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No event found
+  if (!event) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6 text-center">
+          <Calendar size={48} className="text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Event Not Found</h2>
+          <p className="text-gray-600 mb-4">The event you're looking for doesn't exist or has been removed.</p>
+          <button 
+            onClick={() => window.location.href = '/events'}
+            className="inline-flex items-center text-teal-600 hover:underline"
+          >
+            <ArrowLeft size={18} className="mr-2" />
+            Back to All Events
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -151,59 +257,12 @@ const EventDetails = ({ event }) => {
             {/* Gallery Section */}
             {event.gallery && event.gallery.length > 0 && (
               <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-                <div className="relative">
-                  <img 
-                    src={event.gallery[currentImageIndex]?.image} 
-                    alt={event.gallery[currentImageIndex]?.caption || `Event photo ${currentImageIndex + 1}`}
-                    className="w-full h-96 object-cover"
-                  />
-                  
-                  {event.gallery.length > 1 && (
-                    <>
-                      <button 
-                        onClick={handlePrevImage}
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
-                      >
-                        <ChevronLeft size={24} />
-                      </button>
-                      <button 
-                        onClick={handleNextImage}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
-                      >
-                        <ChevronRight size={24} />
-                      </button>
-                    </>
-                  )}
-                  
-                  {event.gallery[currentImageIndex]?.caption && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-4">
-                      <p>{event.gallery[currentImageIndex].caption}</p>
-                    </div>
-                  )}
-                </div>
-                
-                {/* Thumbnails */}
-                {event.gallery.length > 1 && (
-                  <div className="p-4 flex space-x-2 overflow-x-auto">
-                    {event.gallery.map((item, index) => (
-                      <div 
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
-                        className={`flex-shrink-0 cursor-pointer ${
-                          currentImageIndex === index 
-                            ? 'ring-2 ring-teal-500' 
-                            : 'opacity-70 hover:opacity-100'
-                        }`}
-                      >
-                        <img 
-                          src={item.image} 
-                          alt={item.caption || `Thumbnail ${index + 1}`}
-                          className="w-24 h-16 object-cover rounded"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <EventGallery
+                  gallery={event.gallery}
+                  currentImageIndex={currentImageIndex}
+                  setCurrentImageIndex={setCurrentImageIndex}
+                  galleryRef={galleryRef}
+                />
               </div>
             )}
             
@@ -219,6 +278,8 @@ const EventDetails = ({ event }) => {
                   <div className="prose max-w-none text-gray-700">
                     {event.detailed_description ? (
                       <div dangerouslySetInnerHTML={renderHTML(event.detailed_description)} />
+                    ) : event.description ? (
+                      <p>{event.description}</p>
                     ) : (
                       <p>No detailed description available for this event.</p>
                     )}
@@ -290,21 +351,7 @@ const EventDetails = ({ event }) => {
                       Distinguished Guests
                     </h2>
                     
-                    <div className="space-y-3">
-                      {event.attendees.map((attendee, index) => (
-                        <div 
-                          key={index} 
-                          className="p-4 rounded-lg bg-gray-50 border border-gray-100 hover:border-teal-200 transition-colors"
-                        >
-                          <h5 className="font-semibold text-gray-800">
-                            {attendee.name}
-                          </h5>
-                          <p className="text-sm text-gray-600">
-                            {attendee.title}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
+                    <AttendeesList attendees={event.attendees} />
                   </div>
                 )}
                 
@@ -330,7 +377,7 @@ const EventDetails = ({ event }) => {
                           March 15, 2025
                         </div>
                         <a 
-                          href="#"
+                          href="/event-details?id=annual-science-exhibition"
                           className="text-sm font-medium text-teal-600 hover:underline"
                         >
                           View details
@@ -353,7 +400,7 @@ const EventDetails = ({ event }) => {
                           March 3, 2025
                         </div>
                         <a 
-                          href="#"
+                          href="/event-details?id=graduation-ceremony"
                           className="text-sm font-medium text-teal-600 hover:underline"
                         >
                           View details
@@ -376,7 +423,7 @@ const EventDetails = ({ event }) => {
                           February 20, 2025
                         </div>
                         <a 
-                          href="#"
+                          href="/event-details?id=faculty-development-program"
                           className="text-sm font-medium text-teal-600 hover:underline"
                         >
                           View details
@@ -403,7 +450,7 @@ const EventDetails = ({ event }) => {
               </h2>
               
               <div className="space-y-4">
-                {/* Example comments */}
+                {/* Example comments - These would come from API in a full implementation */}
                 <div className="border-b border-gray-100 pb-4">
                   <div className="flex justify-between mb-2">
                     <div>
@@ -429,28 +476,51 @@ const EventDetails = ({ event }) => {
                 {/* Add comment form */}
                 <div className="mt-6">
                   <h3 className="text-lg font-medium text-gray-800 mb-3">Leave a Comment</h3>
-                  <textarea
-                    className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                    rows="3"
-                    placeholder="Share your thoughts about this event..."
-                  ></textarea>
-                  <div className="grid grid-cols-2 gap-4 mt-3">
-                    <input
-                      type="text"
-                      className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                      placeholder="Your Name"
-                    />
-                    <input
-                      type="email"
-                      className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                      placeholder="Your Email"
-                    />
-                  </div>
-                  <div className="mt-3 flex justify-end">
-                    <button className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors">
-                      Post Comment
-                    </button>
-                  </div>
+                  
+                  {submitStatus.message && (
+                    <div className={`p-3 mb-4 rounded-lg ${
+                      submitStatus.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {submitStatus.message}
+                    </div>
+                  )}
+                  
+                  <form onSubmit={handleCommentSubmit}>
+                    <textarea
+                      name="comment"
+                      value={commentForm.comment}
+                      onChange={handleInputChange}
+                      className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      rows="3"
+                      placeholder="Share your thoughts about this event..."
+                    ></textarea>
+                    <div className="grid grid-cols-2 gap-4 mt-3">
+                      <input
+                        type="text"
+                        name="name"
+                        value={commentForm.name}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                        placeholder="Your Name"
+                      />
+                      <input
+                        type="email"
+                        name="email"
+                        value={commentForm.email}
+                        onChange={handleInputChange}
+                        className="border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                        placeholder="Your Email"
+                      />
+                    </div>
+                    <div className="mt-3 flex justify-end">
+                      <button 
+                        type="submit" 
+                        className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
+                      >
+                        Post Comment
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
