@@ -243,7 +243,8 @@ const EventsPage = () => {
 
   if (loading) {
     return (
-      <div className={`min-h-screen flex justify-center items-center ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
+    //   <div className={`min-h-screen flex justify-center items-center ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
+    <div className="min-h-screen flex justify-center items-center">
         <BackgroundPattern />
         <div className="text-center relative z-10">
           <div className={`w-16 h-16 border-4 ${
@@ -259,7 +260,8 @@ const EventsPage = () => {
 
   if (error) {
     return (
-      <div className={`min-h-screen flex justify-center items-center ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
+    //   <div className={`min-h-screen flex justify-center items-center ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
+    <div className="min-h-screen flex justify-center items-center">
         <BackgroundPattern />
         <div className={`text-center max-w-md p-6 ${useLightTheme ? 'bg-white' : 'bg-gray-800'} rounded-lg shadow-md relative z-10`}>
           <div className="text-red-500 text-5xl mb-4">
@@ -283,7 +285,9 @@ const EventsPage = () => {
   }
 
   return (
-    <div className={`min-h-screen ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
+    // <div className={`min-h-screen ${useLightTheme ? 'bg-gray-50' : 'bg-gray-900'}`}>
+    <div className="min-h-screen">
+
       {/* Background Pattern */}
       <BackgroundPattern />
       
