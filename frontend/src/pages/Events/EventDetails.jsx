@@ -477,8 +477,8 @@ const EventDetails = ({ eventId: propEventId }) => {
       <div className="relative z-10">
         {/* Header Section with Hero Image */}
         <div className="relative">
-          <div className="h-96 overflow-hidden relative">
-            <div className="absolute inset-0 bg-black/40 z-10"></div>
+        <div className="h-[810px] overflow-hidden relative">
+            <div className="absolute inset-0 bg-black/10 z-10"></div>
             <img 
               src={event.detail_hero_image || event.image || '/api/placeholder/1200/600'} 
               alt={event.title} 
@@ -487,8 +487,8 @@ const EventDetails = ({ eventId: propEventId }) => {
           </div>
           
           <div className="container mx-auto px-4">
-            <div className="relative -mt-24 mb-8 z-20">
-              <div className={`${useLightTheme ? 'bg-white' : 'bg-gray-800'} shadow-xl mx-auto max-w-4xl rounded-lg`}>
+            <div className="relative -mt-96 mb-8 z-10">
+              <div className={`${useLightTheme ? 'bg-white/80' : 'bg-gray-800/80'} shadow-xl mx-auto max-w-4xl rounded-lg`}>
                 <div className="p-8">
                   <button 
                     onClick={() => window.location.href = '/events'}
