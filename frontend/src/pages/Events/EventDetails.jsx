@@ -1,11 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, ArrowLeft, Users, Share2, Download, ExternalLink, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Calendar, 
+  Clock, 
+  MapPin, 
+  User, 
+  ArrowLeft, 
+  ArrowRight,
+  Users, 
+  Share2, 
+  Download, 
+  ExternalLink, 
+  X, 
+  ChevronLeft, 
+  ChevronRight, 
+  Calendar as CalendarIcon,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Mail,
+  MapIcon,
+  MessageCircle
+} from 'lucide-react';
 
 const EventDetails = ({ eventId: propEventId }) => {
+  // State management
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [relatedEvents, setRelatedEvents] = useState([]);
+  const [showRsvpForm, setShowRsvpForm] = useState(false);
+  const [rsvpData, setRsvpData] = useState({ name: '', email: '', attending: 'yes' });
+  const [rsvpSubmitted, setRsvpSubmitted] = useState(false);
+  const galleryRef = useRef(null);
   
   // Get event ID from props or URL
   const searchParams = new URLSearchParams(window.location.search);
@@ -33,6 +61,9 @@ const EventDetails = ({ eventId: propEventId }) => {
         
         if (data.message && data.message.status === 'success' && data.message.event) {
           setEvent(data.message.event);
+          
+          // Fetch related events
+          fetchRelatedEvents(data.message.event.category);
         } else {
           // If API returned no event, set error
           setError('Event not found or API returned an unexpected response');
@@ -42,6 +73,30 @@ const EventDetails = ({ eventId: propEventId }) => {
         setError(err.message);
       } finally {
         setLoading(false);
+      }
+    };
+    
+            const fetchRelatedEvents = async (category) => {
+      if (!category) return;
+      
+      try {
+        const response = await fetch('/api/method/labmanager.api.events.get_events');
+        if (!response.ok) throw new Error('Failed to fetch related events');
+        
+        const data = await response.json();
+        if (data.message && data.message.status === 'success' && data.message.events) {
+          // Filter events by same category and exclude current event
+          const related = data.message.events
+            .filter(item => 
+              item.category === category && 
+              (item.id !== eventId && item.name !== eventId)
+            )
+            .slice(0, 3); // Limit to 3 related events
+          
+          setRelatedEvents(related);
+        }
+      } catch (err) {
+        console.error("Error fetching related events:", err);
       }
     };
     
@@ -78,9 +133,99 @@ const EventDetails = ({ eventId: propEventId }) => {
     }
   };
   
+  // Social media sharing
+  const socialShareUrls = event ? {
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`,
+    twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`Check out this event: ${event.title}`)}&url=${encodeURIComponent(window.location.href)}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`,
+    email: `mailto:?subject=${encodeURIComponent(`Check out this event: ${event.title}`)}&body=${encodeURIComponent(`I thought you might be interested in this event: ${window.location.href}`)}`
+  } : {};
+  
+  // Add to calendar functions
+  const generateIcsFile = () => {
+    if (!event) return;
+    
+    const eventDate = new Date(event.date);
+    const endDate = new Date(eventDate);
+    endDate.setHours(endDate.getHours() + 2); // Assume 2 hour event if no end time
+    
+    const startTime = eventDate.toISOString().replace(/-|:|\.\d+/g, '');
+    const endTime = endDate.toISOString().replace(/-|:|\.\d+/g, '');
+    
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'CALSCALE:GREGORIAN',
+      'PRODID:-//TechEthica//Events Calendar//EN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `UID:${Date.now()}@techethica.edu`,
+      `DTSTAMP:${startTime}`,
+      `DTSTART:${startTime}`,
+      `DTEND:${endTime}`,
+      `SUMMARY:${event.title}`,
+      `DESCRIPTION:${event.description?.replace(/\n/g, '\\n') || ''}`,
+      `LOCATION:${event.location || 'TBA'}`,
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+    
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${event.title.replace(/\s+/g, '_')}.ics`);
+    link.click();
+  };
+  
+  const addToGoogleCalendar = () => {
+    if (!event) return;
+    
+    const eventDate = new Date(event.date);
+    const endDate = new Date(eventDate);
+    endDate.setHours(endDate.getHours() + 2); // Assume 2 hour event if no end time
+    
+    const startTime = eventDate.toISOString().replace(/-|:|\.\d+/g, '');
+    const endTime = endDate.toISOString().replace(/-|:|\.\d+/g, '');
+    
+    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startTime}/${endTime}&details=${encodeURIComponent(event.description || '')}&location=${encodeURIComponent(event.location || '')}`;
+    
+    window.open(url, '_blank');
+  };
+  
+  // RSVP form handling
+  const handleRsvpChange = (e) => {
+    const { name, value } = e.target;
+    setRsvpData(prev => ({ ...prev, [name]: value }));
+  };
+  
+  const handleRsvpSubmit = (e) => {
+    e.preventDefault();
+    // Here you would typically submit this to your API
+    console.log("RSVP Data:", rsvpData);
+    setRsvpSubmitted(true);
+    setTimeout(() => {
+      setShowRsvpForm(false);
+      setTimeout(() => setRsvpSubmitted(false), 500);
+    }, 2000);
+  };
+  
+  // Gallery navigation functions
+  const handlePrevImage = () => {
+    if (!event?.gallery || event.gallery.length === 0) return;
+    setCurrentImageIndex(prev => (prev === 0 ? event.gallery.length - 1 : prev - 1));
+  };
+  
+  const handleNextImage = () => {
+    if (!event?.gallery || event.gallery.length === 0) return;
+    setCurrentImageIndex(prev => (prev === event.gallery.length - 1 ? 0 : prev + 1));
+  };
+  
   // Open image modal
-  const openModal = (image) => {
+  const openModal = (image, index) => {
     setSelectedImage(image);
+    setCurrentImageIndex(index);
     document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
   };
 
@@ -88,6 +233,19 @@ const EventDetails = ({ eventId: propEventId }) => {
   const closeModal = () => {
     setSelectedImage(null);
     document.body.style.overflow = 'auto'; // Re-enable scrolling
+  };
+  
+  // Scroll gallery to thumbnail
+  const scrollToThumbnail = (index) => {
+    if (galleryRef.current) {
+      const thumbnailWidth = 100; // Approximate width + margins
+      galleryRef.current.scrollLeft = index * thumbnailWidth - (galleryRef.current.clientWidth / 2) + (thumbnailWidth / 2);
+    }
+  };
+  
+  // Render HTML content safely
+  const renderHTML = (html) => {
+    return { __html: html };
   };
   
   // Attendees List Component
@@ -101,7 +259,7 @@ const EventDetails = ({ eventId: propEventId }) => {
         <div className="space-y-3">
           {attendees.map((attendee, index) => (
             <div key={index} className="p-4 rounded-lg bg-gray-50 border border-gray-100 hover:border-green-200 transition-colors">
-              <h5 className="font-semibold text-gray-800">{attendee.name1}</h5>
+              <h5 className="font-semibold text-gray-800">{attendee.name1 || attendee.name}</h5>
               <p className="text-gray-600 text-sm">{attendee.title}</p>
             </div>
           ))}
@@ -116,27 +274,98 @@ const EventDetails = ({ eventId: propEventId }) => {
       return null;
     }
 
+    useEffect(() => {
+      if (gallery && gallery.length > 0) {
+        scrollToThumbnail(currentImageIndex);
+      }
+    }, [currentImageIndex, gallery]);
+
     return (
       <div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {gallery.map((item, index) => (
-            <div 
-              key={index} 
-              className="relative rounded-lg overflow-hidden group cursor-pointer"
-              onClick={() => openModal(item)}
-            >
-              <img 
-                src={item.image || '/api/placeholder/600/400'} 
-                alt={item.caption || `Gallery image ${index + 1}`}
-                className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              {item.caption && (
-                <div className="absolute inset-x-0 bottom-0 bg-gray-900/70 text-white p-2 text-sm">
-                  {item.caption}
-                </div>
-              )}
+        {/* Main image display with navigation */}
+        <div className="relative rounded-lg overflow-hidden mb-4">
+          <img 
+            src={gallery[currentImageIndex]?.image || '/api/placeholder/800/500'} 
+            alt={gallery[currentImageIndex]?.caption || `Gallery image`}
+            className="w-full h-96 object-cover"
+          />
+          
+          {gallery.length > 1 && (
+            <>
+              <button 
+                onClick={handlePrevImage}
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button 
+                onClick={handleNextImage}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </>
+          )}
+          
+          {gallery[currentImageIndex]?.caption && (
+            <div className="absolute inset-x-0 bottom-0 bg-gray-900/70 text-white p-3">
+              {gallery[currentImageIndex].caption}
             </div>
-          ))}
+          )}
+        </div>
+        
+        {/* Thumbnails */}
+        {gallery.length > 1 && (
+          <div 
+            ref={galleryRef}
+            className="flex space-x-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+          >
+            {gallery.map((item, index) => (
+              <div 
+                key={index}
+                onClick={() => setCurrentImageIndex(index)}
+                className={`flex-shrink-0 cursor-pointer relative ${
+                  currentImageIndex === index 
+                    ? 'ring-2 ring-green-500' 
+                    : 'opacity-70 hover:opacity-100'
+                }`}
+              >
+                <img 
+                  src={item.image || '/api/placeholder/100/100'} 
+                  alt={item.caption || `Thumbnail ${index + 1}`}
+                  className="w-24 h-16 object-cover rounded"
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+  
+  // Related Event Card Component
+  const RelatedEventCard = ({ event }) => {
+    if (!event) return null;
+    
+    return (
+      <div className="flex items-center p-3 rounded-lg hover:bg-gray-50 transition-colors border border-gray-100">
+        <img 
+          src={event.image || '/api/placeholder/100/100'} 
+          alt={event.title}
+          className="w-16 h-16 object-cover rounded mr-3 flex-shrink-0"
+        />
+        <div className="flex-grow">
+          <h5 className="font-medium text-gray-800 line-clamp-1">{event.title}</h5>
+          <div className="flex items-center text-sm text-gray-500">
+            <Calendar size={14} className="mr-1" />
+            {formatDate(event.date)}
+          </div>
+          <a 
+            href={`/event-details?id=${encodeURIComponent(event.id || event.name)}`}
+            className="text-green-600 text-sm font-medium hover:underline"
+          >
+            View details
+          </a>
         </div>
       </div>
     );
@@ -264,14 +493,87 @@ const EventDetails = ({ eventId: propEventId }) => {
                     </div>
                   </div>
                   
-                  <div className="flex flex-wrap gap-4 mb-8">
+                  {/* Enhanced Action Buttons */}
+                  <div className="flex flex-wrap gap-3 mb-8">
                     <button 
-                      onClick={handleShare}
-                      className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors flex items-center"
+                      onClick={() => setShowRsvpForm(true)}
+                      className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center"
                     >
-                      <Share2 size={18} className="mr-2" />
-                      Share Event
+                      <Users size={18} className="mr-2" />
+                      RSVP Now
                     </button>
+                    
+                    <div className="relative group">
+                      <button 
+                        className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors flex items-center"
+                      >
+                        <CalendarIcon size={18} className="mr-2" />
+                        Add to Calendar
+                        <ChevronRight size={16} className="ml-1 group-hover:rotate-90 transition-transform" />
+                      </button>
+                      
+                      <div className="absolute left-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100">
+                        <div className="py-1">
+                          <button 
+                            onClick={addToGoogleCalendar}
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center w-full text-left"
+                          >
+                            Google Calendar
+                          </button>
+                          <button 
+                            onClick={generateIcsFile}
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center w-full text-left"
+                          >
+                            iCal / Outlook
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="relative group">
+                      <button 
+                        className="px-4 py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200 transition-colors flex items-center"
+                      >
+                        <Share2 size={18} className="mr-2" />
+                        Share
+                        <ChevronRight size={16} className="ml-1 group-hover:rotate-90 transition-transform" />
+                      </button>
+                      
+                      <div className="absolute left-0 mt-1 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10 invisible group-hover:visible transition-all opacity-0 group-hover:opacity-100">
+                        <div className="py-1">
+                          <a 
+                            href={socialShareUrls.facebook}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                          >
+                            <Facebook size={16} className="mr-2" /> Facebook
+                          </a>
+                          <a 
+                            href={socialShareUrls.twitter}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                          >
+                            <Twitter size={16} className="mr-2" /> Twitter
+                          </a>
+                          <a 
+                            href={socialShareUrls.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                          >
+                            <Linkedin size={16} className="mr-2" /> LinkedIn
+                          </a>
+                          <a 
+                            href={socialShareUrls.email}
+                            className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                          >
+                            <Mail size={16} className="mr-2" /> Email
+                          </a>
+                        </div>
+                      </div>
+                    </div>
                     
                     {event.documents && event.documents.length > 0 && (
                       <button 
@@ -302,9 +604,14 @@ const EventDetails = ({ eventId: propEventId }) => {
                   
                   <div className="prose max-w-none text-gray-700">
                     {event.description ? (
-                      event.description.split('\n\n').map((paragraph, index) => (
-                        <p key={index} className="mb-4">{paragraph}</p>
-                      ))
+                      <div 
+                        dangerouslySetInnerHTML={renderHTML(
+                          event.description
+                            .split('\n\n')
+                            .map(paragraph => `<p>${paragraph}</p>`)
+                            .join('')
+                        )} 
+                      />
                     ) : (
                       <p>No detailed description available for this event.</p>
                     )}
@@ -312,7 +619,41 @@ const EventDetails = ({ eventId: propEventId }) => {
                 </div>
               </div>
               
-              {/* Gallery Section */}
+              {/* Location Map */}
+              {event.location && (
+                <div className="bg-white mb-8 rounded-lg shadow">
+                  <div className="p-6 md:p-8">
+                    <h2 className="text-2xl font-bold mb-4 text-gray-800 flex items-center">
+                      <MapIcon size={24} className="mr-2 text-green-600" />
+                      Event Location
+                    </h2>
+                    
+                    <div className="mb-4">
+                      <p className="mb-4">{event.location}</p>
+                      
+                      {/* Interactive Map Placeholder - In a real app, implement Google Maps or similar */}
+                      <div className="bg-gray-100 border border-gray-200 h-64 rounded-lg flex items-center justify-center">
+                        <MapPin size={48} className="text-gray-400" />
+                        <p className="ml-2 text-gray-500">Map view would be displayed here</p>
+                      </div>
+                      
+                      <div className="mt-4">
+                        <a 
+                          href={`https://maps.google.com/?q=${encodeURIComponent(event.location)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-600 hover:underline flex items-center"
+                        >
+                          <ExternalLink size={16} className="mr-2" />
+                          View on Google Maps
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Gallery Section - Enhanced with carousel */}
               {event.gallery && event.gallery.length > 0 && (
                 <div className="bg-white mb-8 rounded-lg shadow">
                   <div className="p-6 md:p-8">
@@ -357,10 +698,59 @@ const EventDetails = ({ eventId: propEventId }) => {
                   </div>
                 </div>
               )}
+              
+              {/* Comments Section - New */}
+              <div className="bg-white mb-8 rounded-lg shadow">
+                <div className="p-6 md:p-8">
+                  <h2 className="text-2xl font-bold mb-6 text-gray-800 flex items-center">
+                    <MessageCircle size={24} className="mr-2 text-green-600" />
+                    Discussion
+                  </h2>
+                  
+                  <div className="mb-6">
+                    <textarea
+                      className="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                      rows="3"
+                      placeholder="Share your thoughts about this event..."
+                    ></textarea>
+                    <div className="mt-2 flex justify-end">
+                      <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                        Post Comment
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4 border-t border-gray-100 pt-4">
+                    <p className="text-gray-500 text-center py-4">Be the first to comment on this event!</p>
+                    {/* Comments would be displayed here */}
+                  </div>
+                </div>
+              </div>
             </div>
             
             {/* Sidebar */}
             <div>
+              {/* RSVP Card - New */}
+              <div className="bg-white mb-8 rounded-lg shadow">
+                <div className="p-6">
+                  <h2 className="text-xl font-bold mb-4 text-gray-800 flex items-center">
+                    <Users size={20} className="mr-2 text-green-600" />
+                    Join This Event
+                  </h2>
+                  
+                  <p className="mb-4 text-gray-700">
+                    Register your interest in attending this event. We'll send you updates and reminders.
+                  </p>
+                  
+                  <button 
+                    onClick={() => setShowRsvpForm(true)}
+                    className="w-full py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+                  >
+                    RSVP Now
+                  </button>
+                </div>
+              </div>
+              
               {/* Organizer Card */}
               <div className="bg-white mb-8 rounded-lg shadow">
                 <div className="p-6">
@@ -391,6 +781,31 @@ const EventDetails = ({ eventId: propEventId }) => {
                     </h2>
                     
                     <AttendeesList attendees={event.attendees} />
+                  </div>
+                </div>
+              )}
+              
+              {/* Related Events - New */}
+              {relatedEvents && relatedEvents.length > 0 && (
+                <div className="bg-white mb-8 rounded-lg shadow">
+                  <div className="p-6">
+                    <h2 className="text-xl font-bold mb-4 text-gray-800">
+                      Related Events
+                    </h2>
+                    
+                    <div className="space-y-3">
+                      {relatedEvents.map((event, index) => (
+                        <RelatedEventCard key={index} event={event} />
+                      ))}
+                    </div>
+                    
+                    <a
+                      href="/events"
+                      className="mt-4 inline-flex items-center text-sm text-green-600 hover:underline"
+                    >
+                      <ArrowRight size={16} className="mr-1" />
+                      View All Events
+                    </a>
                   </div>
                 </div>
               )}
@@ -427,6 +842,134 @@ const EventDetails = ({ eventId: propEventId }) => {
         </div>
       </div>
       
+      {/* RSVP Modal */}
+      {showRsvpForm && (
+        <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onClick={() => setShowRsvpForm(false)}></div>
+            
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="absolute top-0 right-0 pt-4 pr-4">
+                  <button
+                    type="button"
+                    className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none"
+                    onClick={() => setShowRsvpForm(false)}
+                  >
+                    <span className="sr-only">Close</span>
+                    <X size={24} />
+                  </button>
+                </div>
+                
+                <div className="sm:flex sm:items-start">
+                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
+                    <Users size={24} className="text-green-600" />
+                  </div>
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                      RSVP for Event
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        Please fill out this form to register your interest in attending "{event.title}".
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {rsvpSubmitted ? (
+                  <div className="mt-6 text-center">
+                    <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <h3 className="mt-3 text-lg font-medium text-gray-900">Registration Successful!</h3>
+                    <p className="mt-2 text-sm text-gray-500">Thank you for your interest. We'll send you an email with further details.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleRsvpSubmit} className="mt-6">
+                    <div className="mb-4">
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700">Your Name</label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={rsvpData.name}
+                        onChange={handleRsvpChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="mb-4">
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={rsvpData.email}
+                        onChange={handleRsvpChange}
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700">Will you be attending?</label>
+                      <div className="mt-2 space-y-2">
+                        <div className="flex items-center">
+                          <input
+                            id="attending-yes"
+                            name="attending"
+                            type="radio"
+                            value="yes"
+                            checked={rsvpData.attending === 'yes'}
+                            onChange={handleRsvpChange}
+                            className="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300"
+                          />
+                          <label htmlFor="attending-yes" className="ml-3 block text-sm text-gray-700">Yes, I'll be there</label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            id="attending-maybe"
+                            name="attending"
+                            type="radio"
+                            value="maybe"
+                            checked={rsvpData.attending === 'maybe'}
+                            onChange={handleRsvpChange}
+                            className="focus:ring-green-500 h-4 w-4 text-green-600 border-gray-300"
+                          />
+                          <label htmlFor="attending-maybe" className="ml-3 block text-sm text-gray-700">I'm not sure yet</label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                      <button
+                        type="submit"
+                        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                      >
+                        Submit RSVP
+                      </button>
+                      <button
+                        type="button"
+                        className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                        onClick={() => setShowRsvpForm(false)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Image Modal */}
       {selectedImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90" onClick={closeModal}>
@@ -440,12 +983,36 @@ const EventDetails = ({ eventId: propEventId }) => {
             >
               <X size={20} />
             </button>
-            <img 
-              src={selectedImage.image} 
-              alt={selectedImage.caption || "Gallery image"} 
-              className="max-w-full max-h-[80vh] object-contain"
-              onClick={(e) => e.stopPropagation()}
-            />
+            
+            <div className="relative">
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrevImage();
+                }}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 text-white p-2 rounded-full hover:bg-white/40 transition-colors"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              
+              <img 
+                src={selectedImage.image} 
+                alt={selectedImage.caption || "Gallery image"} 
+                className="max-w-full max-h-[80vh] object-contain"
+                onClick={(e) => e.stopPropagation()}
+              />
+              
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNextImage();
+                }}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 text-white p-2 rounded-full hover:bg-white/40 transition-colors"
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
+            
             {selectedImage.caption && (
               <div className="bg-white/80 backdrop-blur-sm p-3 text-center mt-2 text-gray-800 rounded">
                 {selectedImage.caption}

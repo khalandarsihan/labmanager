@@ -15,6 +15,7 @@
   "date",
   "location",
   "organizer",
+  "time",
   "section_break_ozuq",
   "description",
   "event"
@@ -92,11 +93,16 @@
    "fieldtype": "Link",
    "label": "Event Attendee",
    "options": "Event Attendee"
+  },
+  {
+   "fieldname": "time",
+   "fieldtype": "Data",
+   "label": "Event Time"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-26 22:56:47.665358",
+ "modified": "2025-04-27 06:32:48.336175",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Events",
