@@ -627,7 +627,7 @@ const RelatedEventCard = ({ event }) => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <div className="bg-white mb-8 rounded-lg shadow">
+              {/* <div className="bg-white mb-8 rounded-lg shadow">
                 <div className="p-6 md:p-8">
                   <h2 className="text-2xl font-bold mb-4 text-gray-800">
                     About This Event
@@ -648,7 +648,33 @@ const RelatedEventCard = ({ event }) => {
                     )}
                   </div>
                 </div>
-              </div>
+              </div> */}
+              <div className="bg-white mb-8 rounded-lg shadow">
+            <div className="p-6 md:p-8">
+                <h2 className="text-2xl font-bold mb-4 text-gray-800">
+                About This Event
+                </h2>
+                
+                <div className="prose max-w-none text-gray-700">
+                {event.detailed_description ? (
+                    // If a detailed description is available, render it directly as HTML
+                    <div dangerouslySetInnerHTML={renderHTML(event.detailed_description)} />
+                ) : event.description ? (
+                    // Fall back to regular description if detailed description is not available
+                    <div 
+                    dangerouslySetInnerHTML={renderHTML(
+                        event.description
+                        .split('\n\n')
+                        .map(paragraph => `<p>${paragraph}</p>`)
+                        .join('')
+                    )} 
+                    />
+                ) : (
+                    <p>No detailed description available for this event.</p>
+                )}
+                </div>
+            </div>
+            </div>
               
               {/* Location Map */}
               {event.location && (
