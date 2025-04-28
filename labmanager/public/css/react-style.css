@@ -3419,6 +3419,10 @@ video {
   background-color: rgb(255 255 255 / 0.5);
 }
 
+.bg-white\/60 {
+  background-color: rgb(255 255 255 / 0.6);
+}
+
 .bg-white\/70 {
   background-color: rgb(255 255 255 / 0.7);
 }
@@ -3442,10 +3446,6 @@ video {
 
 .bg-yellow-500\/90 {
   background-color: rgb(234 179 8 / 0.9);
-}
-
-.bg-white\/60 {
-  background-color: rgb(255 255 255 / 0.6);
 }
 
 .bg-\[url\(\'\/assets\/labmanager\/images\/dark-pattern\.png\'\)\] {
@@ -7448,10 +7448,6 @@ video {
 
   .lg\:col-span-2 {
     grid-column: span 2 / span 2;
-  }
-
-  .lg\:col-span-3 {
-    grid-column: span 3 / span 3;
   }
 
   .lg\:mb-0 {

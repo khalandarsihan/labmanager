@@ -17,14 +17,16 @@ const AttendeesList = ({ attendees }) => {
             key={index} 
             className={`p-4 rounded-lg ${
               useLightTheme 
-                ? 'bg-gray-50 border border-gray-100 hover:border-purple-200' 
-                : 'bg-gray-800 border border-gray-700 hover:border-amber-400/30'
+                // ? 'bg-gray-50 border border-gray-100 hover:border-purple-200' 
+                // : 'bg-gray-500 border border-gray-700 hover:border-amber-400/30'
+                ? 'bg-gradient-to-r from-purple-50 via-purple-100 to-purple-50'
+                : 'bg-gradient-to-r from-gray-900 via-gray-800 to-[#444444]'
               } transition-colors`}
           >
-            <h5 className={`font-semibold ${useLightTheme ? 'text-gray-800' : 'text-gray-200'}`}>
+            <h5 className={`font-semibold ${useLightTheme ? 'text-purple-600' : 'text-amber-200'}`}>
               {attendee.name1 || attendee.name}
             </h5>
-            <p className={`text-sm ${useLightTheme ? 'text-gray-600' : 'text-gray-400'}`}>
+            <p className={`text-sm ${useLightTheme ? 'text-gray-800' : 'text-white'}`}>
               {attendee.title}
             </p>
           </div>
