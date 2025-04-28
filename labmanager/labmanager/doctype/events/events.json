@@ -119,13 +119,13 @@
   },
   {
    "fieldname": "detailed_description",
-   "fieldtype": "Text Editor",
+   "fieldtype": "HTML Editor",
    "label": "Detailed Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-27 14:59:15.964027",
+ "modified": "2025-04-28 07:33:20.481780",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Events",
