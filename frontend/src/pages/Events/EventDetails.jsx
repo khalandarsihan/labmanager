@@ -269,7 +269,7 @@ const EventDetails = () => {
         
         {/* Main content */}
         <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             {/* Gallery Section */}
             {event.gallery && event.gallery.length > 0 && (
               <div className={`${themeStyles.card.bg} rounded-lg shadow-md overflow-hidden mb-8 ${themeStyles.card.border} border`}>
