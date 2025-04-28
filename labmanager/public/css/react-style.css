@@ -3444,6 +3444,10 @@ video {
   background-color: rgb(234 179 8 / 0.9);
 }
 
+.bg-white\/60 {
+  background-color: rgb(255 255 255 / 0.6);
+}
+
 .bg-\[url\(\'\/assets\/labmanager\/images\/dark-pattern\.png\'\)\] {
   background-image: url('/assets/labmanager/images/dark-pattern.png');
 }
@@ -5835,6 +5839,10 @@ video {
 
 .hover\:bg-white\/60:hover {
   background-color: rgb(255 255 255 / 0.6);
+}
+
+.hover\:bg-white\/80:hover {
+  background-color: rgb(255 255 255 / 0.8);
 }
 
 .hover\:from-\[\#222222\]:hover {

@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTheme } from '../../../components/ui/ThemeContext';
 
 const EventGallery = ({ gallery, currentImageIndex = 0, setCurrentImageIndex, galleryRef }) => {
   const { useLightTheme, themeStyles } = useTheme();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isPaused, setIsPaused] = useState(false);
+  const autoSlideTimerRef = useRef(null);
 
   // Open image modal
   const openModal = (image) => {
     setSelectedImage(image);
+    setIsPaused(true); // Pause auto-sliding when modal is open
     document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
   };
 
   // Close image modal
   const closeModal = () => {
     setSelectedImage(null);
+    setIsPaused(false); // Resume auto-sliding when modal is closed
     document.body.style.overflow = 'auto'; // Re-enable scrolling
   };
 
@@ -27,6 +31,34 @@ const EventGallery = ({ gallery, currentImageIndex = 0, setCurrentImageIndex, ga
   const handleNextImage = () => {
     if (!gallery || gallery.length === 0) return;
     setCurrentImageIndex(prev => (prev === gallery.length - 1 ? 0 : prev + 1));
+  };
+
+  // Auto slide timer setup
+  useEffect(() => {
+    // Only setup the timer if we have multiple images and not paused
+    if (gallery && gallery.length > 1 && !isPaused) {
+      autoSlideTimerRef.current = setInterval(() => {
+        handleNextImage();
+      }, 3000); // Change slide every 5 seconds
+    }
+
+    // Cleanup function
+    return () => {
+      if (autoSlideTimerRef.current) {
+        clearInterval(autoSlideTimerRef.current);
+      }
+    };
+  }, [gallery, isPaused, currentImageIndex]); // Reset timer when these dependencies change
+
+  // Pause auto-sliding when hovering over the gallery
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    if (!selectedImage) { // Only resume if modal is closed
+      setIsPaused(false);
+    }
   };
 
   // Scroll gallery to thumbnail
@@ -44,12 +76,35 @@ const EventGallery = ({ gallery, currentImageIndex = 0, setCurrentImageIndex, ga
   return (
     <div>
       {/* Main image display with navigation */}
-      <div className="relative rounded-lg overflow-hidden mb-4">
-        <img 
-          src={gallery[currentImageIndex]?.image || '/api/placeholder/800/500'} 
-          alt={gallery[currentImageIndex]?.caption || `Gallery image`}
-          className="w-full h-96 object-cover"
-        />
+      <div 
+        className="relative rounded-lg overflow-hidden mb-4" 
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <div className="w-full relative" style={{ height: "500px" }}> {/* Fixed height container */}
+          <img 
+            src={gallery[currentImageIndex]?.image || '/api/placeholder/800/500'} 
+            alt={gallery[currentImageIndex]?.caption || `Gallery image`}
+            className="w-full h-full object-contain" // Changed from object-cover to object-contain
+          />
+          
+          {/* Progress indicator for auto-sliding */}
+          {gallery.length > 1 && (
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 z-10">
+              {gallery.map((_, index) => (
+                <div 
+                  key={index}
+                  onClick={() => setCurrentImageIndex(index)}
+                  className={`h-2 rounded-full cursor-pointer transition-all ${
+                    currentImageIndex === index 
+                      ? `w-8 ${useLightTheme ? 'bg-purple-500' : 'bg-amber-500'}`
+                      : 'w-2 bg-white/60 hover:bg-white/80'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
         
         {gallery.length > 1 && (
           <>
@@ -91,11 +146,13 @@ const EventGallery = ({ gallery, currentImageIndex = 0, setCurrentImageIndex, ga
                   : 'opacity-70 hover:opacity-100'
               }`}
             >
-              <img 
-                src={item.image || '/api/placeholder/100/100'} 
-                alt={item.caption || `Thumbnail ${index + 1}`}
-                className="w-24 h-16 object-cover rounded"
-              />
+              <div className="w-24 h-16 overflow-hidden rounded">
+                <img 
+                  src={item.image || '/api/placeholder/100/100'} 
+                  alt={item.caption || `Thumbnail ${index + 1}`}
+                  className="w-full h-full object-contain" // Changed from object-cover to object-contain
+                />
+              </div>
             </div>
           ))}
         </div>
