@@ -17,6 +17,7 @@ import AttendeesList from './components/AttendeesList';
 import ThemeSwitcher from '../../components/ui/ThemeSwitcher'; // Import ThemeSwitcher
 import { useTheme } from '../../components/ui/ThemeContext'; // Import useTheme
 
+
 const EventDetails = () => {
   // Get theme from context
   const { useLightTheme, toggleTheme, themeStyles } = useTheme();
@@ -300,6 +301,7 @@ const EventDetails = () => {
                     )}
                   </div>
                 </div>
+
                 
                 {/* Documents Section */}
                 {event.documents && event.documents.length > 0 && (
@@ -355,6 +357,78 @@ const EventDetails = () => {
                     </button>
                   </div>
                 </div>
+                {/* Theme-specific CSS classes for event description content */}
+<style jsx>{`
+  .theme-highlight {
+    color: ${useLightTheme ? '#6b21a8' : '#fcd34d'} !important;
+    transition: color 0.3s ease;
+  }
+  
+  .section-title {
+    color: ${useLightTheme ? '#7e22ce' : '#fcd34d'} !important;
+    transition: color 0.3s ease;
+    font-weight: bold;
+  }
+  
+  .attendee-name {
+    color: ${useLightTheme ? '#6b21a8' : '#fcd34d'} !important;
+    transition: color 0.3s ease;
+  }
+  
+  .attendee-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  @media (min-width: 640px) {
+    .attendee-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  .attendee-item {
+    background-color: ${useLightTheme ? 'rgba(255, 255, 255, 0.4)' : 'rgba(31, 41, 55, 0.3)'};
+    backdrop-filter: blur(4px);
+    color: ${useLightTheme ? '#374151' : '#e5e7eb'};
+    padding: 1rem;
+    border-radius: 0.375rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .attendee-title {
+    font-size: 0.875rem;
+    color: ${useLightTheme ? '#4b5563' : '#9ca3af'};
+  }
+  
+  .hashtags {
+    font-size: 0.8rem;
+    color: ${useLightTheme ? '#4b5563' : '#9ca3af'};
+    word-wrap: break-word;
+  }
+  
+  /* Extra styles for better mobile experience */
+  .section {
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Make sure the styles work well in the context of the card */
+  .prose {
+    max-width: none;
+  }
+  
+  .prose strong {
+    font-weight: 600;
+  }
+  
+  /* Ensure hashtags break properly on mobile */
+  .hashtags {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+`}</style>
               </div>
               
               {/* Sidebar */}
@@ -589,7 +663,10 @@ const EventDetails = () => {
         </div>
       </div>
     </div>
+    
   );
+
 };
+
 
 export default EventDetails;
