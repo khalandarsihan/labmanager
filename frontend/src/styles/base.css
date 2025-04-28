@@ -311,3 +311,31 @@
     background: none !important;
   }
 }
+
+.theme-switcher {
+  position: fixed;
+  bottom: 48px;
+  right: 24px;
+  z-index: 50;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.theme-switcher.light {
+  background-color: #6b21a8; /* Purple */
+  color: white;
+}
+
+.theme-switcher.dark {
+  background-color: #fcd34d; /* Amber */
+  color: #111827; /* Dark Gray */
+}
