@@ -529,6 +529,8 @@ def get_event_comments(event_id, include_pending=False):
             "message": str(e)
         }
 
+# Updated version of update_comment_status function to add to labmanager/api/events.py
+
 @frappe.whitelist()
 def update_comment_status(comment_id, status):
     """Update the status of a comment (approve/reject)"""
@@ -558,10 +560,6 @@ def update_comment_status(comment_id, status):
         comment.status = status
         comment.save(ignore_permissions=True)
         
-        # Notify user if comment is approved or rejected
-        if status in ["Approved", "Rejected"]:
-            self.notify_user_about_comment_status(comment)
-        
         return {
             "status": "success",
             "message": f"Comment status updated to {status}"
@@ -572,7 +570,7 @@ def update_comment_status(comment_id, status):
             "status": "error",
             "message": str(e)
         }
-        
+
 def notify_user_about_comment_status(comment):
     """Notify user about comment status change"""
     try:
@@ -646,3 +644,102 @@ def get_event_categories():
             "status": "error",
             "message": str(e)
         }
+        
+# Add these functions to labmanager/api/events.py
+
+@frappe.whitelist(allow_guest=True)
+def get_recent_events(limit=3, exclude_event_id=None):
+    """Get recent events, optionally excluding a specific event"""
+    try:
+        # Get current date
+        current_date = frappe.utils.getdate()
+        
+        # Build filters
+        filters = {
+            "is_active": 1,
+        }
+        
+        # Add exclusion if provided
+        if exclude_event_id:
+            filters["name"] = ["!=", exclude_event_id]
+        
+        # Get recent events
+        events = frappe.get_all(
+            "Events",
+            fields=[
+                "name", "title", "date", "image", 
+                "card_image", "category"
+            ],
+            filters=filters,
+            order_by="date desc",
+            limit_page_length=int(limit)
+        )
+        
+        # Process events
+        processed_events = []
+        for event in events:
+            # Format date if needed
+            if event.get("date"):
+                event["date"] = event["date"].isoformat() if hasattr(event["date"], "isoformat") else str(event["date"])
+            
+            processed_events.append(event)
+        
+        return {
+            "status": "success",
+            "events": processed_events
+        }
+    except Exception as e:
+        frappe.log_error(f"Recent Events API Error: {str(e)}\n{frappe.get_traceback()}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+
+@frappe.whitelist(allow_guest=True)
+def get_event_approved_comments(event_id, limit=5):
+    """Get approved comments for an event with pagination"""
+    try:
+        if not event_id:
+            return {
+                "status": "error",
+                "message": "Event ID is required"
+            }
+            
+        # Check if the event exists
+        if not frappe.db.exists("Events", event_id):
+            return {
+                "status": "error",
+                "message": "Event not found"
+            }
+        
+        # Get only approved comments
+        filters = {
+            "event": event_id,
+            "status": "Approved"
+        }
+            
+        # Get comments
+        comments = frappe.get_all(
+            "Event Comment",
+            filters=filters,
+            fields=["name", "name1", "email", "comment", "comment_date", "status"],
+            order_by="comment_date desc",
+            limit_page_length=int(limit)
+        )
+        
+        # Format dates
+        for comment in comments:
+            if comment.get("comment_date"):
+                comment["comment_date"] = comment["comment_date"].isoformat() if hasattr(comment["comment_date"], "isoformat") else str(comment["comment_date"])
+        
+        return {
+            "status": "success",
+            "comments": comments
+        }
+    except Exception as e:
+        frappe.log_error(f"Get Event Approved Comments Error: {str(e)}\n{frappe.get_traceback()}")
+        return {
+            "status": "error",
+            "message": str(e)
+        }
+        

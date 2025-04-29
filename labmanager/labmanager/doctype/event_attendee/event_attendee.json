@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:name1",
+ "autoname": "format:{event}-{#}",
  "creation": "2025-04-26 22:43:56.762580",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -45,11 +45,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-04-26 22:58:17.741357",
+ "modified": "2025-04-29 06:17:13.668782",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Event Attendee",
- "naming_rule": "By fieldname",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {

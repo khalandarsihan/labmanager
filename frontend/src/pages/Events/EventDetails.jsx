@@ -36,6 +36,61 @@ const EventDetails = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const eventId = urlParams.get('id');
   
+  const [recentEvents, setRecentEvents] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [loadingRecent, setLoadingRecent] = useState(true);
+  const [loadingComments, setLoadingComments] = useState(true);
+  
+// Fetch recent events
+useEffect(() => {
+  const fetchRecentEvents = async () => {
+    if (!eventId) return;
+    
+    try {
+      setLoadingRecent(true);
+      const response = await fetch(`/api/method/labmanager.api.events.get_recent_events?limit=3&exclude_event_id=${eventId}`);
+      const data = await response.json();
+      
+      if (data.message && data.message.status === 'success') {
+        setRecentEvents(data.message.events || []);
+      } else {
+        console.error('Failed to load recent events:', data.message?.message);
+      }
+    } catch (err) {
+      console.error('Error fetching recent events:', err);
+    } finally {
+      setLoadingRecent(false);
+    }
+  };
+
+  fetchRecentEvents();
+}, [eventId]);
+
+// Fetch approved comments
+useEffect(() => {
+  const fetchComments = async () => {
+    if (!eventId) return;
+    
+    try {
+      setLoadingComments(true);
+      const response = await fetch(`/api/method/labmanager.api.events.get_event_approved_comments?event_id=${eventId}&limit=5`);
+      const data = await response.json();
+      
+      if (data.message && data.message.status === 'success') {
+        setComments(data.message.comments || []);
+      } else {
+        console.error('Failed to load comments:', data.message?.message);
+      }
+    } catch (err) {
+      console.error('Error fetching comments:', err);
+    } finally {
+      setLoadingComments(false);
+    }
+  };
+
+  fetchComments();
+}, [eventId]);
+
   // Fetch event details
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -76,54 +131,72 @@ const EventDetails = () => {
   };
   
   // Handle comment form submission
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault();
+const handleCommentSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!commentForm.name || !commentForm.email || !commentForm.comment) {
+    setSubmitStatus({
+      success: false,
+      message: 'Please fill in all fields'
+    });
+    return;
+  }
+  
+  try {
+    const response = await fetch('/api/method/labmanager.api.events.add_event_comment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event_id: eventId,
+        name: commentForm.name,
+        email: commentForm.email,
+        comment: commentForm.comment
+      }),
+    });
     
-    if (!commentForm.name || !commentForm.email || !commentForm.comment) {
+    const data = await response.json();
+    
+    if (data.message && data.message.status === 'success') {
       setSubmitStatus({
-        success: false,
-        message: 'Please fill in all fields'
-      });
-      return;
-    }
-    
-    try {
-      const response = await fetch('/api/method/labmanager.api.events.add_event_comment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          event_id: eventId,
-          name: commentForm.name,
-          email: commentForm.email,
-          comment: commentForm.comment
-        }),
+        success: true,
+        message: 'Your comment has been submitted for review. It will be visible once approved by a moderator.'
       });
       
-      const data = await response.json();
+      // Clear form
+      setCommentForm({ name: '', email: '', comment: '' });
       
-      if (data.message && data.message.status === 'success') {
-        setSubmitStatus({
-          success: true,
-          message: 'Your comment has been submitted for review'
-        });
-        // Clear form
-        setCommentForm({ name: '', email: '', comment: '' });
-      } else {
-        setSubmitStatus({
-          success: false,
-          message: data.message?.message || 'Failed to submit comment'
-        });
-      }
-    } catch (err) {
-      console.error('Error submitting comment:', err);
+      // Refresh the comments list (though the new comment won't show until approved)
+      // This is helpful in case other comments were approved while the user was on the page
+      const refreshComments = async () => {
+        try {
+          const response = await fetch(`/api/method/labmanager.api.events.get_event_approved_comments?event_id=${eventId}&limit=5`);
+          const data = await response.json();
+          
+          if (data.message && data.message.status === 'success') {
+            setComments(data.message.comments || []);
+          }
+        } catch (err) {
+          console.error('Error refreshing comments:', err);
+        }
+      };
+      
+      refreshComments();
+    } else {
       setSubmitStatus({
         success: false,
-        message: 'Error submitting comment. Please try again later.'
+        message: data.message?.message || 'Failed to submit comment'
       });
     }
-  };
+  } catch (err) {
+    console.error('Error submitting comment:', err);
+    setSubmitStatus({
+      success: false,
+      message: 'Error submitting comment. Please try again later.'
+    });
+  }
+};
 
   // Format date function
   const formatDate = (dateString) => {
@@ -430,191 +503,196 @@ const EventDetails = () => {
         
         {/* Recent Events Section */}
         <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 ${themeStyles.card.border} border`}>
-          <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading}`}>
-            More Recent Events
-          </h2>
-          
-          <div className="space-y-4">
-            <div className={`flex items-center p-3 rounded-lg hover:bg-gray-50 border ${useLightTheme ? 'border-gray-100 hover:bg-gray-50' : 'border-gray-700 hover:bg-gray-700'}`}>
-              <img 
-                src="/api/placeholder/100/100" 
-                alt="Event thumbnail"
-                className="w-16 h-16 object-cover rounded mr-3"
-              />
-              <div>
-                <h5 className={`font-medium ${themeStyles.text.primary} line-clamp-1`}>
-                  Annual Science Exhibition
-                </h5>
-                <div className={`flex items-center text-sm ${themeStyles.text.light}`}>
-                  <Calendar size={14} className="mr-1" />
-                  March 15, 2025
-                </div>
-                <a 
-                  href="/event-details?id=annual-science-exhibition"
-                  className={`text-sm font-medium ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
-                >
-                  View details
-                </a>
-              </div>
+  <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading}`}>
+    More Recent Events
+  </h2>
+  
+  <div className="space-y-4">
+    {loadingRecent ? (
+      // Loading state
+      <>
+        {[...Array(3)].map((_, index) => (
+          <div key={index} className="animate-pulse flex items-center p-3 rounded-lg">
+            <div className="w-16 h-16 bg-gray-200 rounded mr-3"></div>
+            <div className="flex-1">
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/4"></div>
             </div>
-            
-            <div className={`flex items-center p-3 rounded-lg hover:bg-gray-50 border ${useLightTheme ? 'border-gray-100 hover:bg-gray-50' : 'border-gray-700 hover:bg-gray-700'}`}>
-              <img 
-                src="/api/placeholder/100/100" 
-                alt="Event thumbnail"
-                className="w-16 h-16 object-cover rounded mr-3"
-              />
-              <div>
-                <h5 className={`font-medium ${themeStyles.text.primary} line-clamp-1`}>
-                  Graduation Ceremony 2025
-                </h5>
-                <div className={`flex items-center text-sm ${themeStyles.text.light}`}>
-                  <Calendar size={14} className="mr-1" />
-                  March 3, 2025
-                </div>
-                <a 
-                  href="/event-details?id=graduation-ceremony"
-                  className={`text-sm font-medium ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
-                >
-                  View details
-                </a>
-              </div>
-            </div>
-            
-            <div className={`flex items-center p-3 rounded-lg hover:bg-gray-50 border ${useLightTheme ? 'border-gray-100 hover:bg-gray-50' : 'border-gray-700 hover:bg-gray-700'}`}>
-              <img 
-                src="/api/placeholder/100/100" 
-                alt="Event thumbnail"
-                className="w-16 h-16 object-cover rounded mr-3"
-              />
-              <div>
-                <h5 className={`font-medium ${themeStyles.text.primary} line-clamp-1`}>
-                  Faculty Development Program
-                </h5>
-                <div className={`flex items-center text-sm ${themeStyles.text.light}`}>
-                  <Calendar size={14} className="mr-1" />
-                  February 20, 2025
-                </div>
-                <a 
-                  href="/event-details?id=faculty-development-program"
-                  className={`text-sm font-medium ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
-                >
-                  View details
-                </a>
-              </div>
-            </div>
-            
-            <a
-              href="/events"
-              className={`inline-flex items-center ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
-            >
-              View all events
-            </a>
           </div>
-        </div>
+        ))}
+      </>
+    ) : recentEvents.length > 0 ? (
+      // Recent events list
+      <>
+        {recentEvents.map((recentEvent) => (
+          <div 
+            key={recentEvent.name} 
+            className={`flex items-center p-3 rounded-lg border ${
+              useLightTheme ? 'border-gray-100 hover:bg-gray-50' : 'border-gray-700 hover:bg-gray-700'
+            }`}
+          >
+            <img 
+              src={recentEvent.card_image || recentEvent.image || "/api/placeholder/100/100"} 
+              alt={recentEvent.title}
+              className="w-16 h-16 object-cover rounded mr-3"
+            />
+            <div>
+              <h5 className={`font-medium ${themeStyles.text.primary} line-clamp-1`}>
+                {recentEvent.title}
+              </h5>
+              <div className={`flex items-center text-sm ${themeStyles.text.light}`}>
+                <Calendar size={14} className="mr-1" />
+                {formatDate(recentEvent.date)}
+              </div>
+              <a 
+                href={`/event-details?id=${recentEvent.name}`}
+                className={`text-sm font-medium ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
+              >
+                View details
+              </a>
+            </div>
+          </div>
+        ))}
+      </>
+    ) : (
+      // No events state
+      <p className={themeStyles.text.secondary}>No recent events available.</p>
+    )}
+    
+    <a
+      href="/events"
+      className={`inline-flex items-center ${useLightTheme ? 'text-teal-600' : 'text-amber-400'} hover:underline`}
+    >
+      View all events
+    </a>
+  </div>
+</div>
+
       </div>
     </div>
     
     {/* Comments Section */}
     <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 mb-8 ${themeStyles.card.border} border`}>
-      <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading} flex items-center`}>
-        <MessageCircle size={20} className={`mr-2 ${useLightTheme ? 'text-teal-600' : 'text-amber-400'}`} />
-        Comments & Feedback
-      </h2>
-      
-      <div className="space-y-4">
-        {/* Example comments - These would come from API in a full implementation */}
-        <div className={`border-b ${useLightTheme ? 'border-gray-100' : 'border-gray-700'} pb-4`}>
-          <div className="flex justify-between mb-2">
-            <div>
-              <span className={`font-medium ${themeStyles.text.primary}`}>Ravi Sharma</span>
-              <span className={`text-sm ${themeStyles.text.light} ml-2`}>Student</span>
+  <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading} flex items-center`}>
+    <MessageCircle size={20} className={`mr-2 ${useLightTheme ? 'text-teal-600' : 'text-amber-400'}`} />
+    Comments & Feedback
+  </h2>
+  
+  <div className="space-y-4">
+    {/* Dynamic Comments */}
+    {loadingComments ? (
+      // Loading state for comments
+      <>
+        {[...Array(2)].map((_, index) => (
+          <div key={index} className={`border-b ${useLightTheme ? 'border-gray-100' : 'border-gray-700'} pb-4 animate-pulse`}>
+            <div className="flex justify-between mb-2">
+              <div className="w-24 h-4 bg-gray-200 rounded"></div>
+              <div className="w-20 h-4 bg-gray-200 rounded"></div>
             </div>
-            <span className={`text-sm ${themeStyles.text.light}`}>April 26, 2025</span>
+            <div className="h-4 bg-gray-200 rounded mb-2 w-full"></div>
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
           </div>
-          <p className={themeStyles.text.secondary}>The new website looks amazing! It's much easier to navigate and find information about courses.</p>
-        </div>
-        
-        <div className={`border-b ${useLightTheme ? 'border-gray-100' : 'border-gray-700'} pb-4`}>
-          <div className="flex justify-between mb-2">
-            <div>
-              <span className={`font-medium ${themeStyles.text.primary}`}>Dr. Meena Patel</span>
-              <span className={`text-sm ${themeStyles.text.light} ml-2`}>Faculty Member</span>
+        ))}
+      </>
+    ) : comments.length > 0 ? (
+      // Comments list
+      <>
+        {comments.map((comment) => (
+          <div key={comment.name} className={`border-b ${useLightTheme ? 'border-gray-100' : 'border-gray-700'} pb-4`}>
+            <div className="flex justify-between mb-2">
+              <div>
+                <span className={`font-medium ${themeStyles.text.primary}`}>{comment.name1}</span>
+              </div>
+              <span className={`text-sm ${themeStyles.text.light}`}>
+                {new Date(comment.comment_date).toLocaleDateString('en-US', {
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric'
+                })}
+              </span>
             </div>
-            <span className={`text-sm ${themeStyles.text.light}`}>April 25, 2025</span>
+            <p className={themeStyles.text.secondary}>{comment.comment}</p>
           </div>
-          <p className={themeStyles.text.secondary}>Congratulations on the successful launch! The new logo perfectly represents our institution's values.</p>
-        </div>
-        
-        {/* Add comment form */}
-        <div className="mt-6">
-          <h3 className={`text-lg font-medium ${themeStyles.text.primary} mb-3`}>Leave a Comment</h3>
-          
-          {submitStatus.message && (
-            <div className={`p-3 mb-4 rounded-lg ${
-              submitStatus.success ? 
-                useLightTheme ? 'bg-green-100 text-green-800' : 'bg-green-900/30 text-green-300'
-                : useLightTheme ? 'bg-red-100 text-red-800' : 'bg-red-900/30 text-red-300'
-            }`}>
-              {submitStatus.message}
-            </div>
-          )}
-          
-          <form onSubmit={handleCommentSubmit}>
-            <textarea
-              name="comment"
-              value={commentForm.comment}
-              onChange={handleInputChange}
-              className={`w-full border ${
-                useLightTheme 
-                  ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
-                  : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
-              } rounded-lg p-3 focus:ring-2`}
-              rows="3"
-              placeholder="Share your thoughts about this event..."
-            ></textarea>
-            <div className="grid grid-cols-2 gap-4 mt-3">
-              <input
-                type="text"
-                name="name"
-                value={commentForm.name}
-                onChange={handleInputChange}
-                className={`border ${
-                  useLightTheme 
-                    ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
-                    : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
-                } rounded-lg p-2 focus:ring-2`}
-                placeholder="Your Name"
-              />
-              <input
-                type="email"
-                name="email"
-                value={commentForm.email}
-                onChange={handleInputChange}
-                className={`border ${
-                  useLightTheme 
-                    ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
-                    : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
-                } rounded-lg p-2 focus:ring-2`}
-                placeholder="Your Email"
-              />
-            </div>
-            <div className="mt-3 flex justify-end">
-              <button 
-                type="submit" 
-                className={`px-4 py-2 ${
-                  useLightTheme 
-                    ? 'bg-teal-600 hover:bg-teal-700 focus:ring-teal-500' 
-                    : 'bg-amber-600 hover:bg-amber-500 focus:ring-amber-500'
-                } text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2`}
-              >
-                Post Comment
-              </button>
-            </div>
-          </form>
-        </div>
+        ))}
+      </>
+    ) : (
+      // No comments state
+      <div className="text-center py-4">
+        <p className={themeStyles.text.secondary}>No comments yet. Be the first to share your thoughts!</p>
       </div>
+    )}
+    
+    {/* Add comment form */}
+    <div className="mt-6">
+      <h3 className={`text-lg font-medium ${themeStyles.text.primary} mb-3`}>Leave a Comment</h3>
+      
+      {submitStatus.message && (
+        <div className={`p-3 mb-4 rounded-lg ${
+          submitStatus.success ? 
+            useLightTheme ? 'bg-green-100 text-green-800' : 'bg-green-900/30 text-green-300'
+            : useLightTheme ? 'bg-red-100 text-red-800' : 'bg-red-900/30 text-red-300'
+        }`}>
+          {submitStatus.message}
+        </div>
+      )}
+      
+      <form onSubmit={handleCommentSubmit}>
+        <textarea
+          name="comment"
+          value={commentForm.comment}
+          onChange={handleInputChange}
+          className={`w-full border ${
+            useLightTheme 
+              ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
+              : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
+          } rounded-lg p-3 focus:ring-2`}
+          rows="3"
+          placeholder="Share your thoughts about this event..."
+        ></textarea>
+        <div className="grid grid-cols-2 gap-4 mt-3">
+          <input
+            type="text"
+            name="name"
+            value={commentForm.name}
+            onChange={handleInputChange}
+            className={`border ${
+              useLightTheme 
+                ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
+                : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
+            } rounded-lg p-2 focus:ring-2`}
+            placeholder="Your Name"
+          />
+          <input
+            type="email"
+            name="email"
+            value={commentForm.email}
+            onChange={handleInputChange}
+            className={`border ${
+              useLightTheme 
+                ? 'border-gray-300 focus:ring-teal-500 focus:border-teal-500' 
+                : 'border-gray-600 bg-gray-700/50 text-white focus:ring-amber-400 focus:border-amber-400'
+            } rounded-lg p-2 focus:ring-2`}
+            placeholder="Your Email"
+          />
+        </div>
+        <div className="mt-3 flex justify-end">
+          <button 
+            type="submit" 
+            className={`px-4 py-2 ${
+              useLightTheme 
+                ? 'bg-teal-600 hover:bg-teal-700 focus:ring-teal-500' 
+                : 'bg-amber-600 hover:bg-amber-500 focus:ring-amber-500'
+            } text-white rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2`}
+          >
+            Post Comment
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
+
   </div>
 </div>
         
