@@ -38,10 +38,25 @@ const CourseDetails = ({ courseCode }) => {
 
   // Define theme-specific tab styles
   const tabListBg = useLightTheme ? "bg-purple-100/50" : "bg-gray-800";
-  const activeTabBg = useLightTheme ? "bg-white" : "bg-gray-700";
-  const activeTabBorder = useLightTheme ? "border-b-2 border-purple-500" : "border-b-2 border-amber-400";
-  const tabTextColor = useLightTheme ? "text-gray-600" : "text-gray-400";
-  const activeTabTextColor = useLightTheme ? "text-purple-700" : "text-amber-300";
+  
+
+  // Active tab (purple in light, amber in dark)
+  const activeTabBg = useLightTheme ? "bg-purple-600" : "bg-amber-300";
+  const activeTabTextColor = useLightTheme ? "text-white" : "text-gray-900";
+  
+  // Inactive tab (white in light, dark gray in dark)
+  const inactiveTabBg = useLightTheme ? "bg-white" : "bg-gray-700";
+  const inactiveTabTextColor = useLightTheme ? "text-gray-700" : "text-gray-300";
+  
+  // Combined active and inactive tab styling
+  const activeTabStyle = useLightTheme 
+    ? "rounded-t-lg bg-purple-600 shadow-sm text-white" 
+    : "rounded-t-lg bg-amber-300 shadow-sm text-gray-900";
+  
+  const inactiveTabStyle = useLightTheme
+    ? "rounded-t-lg bg-white shadow-sm text-gray-700" 
+    : "rounded-t-lg bg-gray-700 shadow-sm text-gray-300";
+
 
   // Define decoration colors based on theme with increased opacity
   const decorationBorderColor = useLightTheme ? "border-purple-400" : "border-amber-300";
@@ -247,33 +262,59 @@ const CourseDetails = ({ courseCode }) => {
   <Tabs defaultValue="overview">
     <div className="overflow-x-auto">
       <TabsList className={`w-full flex min-w-max rounded-t-lg ${tabListBg}`}>
+        {/* For each tab, we'll handle the styling entirely through data-state */}
         <TabsTrigger 
           value="overview" 
-          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+          className={`py-2 px-4 flex-shrink-0 transition-all 
+            ${useLightTheme ? 
+              "text-gray-700 data-[state=active]:bg-purple-600 data-[state=active]:text-white" : 
+              "text-gray-300 data-[state=active]:bg-amber-300 data-[state=active]:text-gray-900"
+            }
+            rounded-t-lg data-[state=active]:shadow-sm mx-0.5`}
         >
           Overview
         </TabsTrigger>
         <TabsTrigger 
           value="curriculum" 
-          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+          className={`py-2 px-4 flex-shrink-0 transition-all 
+            ${useLightTheme ? 
+              "text-gray-700 data-[state=active]:bg-purple-600 data-[state=active]:text-white" : 
+              "text-gray-300 data-[state=active]:bg-amber-300 data-[state=active]:text-gray-900"
+            }
+            rounded-t-lg data-[state=active]:shadow-sm mx-0.5`}
         >
           Curriculum
         </TabsTrigger>
         <TabsTrigger 
           value="preview" 
-          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+          className={`py-2 px-4 flex-shrink-0 transition-all 
+            ${useLightTheme ? 
+              "text-gray-700 data-[state=active]:bg-purple-600 data-[state=active]:text-white" : 
+              "text-gray-300 data-[state=active]:bg-amber-300 data-[state=active]:text-gray-900"
+            }
+            rounded-t-lg data-[state=active]:shadow-sm mx-0.5`}
         >
           Sample Lesson
         </TabsTrigger>
         <TabsTrigger 
           value="outcomes" 
-          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+          className={`py-2 px-4 flex-shrink-0 transition-all 
+            ${useLightTheme ? 
+              "text-gray-700 data-[state=active]:bg-purple-600 data-[state=active]:text-white" : 
+              "text-gray-300 data-[state=active]:bg-amber-300 data-[state=active]:text-gray-900"
+            }
+            rounded-t-lg data-[state=active]:shadow-sm mx-0.5`}
         >
           Outcomes
         </TabsTrigger>
         <TabsTrigger 
           value="certificate" 
-          className={`py-2 px-4 flex-shrink-0 transition-all data-[state=active]:${activeTabBg} data-[state=active]:${activeTabBorder} data-[state=active]:${activeTabTextColor} ${tabTextColor}`}
+          className={`py-2 px-4 flex-shrink-0 transition-all 
+            ${useLightTheme ? 
+              "text-gray-700 data-[state=active]:bg-purple-600 data-[state=active]:text-white" : 
+              "text-gray-300 data-[state=active]:bg-amber-300 data-[state=active]:text-gray-900"
+            }
+            rounded-t-lg data-[state=active]:shadow-sm mx-0.5`}
         >
           Certificate
         </TabsTrigger>
