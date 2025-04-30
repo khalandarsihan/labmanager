@@ -319,61 +319,66 @@ const CourseDetails = ({ courseCode }) => {
       </Card>
     </TabsContent>
 
-    <TabsContent value="curriculum" className="p-0">
-      <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
-        <CardHeader>
-          <CardTitle className={themeStyles.subheading}>Course Syllabus</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            {course.syllabus?.map((module) => (
-              <Collapsible key={module.name}>
-                <CollapsibleTrigger className="w-full">
-                  <Card className={`border-2 ${useLightTheme ? 'hover:border-purple-200' : 'hover:border-amber-300'} ${themeStyles.card.bg}`}>
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle className={`text-lg ${themeStyles.subheading}`}>{module.title}</CardTitle>
-                          <CardDescription className={`mt-1 ${themeStyles.text.light}`}>
-                            {`${module.duration} ${module.unit}`}
-                          </CardDescription>
-                        </div>
-                        <ChevronDown className={`w-5 h-5 ${themeStyles.text.secondary}`} />
-                      </div>
-                    </CardHeader>
-                  </Card>
-                </CollapsibleTrigger>
 
-                <CollapsibleContent>
-                  <div className="mt-4 ml-4">
-                    <div className={themeStyles.text.primary} dangerouslySetInnerHTML={{ __html: module.description }} />
-                    {module.lessons?.map((lesson, index) => (
-                      <div
-                        key={`${module.name}-${index}`}
-                        className={`flex items-center justify-between p-2 mt-2 rounded ${useLightTheme ? 'bg-gray-50' : 'bg-gray-800'}`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Play className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
-                          <div>
-                            <p className={`font-medium ${themeStyles.text.primary}`}>{lesson.title}</p>
-                            <p className={`text-sm ${themeStyles.text.light}`}>{`${lesson.duration} ${lesson.unit}`}</p>
-                          </div>
-                        </div>
-                        {lesson.preview_enabled && (
-                          <Button variant="outline" size="sm">
-                            Preview
-                          </Button>
-                        )}
-                      </div>
-                    ))}
+<TabsContent value="curriculum" className="p-0">
+  <Card className={`mt-0 rounded-t-none ${themeStyles.card.bg} ${themeStyles.card.border}`}>
+    <CardHeader>
+      <CardTitle className={themeStyles.subheading}>Course Syllabus</CardTitle>
+    </CardHeader>
+    <CardContent className="p-6">
+      <div className="space-y-4">
+        {course.syllabus?.map((module) => (
+          <Collapsible key={module.name}>
+            <CollapsibleTrigger className="w-full">
+              <Card className={`border-2 ${useLightTheme ? 'hover:border-purple-200' : 'hover:border-amber-300'} ${themeStyles.card.bg}`}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className={`text-lg ${themeStyles.subheading}`}>{module.title}</CardTitle>
+                      <CardDescription className={`mt-1 ${themeStyles.text.light}`}>
+                        {`${module.duration} ${module.unit}`}
+                      </CardDescription>
+                    </div>
+                    <ChevronDown className={`w-5 h-5 ${themeStyles.text.secondary}`} />
                   </div>
-                </CollapsibleContent>
-              </Collapsible>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </TabsContent>
+                </CardHeader>
+              </Card>
+            </CollapsibleTrigger>
+
+            <CollapsibleContent>
+              <div className="mt-4 ml-4">
+                <div className={themeStyles.text.primary} dangerouslySetInnerHTML={{ __html: module.description }} />
+                {module.lessons?.map((lesson, index) => (
+                  <div
+                    key={`${module.name}-${index}`}
+                    className={`flex items-center justify-between p-2 mt-2 rounded ${useLightTheme ? 'bg-gray-50' : 'bg-gray-800'}`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Play className={`w-4 h-4 ${useLightTheme ? 'text-purple-600' : 'text-amber-300'}`} />
+                      <div>
+                        <p className={`font-medium ${themeStyles.text.primary}`}>{lesson.title}</p>
+                        <p className={`text-sm ${themeStyles.text.light}`}>{`${lesson.duration} ${lesson.unit}`}</p>
+                      </div>
+                    </div>
+                    {/* Use ternary operator to show Preview button or empty div */}
+                    {lesson.preview_enabled ? (
+                      <Button variant="outline" size="sm">
+                        Preview
+                      </Button>
+                    ) : (
+                      /* Empty div to maintain layout but show nothing */
+                      <div className="w-16"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+</TabsContent>
 
     <TabsContent value="preview" className="p-0">
       <PreviewSection
