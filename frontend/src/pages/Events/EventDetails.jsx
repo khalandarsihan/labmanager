@@ -14,6 +14,7 @@ import {
 import BackgroundPattern from '../../components/ui/BackgroundPattern';
 import EventGallery from './components/EventGallery';
 import AttendeesList from './components/AttendeesList';
+import ShareThisEvent from './components/ShareThisEvent';
 import ThemeSwitcher from '../../components/ui/ThemeSwitcher'; // Import ThemeSwitcher
 import { useTheme } from '../../components/ui/ThemeContext'; // Import useTheme
 
@@ -418,26 +419,9 @@ const handleCommentSubmit = async (e) => {
         )}
         
         {/* Social sharing */}
+        {/* Share This Event */}
         <div className={`${themeStyles.card.bg} rounded-lg shadow-md p-6 ${themeStyles.card.border} border`}>
-          <h2 className={`text-xl font-bold mb-4 ${themeStyles.subheading} flex items-center`}>
-            <Share2 size={20} className={`mr-2 ${useLightTheme ? 'text-teal-600' : 'text-amber-400'}`} />
-            Share This Event
-          </h2>
-          
-          <div className="flex flex-wrap gap-3">
-            <button className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-              Facebook
-            </button>
-            <button className="inline-flex items-center justify-center px-4 py-2 bg-sky-500 text-white rounded-md hover:bg-sky-600">
-              Twitter
-            </button>
-            <button className="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-              WhatsApp
-            </button>
-            <button className="inline-flex items-center justify-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700">
-              Email
-            </button>
-          </div>
+          <ShareThisEvent eventId={event.id || event.name} eventTitle={event.title} />
         </div>
         {/* Theme-specific CSS classes for event description content */}
 {/* JSX Style Block - Updated to match the tailwind classes */}

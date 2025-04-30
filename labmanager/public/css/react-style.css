@@ -3249,6 +3249,11 @@ video {
   background-color: rgb(236 72 153 / 0.9);
 }
 
+.bg-pink-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(219 39 119 / var(--tw-bg-opacity, 1));
+}
+
 .bg-primary {
   background-color: hsl(var(--primary));
 }
@@ -5807,6 +5812,11 @@ video {
 .hover\:bg-green-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(21 128 61 / var(--tw-bg-opacity, 1));
+}
+
+.hover\:bg-pink-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(190 24 93 / var(--tw-bg-opacity, 1));
 }
 
 .hover\:bg-primary\/90:hover {
