@@ -290,7 +290,7 @@ const Navbar = () => {
                 </a>
               </li>
               <li className="py-1">
-                <a href="#" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
+                <a href="/events" className={`flex items-center no-underline ${linkTextStyle} text-xs md:text-sm lg:text-base`}>
                   <i className="fa fa-bullhorn mr-1"></i> Events
                 </a>
               </li>

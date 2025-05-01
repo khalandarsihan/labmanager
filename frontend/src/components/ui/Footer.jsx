@@ -4,8 +4,7 @@ import { useTheme } from './ThemeContext';
 const Footer = () => {
   const { useLightTheme } = useTheme();
   
-
-    const footerBgStyle = useLightTheme
+  const footerBgStyle = useLightTheme
     ? "bg-gradient-to-r from-purple-100 via-purple-200 to-purple-100"
     : "bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900";
 
@@ -39,13 +38,14 @@ const Footer = () => {
 
   return (
     <footer className={`${footerBgStyle} ${textStyle} pt-6 font-sans`}>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
           {/* Company Info Section */}
           <div className="transform transition duration-300 hover:scale-105">
             <h3 className={`text-lg font-bold ${headingStyle} mb-3`}>TechEthica</h3>
-            <p className={`${textStyle} text-sm mb-3`}>Empowering learning through technology and faith.</p>
             <div className="flex flex-col space-y-2">
+              <a href="/" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>Home</a>
               <a href="/about-us" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>About Us</a>
               <a href="/careers" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>Careers</a>
               <a href="/privacy" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>Privacy Policy</a>
@@ -58,7 +58,7 @@ const Footer = () => {
             <div className="flex flex-col space-y-2">
               <a href="/courses/catalog" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>All Courses</a>
               <a href="/blog" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>Blog</a>
-              <a href="/faq" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>FAQ</a>
+              <a href="/events" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>Events</a>
               <a href="/support" className={`${textStyle} text-sm ${linkHoverStyle} transition-all duration-200 hover:translate-x-1`}>Student Support</a>
             </div>
           </div>
@@ -71,7 +71,7 @@ const Footer = () => {
               <a href="mailto:info@techethica.in" className={`${textStyle} ${linkHoverStyle} transition-colors duration-200 flex items-center gap-2 mt-2`}>
                 <i className={`far fa-envelope ${headingStyle} w-4`} /> info@techethica.in
               </a>
-              <a href="tel:+919876543210" className={`${textStyle} ${linkHoverStyle} transition-colors duration-200 flex items-center gap-2 mt-2`}>
+              <a href="tel:+919591382400" className={`${textStyle} ${linkHoverStyle} transition-colors duration-200 flex items-center gap-2 mt-2`}>
                 <i className={`fas fa-phone ${headingStyle} w-4`} /> +91 95913 82400
               </a>
             </address>
@@ -87,7 +87,7 @@ const Footer = () => {
               <a href="#" className={`${socialIconStyle} text-xl transform transition duration-200 hover:-translate-y-1`}>
                 <i className="fab fa-twitter" />
               </a>
-              <a href="#" className={`${socialIconStyle} text-xl transform transition duration-200 hover:-translate-y-1`}>
+              <a href="https://www.instagram.com/techethica?igsh=YWRpMnRsbnVuZWcz" className={`${socialIconStyle} text-xl transform transition duration-200 hover:-translate-y-1`}>
                 <i className="fab fa-instagram" />
               </a>
               <a href="#" className={`${socialIconStyle} text-xl transform transition duration-200 hover:-translate-y-1`}>
@@ -103,17 +103,16 @@ const Footer = () => {
 
       {/* Copyright Section */}
       <div className={`mt-6 ${copyrightBgStyle} transition-all duration-700`}>
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-    <p className={`${copyrightTextStyle} text-sm text-center`}>
-      © {new Date().getFullYear()}&nbsp;
-      <span className={`${highlightStyle} transition-colors duration-200`}>TechEthica</span> |
-      <span className={`${highlightStyle} transition-colors duration-200`}>Sunnah &amp; Science Research Labs</span> |
-      Powered by <span className={`${highlightStyle} transition-colors duration-200`}>TechEthica</span> |
-      All rights reserved
-    </p>
-  </div>
-</div>
-
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+          <p className={`${copyrightTextStyle} text-sm text-center`}>
+            © {new Date().getFullYear()}&nbsp;
+            <span className={`${highlightStyle} transition-colors duration-200`}>TechEthica</span> |
+            <span className={`${highlightStyle} transition-colors duration-200`}>Sunnah &amp; Science Research Labs</span> |
+            Powered by <span className={`${highlightStyle} transition-colors duration-200`}>TechEthica</span> |
+            All rights reserved
+          </p>
+        </div>
+      </div>
     </footer>
   );
 };
