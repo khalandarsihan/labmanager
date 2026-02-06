@@ -71,8 +71,8 @@ const Footer = () => {
               <a href="mailto:info@techethica.in" className={`${textStyle} ${linkHoverStyle} transition-colors duration-200 flex items-center gap-2 mt-2`}>
                 <i className={`far fa-envelope ${headingStyle} w-4`} /> info@techethica.in
               </a>
-              <a href="tel:+919591382400" className={`${textStyle} ${linkHoverStyle} transition-colors duration-200 flex items-center gap-2 mt-2`}>
-                <i className={`fas fa-phone ${headingStyle} w-4`} /> +91 95913 82400
+              <a href="tel:+919380131600" className={`${textStyle} ${linkHoverStyle} transition-colors duration-200 flex items-center gap-2 mt-2`}>
+                <i className={`fas fa-phone ${headingStyle} w-4`} /> +91 93801 31600
               </a>
             </address>
           </div>
