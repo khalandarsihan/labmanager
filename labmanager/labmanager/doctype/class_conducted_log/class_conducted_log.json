@@ -2,26 +2,34 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 0,
- "autoname": "format:CCL-{####}",
- "creation": "2026-03-03 00:00:00.000000",
+ "autoname": "format:CCL-{date}-{###}",
+ "creation": "2026-03-04 00:00:00.000000",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "section_break_class",
-  "timetable_master",
+  "timetable_slot",
   "date",
-  "day",
-  "time_slot",
+  "batch",
   "column_break_ccl1",
   "subject",
   "teacher",
-  "classroom",
-  "section_break_status",
   "status",
+  "section_break_timing",
+  "scheduled_start",
+  "scheduled_end",
   "column_break_ccl2",
-  "cancellation_reason",
-  "section_break_remarks",
-  "remarks"
+  "actual_start",
+  "actual_end",
+  "section_break_delay",
+  "late_start",
+  "delay_minutes",
+  "column_break_ccl3",
+  "section_break_totals",
+  "total_present",
+  "total_absent",
+  "column_break_ccl4",
+  "total_late"
  ],
  "fields": [
   {
@@ -30,36 +38,30 @@
    "label": "Class Details"
   },
   {
-   "fieldname": "timetable_master",
+   "fieldname": "timetable_slot",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Timetable",
+   "label": "Timetable Slot",
    "options": "Timetable Master",
    "reqd": 1
   },
   {
+   "default": "Today",
    "fieldname": "date",
    "fieldtype": "Date",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Date",
    "reqd": 1
   },
   {
-   "fieldname": "day",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "label": "Day",
-   "options": "Sunday\nMonday\nTuesday\nWednesday\nThursday\nFriday\nSaturday",
-   "read_only": 1
-  },
-  {
-   "fieldname": "time_slot",
+   "fieldname": "batch",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Time Slot",
-   "options": "Time Slot",
+   "label": "Batch",
+   "options": "Batch",
    "reqd": 1
   },
   {
@@ -72,7 +74,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Subject",
-   "options": "Subject",
+   "options": "Course",
    "reqd": 1
   },
   {
@@ -81,58 +83,108 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Teacher",
-   "options": "Teacher"
+   "options": "User",
+   "reqd": 1
   },
   {
-   "fieldname": "classroom",
-   "fieldtype": "Link",
-   "label": "Classroom",
-   "options": "Classroom"
-  },
-  {
-   "fieldname": "section_break_status",
-   "fieldtype": "Section Break",
-   "label": "Conduct Status"
-  },
-  {
-   "default": "Draft",
+   "default": "Ongoing",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Draft\nConducted\nCancelled"
+   "options": "Ongoing\nCompleted\nCancelled"
+  },
+  {
+   "fieldname": "section_break_timing",
+   "fieldtype": "Section Break",
+   "label": "Timing"
+  },
+  {
+   "fieldname": "scheduled_start",
+   "fieldtype": "Time",
+   "label": "Scheduled Start"
+  },
+  {
+   "fieldname": "scheduled_end",
+   "fieldtype": "Time",
+   "label": "Scheduled End"
   },
   {
    "fieldname": "column_break_ccl2",
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval:doc.status=='Cancelled'",
-   "fieldname": "cancellation_reason",
-   "fieldtype": "Small Text",
-   "label": "Cancellation Reason"
+   "fieldname": "actual_start",
+   "fieldtype": "Time",
+   "label": "Actual Start"
   },
   {
-   "fieldname": "section_break_remarks",
+   "fieldname": "actual_end",
+   "fieldtype": "Time",
+   "label": "Actual End"
+  },
+  {
+   "fieldname": "section_break_delay",
    "fieldtype": "Section Break",
-   "label": "Remarks"
+   "label": "Delay"
   },
   {
-   "fieldname": "remarks",
-   "fieldtype": "Small Text",
-   "label": "Remarks"
+   "default": "0",
+   "fieldname": "late_start",
+   "fieldtype": "Check",
+   "label": "Late Start"
+  },
+  {
+   "fieldname": "delay_minutes",
+   "fieldtype": "Int",
+   "label": "Delay (Minutes)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ccl3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_totals",
+   "fieldtype": "Section Break",
+   "label": "Attendance Totals"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_present",
+   "fieldtype": "Int",
+   "label": "Total Present",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "total_absent",
+   "fieldtype": "Int",
+   "label": "Total Absent",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_ccl4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "total_late",
+   "fieldtype": "Int",
+   "label": "Total Late",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [
   {
    "group": "Attendance",
-   "link_doctype": "Student Attendance",
-   "link_fieldname": "class_conducted_log"
+   "link_doctype": "Student Attendance TE",
+   "link_fieldname": "class_log"
   }
  ],
- "modified": "2026-03-03 00:00:00.000000",
+ "modified": "2026-03-04 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Class Conducted Log",
@@ -175,12 +227,12 @@
  "sort_order": "DESC",
  "states": [
   {
-   "color": "Gray",
-   "title": "Draft"
+   "color": "Blue",
+   "title": "Ongoing"
   },
   {
    "color": "Green",
-   "title": "Conducted"
+   "title": "Completed"
   },
   {
    "color": "Red",

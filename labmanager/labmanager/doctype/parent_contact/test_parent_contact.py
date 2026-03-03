@@ -3,7 +3,7 @@
 
 from frappe.tests import IntegrationTestCase, UnitTestCase
 
-EXTRA_TEST_RECORD_DEPENDENCIES = ["Student Profile"]
+EXTRA_TEST_RECORD_DEPENDENCIES = ["Student"]
 IGNORE_TEST_RECORD_DEPENDENCIES = []
 
 

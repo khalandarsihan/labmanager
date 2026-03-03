@@ -285,7 +285,7 @@ whitelisted_methods = {
     "labmanager.api.api.get_contact_info": True,
     "labmanager.api.api.save_contact_message": True,
     # Attendance & Communication
-    "labmanager.labmanager.doctype.notification_log.notification_log.send_notification": True,
+    "labmanager.labmanager.doctype.notification_log_te.notification_log_te.create_absent_alert": True,
 }
 
 web_template = [

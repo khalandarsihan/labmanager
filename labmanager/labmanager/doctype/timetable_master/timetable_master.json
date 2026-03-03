@@ -1,85 +1,108 @@
 {
  "actions": [],
  "allow_import": 1,
- "allow_rename": 1,
- "autoname": "format:TT-{####}",
- "creation": "2026-03-03 00:00:00.000000",
+ "allow_rename": 0,
+ "autoname": "format:TMST-{batch}-{day_of_week}-{period_number}",
+ "creation": "2026-03-04 00:00:00.000000",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "section_break_basic",
-  "class_schedule",
-  "academic_year",
+  "batch",
+  "day_of_week",
+  "period_number",
+  "is_active",
   "column_break_tm1",
-  "term",
-  "status",
-  "section_break_dates",
-  "effective_from",
+  "subject",
+  "teacher",
+  "room",
+  "academic_year",
+  "section_break_timing",
+  "scheduled_start",
   "column_break_tm2",
-  "effective_to",
-  "section_break_entries",
-  "timetable_entries"
+  "scheduled_end"
  ],
  "fields": [
   {
    "fieldname": "section_break_basic",
    "fieldtype": "Section Break",
-   "label": "Basic Information"
+   "label": "Slot Details"
   },
   {
-   "fieldname": "class_schedule",
+   "fieldname": "batch",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Class Schedule",
-   "options": "Class Schedule",
+   "label": "Batch",
+   "options": "Batch",
    "reqd": 1
   },
   {
-   "fetch_from": "class_schedule.academic_year",
-   "fetch_if_empty": 1,
-   "fieldname": "academic_year",
-   "fieldtype": "Link",
+   "fieldname": "day_of_week",
+   "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Academic Year",
-   "options": "Academic Year",
-   "read_only": 1
+   "label": "Day of Week",
+   "options": "Monday\nTuesday\nWednesday\nThursday\nFriday\nSaturday",
+   "reqd": 1
+  },
+  {
+   "fieldname": "period_number",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Period Number",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Active"
   },
   {
    "fieldname": "column_break_tm1",
    "fieldtype": "Column Break"
   },
   {
-   "fetch_from": "class_schedule.term",
-   "fetch_if_empty": 1,
-   "fieldname": "term",
+   "fieldname": "subject",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Term",
-   "options": "Academic Term",
-   "read_only": 1
+   "label": "Subject",
+   "options": "Course",
+   "reqd": 1
   },
   {
-   "default": "Draft",
-   "fieldname": "status",
-   "fieldtype": "Select",
+   "fieldname": "teacher",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Status",
-   "options": "Draft\nActive\nInactive"
+   "label": "Teacher",
+   "options": "User",
+   "reqd": 1
   },
   {
-   "fieldname": "section_break_dates",
+   "fieldname": "room",
+   "fieldtype": "Data",
+   "label": "Room"
+  },
+  {
+   "fieldname": "academic_year",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Academic Year",
+   "options": "Academic Year"
+  },
+  {
+   "fieldname": "section_break_timing",
    "fieldtype": "Section Break",
-   "label": "Validity"
+   "label": "Timing"
   },
   {
-   "fieldname": "effective_from",
-   "fieldtype": "Date",
-   "in_list_view": 1,
-   "label": "Effective From",
+   "fieldname": "scheduled_start",
+   "fieldtype": "Time",
+   "label": "Scheduled Start",
    "reqd": 1
   },
   {
@@ -87,20 +110,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "effective_to",
-   "fieldtype": "Date",
-   "label": "Effective To"
-  },
-  {
-   "fieldname": "section_break_entries",
-   "fieldtype": "Section Break",
-   "label": "Timetable Entries"
-  },
-  {
-   "fieldname": "timetable_entries",
-   "fieldtype": "Table",
-   "label": "Timetable Entries",
-   "options": "Timetable Entry"
+   "fieldname": "scheduled_end",
+   "fieldtype": "Time",
+   "label": "Scheduled End",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
@@ -108,10 +121,10 @@
   {
    "group": "Attendance",
    "link_doctype": "Class Conducted Log",
-   "link_fieldname": "timetable_master"
+   "link_fieldname": "timetable_slot"
   }
  ],
- "modified": "2026-03-03 00:00:00.000000",
+ "modified": "2026-03-04 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "LabManager",
  "name": "Timetable Master",
@@ -146,20 +159,7 @@
    "role": "Teacher"
   }
  ],
- "sort_field": "creation",
- "sort_order": "DESC",
- "states": [
-  {
-   "color": "Gray",
-   "title": "Draft"
-  },
-  {
-   "color": "Green",
-   "title": "Active"
-  },
-  {
-   "color": "Red",
-   "title": "Inactive"
-  }
- ]
+ "sort_field": "batch",
+ "sort_order": "ASC",
+ "states": []
 }

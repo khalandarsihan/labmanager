@@ -2,29 +2,34 @@
  "actions": [],
  "allow_import": 1,
  "allow_rename": 0,
- "autoname": "format:ATT-{####}",
- "creation": "2026-03-03 00:00:00.000000",
+ "autoname": "format:SATT-{date}-{###}",
+ "creation": "2026-03-04 00:00:00.000000",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_att1",
-  "class_conducted_log",
+  "section_break_class",
+  "class_log",
   "date",
-  "column_break_att1",
+  "subject",
+  "column_break_sa1",
   "status",
-  "section_break_att2",
+  "entry_time",
+  "late_minutes",
+  "section_break_student",
   "student",
-  "column_break_att2",
+  "student_name",
+  "column_break_sa2",
+  "marked_by",
   "remarks"
  ],
  "fields": [
   {
-   "fieldname": "section_break_att1",
+   "fieldname": "section_break_class",
    "fieldtype": "Section Break",
    "label": "Class"
   },
   {
-   "fieldname": "class_conducted_log",
+   "fieldname": "class_log",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
@@ -33,17 +38,24 @@
    "reqd": 1
   },
   {
-   "fetch_from": "class_conducted_log.date",
-   "fetch_if_empty": 1,
    "fieldname": "date",
    "fieldtype": "Date",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Date",
-   "read_only": 1
+   "reqd": 1
   },
   {
-   "fieldname": "column_break_att1",
+   "fieldname": "subject",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Subject",
+   "options": "Course",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_sa1",
    "fieldtype": "Column Break"
   },
   {
@@ -53,11 +65,21 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Present\nAbsent\nLate\nExcused",
+   "options": "Present\nAbsent\nLate\nOn Leave",
    "reqd": 1
   },
   {
-   "fieldname": "section_break_att2",
+   "fieldname": "entry_time",
+   "fieldtype": "Time",
+   "label": "Entry Time"
+  },
+  {
+   "fieldname": "late_minutes",
+   "fieldtype": "Int",
+   "label": "Late (Minutes)"
+  },
+  {
+   "fieldname": "section_break_student",
    "fieldtype": "Section Break",
    "label": "Student"
   },
@@ -67,12 +89,27 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Student",
-   "options": "Student Profile",
+   "options": "Student",
    "reqd": 1
   },
   {
-   "fieldname": "column_break_att2",
+   "fetch_from": "student.student_name",
+   "fetch_if_empty": 1,
+   "fieldname": "student_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Student Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_sa2",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "marked_by",
+   "fieldtype": "Link",
+   "label": "Marked By",
+   "options": "User"
   },
   {
    "fieldname": "remarks",
@@ -84,14 +121,14 @@
  "links": [
   {
    "group": "Notifications",
-   "link_doctype": "Notification Log",
-   "link_fieldname": "student_attendance"
+   "link_doctype": "Notification Log TE",
+   "link_fieldname": "student"
   }
  ],
- "modified": "2026-03-03 00:00:00.000000",
+ "modified": "2026-03-04 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "LabManager",
- "name": "Student Attendance",
+ "name": "Student Attendance TE",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
@@ -144,7 +181,7 @@
   },
   {
    "color": "Blue",
-   "title": "Excused"
+   "title": "On Leave"
   }
  ]
 }

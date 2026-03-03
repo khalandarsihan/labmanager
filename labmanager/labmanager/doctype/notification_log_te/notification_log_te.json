@@ -2,30 +2,29 @@
  "actions": [],
  "allow_import": 0,
  "allow_rename": 0,
- "autoname": "format:NOTIF-{####}",
- "creation": "2026-03-03 00:00:00.000000",
+ "autoname": "format:NLOG-{###}",
+ "creation": "2026-03-04 00:00:00.000000",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_nl1",
+  "section_break_recipient",
   "student",
   "parent_contact",
-  "notification_type",
   "column_break_nl1",
-  "status",
+  "message_type",
+  "whatsapp_number",
+  "section_break_status",
+  "delivery_status",
   "sent_at",
-  "section_break_nl2",
-  "message",
-  "section_break_nl3",
-  "triggered_by",
-  "class_conducted_log",
-  "column_break_nl3",
-  "student_attendance",
-  "error_log"
+  "column_break_nl2",
+  "meta_message_id",
+  "error_message",
+  "section_break_message",
+  "message_preview"
  ],
  "fields": [
   {
-   "fieldname": "section_break_nl1",
+   "fieldname": "section_break_recipient",
    "fieldtype": "Section Break",
    "label": "Recipient"
   },
@@ -35,7 +34,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Student",
-   "options": "Student Profile"
+   "options": "Student",
+   "reqd": 1
   },
   {
    "fieldname": "parent_contact",
@@ -43,30 +43,39 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Parent Contact",
-   "options": "Parent Contact",
-   "reqd": 1
-  },
-  {
-   "fieldname": "notification_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Notification Type",
-   "options": "WhatsApp\nSMS\nEmail",
-   "reqd": 1
+   "options": "Parent Contact"
   },
   {
    "fieldname": "column_break_nl1",
    "fieldtype": "Column Break"
   },
   {
-   "default": "Pending",
-   "fieldname": "status",
+   "fieldname": "message_type",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Status",
-   "options": "Pending\nSent\nFailed"
+   "label": "Message Type",
+   "options": "Absent Alert\nDaily Summary\nAssignment\nFee Reminder\nLeave Update\nWeekly Report"
+  },
+  {
+   "fieldname": "whatsapp_number",
+   "fieldtype": "Data",
+   "label": "WhatsApp Number",
+   "options": "Phone"
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Delivery"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "delivery_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Delivery Status",
+   "options": "Pending\nSent\nDelivered\nRead\nFailed"
   },
   {
    "fieldname": "sent_at",
@@ -75,57 +84,38 @@
    "read_only": 1
   },
   {
-   "fieldname": "section_break_nl2",
+   "fieldname": "column_break_nl2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "meta_message_id",
+   "fieldtype": "Data",
+   "label": "Meta Message ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Small Text",
+   "label": "Error Message",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_message",
    "fieldtype": "Section Break",
    "label": "Message"
   },
   {
-   "fieldname": "message",
-   "fieldtype": "Text Editor",
-   "label": "Message",
-   "reqd": 1
-  },
-  {
-   "fieldname": "section_break_nl3",
-   "fieldtype": "Section Break",
-   "label": "Context"
-  },
-  {
-   "default": "Manual",
-   "fieldname": "triggered_by",
-   "fieldtype": "Select",
-   "label": "Triggered By",
-   "options": "Absence\nManual\nScheduled"
-  },
-  {
-   "fieldname": "class_conducted_log",
-   "fieldtype": "Link",
-   "label": "Class Conducted Log",
-   "options": "Class Conducted Log"
-  },
-  {
-   "fieldname": "column_break_nl3",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "student_attendance",
-   "fieldtype": "Link",
-   "label": "Student Attendance",
-   "options": "Student Attendance"
-  },
-  {
-   "fieldname": "error_log",
+   "fieldname": "message_preview",
    "fieldtype": "Small Text",
-   "label": "Error Log",
-   "read_only": 1
+   "label": "Message Preview"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-03-03 00:00:00.000000",
+ "modified": "2026-03-04 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "LabManager",
- "name": "Notification Log",
+ "name": "Notification Log TE",
  "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
@@ -161,8 +151,16 @@
    "title": "Pending"
   },
   {
-   "color": "Green",
+   "color": "Blue",
    "title": "Sent"
+  },
+  {
+   "color": "Green",
+   "title": "Delivered"
+  },
+  {
+   "color": "Purple",
+   "title": "Read"
   },
   {
    "color": "Red",
