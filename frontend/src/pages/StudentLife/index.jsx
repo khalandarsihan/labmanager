@@ -11,51 +11,89 @@ const studentLifeSections = [
     title: "Sacred Knowledge & Islamic Learning",  
     text: `TechEthica's foundation is built upon authentic Islamic knowledge. Students engage with traditional texts in a structured environment, learning from qualified scholars and teachers. Our library houses extensive collections of classical works while our classrooms provide a conducive atmosphere for deep learning and discussion. The preservation and transmission of sacred knowledge forms the core of our curriculum, preparing students to uphold and apply Islamic principles in contemporary contexts.`,  
     images: [  
+       "/assets/labmanager/images/islamic_001.jpg",
+      //  "/assets/labmanager/images/islamic_002.jpg",
+      // "/assets/labmanager/images/islamic_002.jpg",
+      "/assets/labmanager/images/group.jpeg",
       "/assets/labmanager/images/focus_zone.jpg",
-      "/assets/labmanager/images/arabic_grammar_class.jpg"  
-    ]  
+      // "/assets/labmanager/images/arabic_grammar_class.jpg",
+     
+        ]  
   },  
-  {  
-    title: "Islamic Scholarship in the Digital Age",  
-    text: `At TechEthica, we bridge the gap between traditional Islamic scholarship and modern technology. Our students maintain the etiquette and appearance of traditional scholars while mastering contemporary digital skills. This unique blend allows them to preserve Islamic knowledge while making it accessible through modern platforms. Students learn to balance adherence to tradition with technological innovation, preparing them to serve as effective scholars in today's interconnected world.`,  
-    images: [  
-      "/assets/labmanager/images/group.jpeg", 
-      "/assets/labmanager/images/sahlv.svg",  
-    ]  
-  },  
-  {  
-    title: "Mentorship, Brotherhood & Belonging",  
-    text: `Brotherhood at TechEthica is rooted in sincerity, service, and shared purpose. Students grow through mentorship from teachers and peer learning with classmates. Whether in serious academic discussions or shared smiles outdoors, a sense of family and ummah spirit defines their experience.`,  
-    images: [  
-      "/assets/labmanager/images/mentorship.jpg",  
-      "/assets/labmanager/images/student_brotherhood_cheer-2.jpg",  
-      "/assets/labmanager/images/student_brotherhood_cheer.jpg"  
-    ]  
-  },
-  {  
-    title: "Focus, Self-Study & Growth Spaces",  
-    text: `Students at TechEthica develop strong habits of personal study. Quiet focus zones, organized study desks, and structured review routines allow them to take charge of their learning journey. They prepare, revise, reflect, and plan with clarity and motivation, knowing that personal excellence is part of worship.`,  
-    images: [  
-      "/assets/labmanager/images/cheelath1.jpeg",  
-      "/assets/labmanager/images/night_study.jpeg",  
-      "/assets/labmanager/images/sinank.png"  
-    ]  
-  },  
-  {  
+  // {  
+  //   title: "Islamic Scholarship in the Digital Age",  
+  //   text: `At TechEthica, we bridge the gap between traditional Islamic scholarship and modern technology. Our students maintain the etiquette and appearance of traditional scholars while mastering contemporary digital skills. This unique blend allows them to preserve Islamic knowledge while making it accessible through modern platforms. Students learn to balance adherence to tradition with technological innovation, preparing them to serve as effective scholars in today's interconnected world.`,  
+  //   images: [  
+  //     "/assets/labmanager/images/islamic_003.jpg",
+  //     "/assets/labmanager/images/group.jpeg",
+  //     // "/assets/labmanager/images/sahlv.svg",  
+  //   ]  
+  // },  
+    {  
     title: "Interactive, Modern Learning Spaces",  
     text: `In our classrooms, tradition meets innovation. Students learn in smart classrooms equipped with projectors and laptops, balancing handwritten notes with digital collaboration. Group learning, real-time coding, and tech-aided discussions make the experience dynamic and effective.`,  
     images: [  
-      "/assets/labmanager/images/smart_classroom.jpg",  
+      "/assets/labmanager/images/islamic_003.jpg",
+      "/assets/labmanager/images/islamic_002.jpg",
+        
       "/assets/labmanager/images/digital_classroom.jpg"  
     ]  
   },  
+  // NEW SECTION 1: Physics Laboratory
   {  
-    title: "Technology & Digital Fluency",  
-    text: `TechEthica blends modern education with Islamic values. Students learn web development, ERP systems, data science, and coding in environments that mimic real-world scenarios. Whether it's programming in Python, working with terminals, or collaborating on live projects, our students develop skills that are current, practical, and grounded in ethics.`,  
+    title: "Physics Laboratory & Experiments",  
+    text: `Our Physics laboratory provides students with hands-on experience in understanding fundamental principles of nature. Equipped with modern apparatus and measurement tools, students conduct experiments in mechanics, optics, electricity, and more. This practical approach reinforces theoretical knowledge while developing analytical and observational skills grounded in scientific methodology.`,  
     images: [  
-      "/assets/labmanager/images/spiritual_routine2.jpeg",  
-      "/assets/labmanager/images/group_code.jpeg",  
-      "/assets/labmanager/images/anas_code.jpeg"  
+      // "/assets/labmanager/images/physics_lab1.jpg",  
+      "/assets/labmanager/images/physics_lab2.jpg",  
+      "/assets/labmanager/images/physics_lab3.jpg",
+      // "/assets/labmanager/images/physics_lab4.jpg",
+      // "/assets/labmanager/images/physics_lab5.jpg",
+      // "/assets/labmanager/images/physics_lab6.jpg",
+      "/assets/labmanager/images/physics_lab7.jpg"  
+    ]  
+  },
+   // NEW SECTION 2: Chemistry Laboratory
+  {  
+    title: "Chemistry Laboratory & Research",  
+    text: `The Chemistry laboratory offers a safe and well-equipped environment for students to explore chemical reactions, compounds, and analytical techniques. From basic qualitative analysis to advanced organic chemistry experiments, students develop precision, safety awareness, and a deeper understanding of the molecular world through guided practical sessions.`,  
+    images: [  
+      "/assets/labmanager/images/chemistry_lab1.jpg",  
+      "/assets/labmanager/images/chemistry_lab2.jpg",  
+      "/assets/labmanager/images/chemistry_lab3.jpg"  
+    ]  
+  },
+    // NEW SECTION 3: Computer Science Lab
+  {  
+    title: "Computer Science & IT Infrastructure",  
+    text: `Our Computer Science lab features modern workstations and high-speed connectivity, enabling students to master programming, web development, database management, and software engineering. Students work on real-world projects, collaborate on coding challenges, and develop the technical expertise needed for careers in technology—all within an ethically guided framework.`,  
+    images: [  
+      // "/assets/labmanager/images/computer_lab1.jpg", 
+      "/assets/labmanager/images/computer_lab4.jpg", 
+      "/assets/labmanager/images/computer_lab2.jpg",
+      "/assets/labmanager/images/anas_code.jpeg",  
+      // "/assets/labmanager/images/computer_lab3.jpg",
+      // "/assets/labmanager/images/computer_lab4.jpg"  
+    ]  
+  },
+  // {  
+  //   title: "Technology & Digital Fluency",  
+  //   text: `TechEthica blends modern education with Islamic values. Students learn web development, ERP systems, data science, and coding in environments that mimic real-world scenarios. Whether it's programming in Python, working with terminals, or collaborating on live projects, our students develop skills that are current, practical, and grounded in ethics.`,  
+  //   images: [  
+  //     "/assets/labmanager/images/spiritual_routine2.jpeg",  
+  //     "/assets/labmanager/images/group_code.jpeg",  
+  //     "/assets/labmanager/images/anas_code.jpeg"  
+  //   ]  
+  // },  
+
+    {  
+    title: "Focus, Self-Study & Growth Spaces",  
+    text: `Students at TechEthica develop strong habits of personal study. Quiet focus zones, organized study desks, and structured review routines allow them to take charge of their learning journey. They prepare, revise, reflect, and plan with clarity and motivation, knowing that personal excellence is part of worship.`,  
+    images: [  
+      "/assets/labmanager/images/group_code.jpeg",
+      // "/assets/labmanager/images/cheelath1.jpeg",  
+      "/assets/labmanager/images/night_study.jpeg",  
+      "/assets/labmanager/images/sinank.png"  
     ]  
   },  
   {  
@@ -67,6 +105,20 @@ const studentLifeSections = [
       "/assets/labmanager/images/collaborative_learning_outdoors2.jpeg"  
     ]  
   },  
+  {  
+    title: "Mentorship, Brotherhood & Belonging",  
+    text: `Brotherhood at TechEthica is rooted in sincerity, service, and shared purpose. Students grow through mentorship from teachers and peer learning with classmates. Whether in serious academic discussions or shared smiles outdoors, a sense of family and ummah spirit defines their experience.`,  
+    images: [
+      "/assets/labmanager/images/islamic_006.jpg",
+      "/assets/labmanager/images/islamic_007.jpg", 
+      "/assets/labmanager/images/islamic_004.jpg",
+
+       
+      // "/assets/labmanager/images/mentorship.jpg",  
+      // "/assets/labmanager/images/student_brotherhood_cheer-2.jpg",  
+      // "/assets/labmanager/images/student_brotherhood_cheer.jpg"  
+    ]  
+  },
   {  
     title: "Physical Wellbeing & Sunnah Living",  
     text: `Physical movement is part of the student routine — from indoor cycling and treadmill walking to light fitness sessions. These moments support discipline, mental focus, and a Prophetic lifestyle. TechEthica believes in a holistic education: healthy bodies supporting healthy minds and hearts.`,  
