@@ -1,0 +1,172 @@
+{
+ "actions": [],
+ "allow_import": 0,
+ "allow_rename": 0,
+ "autoname": "format:NOTIF-{####}",
+ "creation": "2026-03-03 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_nl1",
+  "student",
+  "parent_contact",
+  "notification_type",
+  "column_break_nl1",
+  "status",
+  "sent_at",
+  "section_break_nl2",
+  "message",
+  "section_break_nl3",
+  "triggered_by",
+  "class_conducted_log",
+  "column_break_nl3",
+  "student_attendance",
+  "error_log"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_nl1",
+   "fieldtype": "Section Break",
+   "label": "Recipient"
+  },
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Student",
+   "options": "Student Profile"
+  },
+  {
+   "fieldname": "parent_contact",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Parent Contact",
+   "options": "Parent Contact",
+   "reqd": 1
+  },
+  {
+   "fieldname": "notification_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Notification Type",
+   "options": "WhatsApp\nSMS\nEmail",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_nl1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Pending\nSent\nFailed"
+  },
+  {
+   "fieldname": "sent_at",
+   "fieldtype": "Datetime",
+   "label": "Sent At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_nl2",
+   "fieldtype": "Section Break",
+   "label": "Message"
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Text Editor",
+   "label": "Message",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_nl3",
+   "fieldtype": "Section Break",
+   "label": "Context"
+  },
+  {
+   "default": "Manual",
+   "fieldname": "triggered_by",
+   "fieldtype": "Select",
+   "label": "Triggered By",
+   "options": "Absence\nManual\nScheduled"
+  },
+  {
+   "fieldname": "class_conducted_log",
+   "fieldtype": "Link",
+   "label": "Class Conducted Log",
+   "options": "Class Conducted Log"
+  },
+  {
+   "fieldname": "column_break_nl3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "student_attendance",
+   "fieldtype": "Link",
+   "label": "Student Attendance",
+   "options": "Student Attendance"
+  },
+  {
+   "fieldname": "error_log",
+   "fieldtype": "Small Text",
+   "label": "Error Log",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-03-03 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Notification Log",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Academics User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  {
+   "color": "Orange",
+   "title": "Pending"
+  },
+  {
+   "color": "Green",
+   "title": "Sent"
+  },
+  {
+   "color": "Red",
+   "title": "Failed"
+  }
+ ]
+}

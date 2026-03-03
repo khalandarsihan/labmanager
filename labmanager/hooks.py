@@ -268,7 +268,7 @@ whitelisted_methods = {
     "labmanager.labmanager.lab_core.lab_controller.end_lab_session": True,
     "labmanager.labmanager.lab_core.lab_controller.extend_lab_session": True,
     "labmanager.labmanager.lab_core.lab_controller.get_active_session": True,
-    "labmanager.labmanager.api.api.get_course_details": True,
+    "labmanager.api.api.get_course_details": True,
     "labmanager.api.api.register_student": True,
     "labmanager.api.api.get_registration_status": True,
     "labmanager.api.api.update_registration": True,
@@ -284,23 +284,10 @@ whitelisted_methods = {
     "labmanager.api.api.send_interview_notification": True,
     "labmanager.api.api.get_contact_info": True,
     "labmanager.api.api.save_contact_message": True,
-       
+    # Attendance & Communication
+    "labmanager.labmanager.doctype.notification_log.notification_log.send_notification": True,
 }
 
-# Add CORS configuration for your frontend
-cors_allowed_origins = ["*"]  # For development - restrict this in production
-cors_allowed_methods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-cors_allowed_headers = ["*"]
-cors_expose_headers = [
-    "X-Frappe-CSRF-Token",
-    "Content-Type",
-    "X-Rate-Limit-Limit",
-    "X-Rate-Limit-Remaining",
-    "X-Rate-Limit-Reset"
-]
-cors_allow_credentials = True
-
-# In hooks.py
 web_template = [
     {
         "template": "labmanager/web_template/techethica_navbar/techethica_navbar.html",
@@ -320,14 +307,6 @@ website_context = {
     "hide_footer": 1,
     # "hide_navbar": 1,
     "top_bar_items": []
-}
-
-{
-  "scripts": {
-    "build": "webpack --mode production",
-    "dev": "webpack --mode development --watch",
-    "build:css": "tailwindcss -i ./src/styles/base.css -o ../labmanager/public/css/style.css --watch"
-  }
 }
 
 # website_route_rules = [
@@ -366,76 +345,9 @@ website_route_rules = [
     # {"from_route": "/enroll/<id>", "to_route": "enroll/details"},
 ]
 
-api_spec = {
-    'labmanager.api.get_course_data': {
-        'methods': ['GET']
-    },
-        'labmanager.api.api.register_student': {
-        'methods': ['POST'],
-        'auth_required': False
-    },
-    'labmanager.api.api.get_registration_status': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-    'labmanager.api.api.update_registration': {
-        'methods': ['PUT'],
-        'auth_required': False
-    },
-    'labmanager.api.api.get_education_levels': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-    'labmanager.api.api.get_academic_programs': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-    'labmanager.api.api.get_islamic_specializations': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-    'labmanager.api.api.get_registration_details': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-        'labmanager.api.api.get_course_catalog': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-    'labmanager.api.api.get_exam_dates': {
-        'methods': ['POST'],
-        'auth_required': False
-},
-    'labmanager.api.api.get_application_status': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-    'labmanager.api.events.get_events': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-    'labmanager.api.events.get_event_details': {
-        'methods': ['GET'],
-        'auth_required': False
-    },
-    'labmanager.api.events.create_event': {
-        'methods': ['POST'],
-        'auth_required': True
-    },
-
-}
-
-
-override_whitelisted_methods = {
-    "your_app.api.get_course_details": "labmanager.api.get_course_details",
-    "your_app.api.enroll_student": "labmanager.api.enroll_student"
-}
-
 socketio = True
 
 max_file_size = 10 * 1024 * 1024  # 10MB
-
-# Add this to your hooks.py file
 
 # fixtures = [
 #     # Education related doctypes
