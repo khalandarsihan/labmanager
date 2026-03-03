@@ -344,21 +344,23 @@ const ContactPage = () => {
         </div>
         
         {/* Map Section */}
-        <div className="mt-12">
-          <div className={`${themeStyles.card.bg} ${themeStyles.card.border} rounded-lg shadow-md p-4 border`}>
-            <div className="overflow-hidden rounded-md h-64">
-              <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.0606080253!2d77.70762151534796!3d13.034956817134118!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae11a676e382d1%3A0x7bde0f6ebd4e2cd7!2sBidarahalli%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1619116241415!5m2!1sen!2sin" 
-                width="100%" 
-                height="100%" 
-                style={{ border: 0 }} 
-                allowFullScreen="" 
-                loading="lazy"
-                title="TechEthica Location"
-              ></iframe>
-            </div>
-          </div>
-        </div>
+
+<div className="mt-12">
+  <div className={`${themeStyles.card.bg} ${themeStyles.card.border} rounded-lg shadow-md p-4 border`}>
+    <div className="overflow-hidden rounded-md h-64">
+      <iframe 
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.6810839214486!2d77.7145663!3d13.055960500000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae11348aaf9813%3A0xa6be079ccf160503!2sTechEthica%20%7C%20Sunnah%20%26%20Science%20Research%20Labs!5e0!3m2!1sen!2sin!4v1772536779686!5m2!1sen!2sin" 
+        width="100%" 
+        height="100%" 
+        style={{ border: 0 }} 
+        allowFullScreen="" 
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        title="TechEthica Location"
+      ></iframe>
+    </div>
+  </div>
+</div>
         
 
       </div>
