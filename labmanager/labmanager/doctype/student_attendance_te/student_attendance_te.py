@@ -10,6 +10,14 @@ class StudentAttendanceTE(Document):
 	def before_insert(self):
 		if not self.marked_by:
 			self.marked_by = frappe.session.user
+		self._populate_student_name()
+
+	def _populate_student_name(self):
+		"""Auto-fill student_name from the linked Student Profile → User."""
+		if self.student and not self.student_name:
+			user_id = frappe.db.get_value("Student Profile", self.student, "student_id")
+			if user_id:
+				self.student_name = frappe.db.get_value("User", user_id, "full_name") or user_id
 
 	def validate(self):
 		self._validate_no_duplicate()
