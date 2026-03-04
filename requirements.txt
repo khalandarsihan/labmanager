@@ -2,3 +2,4 @@
 docker
 paramiko
 requests
+qrcode[pil]

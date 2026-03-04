@@ -6,14 +6,30 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "section_basic",
   "full_name",
   "batch",
+  "class_section",
   "qr_id",
   "column_break_sp1",
   "registration",
-  "student_id"
+  "student_id",
+  "section_idcard",
+  "father_name",
+  "blood_group",
+  "date_of_birth",
+  "column_break_sp2",
+  "address",
+  "emergency_contact",
+  "section_qr",
+  "qr_code"
  ],
  "fields": [
+  {
+   "fieldname": "section_basic",
+   "fieldtype": "Section Break",
+   "label": "Basic Info"
+  },
   {
    "fieldname": "full_name",
    "fieldtype": "Data",
@@ -31,11 +47,18 @@
    "options": "Batch"
   },
   {
+   "fieldname": "class_section",
+   "fieldtype": "Data",
+   "in_list_view": 0,
+   "label": "Class / Course"
+  },
+  {
    "fieldname": "qr_id",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "QR ID",
+   "read_only": 1,
    "unique": 1
   },
   {
@@ -56,6 +79,52 @@
    "fieldtype": "Link",
    "label": "Portal User",
    "options": "User"
+  },
+  {
+   "fieldname": "section_idcard",
+   "fieldtype": "Section Break",
+   "label": "ID Card Details"
+  },
+  {
+   "fieldname": "father_name",
+   "fieldtype": "Data",
+   "label": "Father's Name"
+  },
+  {
+   "fieldname": "blood_group",
+   "fieldtype": "Select",
+   "label": "Blood Group",
+   "options": "\nA+\nA-\nB+\nB-\nO+\nO-\nAB+\nAB-"
+  },
+  {
+   "fieldname": "date_of_birth",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "column_break_sp2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Address"
+  },
+  {
+   "fieldname": "emergency_contact",
+   "fieldtype": "Data",
+   "label": "Emergency Contact"
+  },
+  {
+   "fieldname": "section_qr",
+   "fieldtype": "Section Break",
+   "label": "QR Code"
+  },
+  {
+   "fieldname": "qr_code",
+   "fieldtype": "Attach Image",
+   "label": "QR Code",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,

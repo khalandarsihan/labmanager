@@ -113,7 +113,13 @@ def mark_attendance(class_log: str, qr_id: str, scan_time: str = None) -> dict:
 	"""
 	log = frappe.get_doc("Class Conducted Log", class_log)
 
+	# QR encodes the student doc name (e.g. STUD-001); also fall back to qr_id field
 	student = frappe.db.get_value(
+		"Student Profile",
+		{"name": qr_id, "batch": log.batch},
+		["name", "full_name"],
+		as_dict=True,
+	) or frappe.db.get_value(
 		"Student Profile",
 		{"qr_id": qr_id, "batch": log.batch},
 		["name", "full_name"],
