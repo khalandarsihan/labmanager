@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useFrappePostCall } from "frappe-react-sdk";
 import ClassHeader from "./components/ClassHeader";
 import QRScanner from "./components/QRScanner";
 import AttendanceSummary from "./components/AttendanceSummary";
@@ -14,50 +15,51 @@ const TeacherAttendancePage = () => {
 	const [closeSummary, setCloseSummary] = useState(null);
 	const { toast, Toaster } = useToast();
 
+	const { call: getSlot } = useFrappePostCall(
+		"labmanager.attendance.api.get_current_timetable_slot"
+	);
+	const { call: createLog } = useFrappePostCall(
+		"labmanager.attendance.api.create_class_log"
+	);
+	const { call: markAtt } = useFrappePostCall(
+		"labmanager.attendance.api.mark_attendance"
+	);
+	const { call: closeLog } = useFrappePostCall(
+		"labmanager.attendance.api.close_class_log"
+	);
+
 	useEffect(() => {
-		frappe.call({
-			method: "labmanager.attendance.api.get_current_timetable_slot",
-			callback: (r) => {
-				if (r.exc || !r.message || !r.message.slot) {
-					setSlotData(r.message || null);
+		getSlot({})
+			.then((r) => {
+				const data = r.message;
+				if (!data || !data.slot) {
+					setSlotData(data || null);
 					setPhase("no-class");
 				} else {
-					setSlotData(r.message);
+					setSlotData(data);
 					setPhase("ready");
 				}
-			},
-		});
+			})
+			.catch(() => setPhase("no-class"));
 	}, []);
 
 	const handleStartClass = useCallback(() => {
-		frappe.call({
-			method: "labmanager.attendance.api.create_class_log",
-			args: { timetable_slot: slotData.slot },
-			callback: (r) => {
-				if (!r.exc && r.message) {
+		createLog({ timetable_slot: slotData.slot })
+			.then((r) => {
+				if (r.message) {
 					setClassLog(r.message);
 					setPhase("scanning");
 				}
-			},
-		});
-	}, [slotData]);
+			})
+			.catch(() => {});
+	}, [slotData, createLog]);
 
 	const handleScan = useCallback(
 		(qrId) => {
 			if (!classLog) return;
 			const scan_time = new Date().toTimeString().slice(0, 8);
-			frappe.call({
-				method: "labmanager.attendance.api.mark_attendance",
-				args: { class_log: classLog, qr_id: qrId, scan_time },
-				callback: (r) => {
-					if (r.exc) {
-						toast({
-							title: "Invalid QR",
-							description: String(r.exc[0] || "Unknown error"),
-							variant: "destructive",
-						});
-						return;
-					}
+			markAtt({ class_log: classLog, qr_id: qrId, scan_time })
+				.then((r) => {
 					const result = r.message;
 					if (result.already_marked) {
 						toast({
@@ -76,25 +78,29 @@ const TeacherAttendancePage = () => {
 							...prev,
 						]);
 					}
-				},
-			});
+				})
+				.catch((err) => {
+					toast({
+						title: "Invalid QR",
+						description: String(err?.message || "Unknown error"),
+						variant: "destructive",
+					});
+				});
 		},
-		[classLog, toast]
+		[classLog, toast, markAtt]
 	);
 
 	const handleEndClass = useCallback(() => {
 		if (!classLog) return;
-		frappe.call({
-			method: "labmanager.attendance.api.close_class_log",
-			args: { class_log: classLog },
-			callback: (r) => {
-				if (!r.exc && r.message) {
+		closeLog({ class_log: classLog })
+			.then((r) => {
+				if (r.message) {
 					setCloseSummary(r.message);
 					setPhase("closed");
 				}
-			},
-		});
-	}, [classLog]);
+			})
+			.catch(() => {});
+	}, [classLog, closeLog]);
 
 	const totalStudents = slotData?.student_list?.length || 0;
 	const markedCount = attendanceList.length;
