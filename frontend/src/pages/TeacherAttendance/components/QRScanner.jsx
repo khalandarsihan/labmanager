@@ -8,10 +8,13 @@ const QRScanner = ({ onScan }) => {
 	const canvasRef = useRef(null);
 	const animationRef = useRef(null);
 	const lastScanRef = useRef(0);
+	const detectorRef = useRef(null); // native BarcodeDetector if available
+	const scanningRef = useRef(false); // prevent concurrent async detections
 	const [cameraError, setCameraError] = useState(null);
 	const [ready, setReady] = useState(false);
 	const [lastDetected, setLastDetected] = useState(null);
 	const [manualInput, setManualInput] = useState("");
+	const [engine, setEngine] = useState(""); // "native" | "jsqr"
 
 	const fireScan = useCallback(
 		(data) => {
@@ -28,37 +31,66 @@ const QRScanner = ({ onScan }) => {
 	const tick = useCallback(() => {
 		const video = videoRef.current;
 		const canvas = canvasRef.current;
-		if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA) {
+		if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
 			animationRef.current = requestAnimationFrame(tick);
 			return;
 		}
 
-		canvas.width = video.videoWidth;
-		canvas.height = video.videoHeight;
-		const ctx = canvas.getContext("2d");
-		ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-		const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-		// invertFirst helps detect QR codes displayed on phone/screen
-		const code = jsQR(imageData.data, imageData.width, imageData.height, {
-			inversionAttempts: "invertFirst",
-		});
-
-		if (code && code.data) {
-			fireScan(code.data);
+		if (detectorRef.current) {
+			// Native BarcodeDetector (Chrome / Chromium — best detection)
+			if (!scanningRef.current) {
+				scanningRef.current = true;
+				detectorRef.current
+					.detect(video)
+					.then((codes) => {
+						if (codes.length > 0) fireScan(codes[0].rawValue);
+					})
+					.catch(() => {})
+					.finally(() => { scanningRef.current = false; });
+			}
+		} else if (canvas) {
+			// jsQR fallback (Firefox / older browsers)
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+			const ctx = canvas.getContext("2d");
+			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+			const code = jsQR(imageData.data, imageData.width, imageData.height, {
+				inversionAttempts: "invertFirst",
+			});
+			if (code && code.data) fireScan(code.data);
 		}
 
 		animationRef.current = requestAnimationFrame(tick);
 	}, [fireScan]);
 
 	useEffect(() => {
+		// Initialise the best available detector
+		if ("BarcodeDetector" in window) {
+			BarcodeDetector.getSupportedFormats().then((formats) => {
+				if (formats.includes("qr_code")) {
+					detectorRef.current = new BarcodeDetector({ formats: ["qr_code"] });
+					setEngine("native");
+				} else {
+					setEngine("jsqr");
+				}
+			});
+		} else {
+			setEngine("jsqr");
+		}
+	}, []);
+
+	useEffect(() => {
 		let stream = null;
 
-		// Try rear camera first; browsers fall back to front on laptops
-		const constraints = { video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } } };
-
 		navigator.mediaDevices
-			.getUserMedia(constraints)
+			.getUserMedia({
+				video: {
+					facingMode: { ideal: "environment" },
+					width: { ideal: 1280 },
+					height: { ideal: 720 },
+				},
+			})
 			.then((s) => {
 				stream = s;
 				if (videoRef.current) {
@@ -106,9 +138,9 @@ const QRScanner = ({ onScan }) => {
 				<video ref={videoRef} className="w-full max-h-72 object-cover" playsInline muted />
 				<canvas ref={canvasRef} className="hidden" />
 
-				{/* Viewfinder overlay */}
+				{/* Viewfinder corners */}
 				<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-					<div className="w-48 h-48 border-2 border-amber-400/70 rounded-lg relative">
+					<div className="w-48 h-48 relative">
 						<div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-amber-400 rounded-tl" />
 						<div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-amber-400 rounded-tr" />
 						<div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-amber-400 rounded-bl" />
@@ -117,14 +149,27 @@ const QRScanner = ({ onScan }) => {
 				</div>
 
 				{/* Status bar */}
-				<div className="absolute bottom-2 left-0 right-0 text-center">
-					<span className="text-xs bg-gray-950/80 text-amber-300 px-3 py-1 rounded-full">
-						{!ready ? "Starting camera…" : lastDetected ? `✓ ${lastDetected}` : "Point camera at student QR code"}
-					</span>
+				<div className="absolute bottom-2 left-0 right-0 text-center space-y-1">
+					<div>
+						<span className="text-xs bg-gray-950/80 text-amber-300 px-3 py-1 rounded-full">
+							{!ready
+								? "Starting camera…"
+								: lastDetected
+								? `✓ ${lastDetected}`
+								: "Point camera at student QR code"}
+						</span>
+					</div>
+					{engine && (
+						<div>
+							<span className="text-xs text-gray-600">
+								{engine === "native" ? "● Native scanner" : "● jsQR fallback"}
+							</span>
+						</div>
+					)}
 				</div>
 			</div>
 
-			{/* Manual fallback */}
+			{/* Manual fallback — always visible */}
 			<ManualInput value={manualInput} onChange={setManualInput} onSubmit={handleManualSubmit} />
 		</div>
 	);
