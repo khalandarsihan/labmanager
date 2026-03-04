@@ -496,7 +496,7 @@ const generatePdf = async () => {
   });
 
   // Centered footer text with updated information
-  const footerText = 'TechEthica | Sunnah & Science Research Labs | admin@techethica.in | +91 95913 82400';
+  const footerText = 'TechEthica | Sunnah & Science Research Labs | admin@techethica.in | +91 93801 31600';
   const textWidth = helveticaFont.widthOfTextAtSize(footerText, textSize - 1);
   const centerX = (page.getWidth() - textWidth) / 2;
 

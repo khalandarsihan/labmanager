@@ -2359,7 +2359,7 @@ def send_interview_notification(email, student_name, registration_id, date, time
                 <a href="{tracking_url}" style="display: inline-block; background-color: #6d28d9; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">Track Your Application</a>
             </p>
             
-            <p>If you need to reschedule or have any questions, please contact our admissions office as soon as possible at <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at <a href="tel:+91 95913 82400" style="color: #6d28d9;">+91 95913 82400</a>.</p>
+            <p>If you need to reschedule or have any questions, please contact our admissions office as soon as possible at <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at <a href="tel:+91 93801 31600" style="color: #6d28d9;">+91 93801 31600</a>.</p>
             
             <p style="margin-top: 30px;">We look forward to meeting you!</p>
             
@@ -2808,7 +2808,7 @@ def get_timeline_entries(registration_id):
 
 #             <p>If you have any questions, feel free to reach out to us at 
 #                 <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at 
-#                 <a href="tel:+91 95913 82400" style="color: #6d28d9;">+91 95913 82400</a>.
+#                 <a href="tel:+91 93801 31600" style="color: #6d28d9;">+91 93801 31600</a>.
 #             </p>
 
 #             <p style="margin-top: 30px;">Warm regards,<br>
@@ -2905,7 +2905,7 @@ def send_registration_pdf(registration_id, email, pdf_data=None, first_name='', 
 
             <p>If you have any questions, feel free to reach out to us at 
                 <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at 
-                <a href="tel:+91 95913 82400" style="color: #6d28d9;">+91 95913 82400</a>.
+                <a href="tel:+91 93801 31600" style="color: #6d28d9;">+91 93801 31600</a>.
             </p>
 
             <p style="margin-top: 30px;">Warm regards,<br>
@@ -3009,7 +3009,7 @@ def get_contact_info():
         contact_data = {
             "address": website_settings.get("address") or company_data.get("address") or "Bidarahalli, Bengaluru, KA, India",
             "email": website_settings.get("contact_email") or company_data.get("email") or "info@techethica.in",
-            "phone": website_settings.get("contact_phone") or company_data.get("phone") or "+91 95913 82400",
+            "phone": website_settings.get("contact_phone") or company_data.get("phone") or "+91 93801 31600",
             "office_hours": website_settings.get("office_hours") or "Monday - Friday: 9AM - 5PM",
             "about": website_settings.get("about_us_text") or "TechEthica is a pioneering research laboratory dedicated to exploring the intersection of Sunnah and Science."
         }
@@ -3022,7 +3022,7 @@ def get_contact_info():
         return {
             "address": "Bidarahalli, Bengaluru, KA, India",
             "email": "info@techethica.in",
-            "phone": "+91 95913 82400",
+            "phone": "+91 93801 31600",
             "office_hours": "Monday - Friday: 9AM - 5PM",
             "about": "TechEthica is a pioneering research laboratory dedicated to exploring the intersection of Sunnah and Science."
         }
@@ -3185,7 +3185,7 @@ def send_acceptance_notification(registration_id):
                 <a href="{tracking_url}" style="display: inline-block; background-color: #6d28d9; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; font-weight: bold;">Track Your Application</a>
             </p>
             
-            <p>If you have any questions, please contact our admissions office at <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at <a href="tel:+91 95913 82400" style="color: #6d28d9;">+91 95913 82400</a>.</p>
+            <p>If you have any questions, please contact our admissions office at <a href="mailto:admin@techethica.in" style="color: #6d28d9;">admin@techethica.in</a> or call us at <a href="tel:+91 93801 31600" style="color: #6d28d9;">+91 93801 31600</a>.</p>
             
             <p style="margin-top: 30px;">Warm regards,<br>
             <strong>The TechEthica Admissions Team</strong></p>

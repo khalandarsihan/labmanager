@@ -14,7 +14,7 @@ const ContactPage = () => {
   const [contactInfo, setContactInfo] = useState({
     address: "Bidarahalli, Bengaluru, KA, India",
     email: "info@techethica.in",
-    phone: "+91 95913 82400",
+    phone: "+91 93801 31600",
     office_hours: "Monday - Friday: 9AM - 5PM",
     about: "TechEthica is a pioneering research laboratory dedicated to exploring the intersection of Sunnah and Science."
   });
