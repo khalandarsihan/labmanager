@@ -13,12 +13,26 @@ def _time_to_minutes(t) -> int:
 	return t.hour * 60 + t.minute
 
 
+def _students_in_batch(batch: str) -> list[dict]:
+	"""Return all active Student Profile rows enrolled in the given batch."""
+	return frappe.db.sql(
+		"""
+		SELECT sp.name, sp.full_name
+		FROM `tabStudent Profile` sp
+		INNER JOIN `tabStudent Batch Enrollment` sbe ON sbe.parent = sp.name
+		WHERE sbe.batch = %s AND sbe.is_active = 1
+		""",
+		batch,
+		as_dict=True,
+	)
+
+
 @frappe.whitelist()
 def get_current_timetable_slot() -> dict:
 	"""
 	Return the active timetable slot for the logged-in teacher.
 	Falls back to the next upcoming slot if no class is currently active.
-	Includes the student list for the slot's batch.
+	Includes the student list for the slot's batch (via enrollments).
 	"""
 	teacher = frappe.session.user
 	day_map = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -52,11 +66,7 @@ def get_current_timetable_slot() -> dict:
 	slot_start = get_time(result_slot.scheduled_start)
 	delay_minutes = max(0, _time_to_minutes(now) - _time_to_minutes(slot_start)) if is_active else 0
 
-	students = frappe.get_all(
-		"Student Profile",
-		filters={"batch": result_slot.batch},
-		fields=["name", "full_name", "qr_id"],
-	)
+	students = _students_in_batch(result_slot.batch)
 
 	return {
 		"slot": result_slot.name,
@@ -109,27 +119,33 @@ def mark_attendance(class_log: str, qr_id: str, scan_time: str = None) -> dict:
 	"""
 	Mark attendance for the student identified by qr_id.
 	Returns {student_name, status, late_minutes, already_marked}.
-	Throws if the QR code is invalid or student is not in the batch.
+	Throws if the QR code is invalid or student is not enrolled in the batch.
 	"""
 	log = frappe.get_doc("Class Conducted Log", class_log)
 
 	# QR encodes the student doc name (e.g. STUD-001); also fall back to qr_id field.
-	# Look up WITHOUT batch filter first so we can give a clear "wrong batch" message.
 	student = frappe.db.get_value(
 		"Student Profile",
 		{"name": qr_id},
-		["name", "full_name", "batch"],
+		["name", "full_name"],
 		as_dict=True,
 	) or frappe.db.get_value(
 		"Student Profile",
 		{"qr_id": qr_id},
-		["name", "full_name", "batch"],
+		["name", "full_name"],
 		as_dict=True,
 	)
 	if not student:
 		frappe.throw(_("QR code not recognised. Please check the student ID."))
-	if log.batch and student.batch != log.batch:
-		frappe.throw(_("{0} is not enrolled in this batch.").format(student.full_name))
+
+	# Verify the student is enrolled in the batch for this class
+	if log.batch:
+		enrolled = frappe.db.exists(
+			"Student Batch Enrollment",
+			{"parent": student.name, "batch": log.batch, "is_active": 1},
+		)
+		if not enrolled:
+			frappe.throw(_("{0} is not enrolled in this batch.").format(student.full_name))
 
 	existing = frappe.db.get_value(
 		"Student Attendance TE",
@@ -180,16 +196,12 @@ def mark_attendance(class_log: str, qr_id: str, scan_time: str = None) -> dict:
 @frappe.whitelist()
 def close_class_log(class_log: str) -> dict:
 	"""
-	Close a class: mark all unmarked students Absent, set actual_end,
+	Close a class: mark all unenrolled/unmarked students Absent, set actual_end,
 	enqueue WhatsApp alerts, and return final totals + duration.
 	"""
 	log = frappe.get_doc("Class Conducted Log", class_log)
 
-	all_students = frappe.get_all(
-		"Student Profile",
-		filters={"batch": log.batch},
-		fields=["name", "full_name"],
-	)
+	all_students = _students_in_batch(log.batch)
 	marked = {
 		r.student
 		for r in frappe.get_all(

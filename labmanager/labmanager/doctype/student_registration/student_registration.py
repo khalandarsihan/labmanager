@@ -41,6 +41,7 @@
 # Student Registration doctype hooks in student_registration.py
 import frappe
 from frappe.model.document import Document
+from frappe.utils import nowdate
 from labmanager.timeline_service import create_timeline_entry, ensure_initial_timeline_entry
 from labmanager.utils import create_default_document_requirements, get_default_next_steps
 
@@ -104,10 +105,49 @@ class StudentRegistration(Document):
         parts = [self.first_name, self.middle_name, self.last_name]
         full_name = " ".join(p for p in parts if p)
 
+        # Build a combined address string from the registration address parts
+        addr_parts = [
+            self.address,
+            self.city,
+            self.state,
+            self.postal_code,
+            str(self.country) if self.country else None,
+        ]
+        combined_address = ", ".join(p for p in addr_parts if p) or None
+
+        # Fetch the Academic Program label for class_section
+        program_name = None
+        if self.desired_academic_program:
+            program_name = frappe.db.get_value(
+                "Academic Program", self.desired_academic_program, "program_name"
+            ) or self.desired_academic_program
+
+        # Look up batches linked to this program so we can auto-enroll
+        program_batches = []
+        if self.desired_academic_program:
+            program_batches = frappe.get_all(
+                "Program Batch Mapping",
+                filters={"academic_program": self.desired_academic_program, "is_active": 1},
+                fields=["batch"],
+            )
+
+        enrollments = [
+            {"batch": pb.batch, "enrolled_on": nowdate(), "is_active": 1}
+            for pb in program_batches
+        ]
+
         profile = frappe.get_doc({
             "doctype": "Student Profile",
             "full_name": full_name,
             "registration": self.name,
+            "gender": self.gender,
+            "date_of_birth": self.date_of_birth,
+            "phone": self.phone,
+            "email": self.email,
+            "address": combined_address,
+            "profile_image": self.profile_image,
+            "class_section": program_name,
+            "enrollments": enrollments,
         })
         profile.insert(ignore_permissions=True)
         frappe.db.set_value("Student Registration", self.name, "student_profile", profile.name)

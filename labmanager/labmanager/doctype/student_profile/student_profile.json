@@ -8,13 +8,18 @@
  "field_order": [
   "section_basic",
   "full_name",
-  "batch",
+  "gender",
   "class_section",
   "qr_id",
   "column_break_sp1",
   "registration",
   "student_id",
+  "phone",
+  "email",
+  "section_enrollments",
+  "enrollments",
   "section_idcard",
+  "profile_image",
   "father_name",
   "blood_group",
   "date_of_birth",
@@ -39,12 +44,10 @@
    "reqd": 1
   },
   {
-   "fieldname": "batch",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Batch",
-   "options": "Batch"
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "\nMale\nFemale\nOther"
   },
   {
    "fieldname": "class_section",
@@ -81,9 +84,36 @@
    "options": "User"
   },
   {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "label": "Email",
+   "options": "Email"
+  },
+  {
+   "fieldname": "section_enrollments",
+   "fieldtype": "Section Break",
+   "label": "Batch Enrollments"
+  },
+  {
+   "fieldname": "enrollments",
+   "fieldtype": "Table",
+   "label": "Enrollments",
+   "options": "Student Batch Enrollment"
+  },
+  {
    "fieldname": "section_idcard",
    "fieldtype": "Section Break",
    "label": "ID Card Details"
+  },
+  {
+   "fieldname": "profile_image",
+   "fieldtype": "Attach Image",
+   "label": "Profile Photo"
   },
   {
    "fieldname": "father_name",

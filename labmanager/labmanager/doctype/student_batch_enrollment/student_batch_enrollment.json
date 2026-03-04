@@ -1,0 +1,43 @@
+{
+ "actions": [],
+ "creation": "2026-03-04 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "batch",
+  "enrolled_on",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "batch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Batch",
+   "options": "Batch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "enrolled_on",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Enrolled On"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "in_list_view": 1,
+   "label": "Active"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "modified": "2026-03-04 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Student Batch Enrollment",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": []
+}

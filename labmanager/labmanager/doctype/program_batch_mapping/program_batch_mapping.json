@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "autoname": "format:PBM-{####}",
+ "creation": "2026-03-04 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "academic_program",
+  "batch",
+  "batch_type",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "academic_program",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Academic Program",
+   "options": "Academic Program",
+   "reqd": 1
+  },
+  {
+   "fieldname": "batch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Batch",
+   "options": "Batch",
+   "reqd": 1
+  },
+  {
+   "fieldname": "batch_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Batch Type",
+   "options": "Academic\nIslamic Studies\nCommon"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "default": "1",
+   "in_list_view": 1,
+   "label": "Active"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "modified": "2026-03-04 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Program Batch Mapping",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Academics User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "academic_program",
+ "sort_order": "ASC",
+ "states": []
+}
