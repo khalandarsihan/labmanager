@@ -1,0 +1,10 @@
+{% extends "templates/layout.html" %} {% block title %}Teacher Attendance — TechEthica{% endblock %} {% block
+head %}
+{% endblock %} {% block content %}
+<div id="teacher-attendance-root"></div>
+{% endblock %} {% block scripts %}
+<script type="text/javascript">
+	window.socketPort = "{{ socketPort }}";
+</script>
+<script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
+{% endblock %}

@@ -286,6 +286,11 @@ whitelisted_methods = {
     "labmanager.api.api.save_contact_message": True,
     # Attendance & Communication
     "labmanager.labmanager.doctype.notification_log_te.notification_log_te.create_absent_alert": True,
+    # QR Attendance API
+    "labmanager.attendance.api.get_current_timetable_slot": True,
+    "labmanager.attendance.api.create_class_log": True,
+    "labmanager.attendance.api.mark_attendance": True,
+    "labmanager.attendance.api.close_class_log": True,
 }
 
 web_template = [
@@ -339,6 +344,7 @@ website_route_rules = [
     {"from_route": "/contact-us", "to_route": "contact-us"},
     {"from_route": "/events", "to_route": "events"},
     {"from_route": "/event-details", "to_route": "events/event-details"},
+    {"from_route": "/teacher-attendance", "to_route": "teacher-attendance"},
     # {"from_route": "/admin/applications", "to_route": "admin/applications"},
     # {"from_route": "/admin/applications/<id>", "to_route": "admin/applications/details"},
     # {"from_route": "/enroll", "to_route": "enroll"},

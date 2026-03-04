@@ -7,8 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "full_name",
-  "registration",
+  "batch",
+  "qr_id",
   "column_break_sp1",
+  "registration",
   "student_id"
  ],
  "fields": [
@@ -21,6 +23,26 @@
    "reqd": 1
   },
   {
+   "fieldname": "batch",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Batch",
+   "options": "Batch"
+  },
+  {
+   "fieldname": "qr_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "QR ID",
+   "unique": 1
+  },
+  {
+   "fieldname": "column_break_sp1",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "registration",
    "fieldtype": "Link",
    "in_list_view": 1,
@@ -28,10 +50,6 @@
    "label": "Registration",
    "options": "Student Registration",
    "read_only": 1
-  },
-  {
-   "fieldname": "column_break_sp1",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "student_id",
