@@ -1,9 +1,11 @@
 import React, { useRef, useEffect, useCallback, useState } from "react";
 import jsQR from "jsqr";
+import { useTheme } from "../../../components/ui/ThemeContext";
 
 const COOLDOWN_MS = 2000;
 
 const QRScanner = ({ onScan }) => {
+	const { useLightTheme, themeStyles } = useTheme();
 	const videoRef = useRef(null);
 	const canvasRef = useRef(null);
 	const animationRef = useRef(null);
@@ -121,37 +123,53 @@ const QRScanner = ({ onScan }) => {
 		}
 	};
 
+	const accentColor = useLightTheme ? "border-purple-400" : "border-amber-400";
+	const cornerColor = useLightTheme ? "border-purple-500" : "border-amber-400";
+
 	if (cameraError) {
 		return (
 			<div className="space-y-3">
-				<div className="rounded-lg border border-red-700/50 bg-red-950/30 p-4 text-center text-red-400 text-sm">
+				<div className={`rounded-lg border p-4 text-center text-sm ${
+					useLightTheme
+						? "border-red-300 bg-red-50 text-red-600"
+						: "border-red-700/50 bg-red-950/30 text-red-400"
+				}`}>
 					{cameraError}
 				</div>
-				<ManualInput value={manualInput} onChange={setManualInput} onSubmit={handleManualSubmit} />
+				<ManualInput
+					value={manualInput}
+					onChange={setManualInput}
+					onSubmit={handleManualSubmit}
+					useLightTheme={useLightTheme}
+					themeStyles={themeStyles}
+				/>
 			</div>
 		);
 	}
 
 	return (
 		<div className="space-y-2">
-			<div className="relative rounded-lg overflow-hidden border border-amber-700/40 bg-black">
+			{/* Camera viewport — always dark for contrast */}
+			<div className={`relative rounded-lg overflow-hidden border ${accentColor} bg-black`}>
 				<video ref={videoRef} className="w-full max-h-72 object-cover" playsInline muted />
 				<canvas ref={canvasRef} className="hidden" />
 
 				{/* Viewfinder corners */}
 				<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
 					<div className="w-48 h-48 relative">
-						<div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-amber-400 rounded-tl" />
-						<div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-amber-400 rounded-tr" />
-						<div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-amber-400 rounded-bl" />
-						<div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-amber-400 rounded-br" />
+						<div className={`absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 ${cornerColor} rounded-tl`} />
+						<div className={`absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 ${cornerColor} rounded-tr`} />
+						<div className={`absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 ${cornerColor} rounded-bl`} />
+						<div className={`absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 ${cornerColor} rounded-br`} />
 					</div>
 				</div>
 
-				{/* Status bar */}
+				{/* Status bar — always on dark camera bg */}
 				<div className="absolute bottom-2 left-0 right-0 text-center space-y-1">
 					<div>
-						<span className="text-xs bg-gray-950/80 text-amber-300 px-3 py-1 rounded-full">
+						<span className={`text-xs px-3 py-1 rounded-full bg-gray-950/80 ${
+							useLightTheme ? "text-purple-300" : "text-amber-300"
+						}`}>
 							{!ready
 								? "Starting camera…"
 								: lastDetected
@@ -161,7 +179,7 @@ const QRScanner = ({ onScan }) => {
 					</div>
 					{engine && (
 						<div>
-							<span className="text-xs text-gray-600">
+							<span className="text-xs text-gray-500">
 								{engine === "native" ? "● Native scanner" : "● jsQR fallback"}
 							</span>
 						</div>
@@ -170,23 +188,37 @@ const QRScanner = ({ onScan }) => {
 			</div>
 
 			{/* Manual fallback — always visible */}
-			<ManualInput value={manualInput} onChange={setManualInput} onSubmit={handleManualSubmit} />
+			<ManualInput
+				value={manualInput}
+				onChange={setManualInput}
+				onSubmit={handleManualSubmit}
+				useLightTheme={useLightTheme}
+				themeStyles={themeStyles}
+			/>
 		</div>
 	);
 };
 
-const ManualInput = ({ value, onChange, onSubmit }) => (
+const ManualInput = ({ value, onChange, onSubmit, useLightTheme, themeStyles }) => (
 	<form onSubmit={onSubmit} className="flex gap-2">
 		<input
 			type="text"
 			value={value}
 			onChange={(e) => onChange(e.target.value)}
 			placeholder="Type student ID manually (e.g. STUD-001)"
-			className="flex-1 rounded-lg bg-gray-900 border border-gray-700 text-amber-100 text-sm px-3 py-2 placeholder-gray-600 focus:outline-none focus:border-amber-600"
+			className={`flex-1 rounded-lg border text-sm px-3 py-2 focus:outline-none ${
+				useLightTheme
+					? "bg-white border-gray-300 text-gray-800 placeholder-gray-400 focus:border-purple-500"
+					: "bg-gray-900 border-gray-700 text-amber-100 placeholder-gray-600 focus:border-amber-600"
+			}`}
 		/>
 		<button
 			type="submit"
-			className="rounded-lg bg-amber-700 hover:bg-amber-600 text-white text-sm font-medium px-4 py-2"
+			className={`rounded-lg text-sm font-medium px-4 py-2 transition-colors ${
+				useLightTheme
+					? "bg-purple-600 hover:bg-purple-700 text-white"
+					: "bg-amber-700 hover:bg-amber-600 text-white"
+			}`}
 		>
 			Mark
 		</button>
