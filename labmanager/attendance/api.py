@@ -113,20 +113,23 @@ def mark_attendance(class_log: str, qr_id: str, scan_time: str = None) -> dict:
 	"""
 	log = frappe.get_doc("Class Conducted Log", class_log)
 
-	# QR encodes the student doc name (e.g. STUD-001); also fall back to qr_id field
+	# QR encodes the student doc name (e.g. STUD-001); also fall back to qr_id field.
+	# Look up WITHOUT batch filter first so we can give a clear "wrong batch" message.
 	student = frappe.db.get_value(
 		"Student Profile",
-		{"name": qr_id, "batch": log.batch},
-		["name", "full_name"],
+		{"name": qr_id},
+		["name", "full_name", "batch"],
 		as_dict=True,
 	) or frappe.db.get_value(
 		"Student Profile",
-		{"qr_id": qr_id, "batch": log.batch},
-		["name", "full_name"],
+		{"qr_id": qr_id},
+		["name", "full_name", "batch"],
 		as_dict=True,
 	)
 	if not student:
-		frappe.throw(_("Invalid QR code or student not enrolled in this batch."))
+		frappe.throw(_("QR code not recognised. Please check the student ID."))
+	if log.batch and student.batch != log.batch:
+		frappe.throw(_("{0} is not enrolled in this batch.").format(student.full_name))
 
 	existing = frappe.db.get_value(
 		"Student Attendance TE",
