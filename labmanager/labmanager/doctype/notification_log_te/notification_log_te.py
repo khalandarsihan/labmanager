@@ -56,10 +56,7 @@ def create_absent_alert(student: str, class_log: str) -> str:
 		as_dict=True,
 	)
 
-	user_id = frappe.db.get_value("Student Profile", student, "student_id")
-	student_name = (
-		frappe.db.get_value("User", user_id, "full_name") if user_id else None
-	) or student
+	student_name = frappe.db.get_value("Student Profile", student, "full_name") or student
 
 	message = (
 		f"Dear Parent,\n\n"

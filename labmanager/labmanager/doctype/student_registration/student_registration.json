@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "status",
+  "student_profile",
   "personal_information_section",
   "first_name",
   "date_of_birth",
@@ -192,6 +193,14 @@
    "fieldtype": "Select",
    "label": "Status",
    "options": "Submitted\nDocuments Requested\nUnder Review\nInterview Scheduled\nAccepted\nWaitlisted\nRejected"
+  },
+  {
+   "fieldname": "student_profile",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Student Profile",
+   "options": "Student Profile",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_yndw",
