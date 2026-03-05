@@ -146,34 +146,33 @@ home_page = "home_react"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	# Assignment notification → parents of enrolled students
+	# Activate once an Assignment TE doctype exists in the app
+	# "Assignment TE": {
+	# 	"after_insert": "labmanager.labmanager.whatsapp.api.on_assignment_created"
+	# },
+}
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"labmanager.tasks.all"
-# 	],
-# 	"daily": [
-# 		"labmanager.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"labmanager.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"labmanager.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"labmanager.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"cron": {
+		# Daily attendance summary → teachers, Mon–Sat at 4 PM
+		"0 16 * * 1-6": [
+			"labmanager.labmanager.whatsapp.scheduler.send_daily_attendance_summary"
+		],
+		# Fee reminders → parents, every day at 9 AM (7-day advance notice)
+		"0 9 * * *": [
+			"labmanager.labmanager.whatsapp.scheduler.send_fee_reminders"
+		],
+		# Weekly attendance report → parents, every Friday at 6 PM
+		"0 18 * * 5": [
+			"labmanager.labmanager.whatsapp.scheduler.send_weekly_reports"
+		],
+	}
+}
 
 # Testing
 # -------

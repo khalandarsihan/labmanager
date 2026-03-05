@@ -76,4 +76,12 @@ def create_absent_alert(student: str, class_log: str) -> str:
 		}
 	)
 	doc.insert(ignore_permissions=True)
+
+	# Dispatch WhatsApp in background so the attendance flow is not blocked
+	frappe.enqueue(
+		"labmanager.labmanager.whatsapp.api.send_absent_alert",
+		nlog_name=doc.name,
+		queue="short",
+	)
+
 	return doc.name
