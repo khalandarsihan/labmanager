@@ -164,6 +164,10 @@ scheduler_events = {
 		"0 20 * * 0-4,6": [
 			"labmanager.labmanager.whatsapp.scheduler.send_daily_attendance_summary"
 		],
+		# No-class alerts → parents, Mon–Thu + Sat–Sun at 9 PM (after all classes end)
+		"0 21 * * 0-4,6": [
+			"labmanager.labmanager.whatsapp.scheduler.notify_unconducted_classes"
+		],
 		# Fee reminders → parents, every day at 9 AM (7-day advance notice)
 		"0 9 * * *": [
 			"labmanager.labmanager.whatsapp.scheduler.send_fee_reminders"

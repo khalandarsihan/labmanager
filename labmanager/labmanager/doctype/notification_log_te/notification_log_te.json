@@ -55,7 +55,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Message Type",
-   "options": "Absent Alert\nDaily Summary\nAssignment\nFee Reminder\nLeave Update\nWeekly Report"
+   "options": "Absent Alert\nDaily Summary\nAssignment\nFee Reminder\nLeave Update\nWeekly Report\nNo Class"
   },
   {
    "fieldname": "whatsapp_number",

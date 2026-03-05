@@ -347,6 +347,53 @@ def _dispatch_assignment_notification(
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Template 3b — No Class Today
+# Called from: scheduler at 21:00 for unconducted slots
+# ══════════════════════════════════════════════════════════════════════════════
+
+def send_no_class_alert(student: str, subject: str, batch: str, date: str):
+	"""
+	Notify the parent that no class was held today for a given subject.
+
+	Template: no_class_today
+	Params  : {{1}} student name  {{2}} subject  {{3}} batch  {{4}} date
+	"""
+	try:
+		parent = frappe.db.get_value(
+			"Parent Contact",
+			{"student": student},
+			["name", "whatsapp_number"],
+			as_dict=True,
+		)
+		if not parent or not parent.whatsapp_number:
+			return
+
+		student_full = frappe.db.get_value("Student Profile", student, "full_name") or student
+		date_str = format_date(date)
+
+		nlog = frappe.get_doc({
+			"doctype": "Notification Log TE",
+			"student": student,
+			"parent_contact": parent.name,
+			"message_type": "No Class",
+			"whatsapp_number": parent.whatsapp_number,
+			"message_preview": f"No class for {subject} on {date_str}",
+		})
+		nlog.insert(ignore_permissions=True)
+		frappe.db.commit()
+
+		send_whatsapp(
+			to=parent.whatsapp_number,
+			template_name="no_class_today",
+			components=[_body(student_full, subject, batch, date_str)],
+			nlog_name=nlog.name,
+		)
+
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), f"WhatsApp send_no_class_alert – {student}")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Template 4 — Fee Reminder
 # Called from: scheduler 7 days before Sales Invoice due date
 # ══════════════════════════════════════════════════════════════════════════════

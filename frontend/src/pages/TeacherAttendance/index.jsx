@@ -93,9 +93,15 @@ const TeacherAttendancePage = () => {
 	}, [fetchStats]);
 
 	// Called when teacher clicks "Start Class"
+	// Re-evaluate lateness at click time — not at page-load time — so a teacher who
+	// loaded the page early and clicked late is correctly prompted, and one who loaded
+	// after a past slot won't see a stale huge-delay from yesterday.
 	const handleStartClass = useCallback(() => {
-		if (slotData?.is_late) {
-			// Teacher is late — ask for a reason before proceeding
+		if (!slotData) return;
+		const now = new Date();
+		const [h, m] = (slotData.scheduled_start || "00:00").split(":").map(Number);
+		const delayMinutes = Math.max(0, now.getHours() * 60 + now.getMinutes() - (h * 60 + m));
+		if (delayMinutes > 5) {
 			setLateReason("");
 			setLatePrompt(true);
 		} else {
