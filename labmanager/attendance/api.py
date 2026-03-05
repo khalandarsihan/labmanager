@@ -160,10 +160,12 @@ def get_class_attendance(class_log: str) -> dict:
 
 
 @frappe.whitelist()
-def create_class_log(timetable_slot: str) -> str:
+def create_class_log(timetable_slot: str, late_reason: str = "") -> str:
 	"""
 	Create a Class Conducted Log for today's timetable slot.
 	Returns the existing log name if one already exists for today.
+	If late_reason is provided the teacher acknowledges they started late;
+	students will not be penalised for lateness in this session.
 	"""
 	today = nowdate()
 	existing = frappe.db.get_value(
@@ -187,6 +189,7 @@ def create_class_log(timetable_slot: str) -> str:
 		"status": "Ongoing",
 		"late_start": 1 if delay > 5 else 0,
 		"delay_minutes": delay,
+		"teacher_late_reason": late_reason.strip() if late_reason else "",
 	})
 	doc.insert(ignore_permissions=True)
 	return doc.name
@@ -244,10 +247,15 @@ def mark_attendance(class_log: str, qr_id: str, scan_time: str = None) -> dict:
 		}
 
 	scan = get_time(scan_time) if scan_time else datetime.now().time()
-	# Use scheduled_start for lateness so an early-starting teacher doesn't penalise students
-	ref_time = get_time(log.scheduled_start) if log.scheduled_start else (
-		get_time(log.actual_start) if log.actual_start else None
-	)
+	# If teacher logged a late-start reason, measure lateness from when class actually began
+	# (students should not be penalised for the teacher's delay).
+	# Otherwise use scheduled_start so an early-starting teacher doesn't penalise students.
+	if log.teacher_late_reason and log.actual_start:
+		ref_time = get_time(log.actual_start)
+	elif log.scheduled_start:
+		ref_time = get_time(log.scheduled_start)
+	else:
+		ref_time = get_time(log.actual_start) if log.actual_start else None
 	late_minutes = 0
 	status = "Present"
 	if ref_time:

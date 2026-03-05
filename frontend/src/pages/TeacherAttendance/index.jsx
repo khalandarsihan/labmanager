@@ -29,6 +29,8 @@ const TeacherAttendancePage = () => {
 	const [attendanceList, setAttendanceList] = useState([]);
 	const [liveStats, setLiveStats]     = useState({ present: 0, late: 0, absent: 0, total: 0 });
 	const [closeSummary, setCloseSummary] = useState(null);
+	const [latePrompt, setLatePrompt]   = useState(false);   // show reason dialog
+	const [lateReason, setLateReason]   = useState("");
 	const { toast, Toaster }            = useToast();
 	const { useLightTheme, themeStyles } = useTheme();
 
@@ -90,8 +92,20 @@ const TeacherAttendancePage = () => {
 			.catch(() => {});
 	}, [fetchStats]);
 
+	// Called when teacher clicks "Start Class"
 	const handleStartClass = useCallback(() => {
-		createLog({ timetable_slot: slotData.slot })
+		if (slotData?.is_late) {
+			// Teacher is late — ask for a reason before proceeding
+			setLateReason("");
+			setLatePrompt(true);
+		} else {
+			doStartClass("");
+		}
+	}, [slotData]);
+
+	const doStartClass = useCallback((reason) => {
+		setLatePrompt(false);
+		createLog({ timetable_slot: slotData.slot, late_reason: reason })
 			.then((r) => {
 				if (r.message) {
 					setClassLog(r.message);
@@ -237,17 +251,76 @@ const TeacherAttendancePage = () => {
 
 				{/* Ready — start class */}
 				{phase === "ready" && (
-					<div className="text-center py-4">
-						<Button
-							onClick={handleStartClass}
-							className={`px-10 py-3 text-base rounded-lg font-semibold transition-colors ${
-								useLightTheme
-									? "bg-purple-600 hover:bg-purple-700 text-white"
-									: "bg-amber-500 hover:bg-amber-600 text-gray-900"
-							}`}
-						>
-							Start Class
-						</Button>
+					<div className="py-4">
+						{slotData?.is_late && (
+							<div className={`mb-4 rounded-xl px-4 py-3 text-sm flex items-start gap-2 ${
+								useLightTheme ? "bg-amber-50 border border-amber-200 text-amber-800" : "bg-amber-900/30 border border-amber-700 text-amber-300"
+							}`}>
+								<span className="text-base flex-shrink-0">⚠️</span>
+								<span>Class is starting <strong>{slotData.delay_minutes} min</strong> late. You will be asked for a reason.</span>
+							</div>
+						)}
+						<div className="text-center">
+							<Button
+								onClick={handleStartClass}
+								className={`px-10 py-3 text-base rounded-lg font-semibold transition-colors ${
+									useLightTheme
+										? "bg-purple-600 hover:bg-purple-700 text-white"
+										: "bg-amber-500 hover:bg-amber-600 text-gray-900"
+								}`}
+							>
+								Start Class
+							</Button>
+						</div>
+					</div>
+				)}
+
+				{/* Late reason modal */}
+				{latePrompt && (
+					<div className="fixed inset-0 z-50 flex items-end justify-center" style={{ background: "rgba(0,0,0,0.5)" }}>
+						<div className={`w-full max-w-lg rounded-t-2xl p-6 ${useLightTheme ? "bg-white" : "bg-gray-900"}`}>
+							{/* Handle */}
+							<div className="w-10 h-1 rounded-full bg-gray-300 mx-auto mb-5" />
+
+							<h3 className={`text-base font-bold mb-1 ${themeStyles.heading}`}>Class started late</h3>
+							<p className={`text-sm mb-4 ${themeStyles.text.light}`}>
+								Please enter the reason. Students who arrive on time for the <em>actual</em> start will not be marked late.
+							</p>
+
+							<textarea
+								autoFocus
+								value={lateReason}
+								onChange={(e) => setLateReason(e.target.value)}
+								placeholder="e.g. Previous class ran over, traffic delay…"
+								rows={3}
+								className={`w-full rounded-xl border px-4 py-3 text-sm resize-none mb-4 ${
+									useLightTheme
+										? "border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400"
+										: "border-gray-700 bg-gray-800 text-white placeholder-gray-500"
+								}`}
+							/>
+
+							<div className="flex gap-3">
+								<Button
+									onClick={() => setLatePrompt(false)}
+									variant="outline"
+									className={`flex-1 ${themeStyles.card.border}`}
+								>
+									Cancel
+								</Button>
+								<Button
+									onClick={() => doStartClass(lateReason)}
+									disabled={!lateReason.trim()}
+									className={`flex-1 font-semibold ${
+										useLightTheme
+											? "bg-purple-600 hover:bg-purple-700 text-white disabled:bg-gray-300"
+											: "bg-amber-500 hover:bg-amber-600 text-gray-900 disabled:bg-gray-700 disabled:text-gray-500"
+									}`}
+								>
+									Start Class
+								</Button>
+							</div>
+						</div>
 					</div>
 				)}
 

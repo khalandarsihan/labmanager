@@ -25,6 +25,7 @@
   "late_start",
   "delay_minutes",
   "column_break_ccl3",
+  "teacher_late_reason",
   "section_break_totals",
   "total_present",
   "total_absent",
@@ -143,6 +144,12 @@
   {
    "fieldname": "column_break_ccl3",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "teacher_late_reason",
+   "fieldtype": "Small Text",
+   "label": "Teacher Late Reason",
+   "description": "If the teacher started late, reason is recorded here. Students will not be marked Late for this session."
   },
   {
    "fieldname": "section_break_totals",
