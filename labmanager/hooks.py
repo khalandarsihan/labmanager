@@ -289,6 +289,8 @@ whitelisted_methods = {
     # Attendance & Communication
     "labmanager.labmanager.doctype.notification_log_te.notification_log_te.create_absent_alert": True,
     # QR Attendance API
+    "labmanager.attendance.api.get_today_slots": True,
+    "labmanager.attendance.api.get_slot_students": True,
     "labmanager.attendance.api.get_current_timetable_slot": True,
     "labmanager.attendance.api.create_class_log": True,
     "labmanager.attendance.api.mark_attendance": True,

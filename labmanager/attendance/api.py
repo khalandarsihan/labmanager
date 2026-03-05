@@ -28,11 +28,67 @@ def _students_in_batch(batch: str) -> list[dict]:
 
 
 @frappe.whitelist()
+def get_today_slots() -> dict:
+	"""
+	Return ALL timetable slots for the logged-in teacher today, annotated
+	with whether each is active, upcoming, or past.
+	"""
+	teacher = frappe.session.user
+	day_map = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+	day_of_week = day_map[datetime.today().weekday()]
+	now = datetime.now().time()
+
+	slots = frappe.get_all(
+		"Timetable Master",
+		filters={"teacher": teacher, "day_of_week": day_of_week, "is_active": 1},
+		fields=["name", "subject", "batch", "scheduled_start", "scheduled_end", "period_number"],
+		order_by="scheduled_start asc",
+	)
+
+	if not slots:
+		return {"slots": [], "message": "No classes scheduled for today."}
+
+	result = []
+	for slot in slots:
+		start = get_time(slot.scheduled_start)
+		end   = get_time(slot.scheduled_end) if slot.scheduled_end else None
+		if end and start <= now <= end:
+			status = "active"
+		elif start > now:
+			status = "upcoming"
+		else:
+			status = "past"
+
+		delay_minutes = max(0, _time_to_minutes(now) - _time_to_minutes(start)) if status == "active" else 0
+		result.append({
+			"slot":            slot.name,
+			"subject":         slot.subject,
+			"batch":           slot.batch,
+			"period_number":   slot.period_number,
+			"scheduled_start": str(slot.scheduled_start),
+			"scheduled_end":   str(slot.scheduled_end) if slot.scheduled_end else "",
+			"status":          status,
+			"is_late":         delay_minutes > 5,
+			"delay_minutes":   delay_minutes,
+		})
+
+	return {"slots": result}
+
+
+@frappe.whitelist()
+def get_slot_students(timetable_slot: str) -> list:
+	"""Return the student list for a specific timetable slot."""
+	batch = frappe.db.get_value("Timetable Master", timetable_slot, "batch")
+	if not batch:
+		return []
+	return _students_in_batch(batch)
+
+
+@frappe.whitelist()
 def get_current_timetable_slot() -> dict:
 	"""
-	Return the active timetable slot for the logged-in teacher.
-	Falls back to the next upcoming slot if no class is currently active.
-	Includes the student list for the slot's batch (via enrollments).
+	Legacy: return the single active/next slot for the logged-in teacher.
+	Kept for backwards compatibility; new code should use get_today_slots.
 	"""
 	teacher = frappe.session.user
 	day_map = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -50,8 +106,8 @@ def get_current_timetable_slot() -> dict:
 	next_slot = None
 	for slot in slots:
 		start = get_time(slot.scheduled_start)
-		end = get_time(slot.scheduled_end)
-		if start <= now <= end:
+		end   = get_time(slot.scheduled_end) if slot.scheduled_end else None
+		if end and start <= now <= end:
 			active_slot = slot
 			break
 		elif start > now and not next_slot:
@@ -62,10 +118,8 @@ def get_current_timetable_slot() -> dict:
 
 	result_slot = active_slot or next_slot
 	is_active = active_slot is not None
-
 	slot_start = get_time(result_slot.scheduled_start)
 	delay_minutes = max(0, _time_to_minutes(now) - _time_to_minutes(slot_start)) if is_active else 0
-
 	students = _students_in_batch(result_slot.batch)
 
 	return {
@@ -73,7 +127,7 @@ def get_current_timetable_slot() -> dict:
 		"subject": result_slot.subject,
 		"batch": result_slot.batch,
 		"scheduled_start": str(result_slot.scheduled_start),
-		"scheduled_end": str(result_slot.scheduled_end),
+		"scheduled_end":   str(result_slot.scheduled_end) if result_slot.scheduled_end else "",
 		"is_active": is_active,
 		"is_late": delay_minutes > 5,
 		"delay_minutes": delay_minutes,

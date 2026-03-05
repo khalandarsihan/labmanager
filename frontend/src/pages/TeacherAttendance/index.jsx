@@ -9,59 +9,86 @@ import ClassHeader from "./components/ClassHeader";
 import QRScanner from "./components/QRScanner";
 import AttendanceSummary from "./components/AttendanceSummary";
 
+const STATUS_STYLE = {
+	active:   { dot: "bg-green-500", label: "Active",    badge: "bg-green-100 text-green-700" },
+	upcoming: { dot: "bg-amber-400",  label: "Upcoming",  badge: "bg-amber-100 text-amber-700" },
+	past:     { dot: "bg-gray-400",   label: "Past",      badge: "bg-gray-100 text-gray-500"  },
+};
+
+function fmt(timeStr) {
+	if (!timeStr) return "";
+	return timeStr.slice(0, 5);
+}
+
 const TeacherAttendancePage = () => {
-	// phase: loading | no-class | ready | scanning | closed
-	const [phase, setPhase] = useState("loading");
-	const [slotData, setSlotData] = useState(null);
-	const [classLog, setClassLog] = useState(null);
+	// phase: loading | no-class | picking | ready | scanning | closed
+	const [phase, setPhase]             = useState("loading");
+	const [allSlots, setAllSlots]       = useState([]);
+	const [slotData, setSlotData]       = useState(null);
+	const [classLog, setClassLog]       = useState(null);
 	const [attendanceList, setAttendanceList] = useState([]);
-	const [liveStats, setLiveStats] = useState({ present: 0, late: 0, absent: 0, total: 0 });
+	const [liveStats, setLiveStats]     = useState({ present: 0, late: 0, absent: 0, total: 0 });
 	const [closeSummary, setCloseSummary] = useState(null);
-	const { toast, Toaster } = useToast();
+	const { toast, Toaster }            = useToast();
 	const { useLightTheme, themeStyles } = useTheme();
 
-	const { call: getSlot } = useFrappePostCall("labmanager.attendance.api.get_current_timetable_slot");
-	const { call: createLog } = useFrappePostCall("labmanager.attendance.api.create_class_log");
-	const { call: markAtt } = useFrappePostCall("labmanager.attendance.api.mark_attendance");
-	const { call: closeLog } = useFrappePostCall("labmanager.attendance.api.close_class_log");
-	const { call: fetchStats } = useFrappePostCall("labmanager.attendance.api.get_class_attendance");
+	const { call: getTodaySlots } = useFrappePostCall("labmanager.attendance.api.get_today_slots");
+	const { call: getSlotStudents } = useFrappePostCall("labmanager.attendance.api.get_slot_students");
+	const { call: createLog }     = useFrappePostCall("labmanager.attendance.api.create_class_log");
+	const { call: markAtt }       = useFrappePostCall("labmanager.attendance.api.mark_attendance");
+	const { call: closeLog }      = useFrappePostCall("labmanager.attendance.api.close_class_log");
+	const { call: fetchStats }    = useFrappePostCall("labmanager.attendance.api.get_class_attendance");
 
 	useEffect(() => {
-		getSlot({})
+		getTodaySlots({})
 			.then((r) => {
 				const data = r.message;
-				if (!data || !data.slot) {
-					setSlotData(data || null);
+				if (!data || !data.slots || data.slots.length === 0) {
 					setPhase("no-class");
 				} else {
-					setSlotData(data);
-					setPhase("ready");
+					setAllSlots(data.slots);
+					// Auto-select if only one slot
+					if (data.slots.length === 1) {
+						selectSlot(data.slots[0]);
+					} else {
+						setPhase("picking");
+					}
 				}
 			})
 			.catch(() => setPhase("no-class"));
 	}, []);
 
-	const refreshStats = useCallback(
-		(log) => {
-			fetchStats({ class_log: log })
-				.then((r) => {
-					if (r.message) {
-						const { records, present, late, absent, total } = r.message;
-						setLiveStats({ present, late, absent, total });
-						setAttendanceList(
-							records.map((rec) => ({
-								student_name: rec.student_name,
-								status: rec.status,
-								late_minutes: rec.late_minutes || 0,
-								timestamp: rec.entry_time || "",
-							}))
-						);
-					}
-				})
-				.catch(() => {});
-		},
-		[fetchStats]
-	);
+	const selectSlot = useCallback((slot) => {
+		// Fetch students for the chosen slot then move to ready
+		getSlotStudents({ timetable_slot: slot.slot })
+			.then((r) => {
+				setSlotData({ ...slot, student_list: r.message || [] });
+				setPhase("ready");
+			})
+			.catch(() => {
+				setSlotData({ ...slot, student_list: [] });
+				setPhase("ready");
+			});
+	}, [getSlotStudents]);
+
+	const refreshStats = useCallback((log) => {
+		fetchStats({ class_log: log })
+			.then((r) => {
+				if (r.message) {
+					const { records, present, late, absent, total } = r.message;
+					setLiveStats({ present, late, absent, total });
+					setAttendanceList(
+						records.map((rec) => ({
+							student_name: rec.student_name,
+							status: rec.status,
+							late_minutes: rec.late_minutes || 0,
+							timestamp: rec.entry_time || "",
+						}))
+					);
+				}
+			})
+			.catch(() => {});
+	}, [fetchStats]);
 
 	const handleStartClass = useCallback(() => {
 		createLog({ timetable_slot: slotData.slot })
@@ -75,57 +102,42 @@ const TeacherAttendancePage = () => {
 			.catch(() => {});
 	}, [slotData, createLog, refreshStats]);
 
-	const handleScan = useCallback(
-		(qrId) => {
-			if (!classLog) return;
-			const scan_time = new Date().toTimeString().slice(0, 8);
-			markAtt({ class_log: classLog, qr_id: qrId, scan_time })
-				.then((r) => {
-					const result = r.message;
-					if (result.already_marked) {
-						toast({
-							title: "Already Marked",
-							description: `${result.student_name} — ${result.status}`,
-							variant: "default",
-						});
-					} else {
-						toast({
-							title: result.status === "Late" ? `Late +${result.late_minutes} min` : "Present ✓",
-							description: result.student_name,
-							variant: result.status === "Late" ? "default" : "success",
-						});
-						// Update counters locally from the scan result — no extra API call needed
-						setLiveStats((prev) => ({
-							...prev,
-							present: prev.present + (result.status === "Present" ? 1 : 0),
-							late: prev.late + (result.status === "Late" ? 1 : 0),
-							total: prev.total + 1,
-						}));
-						setAttendanceList((prev) => [
-							{ ...result, timestamp: new Date().toLocaleTimeString() },
-							...prev,
-						]);
-					}
-				})
-				.catch((err) => {
+	const handleScan = useCallback((qrId) => {
+		if (!classLog) return;
+		const scan_time = new Date().toTimeString().slice(0, 8);
+		markAtt({ class_log: classLog, qr_id: qrId, scan_time })
+			.then((r) => {
+				const result = r.message;
+				if (result.already_marked) {
+					toast({ title: "Already Marked", description: `${result.student_name} — ${result.status}`, variant: "default" });
+				} else {
 					toast({
-						title: "Error",
-						description: String(err?.message || "Unknown error"),
-						variant: "destructive",
+						title: result.status === "Late" ? `Late +${result.late_minutes} min` : "Present ✓",
+						description: result.student_name,
+						variant: result.status === "Late" ? "default" : "success",
 					});
-				});
-		},
-		[classLog, toast, markAtt]
-	);
+					setLiveStats((prev) => ({
+						...prev,
+						present: prev.present + (result.status === "Present" ? 1 : 0),
+						late:    prev.late    + (result.status === "Late"    ? 1 : 0),
+						total:   prev.total + 1,
+					}));
+					setAttendanceList((prev) => [
+						{ ...result, timestamp: new Date().toLocaleTimeString() },
+						...prev,
+					]);
+				}
+			})
+			.catch((err) => {
+				toast({ title: "Error", description: String(err?.message || "Unknown error"), variant: "destructive" });
+			});
+	}, [classLog, toast, markAtt]);
 
 	const handleEndClass = useCallback(() => {
 		if (!classLog) return;
 		closeLog({ class_log: classLog })
 			.then((r) => {
-				if (r.message) {
-					setCloseSummary(r.message);
-					setPhase("closed");
-				}
+				if (r.message) { setCloseSummary(r.message); setPhase("closed"); }
 			})
 			.catch(() => {});
 	}, [classLog, closeLog]);
@@ -155,16 +167,72 @@ const TeacherAttendancePage = () => {
 					<Card className={`${themeStyles.card.bg} border ${themeStyles.card.border}`}>
 						<CardContent className="py-10 text-center space-y-2">
 							<p className={`text-lg font-medium ${themeStyles.heading}`}>No active class right now</p>
-							{slotData?.message && (
-								<p className={`text-sm ${themeStyles.text.light}`}>{slotData.message}</p>
-							)}
+							<p className={`text-sm ${themeStyles.text.light}`}>No classes are scheduled for you today.</p>
 						</CardContent>
 					</Card>
 				)}
 
+				{/* Slot picker */}
+				{phase === "picking" && (
+					<div className="space-y-3">
+						<p className={`text-sm font-semibold mb-4 ${themeStyles.text.secondary}`}>
+							Select a class to take attendance:
+						</p>
+						{allSlots.map((slot) => {
+							const st = STATUS_STYLE[slot.status] || STATUS_STYLE.upcoming;
+							return (
+								<button
+									key={slot.slot}
+									onClick={() => selectSlot(slot)}
+									className={`w-full text-left rounded-xl border p-4 flex items-center gap-4 transition-all hover:shadow-md
+										${themeStyles.card.bg} ${themeStyles.card.border}`}
+									style={{ cursor: "pointer" }}
+								>
+									{/* Status dot */}
+									<div className={`w-3 h-3 rounded-full flex-shrink-0 ${st.dot}`} />
+
+									{/* Subject + batch */}
+									<div className="flex-1 min-w-0">
+										<div className={`font-bold text-base truncate ${themeStyles.heading}`}>
+											{slot.subject}
+										</div>
+										<div className={`text-sm truncate ${themeStyles.text.light}`}>
+											{slot.batch}
+										</div>
+									</div>
+
+									{/* Time + badge */}
+									<div className="flex-shrink-0 text-right">
+										<div className={`text-sm font-semibold ${themeStyles.text.secondary}`}>
+											{fmt(slot.scheduled_start)}
+											{slot.scheduled_end && ` – ${fmt(slot.scheduled_end)}`}
+										</div>
+										<span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${st.badge}`}>
+											{st.label}
+											{slot.status === "active" && slot.is_late && ` · ${slot.delay_minutes}m late`}
+										</span>
+									</div>
+								</button>
+							);
+						})}
+					</div>
+				)}
+
 				{/* Class header for active phases */}
 				{(phase === "ready" || phase === "scanning" || phase === "closed") && slotData && (
-					<ClassHeader slotData={slotData} classLog={classLog} />
+					<>
+						{/* Back to picker link */}
+						{phase === "ready" && allSlots.length > 1 && (
+							<button
+								onClick={() => { setSlotData(null); setPhase("picking"); }}
+								className={`text-sm mb-3 flex items-center gap-1 ${themeStyles.text.light} hover:underline`}
+								style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+							>
+								← Back to class list
+							</button>
+						)}
+						<ClassHeader slotData={slotData} classLog={classLog} />
+					</>
 				)}
 
 				{/* Ready — start class */}
@@ -209,17 +277,15 @@ const TeacherAttendancePage = () => {
 				{phase === "closed" && closeSummary && (
 					<Card className={`${themeStyles.card.bg} border ${themeStyles.card.border}`}>
 						<CardHeader>
-							<CardTitle className={`text-center ${themeStyles.heading}`}>
-								Class Completed
-							</CardTitle>
+							<CardTitle className={`text-center ${themeStyles.heading}`}>Class Completed</CardTitle>
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div className="grid grid-cols-2 gap-3 text-center">
 								{[
-									{ label: "Present", value: closeSummary.total_present, color: "text-green-500", bg: useLightTheme ? "bg-green-50 border-green-200" : "bg-green-900/30 border-green-800" },
-									{ label: "Absent",  value: closeSummary.total_absent,  color: "text-red-500",   bg: useLightTheme ? "bg-red-50 border-red-200"   : "bg-red-900/30 border-red-800"   },
-									{ label: "Late",    value: closeSummary.total_late,    color: useLightTheme ? "text-amber-600" : "text-amber-400", bg: useLightTheme ? "bg-amber-50 border-amber-200" : "bg-amber-900/30 border-amber-800" },
-									{ label: "Duration (min)", value: closeSummary.duration_minutes, color: themeStyles.text.secondary, bg: useLightTheme ? "bg-gray-50 border-gray-200" : "bg-gray-800/50 border-gray-700" },
+									{ label: "Present",       value: closeSummary.total_present,    color: "text-green-500",  bg: useLightTheme ? "bg-green-50 border-green-200"   : "bg-green-900/30 border-green-800"  },
+									{ label: "Absent",        value: closeSummary.total_absent,     color: "text-red-500",    bg: useLightTheme ? "bg-red-50 border-red-200"     : "bg-red-900/30 border-red-800"    },
+									{ label: "Late",          value: closeSummary.total_late,       color: useLightTheme ? "text-amber-600" : "text-amber-400", bg: useLightTheme ? "bg-amber-50 border-amber-200" : "bg-amber-900/30 border-amber-800" },
+									{ label: "Duration (min)",value: closeSummary.duration_minutes, color: themeStyles.text.secondary, bg: useLightTheme ? "bg-gray-50 border-gray-200" : "bg-gray-800/50 border-gray-700" },
 								].map(({ label, value, color, bg }) => (
 									<div key={label} className={`rounded-lg border ${bg} p-4`}>
 										<div className={`text-3xl font-bold ${color}`}>{value}</div>
@@ -230,6 +296,17 @@ const TeacherAttendancePage = () => {
 							<p className={`text-center text-xs ${themeStyles.text.light}`}>
 								WhatsApp alerts queued for absent students' parents.
 							</p>
+							{allSlots.length > 1 && (
+								<div className="text-center pt-2">
+									<Button
+										onClick={() => { setSlotData(null); setClassLog(null); setCloseSummary(null); setAttendanceList([]); setLiveStats({ present: 0, late: 0, absent: 0, total: 0 }); setPhase("picking"); }}
+										variant="outline"
+										className={`${themeStyles.card.border}`}
+									>
+										Take next class
+									</Button>
+								</div>
+							)}
 						</CardContent>
 					</Card>
 				)}
