@@ -2,12 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Users, Printer } from 'lucide-react';
 import BackgroundPattern from './BackgroundPattern';
 
+// Each entry: bg class used for cells, text class used for modal accents
 const SUBJECT_COLORS = [
-  'bg-emerald-500/90', 'bg-amber-500/90', 'bg-fuchsia-400/90', 'bg-blue-500/90',
-  'bg-yellow-500/90', 'bg-pink-500/90', 'bg-purple-500/90', 'bg-green-500/90',
-  'bg-cyan-500/90', 'bg-lime-500/90', 'bg-rose-500/90', 'bg-orange-500/90',
-  'bg-teal-500/90', 'bg-red-500/90', 'bg-sky-500/90', 'bg-violet-500/90',
-  'bg-indigo-500/90', 'bg-pink-400/90', 'bg-sky-400/90', 'bg-fuchsia-600/90',
+  { bg: 'bg-emerald-500/90', text: 'text-emerald-400' },
+  { bg: 'bg-amber-500/90',   text: 'text-amber-400'   },
+  { bg: 'bg-fuchsia-400/90', text: 'text-fuchsia-400' },
+  { bg: 'bg-blue-500/90',    text: 'text-blue-400'    },
+  { bg: 'bg-yellow-500/90',  text: 'text-yellow-400'  },
+  { bg: 'bg-pink-500/90',    text: 'text-pink-400'    },
+  { bg: 'bg-purple-500/90',  text: 'text-purple-400'  },
+  { bg: 'bg-green-500/90',   text: 'text-green-400'   },
+  { bg: 'bg-cyan-500/90',    text: 'text-cyan-400'    },
+  { bg: 'bg-lime-500/90',    text: 'text-lime-400'    },
+  { bg: 'bg-rose-500/90',    text: 'text-rose-400'    },
+  { bg: 'bg-orange-500/90',  text: 'text-orange-400'  },
+  { bg: 'bg-teal-500/90',    text: 'text-teal-400'    },
+  { bg: 'bg-red-500/90',     text: 'text-red-400'     },
+  { bg: 'bg-sky-500/90',     text: 'text-sky-400'     },
+  { bg: 'bg-violet-500/90',  text: 'text-violet-400'  },
+  { bg: 'bg-indigo-500/90',  text: 'text-indigo-400'  },
+  { bg: 'bg-pink-400/90',    text: 'text-pink-300'    },
+  { bg: 'bg-sky-400/90',     text: 'text-sky-300'     },
+  { bg: 'bg-fuchsia-600/90', text: 'text-fuchsia-400' },
 ];
 
 const getTimeBlock = (timeStr) => {
@@ -50,12 +66,13 @@ const ClassSchedule = () => {
     { id: 'night', name: 'Night (9:00 - 10:00 PM)' },
   ];
 
-  // Build subject → color map (stable, index-based)
+  // Build subject → color pair map (stable, index-based)
   const subjectColorMap = {};
   subjects.forEach((s, i) => {
     subjectColorMap[s.name] = SUBJECT_COLORS[i % SUBJECT_COLORS.length];
   });
-  const getSubjectColor = (name) => subjectColorMap[name] || 'bg-gray-700/90';
+  const getSubjectBg   = (name) => (subjectColorMap[name] || { bg: 'bg-gray-700/90' }).bg;
+  const getSubjectText = (name) => (subjectColorMap[name] || { text: 'text-gray-300' }).text;
 
   // Fetch all batches on mount
   useEffect(() => {
@@ -168,7 +185,7 @@ const ClassSchedule = () => {
                   <div className="p-2">
                     {cls ? (
                       <div>
-                        <div className={`inline-flex mb-1.5 items-center px-2 py-1 rounded-md ${getSubjectColor(cls.subject)} text-white`}>
+                        <div className={`inline-flex mb-1.5 items-center px-2 py-1 rounded-md ${getSubjectBg(cls.subject)} text-white`}>
                           <span className="font-medium text-sm">{cls.subject}</span>
                         </div>
                         <div className="flex flex-col text-xs space-y-1">
@@ -224,7 +241,7 @@ const ClassSchedule = () => {
                     </td>
                     <td className="p-3">
                       {cls ? (
-                        <div className={`inline-flex items-center px-2 py-1 rounded-md ${getSubjectColor(cls.subject)} text-white`}>
+                        <div className={`inline-flex items-center px-2 py-1 rounded-md ${getSubjectBg(cls.subject)} text-white`}>
                           <span className="font-medium">{cls.subject}</span>
                         </div>
                       ) : (
@@ -299,7 +316,7 @@ const ClassSchedule = () => {
                           </div>
                           <div className="p-2">
                             {cls ? (
-                              <div className={`p-2 rounded-md ${getSubjectColor(cls.subject)} text-white`}>
+                              <div className={`p-2 rounded-md ${getSubjectBg(cls.subject)} text-white`}>
                                 <div className="font-medium text-sm">{cls.subject}</div>
                                 <div className="text-xs text-white/90 mt-1 flex items-center">
                                   <Users className="w-3 h-3 mr-1" />
@@ -362,7 +379,7 @@ const ClassSchedule = () => {
                         onClick={() => cls && setSelectedClass(cls)}
                       >
                         {cls ? (
-                          <div className={`p-2 rounded-md ${getSubjectColor(cls.subject)} text-white cursor-pointer hover:shadow-md transition-shadow`}>
+                          <div className={`p-2 rounded-md ${getSubjectBg(cls.subject)} text-white cursor-pointer hover:shadow-md transition-shadow`}>
                             <div className="font-medium text-sm">{cls.subject}</div>
                             <div className="text-xs text-white/90 mt-1 flex items-center">
                               <Users className="w-3 h-3 mr-1" />
@@ -477,21 +494,21 @@ const ClassSchedule = () => {
               className="bg-gray-800 p-4 md:p-6 rounded-lg max-w-md w-full border border-gray-600 shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className={`w-full h-1 ${getSubjectColor(selectedClass.subject)} rounded-full mb-3 md:mb-4`}></div>
-              <h3 className="text-lg md:text-xl font-semibold text-amber-300 mb-4">{selectedClass.subject}</h3>
+              <div className={`w-full h-1 ${getSubjectBg(selectedClass.subject)} rounded-full mb-3 md:mb-4`}></div>
+              <h3 className={`text-lg md:text-xl font-semibold mb-4 ${getSubjectText(selectedClass.subject)}`}>{selectedClass.subject}</h3>
 
               <div className="flex flex-col gap-3 text-sm">
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-amber-300" />
+                  <Users className={`w-4 h-4 ${getSubjectText(selectedClass.subject)}`} />
                   <span className="text-gray-200">Teacher: {selectedClass.teacher_name || 'To be assigned'}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-300" />
+                  <Clock className={`w-4 h-4 ${getSubjectText(selectedClass.subject)}`} />
                   <span className="text-gray-200">Time: {selectedClass.start} – {selectedClass.end}</span>
                 </div>
                 {selectedClass.room && (
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-amber-300" />
+                    <MapPin className={`w-4 h-4 ${getSubjectText(selectedClass.subject)}`} />
                     <span className="text-gray-200">Room: {selectedClass.room}</span>
                   </div>
                 )}
@@ -599,7 +616,7 @@ const ClassSchedule = () => {
                   <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-1 md:gap-2">
                     {subjects.map((subject) => (
                       <div key={subject.name} className="flex items-center p-1 rounded hover:bg-gray-100">
-                        <div className={`w-3 h-3 md:w-4 md:h-4 rounded ${getSubjectColor(subject.name)} mr-1 md:mr-2`}></div>
+                        <div className={`w-3 h-3 md:w-4 md:h-4 rounded ${getSubjectBg(subject.name)} mr-1 md:mr-2`}></div>
                         <span className="text-xs md:text-sm">{subject.name}</span>
                       </div>
                     ))}
