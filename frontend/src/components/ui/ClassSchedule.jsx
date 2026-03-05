@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Users, Printer } from 'lucide-react';
 import BackgroundPattern from './BackgroundPattern';
+import { useTheme } from './ThemeContext';
 
 // bg: Tailwind class for cell backgrounds (purge-safe — used directly in JSX)
 // color: hex used via inline style in the modal (immune to CSS purging)
@@ -39,6 +40,19 @@ const getTimeBlock = (timeStr) => {
 };
 
 const ClassSchedule = () => {
+  const { useLightTheme } = useTheme();
+
+  // ── Theme-derived classes ──────────────────────────────────────────────────
+  const card      = useLightTheme ? 'bg-white/90 border-purple-200/60 shadow-purple-100/50' : 'bg-gray-800/80 border-gray-600';
+  const heading   = useLightTheme ? 'text-purple-800' : 'text-amber-200';
+  const btnActive = useLightTheme ? 'bg-purple-600 text-white' : 'bg-amber-300 text-gray-900';
+  const btnInact  = useLightTheme ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-gray-700 text-gray-200 hover:bg-gray-600';
+  const selectCls = useLightTheme ? 'bg-white text-gray-800 border-gray-300 focus:ring-purple-400' : 'bg-gray-700 text-gray-200 border-gray-600 focus:ring-amber-300';
+  const modalBg   = useLightTheme ? 'bg-white border-gray-200' : 'bg-gray-800 border-gray-600';
+  const modalText = useLightTheme ? 'text-gray-800' : 'text-gray-200';
+  const switchBorder = useLightTheme ? 'border-gray-200' : 'border-gray-700';
+  // ──────────────────────────────────────────────────────────────────────────
+
   const [currentBatch, setCurrentBatch] = useState('');
   const [batchList, setBatchList] = useState([]);
   const [selectedDay, setSelectedDay] = useState('');
@@ -436,17 +450,17 @@ const ClassSchedule = () => {
     <div className="relative">
       <BackgroundPattern />
 
-      <div className="relative z-10 bg-gray-800/80 backdrop-blur-sm border border-gray-600 rounded-lg p-4 md:p-6 shadow-xl">
+      <div className={`relative z-10 backdrop-blur-sm border rounded-lg p-4 md:p-6 shadow-xl ${card}`}>
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6 gap-3">
-          <h2 className="text-xl md:text-2xl font-bold text-amber-200 flex items-center">
+          <h2 className={`text-xl md:text-2xl font-bold flex items-center ${heading}`}>
             <Calendar className="w-5 h-5 md:w-6 md:h-6 mr-1 md:mr-2" />
             Class Schedule
           </h2>
 
           <div className="flex gap-2 w-full md:w-auto">
             <select
-              className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 text-sm p-1 outline-none focus:ring-2 focus:ring-amber-300"
+              className={`rounded-md border text-sm p-1 outline-none focus:ring-2 ${selectCls}`}
               value={currentBatch}
               onChange={(e) => setCurrentBatch(e.target.value)}
             >
@@ -457,7 +471,7 @@ const ClassSchedule = () => {
             </select>
 
             <button
-              className="bg-gray-700 text-gray-200 p-1 rounded-md border border-gray-600 hover:bg-amber-300 hover:text-gray-900 transition-colors duration-200 flex items-center"
+              className={`p-1 rounded-md border transition-colors duration-200 flex items-center ${btnInact}`}
               onClick={handlePrint}
             >
               <Printer className="w-5 h-5" />
@@ -492,7 +506,7 @@ const ClassSchedule = () => {
             onClick={() => setSelectedClass(null)}
           >
             <div
-              className="bg-gray-800 p-4 md:p-6 rounded-lg max-w-md w-full border border-gray-600 shadow-xl"
+              className={`p-4 md:p-6 rounded-lg max-w-md w-full border shadow-xl ${modalBg}`}
               onClick={(e) => e.stopPropagation()}
             >
               <div className={`w-full h-1 ${getSubjectBg(selectedClass.subject)} rounded-full mb-3 md:mb-4`}></div>
@@ -506,23 +520,23 @@ const ClassSchedule = () => {
               <div className="flex flex-col gap-3 text-sm">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4" style={{ color: getSubjectColor(selectedClass.subject) }} />
-                  <span className="text-gray-200">Teacher: {selectedClass.teacher_name || 'To be assigned'}</span>
+                  <span className={modalText}>Teacher: {selectedClass.teacher_name || 'To be assigned'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4" style={{ color: getSubjectColor(selectedClass.subject) }} />
-                  <span className="text-gray-200">Time: {selectedClass.start} – {selectedClass.end}</span>
+                  <span className={modalText}>Time: {selectedClass.start} – {selectedClass.end}</span>
                 </div>
                 {selectedClass.room && (
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" style={{ color: getSubjectColor(selectedClass.subject) }} />
-                    <span className="text-gray-200">Room: {selectedClass.room}</span>
+                    <span className={modalText}>Room: {selectedClass.room}</span>
                   </div>
                 )}
               </div>
 
               <div className="flex justify-end mt-6">
                 <button
-                  className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors text-sm"
+                  className={`px-3 py-1.5 md:px-4 md:py-2 rounded-md transition-colors text-sm ${btnInact}`}
                   onClick={() => setSelectedClass(null)}
                 >
                   Close
@@ -550,7 +564,7 @@ const ClassSchedule = () => {
                   {scheduleData.days.map((day) => (
                     <button
                       key={day}
-                      className={`px-3 py-1 text-sm rounded-md transition-colors ${selectedDay === day ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                      className={`px-3 py-1 text-sm rounded-md transition-colors ${selectedDay === day ? btnActive : btnInact}`}
                       onClick={() => setSelectedDay(day)}
                     >
                       {day}
@@ -561,7 +575,7 @@ const ClassSchedule = () => {
                   {timeBlocks.map((block) => (
                     <button
                       key={block.id}
-                      className={`px-3 py-1 text-sm rounded-md transition-colors ${selectedTimeBlock === block.id ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                      className={`px-3 py-1 text-sm rounded-md transition-colors ${selectedTimeBlock === block.id ? btnActive : btnInact}`}
                       onClick={() => setSelectedTimeBlock(block.id)}
                     >
                       {block.id === 'all' ? block.name : <span className="flex items-center"><Clock className="w-3 h-3 mr-1" />{block.name}</span>}
@@ -575,7 +589,7 @@ const ClassSchedule = () => {
                   {scheduleData.days.map((day) => (
                     <button
                       key={day}
-                      className={`px-3 py-2 text-xs rounded-md transition-colors whitespace-nowrap flex-shrink-0 ${selectedDay === day ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                      className={`px-3 py-2 text-xs rounded-md transition-colors whitespace-nowrap flex-shrink-0 ${selectedDay === day ? btnActive : btnInact}`}
                       onClick={() => setSelectedDay(day)}
                     >
                       {day}
@@ -583,7 +597,7 @@ const ClassSchedule = () => {
                   ))}
                 </div>
                 <select
-                  className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-2 text-sm outline-none focus:ring-2 focus:ring-amber-300 w-full"
+                  className={`rounded-md border p-2 text-sm outline-none focus:ring-2 w-full ${selectCls}`}
                   value={selectedTimeBlock}
                   onChange={(e) => setSelectedTimeBlock(e.target.value)}
                 >
@@ -597,15 +611,15 @@ const ClassSchedule = () => {
             {/* View mode switcher */}
             <div className="transition-all duration-300 ease-in-out">
               <div className="flex justify-end mb-3 md:mb-4">
-                <div className="flex border border-gray-700 rounded-md overflow-hidden">
+                <div className={`flex border rounded-md overflow-hidden ${switchBorder}`}>
                   <button
-                    className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                    className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'daily' ? btnActive : btnInact}`}
                     onClick={() => setViewMode('daily')}
                   >
                     {isMobile ? 'Daily' : 'Daily View'}
                   </button>
                   <button
-                    className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                    className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'weekly' ? btnActive : btnInact}`}
                     onClick={() => setViewMode('weekly')}
                   >
                     {isMobile ? 'Weekly' : 'Weekly View'}
