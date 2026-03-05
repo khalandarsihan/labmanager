@@ -3,137 +3,125 @@ import React from "react";
 function fmtDate(dateStr) {
 	if (!dateStr) return "";
 	try {
-		const d = new Date(dateStr);
-		return d.toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
-	} catch {
-		return dateStr;
-	}
+		return new Date(dateStr).toLocaleDateString("en-IN", { day: "2-digit", month: "short" });
+	} catch { return dateStr; }
 }
 
 function daysLeft(dateStr) {
 	if (!dateStr) return null;
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	const due = new Date(dateStr);
-	due.setHours(0, 0, 0, 0);
+	const today = new Date(); today.setHours(0, 0, 0, 0);
+	const due = new Date(dateStr); due.setHours(0, 0, 0, 0);
 	return Math.ceil((due - today) / 86400000);
 }
 
-const SUBJECT_COLORS = ["#1B4332", "#166534", "#14532D", "#064E3B", "#134E4A"];
+const SUBJECT_GRADIENTS = [
+	"linear-gradient(135deg, #1B4332, #166534)",
+	"linear-gradient(135deg, #14532D, #166534)",
+	"linear-gradient(135deg, #064E3B, #0F766E)",
+	"linear-gradient(135deg, #134E4A, #0F766E)",
+	"linear-gradient(135deg, #0C4A6E, #0369A1)",
+];
 
 export default function AssignmentCard({ assignments }) {
 	const { pending = [], submitted_count = 0, overdue_count = 0 } = assignments || {};
 
 	return (
-		<div
-			style={{
-				background: "#fff",
-				borderRadius: "20px",
-				padding: "20px",
-				boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
-			}}
-		>
-			{/* Header */}
-			<div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-				<h3 style={{ fontSize: "15px", fontWeight: 700, color: "#111827", margin: 0, flex: 1 }}>
-					Assignments
-				</h3>
-				{pending.length > 0 && (
-					<div
-						style={{
-							background: overdue_count > 0 ? "#FEE2E2" : "#DBEAFE",
-							color: overdue_count > 0 ? "#DC2626" : "#1D4ED8",
-							fontSize: "12px",
-							fontWeight: 700,
-							padding: "3px 10px",
-							borderRadius: "20px",
-						}}
-					>
-						{pending.length} pending
-					</div>
-				)}
-			</div>
+		<div className="rounded-3xl overflow-hidden" style={{ background: "#fff", boxShadow: "0 8px 32px rgba(27,67,50,0.1)" }}>
+			{/* Gold top bar */}
+			<div className="h-1 w-full" style={{ background: "linear-gradient(90deg, #D4AF37, #F0D060, #D4AF37)" }} />
 
-			{/* Empty state */}
-			{pending.length === 0 ? (
-				<div style={{ textAlign: "center", padding: "20px 0" }}>
-					<div style={{ fontSize: "28px", marginBottom: "8px" }}>✅</div>
-					<p style={{ fontSize: "14px", color: "#6B7280", margin: 0 }}>
-						No pending assignments
-					</p>
+			<div className="p-5">
+				{/* Title */}
+				<div className="flex items-center gap-2 mb-5">
+					<div className="w-1 h-5 rounded-full" style={{ background: "linear-gradient(180deg, #1B4332, #166534)" }} />
+					<h3 className="flex-1 text-base font-bold" style={{ color: "#111827" }}>Assignments</h3>
+					{pending.length > 0 && (
+						<span
+							className="text-xs font-black px-3 py-1 rounded-full"
+							style={{
+								background: overdue_count > 0 ? "#FEE2E2" : "#DBEAFE",
+								color: overdue_count > 0 ? "#DC2626" : "#1D4ED8",
+							}}
+						>
+							{pending.length} pending
+						</span>
+					)}
 				</div>
-			) : (
-				<div>
-					{pending.map((a, idx) => {
-						const days = daysLeft(a.due_date);
-						const isOverdue = days !== null && days < 0;
-						const isUrgent = days !== null && days <= 2 && days >= 0;
 
-						return (
-							<div
-								key={idx}
-								style={{
-									borderBottom: idx < pending.length - 1 ? "1px solid #F3F4F6" : "none",
-									paddingBottom: "14px",
-									marginBottom: "14px",
-								}}
-							>
-								<div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
-									{/* Subject chip */}
+				{pending.length === 0 ? (
+					<div className="flex flex-col items-center py-8">
+						<div
+							className="w-16 h-16 rounded-2xl flex items-center justify-center mb-3"
+							style={{ background: "linear-gradient(135deg, #F0FDF4, #DCFCE7)" }}
+						>
+							<span className="text-3xl">✅</span>
+						</div>
+						<p className="text-sm font-medium" style={{ color: "#6B7280" }}>All caught up!</p>
+						<p className="text-xs mt-1" style={{ color: "#9CA3AF" }}>No pending assignments</p>
+					</div>
+				) : (
+					<div className="space-y-3">
+						{pending.map((a, idx) => {
+							const days = daysLeft(a.due_date);
+							const isOverdue = days !== null && days < 0;
+							const isUrgent = days !== null && days <= 2 && days >= 0;
+							const urgencyColor = isOverdue ? "#DC2626" : isUrgent ? "#D97706" : "#6B7280";
+
+							return (
+								<div
+									key={idx}
+									className="rounded-2xl p-3 flex items-start gap-3"
+									style={{
+										background: isOverdue ? "#FEF2F2" : isUrgent ? "#FFFBEB" : "#F9FAFB",
+										border: `1px solid ${isOverdue ? "#FECACA" : isUrgent ? "#FDE68A" : "#F3F4F6"}`,
+									}}
+								>
+									{/* Subject badge */}
 									<div
-										style={{
-											background: SUBJECT_COLORS[idx % SUBJECT_COLORS.length],
-											color: "#fff",
-											fontSize: "10px",
-											fontWeight: 700,
-											padding: "3px 8px",
-											borderRadius: "6px",
-											whiteSpace: "nowrap",
-											flexShrink: 0,
-											marginTop: "2px",
-										}}
+										className="flex-shrink-0 text-[10px] font-black text-white px-2 py-1 rounded-lg"
+										style={{ background: SUBJECT_GRADIENTS[idx % SUBJECT_GRADIENTS.length] }}
 									>
-										{a.subject || "General"}
+										{(a.subject || "Gen").slice(0, 6)}
 									</div>
 
-									<div style={{ flex: 1 }}>
-										<div style={{ fontSize: "14px", fontWeight: 600, color: "#111827" }}>
+									{/* Content */}
+									<div className="flex-1 min-w-0">
+										<div className="text-sm font-semibold truncate" style={{ color: "#111827" }}>
 											{a.title}
 										</div>
-										<div style={{ fontSize: "12px", color: isOverdue ? "#DC2626" : isUrgent ? "#D97706" : "#6B7280", marginTop: "3px" }}>
+										<div className="text-xs mt-0.5 font-medium" style={{ color: urgencyColor }}>
 											{isOverdue
-												? `⚠️ OVERDUE by ${Math.abs(days)} day${Math.abs(days) !== 1 ? "s" : ""}`
+												? `⚠ OVERDUE · ${Math.abs(days)}d ago`
 												: days === 0
 												? "⚡ Due today"
 												: days !== null
-												? `Due: ${fmtDate(a.due_date)} (${days} days left)`
-												: `Due: ${fmtDate(a.due_date)}`}
+												? `Due ${fmtDate(a.due_date)} · ${days}d left`
+												: `Due ${fmtDate(a.due_date)}`}
 										</div>
 									</div>
 								</div>
-							</div>
-						);
-					})}
-				</div>
-			)}
+							);
+						})}
+					</div>
+				)}
 
-			{/* Footer stats */}
-			{(submitted_count > 0 || overdue_count > 0) && (
-				<div
-					style={{
-						marginTop: "12px",
-						paddingTop: "12px",
-						borderTop: "1px solid #F3F4F6",
-						fontSize: "12px",
-						color: "#9CA3AF",
-						display: "flex",
-						gap: "16px",
-					}}
-				>
-					{submitted_count > 0 && <span>✓ {submitted_count} submitted</span>}
-					{overdue_count > 0 && <span style={{ color: "#DC2626" }}>⚠ {overdue_count} overdue</span>}
-				</div>
-			)}
+				{(submitted_count > 0 || overdue_count > 0) && (
+					<div className="flex gap-4 mt-4 pt-4 border-t" style={{ borderColor: "#F3F4F6" }}>
+						{submitted_count > 0 && (
+							<div className="flex items-center gap-1.5">
+								<div className="w-2 h-2 rounded-full" style={{ background: "#16A34A" }} />
+								<span className="text-xs font-medium" style={{ color: "#6B7280" }}>{submitted_count} submitted</span>
+							</div>
+						)}
+						{overdue_count > 0 && (
+							<div className="flex items-center gap-1.5">
+								<div className="w-2 h-2 rounded-full" style={{ background: "#DC2626" }} />
+								<span className="text-xs font-medium" style={{ color: "#DC2626" }}>{overdue_count} overdue</span>
+							</div>
+						)}
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }
