@@ -61,10 +61,7 @@ def send_fee_reminders():
 
 	invoices = frappe.db.sql(
 		"""
-		SELECT
-			si.name     AS invoice_name,
-			si.customer AS customer,
-			COALESCE(si.custom_student_profile, si.customer) AS student_profile
+		SELECT si.name AS invoice_name, si.customer AS student_profile
 		FROM `tabSales Invoice` si
 		WHERE
 			si.due_date = %s
@@ -77,7 +74,7 @@ def send_fee_reminders():
 
 	for inv in invoices:
 		student = inv.student_profile
-		# Verify this is a valid Student Profile (not just any customer)
+		# Only proceed if the customer maps to a Student Profile
 		if not frappe.db.exists("Student Profile", student):
 			continue
 		try:
