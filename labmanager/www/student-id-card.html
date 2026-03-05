@@ -1,0 +1,20 @@
+{% extends "templates/layout.html" %}
+{% block title %}Student ID Card — TechEthica{% endblock %}
+{% block head %}
+<style>
+  @media print {
+    header, footer, nav, .navbar, .page-header, #toolbar, .sidebar { display: none !important; }
+    body { margin: 0; background: white; }
+    #student-id-card-root { padding: 0; }
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div id="student-id-card-root"></div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+  window.socketPort = "{{ socketPort }}";
+</script>
+<script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
+{% endblock %}

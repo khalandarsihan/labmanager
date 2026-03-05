@@ -550,6 +550,7 @@ import EventsPage from "./pages/Events/EventPage";
 import EventDetails from "./pages/Events/EventDetails";
 import AppWrapper from "./components/AppWrapper";
 import TeacherAttendancePage from "./pages/TeacherAttendance";
+import StudentIDCardPage from "./pages/StudentIDCard";
 
 // Function to render with FrappeProvider wrapper
 const renderWithProvider = (component, container) => {
@@ -693,4 +694,10 @@ if (eventDetailsContainer) {
 const teacherAttendanceContainer = document.getElementById("teacher-attendance-root");
 if (teacherAttendanceContainer) {
 	renderWithProvider(<TeacherAttendancePage />, teacherAttendanceContainer);
+}
+
+// Student ID Card Page
+const studentIDCardContainer = document.getElementById("student-id-card-root");
+if (studentIDCardContainer) {
+	renderWithProvider(<StudentIDCardPage />, studentIDCardContainer);
 }

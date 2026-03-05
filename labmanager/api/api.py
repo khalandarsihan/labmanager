@@ -3218,3 +3218,22 @@ def send_acceptance_notification(registration_id):
             "status": "error",
             "message": str(e)
         }
+
+@frappe.whitelist()
+def get_student_id_card(student):
+	"""Return all fields needed to render and print a student ID card."""
+	doc = frappe.get_doc("Student Profile", student)
+	return {
+		"name": doc.name,
+		"full_name": doc.full_name or "",
+		"father_name": doc.father_name or "",
+		"blood_group": doc.blood_group or "",
+		"date_of_birth": str(doc.date_of_birth) if doc.date_of_birth else "",
+		"class_section": doc.class_section or "",
+		"address": doc.address or "",
+		"emergency_contact": doc.emergency_contact or "",
+		"profile_image": doc.profile_image or "",
+		"qr_code": doc.qr_code or "",
+		"qr_id": doc.qr_id or doc.name,
+		"phone": doc.phone or "",
+	}

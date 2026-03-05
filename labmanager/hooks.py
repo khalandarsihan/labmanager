@@ -291,6 +291,10 @@ whitelisted_methods = {
     "labmanager.attendance.api.create_class_log": True,
     "labmanager.attendance.api.mark_attendance": True,
     "labmanager.attendance.api.close_class_log": True,
+    "labmanager.attendance.api.get_class_attendance": True,
+    # Student ID Card
+    "labmanager.api.api.get_student_id_card": True,
+    "labmanager.labmanager.doctype.student_profile.student_profile.regenerate_all_qr": True,
 }
 
 web_template = [
@@ -345,6 +349,7 @@ website_route_rules = [
     {"from_route": "/events", "to_route": "events"},
     {"from_route": "/event-details", "to_route": "events/event-details"},
     {"from_route": "/teacher-attendance", "to_route": "teacher-attendance"},
+    {"from_route": "/student-id-card", "to_route": "student-id-card"},
     # {"from_route": "/admin/applications", "to_route": "admin/applications"},
     # {"from_route": "/admin/applications/<id>", "to_route": "admin/applications/details"},
     # {"from_route": "/enroll", "to_route": "enroll"},
