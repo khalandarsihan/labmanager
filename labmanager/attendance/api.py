@@ -52,14 +52,19 @@ def get_today_slots() -> dict:
 	for slot in slots:
 		start = get_time(slot.scheduled_start)
 		end   = get_time(slot.scheduled_end) if slot.scheduled_end else None
-		if end and start <= now <= end:
-			status = "active"
-		elif start > now:
-			status = "upcoming"
-		else:
-			status = "past"
 
-		delay_minutes = max(0, _time_to_minutes(now) - _time_to_minutes(start)) if status == "active" else 0
+		if start > now:
+			status = "upcoming"
+		elif end and now > end:
+			status = "past"
+		else:
+			# now >= start and (no end time OR now <= end)
+			status = "active"
+
+		# Delay is always measured from scheduled_start — even for past slots that
+		# the teacher is opening late.  This ensures the late-reason prompt fires
+		# regardless of whether the class window has technically ended.
+		delay_minutes = max(0, _time_to_minutes(now) - _time_to_minutes(start)) if start <= now else 0
 		result.append({
 			"slot":            slot.name,
 			"subject":         slot.subject,
