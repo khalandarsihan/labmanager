@@ -95,17 +95,21 @@ def verify_portal_token(token: str) -> dict:
 		)
 		if not sp:
 			continue
-		batch = frappe.db.get_value(
+		batches = frappe.get_all(
 			"Student Batch Enrollment",
-			{"parent": student_id, "is_active": 1},
-			"batch",
-		) or ""
+			filters={"parent": student_id, "is_active": 1},
+			fields=["batch"],
+			order_by="creation asc",
+		)
+		batch_names = [b.batch for b in batches if b.batch]
+		batch_label = ", ".join(batch_names)
 		students.append({
 			"student_id": sp.name,
 			"student_name": sp.full_name or sp.name,
-			"batch": batch,
+			"batch": batch_label,
+			"batches": batch_names,
 			"photo_url": "",
-			"program": batch,
+			"program": batch_label,
 		})
 
 	return {"valid": True, "parent_name": parent_name, "students": students}
@@ -420,12 +424,14 @@ def _get_fee_data(student_id: str, today) -> dict:
 
 def _get_schedule_today(student_id: str, today) -> list:
 	try:
-		batch = frappe.db.get_value(
+		batches = frappe.get_all(
 			"Student Batch Enrollment",
-			{"parent": student_id, "is_active": 1},
-			"batch",
+			filters={"parent": student_id, "is_active": 1},
+			fields=["batch"],
+			order_by="creation asc",
 		)
-		if not batch:
+		batch_names = [b.batch for b in batches if b.batch]
+		if not batch_names:
 			return []
 
 		day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -434,16 +440,22 @@ def _get_schedule_today(student_id: str, today) -> list:
 			return []
 		today_name = day_names[weekday]
 
-		slots = frappe.get_all(
-			"Timetable Master",
-			filters={"batch": batch, "day_of_week": today_name, "is_active": 1},
-			fields=["name", "period_number", "subject", "teacher",
-			        "scheduled_start", "scheduled_end", "room"],
-			order_by="period_number asc",
-		)
+		all_slots = []
+		for batch in batch_names:
+			slots = frappe.get_all(
+				"Timetable Master",
+				filters={"batch": batch, "day_of_week": today_name, "is_active": 1},
+				fields=["name", "period_number", "subject", "teacher",
+				        "scheduled_start", "scheduled_end", "room", "batch"],
+				order_by="scheduled_start asc",
+			)
+			all_slots.extend(slots)
+
+		# Sort all slots across batches by start time
+		all_slots.sort(key=lambda s: s.scheduled_start or datetime.time())
 
 		result = []
-		for slot in slots:
+		for slot in all_slots:
 			log_status = frappe.db.get_value(
 				"Class Conducted Log",
 				{"timetable_slot": slot.name, "date": str(today)},
@@ -465,6 +477,7 @@ def _get_schedule_today(student_id: str, today) -> list:
 				"start_time": _fmt_timedelta(slot.scheduled_start),
 				"end_time": _fmt_timedelta(slot.scheduled_end),
 				"room": slot.room or "",
+				"batch": slot.batch or "",
 				"status": period_status,
 			})
 		return result

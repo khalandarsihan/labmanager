@@ -92,11 +92,19 @@ export default function ScheduleCard({ schedule }) {
 													>
 														{period.subject}
 													</div>
-													{period.teacher_name && (
+													{(period.teacher_name || period.batch) && (
 														<div className="text-xs mt-0.5 truncate" style={{ color: "#9CA3AF" }}>
 															{period.teacher_name}
-															{period.room && ` · ${period.room}`}
+															{period.teacher_name && period.room && ` · ${period.room}`}
 														</div>
+													)}
+													{period.batch && (
+														<span
+															className="inline-block text-[9px] font-bold px-1.5 py-0.5 rounded-md mt-1"
+															style={{ background: "rgba(27,67,50,0.08)", color: "#1B4332" }}
+														>
+															{period.batch}
+														</span>
 													)}
 												</div>
 

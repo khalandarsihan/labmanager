@@ -171,11 +171,18 @@ export default function Dashboard({ token, students, parentName }) {
 									<span className="text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>Attendance</span>
 								</div>
 							)}
-							{activeStudent?.batch && (
-								<div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
-									<span className="text-xs" style={{ color: "rgba(255,255,255,0.8)" }}>📚 {activeStudent.batch}</span>
-								</div>
-							)}
+							{activeStudent?.batches?.length > 0
+								? activeStudent.batches.map((b) => (
+									<div key={b} className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
+										<span className="text-xs" style={{ color: "rgba(255,255,255,0.8)" }}>📚 {b}</span>
+									</div>
+								))
+								: activeStudent?.batch && (
+									<div className="flex items-center gap-2 px-4 py-2 rounded-xl" style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
+										<span className="text-xs" style={{ color: "rgba(255,255,255,0.8)" }}>📚 {activeStudent.batch}</span>
+									</div>
+								)
+							}
 						</div>
 					)}
 				</div>
@@ -216,11 +223,13 @@ export default function Dashboard({ token, students, parentName }) {
 
 								<div className="flex-1 min-w-0">
 									<h2 className="text-base font-bold text-gray-900 truncate">{activeStudent.student_name}</h2>
-									{activeStudent.batch && (
-										<span className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full mt-1" style={{ background: "linear-gradient(90deg, #DCFCE7, #F0FDF4)", color: "#166534" }}>
-											📚 {activeStudent.batch}
-										</span>
-									)}
+									<div className="flex flex-wrap gap-1 mt-1">
+										{(activeStudent.batches?.length > 0 ? activeStudent.batches : activeStudent.batch ? [activeStudent.batch] : []).map((b) => (
+											<span key={b} className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 rounded-full" style={{ background: "linear-gradient(90deg, #DCFCE7, #F0FDF4)", color: "#166534" }}>
+												📚 {b}
+											</span>
+										))}
+									</div>
 								</div>
 
 								{/* Attendance ring mini */}
