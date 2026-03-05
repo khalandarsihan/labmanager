@@ -3,7 +3,8 @@ import StudentSelector from "./StudentSelector";
 import AttendanceCard from "./AttendanceCard";
 import AssignmentCard from "./AssignmentCard";
 import FeeCard from "./FeeCard";
-import ScheduleCard from "./ScheduleCard";
+import TodaySchedule from "./TodaySchedule";
+import NotificationsCard from "./NotificationsCard";
 import LeaveRequestModal from "./LeaveRequestModal";
 import LoadingSkeleton from "./LoadingSkeleton";
 
@@ -39,12 +40,17 @@ const CoinIcon = () => (
 		<circle cx="12" cy="12" r="10"/><path d="M12 6v2m0 8v2m-4-6h8"/>
 	</svg>
 );
+const BellIcon = () => (
+	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+		<path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+	</svg>
+);
 
 const NAV_ITEMS = [
-	{ id: "today",       Icon: CalendarIcon, label: "Today" },
-	{ id: "attendance",  Icon: ShieldIcon,   label: "Attendance" },
-	{ id: "assignments", Icon: BookIcon,     label: "Homework" },
-	{ id: "fees",        Icon: CoinIcon,     label: "Fees" },
+	{ id: "today",         Icon: CalendarIcon, label: "Today" },
+	{ id: "assignments",   Icon: BookIcon,     label: "Homework" },
+	{ id: "fees",          Icon: CoinIcon,     label: "Fees" },
+	{ id: "notifications", Icon: BellIcon,     label: "Alerts" },
 ];
 
 /* ── Islamic star pattern for header ──────────────────── */
@@ -129,12 +135,22 @@ export default function Dashboard({ token, students, parentName }) {
 			</div>
 		);
 
+		const studentBatches = activeStudent?.batches?.length > 0
+			? activeStudent.batches
+			: activeStudent?.batch ? [activeStudent.batch] : [];
+
 		switch (activeTab) {
-			case "today":       return <div className="space-y-4"><ScheduleCard schedule={dashData.schedule_today} /><AttendanceCard attendance={dashData.attendance} token={token} studentId={activeStudentId} /></div>;
-			case "attendance":  return <AttendanceCard attendance={dashData.attendance} token={token} studentId={activeStudentId} />;
-			case "assignments": return <AssignmentCard assignments={dashData.assignments} />;
-			case "fees":        return <FeeCard fees={dashData.fees} />;
-			default:            return null;
+			case "today":
+				return (
+					<div className="space-y-4">
+						<TodaySchedule schedule={dashData.schedule_today} batches={studentBatches} />
+						<AttendanceCard attendance={dashData.attendance} token={token} studentId={activeStudentId} />
+					</div>
+				);
+			case "assignments":   return <AssignmentCard assignments={dashData.assignments} />;
+			case "fees":          return <FeeCard fees={dashData.fees} />;
+			case "notifications": return <NotificationsCard notifications={dashData.notifications} />;
+			default:              return null;
 		}
 	};
 
