@@ -1736,6 +1736,19 @@ def get_all_sections():
         frappe.log_error(frappe.get_traceback(), "Get All Sections API Error")
         return {"error": str(e), "status": "error"}
 
+def _fmt_timedelta(t) -> str:
+	"""Format a timedelta (Frappe Time field) or time-like value as HH:MM."""
+	if not t:
+		return ""
+	try:
+		# timedelta from Frappe
+		total = int(t.total_seconds())
+		return f"{total // 3600:02d}:{(total % 3600) // 60:02d}"
+	except AttributeError:
+		# fallback: already a string or time object
+		return str(t)[:5]
+
+
 @frappe.whitelist(allow_guest=True)
 def get_all_batches():
 	"""Return all active Batch TE records for the class schedule selector."""
@@ -1790,8 +1803,8 @@ def get_timetable_schedule(batch):
 			classes[day] = []
 
 		pn = slot.period_number
-		start = str(slot.scheduled_start)[:5] if slot.scheduled_start else ""
-		end = str(slot.scheduled_end)[:5] if slot.scheduled_end else ""
+		start = _fmt_timedelta(slot.scheduled_start)
+		end = _fmt_timedelta(slot.scheduled_end)
 
 		if pn not in periods_map:
 			periods_map[pn] = {"start": start, "end": end}
