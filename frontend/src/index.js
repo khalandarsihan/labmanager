@@ -551,6 +551,7 @@ import EventDetails from "./pages/Events/EventDetails";
 import AppWrapper from "./components/AppWrapper";
 import TeacherAttendancePage from "./pages/TeacherAttendance";
 import StudentIDCardPage from "./pages/StudentIDCard";
+import ParentPortalPage from "./pages/ParentPortal";
 
 // Function to render with FrappeProvider wrapper
 const renderWithProvider = (component, container) => {
@@ -700,4 +701,15 @@ if (teacherAttendanceContainer) {
 const studentIDCardContainer = document.getElementById("student-id-card-root");
 if (studentIDCardContainer) {
 	renderWithProvider(<StudentIDCardPage />, studentIDCardContainer);
+}
+
+// Parent Portal Page (no AppWrapper — uses own token auth)
+const parentPortalContainer = document.getElementById("parent-portal-root");
+if (parentPortalContainer) {
+	const root = createRoot(parentPortalContainer);
+	root.render(
+		<React.StrictMode>
+			<ParentPortalPage />
+		</React.StrictMode>
+	);
 }

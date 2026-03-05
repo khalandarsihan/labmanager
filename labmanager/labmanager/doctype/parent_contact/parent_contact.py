@@ -1,24 +1,31 @@
 # Copyright (c) 2026, Khalandar Sihan and contributors
 # For license information, please see license.txt
 
-import secrets
-
 import frappe
 from frappe import _
 from frappe.model.document import Document
-from frappe.utils import add_days, now_datetime
 
 
 class ParentContact(Document):
 	def before_insert(self):
 		self._generate_portal_token()
 
+	def after_insert(self):
+		"""Send portal link WhatsApp after doc is saved."""
+		try:
+			from labmanager.portal.api import send_portal_link_whatsapp
+			send_portal_link_whatsapp(self.name)
+		except Exception:
+			frappe.log_error(frappe.get_traceback(), "Parent Portal Link WhatsApp on Insert")
+
 	def validate(self):
 		self._validate_primary_contact_number()
 
 	def _generate_portal_token(self):
-		self.portal_token = secrets.token_urlsafe(32)
-		self.token_expiry = add_days(now_datetime(), 30)
+		"""Generate a permanent (no-expiry) portal token."""
+		from labmanager.portal.token_utils import generate_portal_token
+		self.portal_token = generate_portal_token()
+		# Token is permanent — no expiry set
 
 	def _validate_primary_contact_number(self):
 		if self.primary_contact == "Father" and not self.father_whatsapp:
@@ -31,13 +38,6 @@ class ParentContact(Document):
 				_("Mother WhatsApp number is not set — notifications may not be delivered."),
 				alert=True,
 			)
-
-	@frappe.whitelist()
-	def refresh_token(self):
-		"""Regenerate portal token. Called from the form's Refresh Token button."""
-		self._generate_portal_token()
-		self.save(ignore_permissions=True)
-		return self.portal_token
 
 	def get_whatsapp_number(self) -> str | None:
 		"""Return the WhatsApp number of the primary contact."""

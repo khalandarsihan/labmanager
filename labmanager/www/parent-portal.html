@@ -1,0 +1,26 @@
+{% extends "templates/layout.html" %}
+{% block title %}TechEthica Parent Portal{% endblock %}
+{% block head %}
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<style>
+  /* Full-screen experience — hide all Frappe chrome */
+  .navbar, .page-header, header.navbar, .navbar-header,
+  .navbar-toggler, .nav-link, .dropdown-menu,
+  .page-footer, footer { display: none !important; }
+  body { padding-top: 0 !important; background: #F9FAFB; }
+  .page-content-wrapper, .container, .container-fluid,
+  .layout-main, .layout-main-section,
+  .page-container { padding: 0 !important; margin: 0 !important;
+    max-width: 100% !important; }
+</style>
+{% endblock %}
+{% block content %}
+<div id="parent-portal-root" style="min-height: 100vh; background: #F9FAFB;"></div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+  window.socketPort = "{{ socketPort }}";
+</script>
+<script type="text/javascript" src="/assets/labmanager/js/react/bundle.js"></script>
+{% endblock %}

@@ -47,7 +47,8 @@ app_include_js = ["/assets/labmanager/js/lab_dockerfile.js"]
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 
 doctype_js = {
-    "Lab Dockerfile": "public/js/lab_dockerfile.js"
+    "Lab Dockerfile": "public/js/lab_dockerfile.js",
+    "Parent Contact": "labmanager/labmanager/doctype/parent_contact/parent_contact.js",
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -296,6 +297,13 @@ whitelisted_methods = {
     # Student ID Card
     "labmanager.api.api.get_student_id_card": True,
     "labmanager.labmanager.doctype.student_profile.student_profile.regenerate_all_qr": True,
+    # Parent Portal (guest-facing)
+    "labmanager.portal.api.verify_portal_token": True,
+    "labmanager.portal.api.get_student_dashboard": True,
+    "labmanager.portal.api.submit_leave_request": True,
+    # Parent Portal (admin — logged-in only)
+    "labmanager.portal.api.generate_and_save_token": True,
+    "labmanager.portal.api.send_portal_link_whatsapp": True,
 }
 
 web_template = [
@@ -351,6 +359,7 @@ website_route_rules = [
     {"from_route": "/event-details", "to_route": "events/event-details"},
     {"from_route": "/teacher-attendance", "to_route": "teacher-attendance"},
     {"from_route": "/student-id-card", "to_route": "student-id-card"},
+    {"from_route": "/parent-portal", "to_route": "parent-portal"},
     # {"from_route": "/admin/applications", "to_route": "admin/applications"},
     # {"from_route": "/admin/applications/<id>", "to_route": "admin/applications/details"},
     # {"from_route": "/enroll", "to_route": "enroll"},
