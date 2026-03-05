@@ -56,8 +56,6 @@ export default function WeekCalendar({ days, token, studentId }) {
 		}
 	};
 
-	const selectedDay = days.find((d) => d.date === selected);
-
 	return (
 		<div>
 			<div className="text-xs font-semibold mb-3" style={{ color: "#6B7280", letterSpacing: "0.05em" }}>
@@ -121,17 +119,36 @@ export default function WeekCalendar({ days, token, studentId }) {
 					>
 						<div>
 							<div className="text-white font-bold text-sm">{fmtFull(selected)}</div>
-							{selectedDay && (
-								<div className="flex items-center gap-1.5 mt-0.5">
-									<span className="text-xs" style={{ color: "rgba(255,255,255,0.7)" }}>Overall:</span>
-									<span
-										className="text-[10px] font-black px-2 py-0.5 rounded-full"
-										style={(STATUS_CFG[selectedDay.status] || STATUS_CFG.no_class).badge}
-									>
-										{(STATUS_CFG[selectedDay.status] || STATUS_CFG.no_class).label}
-									</span>
-								</div>
-							)}
+							{/* Count summary — shown once per-class data is loaded */}
+							{detail && detail.classes.length > 0 && (() => {
+								const counts = detail.classes.reduce(
+									(acc, cls) => {
+										const s = (cls.status || "").toLowerCase();
+										if (s === "present") acc.present++;
+										else if (s === "absent") acc.absent++;
+										else if (s === "late") acc.late++;
+										return acc;
+									},
+									{ present: 0, absent: 0, late: 0 }
+								);
+								const parts = [];
+								if (counts.present) parts.push({ label: `${counts.present}P`, cfg: STATUS_CFG.present });
+								if (counts.late)    parts.push({ label: `${counts.late}L`,    cfg: STATUS_CFG.late });
+								if (counts.absent)  parts.push({ label: `${counts.absent}A`,  cfg: STATUS_CFG.absent });
+								return (
+									<div className="flex items-center gap-1.5 mt-1">
+										{parts.map(({ label, cfg }) => (
+											<span
+												key={label}
+												className="text-[10px] font-black px-2 py-0.5 rounded-full"
+												style={cfg.badge}
+											>
+												{label}
+											</span>
+										))}
+									</div>
+								);
+							})()}
 						</div>
 						<button
 							onClick={() => { setSelected(null); setDetail(null); }}
@@ -154,14 +171,16 @@ export default function WeekCalendar({ days, token, studentId }) {
 							</div>
 						) : detail && detail.classes.length > 0 ? (
 							detail.classes.map((cls, i) => {
-								const cfg = STATUS_CFG[cls.status?.toLowerCase().replace(" ", "_")] || STATUS_CFG.no_class;
+								const statusKey = cls.status?.toLowerCase().replace(" ", "_");
+								const cfg = STATUS_CFG[statusKey] || STATUS_CFG.no_class;
+								const isLate = statusKey === "late" && cls.late_minutes > 0;
 								return (
 									<div
 										key={i}
 										className="flex items-center gap-3 px-4 py-3"
 										style={{ borderBottom: i < detail.classes.length - 1 ? "1px solid #F3F4F6" : "none" }}
 									>
-										<span className="text-base flex-shrink-0">{STATUS_ICON[cls.status?.toLowerCase().replace(" ", "_")] || "—"}</span>
+										<span className="text-base flex-shrink-0">{STATUS_ICON[statusKey] || "—"}</span>
 										<div className="flex-1 min-w-0">
 											<div className="text-sm font-semibold truncate" style={{ color: "#111827" }}>
 												{cls.subject}
@@ -175,7 +194,7 @@ export default function WeekCalendar({ days, token, studentId }) {
 												className="text-[10px] font-black px-2 py-0.5 rounded-full"
 												style={cfg.badge}
 											>
-												{cfg.label}
+												{isLate ? `Late +${cls.late_minutes}m` : cfg.label}
 											</div>
 											{cls.start_time && (
 												<div className="text-[10px] mt-0.5" style={{ color: "#9CA3AF" }}>

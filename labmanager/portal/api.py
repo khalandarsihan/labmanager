@@ -184,21 +184,37 @@ def get_student_dashboard(token: str, student_id: str) -> dict:
 			"status": status,
 		})
 
-	# Recent 7 days
+	# Recent 7 days — aggregate all records per day, pick worst status.
+	# Priority: Absent > Late > Present > On Leave  (so one absence doesn't hide presents)
+	day_start = today - datetime.timedelta(days=6)
+	_day_rows = frappe.db.sql(
+		"""
+		SELECT date, status, COUNT(*) AS cnt
+		FROM `tabStudent Attendance TE`
+		WHERE student = %s AND date BETWEEN %s AND %s
+		GROUP BY date, status
+		""",
+		(student_id, str(day_start), str(today)),
+		as_dict=True,
+	)
+	_day_map: dict[str, dict[str, int]] = {}
+	for r in _day_rows:
+		d = str(r.date)
+		_day_map.setdefault(d, {})[r.status] = int(r.cnt or 0)
+
+	_PRIORITY = ["Absent", "Late", "Present", "On Leave"]
 	recent_7 = []
 	for i in range(6, -1, -1):
 		day = today - datetime.timedelta(days=i)
-		att_status = frappe.db.get_value(
-			"Student Attendance TE",
-			{"student": student_id, "date": str(day)},
-			"status",
-		)
-		if att_status:
-			mapped = att_status.lower().replace(" ", "_")
-		else:
-			mapped = "no_class"
+		day_str = str(day)
+		statuses = _day_map.get(day_str, {})
+		mapped = "no_class"
+		for s in _PRIORITY:
+			if s in statuses:
+				mapped = s.lower().replace(" ", "_")
+				break
 		recent_7.append({
-			"date": str(day),
+			"date": day_str,
 			"day_name": day.strftime("%a"),
 			"status": mapped,
 		})
@@ -292,6 +308,7 @@ def get_day_attendance(token: str, student_id: str, date: str) -> dict:
 		"""
 		SELECT
 			sa.status,
+			sa.late_minutes,
 			ccl.subject,
 			ccl.actual_start,
 			ccl.scheduled_start,
@@ -314,6 +331,7 @@ def get_day_attendance(token: str, student_id: str, date: str) -> dict:
 		classes.append({
 			"subject": r.subject or "Unknown",
 			"status": r.status or "Unknown",
+			"late_minutes": int(r.late_minutes or 0),
 			"start_time": _fmt_timedelta(r.scheduled_start),
 			"end_time": _fmt_timedelta(r.scheduled_end),
 			"teacher_name": teacher_name,
