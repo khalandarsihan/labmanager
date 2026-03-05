@@ -4,7 +4,7 @@
 Scheduled WhatsApp jobs for TechEthica / LabManager.
 
 Registered in hooks.py → scheduler_events → "cron":
-  "0 16 * * 1-6"  → send_daily_attendance_summary   (Mon–Sat, 4 PM)
+  "0 20 * * 0-4,6" → send_daily_attendance_summary   (Mon–Thu + Sat–Sun, 8 PM)
   "0 9  * * *"    → send_fee_reminders              (daily, 9 AM)
   "0 18 * * 5"    → send_weekly_reports             (Friday, 6 PM)
 """
@@ -25,7 +25,7 @@ from labmanager.labmanager.whatsapp.api import (
 
 def send_daily_attendance_summary():
 	"""
-	Runs Mon–Sat at 16:00.
+	Runs Mon–Thu + Sat–Sun at 20:00 (Friday off).
 	Finds every completed Class Conducted Log for today and dispatches
 	a summary WhatsApp to the teacher of each log.
 	"""

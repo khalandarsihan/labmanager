@@ -159,8 +159,8 @@ doc_events = {
 
 scheduler_events = {
 	"cron": {
-		# Daily attendance summary → teachers, Mon–Sat at 4 PM
-		"0 16 * * 1-6": [
+		# Daily attendance summary → teachers, Mon–Thu + Sat–Sun at 8 PM (Friday off)
+		"0 20 * * 0-4,6": [
 			"labmanager.labmanager.whatsapp.scheduler.send_daily_attendance_summary"
 		],
 		# Fee reminders → parents, every day at 9 AM (7-day advance notice)
