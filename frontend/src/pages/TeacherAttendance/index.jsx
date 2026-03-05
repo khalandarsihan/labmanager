@@ -15,6 +15,7 @@ const TeacherAttendancePage = () => {
 	const [slotData, setSlotData] = useState(null);
 	const [classLog, setClassLog] = useState(null);
 	const [attendanceList, setAttendanceList] = useState([]);
+	const [liveStats, setLiveStats] = useState({ present: 0, late: 0, absent: 0, total: 0 });
 	const [closeSummary, setCloseSummary] = useState(null);
 	const { toast, Toaster } = useToast();
 	const { useLightTheme, themeStyles } = useTheme();
@@ -23,6 +24,7 @@ const TeacherAttendancePage = () => {
 	const { call: createLog } = useFrappePostCall("labmanager.attendance.api.create_class_log");
 	const { call: markAtt } = useFrappePostCall("labmanager.attendance.api.mark_attendance");
 	const { call: closeLog } = useFrappePostCall("labmanager.attendance.api.close_class_log");
+	const { call: fetchStats } = useFrappePostCall("labmanager.attendance.api.get_class_attendance");
 
 	useEffect(() => {
 		getSlot({})
@@ -39,16 +41,39 @@ const TeacherAttendancePage = () => {
 			.catch(() => setPhase("no-class"));
 	}, []);
 
+	const refreshStats = useCallback(
+		(log) => {
+			fetchStats({ class_log: log })
+				.then((r) => {
+					if (r.message) {
+						const { records, present, late, absent, total } = r.message;
+						setLiveStats({ present, late, absent, total });
+						setAttendanceList(
+							records.map((rec) => ({
+								student_name: rec.student_name,
+								status: rec.status,
+								late_minutes: rec.late_minutes || 0,
+								timestamp: rec.entry_time || "",
+							}))
+						);
+					}
+				})
+				.catch(() => {});
+		},
+		[fetchStats]
+	);
+
 	const handleStartClass = useCallback(() => {
 		createLog({ timetable_slot: slotData.slot })
 			.then((r) => {
 				if (r.message) {
 					setClassLog(r.message);
 					setPhase("scanning");
+					refreshStats(r.message);
 				}
 			})
 			.catch(() => {});
-	}, [slotData, createLog]);
+	}, [slotData, createLog, refreshStats]);
 
 	const handleScan = useCallback(
 		(qrId) => {
@@ -69,6 +94,13 @@ const TeacherAttendancePage = () => {
 							description: result.student_name,
 							variant: result.status === "Late" ? "default" : "success",
 						});
+						// Update counters locally from the scan result — no extra API call needed
+						setLiveStats((prev) => ({
+							...prev,
+							present: prev.present + (result.status === "Present" ? 1 : 0),
+							late: prev.late + (result.status === "Late" ? 1 : 0),
+							total: prev.total + 1,
+						}));
 						setAttendanceList((prev) => [
 							{ ...result, timestamp: new Date().toLocaleTimeString() },
 							...prev,
@@ -99,8 +131,7 @@ const TeacherAttendancePage = () => {
 	}, [classLog, closeLog]);
 
 	const totalStudents = slotData?.student_list?.length || 0;
-	const markedCount = attendanceList.length;
-	const remaining = Math.max(0, totalStudents - markedCount);
+	const remaining = Math.max(0, totalStudents - liveStats.present - liveStats.late);
 
 	return (
 		<div className={`relative min-h-screen overflow-x-hidden ${themeStyles.background}`}>
@@ -158,7 +189,9 @@ const TeacherAttendancePage = () => {
 						<QRScanner onScan={handleScan} />
 						<AttendanceSummary
 							attendanceList={attendanceList}
-							totalStudents={totalStudents}
+							present={liveStats.present}
+							late={liveStats.late}
+							absent={liveStats.absent}
 							remaining={remaining}
 						/>
 						<div className="text-center pb-4">

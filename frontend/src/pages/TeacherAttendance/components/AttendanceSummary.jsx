@@ -5,11 +5,8 @@ import { Badge } from "../../../components/ui/badge";
 
 const BADGE_VARIANT = { Present: "success", Late: "warning", Absent: "danger" };
 
-const AttendanceSummary = ({ attendanceList, totalStudents, remaining }) => {
+const AttendanceSummary = ({ attendanceList, present, late, absent, remaining }) => {
 	const { useLightTheme, themeStyles } = useTheme();
-	const present = attendanceList.filter((a) => a.status === "Present").length;
-	const late = attendanceList.filter((a) => a.status === "Late").length;
-	const absent = Math.max(0, totalStudents - present - late - remaining);
 
 	const counters = [
 		{

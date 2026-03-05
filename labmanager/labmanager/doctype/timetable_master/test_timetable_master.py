@@ -3,7 +3,7 @@
 
 from frappe.tests import IntegrationTestCase, UnitTestCase
 
-EXTRA_TEST_RECORD_DEPENDENCIES = ["Batch", "Academic Year"]
+EXTRA_TEST_RECORD_DEPENDENCIES = ["Batch TE", "Academic Year"]
 IGNORE_TEST_RECORD_DEPENDENCIES = []
 
 

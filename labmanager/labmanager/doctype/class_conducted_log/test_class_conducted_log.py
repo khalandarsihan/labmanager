@@ -3,7 +3,7 @@
 
 from frappe.tests import IntegrationTestCase, UnitTestCase
 
-EXTRA_TEST_RECORD_DEPENDENCIES = ["Timetable Master", "Batch"]
+EXTRA_TEST_RECORD_DEPENDENCIES = ["Timetable Master", "Batch TE"]
 IGNORE_TEST_RECORD_DEPENDENCIES = []
 
 

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import jsQR from "jsqr";
 import { useTheme } from "../../../components/ui/ThemeContext";
 
@@ -10,64 +10,20 @@ const QRScanner = ({ onScan }) => {
 	const canvasRef = useRef(null);
 	const animationRef = useRef(null);
 	const lastScanRef = useRef(0);
-	const detectorRef = useRef(null); // native BarcodeDetector if available
-	const scanningRef = useRef(false); // prevent concurrent async detections
+	const detectorRef = useRef(null);
+	const scanningRef = useRef(false);
+	// Keep onScan always current without it being a dep of the camera effect
+	const onScanRef = useRef(onScan);
+	useEffect(() => { onScanRef.current = onScan; });
+
 	const [cameraError, setCameraError] = useState(null);
 	const [ready, setReady] = useState(false);
 	const [lastDetected, setLastDetected] = useState(null);
 	const [manualInput, setManualInput] = useState("");
-	const [engine, setEngine] = useState(""); // "native" | "jsqr"
+	const [engine, setEngine] = useState("");
 
-	const fireScan = useCallback(
-		(data) => {
-			const now = Date.now();
-			if (now - lastScanRef.current > COOLDOWN_MS) {
-				lastScanRef.current = now;
-				setLastDetected(data);
-				onScan(data);
-			}
-		},
-		[onScan]
-	);
-
-	const tick = useCallback(() => {
-		const video = videoRef.current;
-		const canvas = canvasRef.current;
-		if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
-			animationRef.current = requestAnimationFrame(tick);
-			return;
-		}
-
-		if (detectorRef.current) {
-			// Native BarcodeDetector (Chrome / Chromium — best detection)
-			if (!scanningRef.current) {
-				scanningRef.current = true;
-				detectorRef.current
-					.detect(video)
-					.then((codes) => {
-						if (codes.length > 0) fireScan(codes[0].rawValue);
-					})
-					.catch(() => {})
-					.finally(() => { scanningRef.current = false; });
-			}
-		} else if (canvas) {
-			// jsQR fallback (Firefox / older browsers)
-			canvas.width = video.videoWidth;
-			canvas.height = video.videoHeight;
-			const ctx = canvas.getContext("2d");
-			ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-			const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-			const code = jsQR(imageData.data, imageData.width, imageData.height, {
-				inversionAttempts: "invertFirst",
-			});
-			if (code && code.data) fireScan(code.data);
-		}
-
-		animationRef.current = requestAnimationFrame(tick);
-	}, [fireScan]);
-
+	// Initialise detector once
 	useEffect(() => {
-		// Initialise the best available detector
 		if ("BarcodeDetector" in window) {
 			BarcodeDetector.getSupportedFormats().then((formats) => {
 				if (formats.includes("qr_code")) {
@@ -82,8 +38,54 @@ const QRScanner = ({ onScan }) => {
 		}
 	}, []);
 
+	// Camera lifecycle — runs once on mount, never restarts due to parent re-renders
 	useEffect(() => {
 		let stream = null;
+		let cancelled = false;
+
+		const fireScan = (data) => {
+			const now = Date.now();
+			if (now - lastScanRef.current > COOLDOWN_MS) {
+				lastScanRef.current = now;
+				setLastDetected(data);
+				onScanRef.current(data);
+			}
+		};
+
+		const tick = () => {
+			if (cancelled) return;
+			const video = videoRef.current;
+			const canvas = canvasRef.current;
+			if (!video || video.readyState !== video.HAVE_ENOUGH_DATA) {
+				animationRef.current = requestAnimationFrame(tick);
+				return;
+			}
+
+			if (detectorRef.current) {
+				if (!scanningRef.current) {
+					scanningRef.current = true;
+					detectorRef.current
+						.detect(video)
+						.then((codes) => {
+							if (codes.length > 0) fireScan(codes[0].rawValue);
+						})
+						.catch(() => {})
+						.finally(() => { scanningRef.current = false; });
+				}
+			} else if (canvas) {
+				canvas.width = video.videoWidth;
+				canvas.height = video.videoHeight;
+				const ctx = canvas.getContext("2d");
+				ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+				const code = jsQR(imageData.data, imageData.width, imageData.height, {
+					inversionAttempts: "invertFirst",
+				});
+				if (code && code.data) fireScan(code.data);
+			}
+
+			animationRef.current = requestAnimationFrame(tick);
+		};
 
 		navigator.mediaDevices
 			.getUserMedia({
@@ -94,31 +96,39 @@ const QRScanner = ({ onScan }) => {
 				},
 			})
 			.then((s) => {
+				if (cancelled) { s.getTracks().forEach((t) => t.stop()); return; }
 				stream = s;
 				if (videoRef.current) {
+					videoRef.current.muted = true;
 					videoRef.current.srcObject = s;
 					videoRef.current
 						.play()
 						.then(() => {
-							setReady(true);
-							animationRef.current = requestAnimationFrame(tick);
+							if (!cancelled) {
+								setReady(true);
+								animationRef.current = requestAnimationFrame(tick);
+							}
 						})
-						.catch(() => setCameraError("Could not start camera stream."));
+						.catch(() => { if (!cancelled) setCameraError("Could not start camera stream."); });
 				}
 			})
-			.catch(() => setCameraError("Camera access denied. Please allow camera permissions."));
+			.catch(() => { if (!cancelled) setCameraError("Camera access denied. Please allow camera permissions."); });
 
 		return () => {
+			cancelled = true;
 			cancelAnimationFrame(animationRef.current);
 			if (stream) stream.getTracks().forEach((t) => t.stop());
 		};
-	}, [tick]);
+	}, []); // empty deps — camera starts once and stays running
 
 	const handleManualSubmit = (e) => {
 		e.preventDefault();
 		const val = manualInput.trim();
 		if (val) {
-			fireScan(val);
+			const now = Date.now();
+			lastScanRef.current = now;
+			setLastDetected(val);
+			onScanRef.current(val);
 			setManualInput("");
 		}
 	};
@@ -149,12 +159,10 @@ const QRScanner = ({ onScan }) => {
 
 	return (
 		<div className="space-y-2">
-			{/* Camera viewport — always dark for contrast */}
 			<div className={`relative rounded-lg overflow-hidden border ${accentColor} bg-black`}>
 				<video ref={videoRef} className="w-full max-h-72 object-cover" playsInline muted />
 				<canvas ref={canvasRef} className="hidden" />
 
-				{/* Viewfinder corners */}
 				<div className="absolute inset-0 flex items-center justify-center pointer-events-none">
 					<div className="w-48 h-48 relative">
 						<div className={`absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 ${cornerColor} rounded-tl`} />
@@ -164,7 +172,6 @@ const QRScanner = ({ onScan }) => {
 					</div>
 				</div>
 
-				{/* Status bar — always on dark camera bg */}
 				<div className="absolute bottom-2 left-0 right-0 text-center space-y-1">
 					<div>
 						<span className={`text-xs px-3 py-1 rounded-full bg-gray-950/80 ${
@@ -187,7 +194,6 @@ const QRScanner = ({ onScan }) => {
 				</div>
 			</div>
 
-			{/* Manual fallback — always visible */}
 			<ManualInput
 				value={manualInput}
 				onChange={setManualInput}

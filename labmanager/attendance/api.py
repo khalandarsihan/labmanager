@@ -82,6 +82,30 @@ def get_current_timetable_slot() -> dict:
 
 
 @frappe.whitelist()
+def get_class_attendance(class_log: str) -> dict:
+	"""
+	Return live attendance counts and the full scan list for an ongoing class.
+	Used by the frontend to keep counters accurate across page reloads.
+	"""
+	records = frappe.get_all(
+		"Student Attendance TE",
+		filters={"class_log": class_log},
+		fields=["student", "student_name", "status", "late_minutes", "entry_time"],
+		order_by="creation desc",
+	)
+	present = sum(1 for r in records if r.status == "Present")
+	late = sum(1 for r in records if r.status == "Late")
+	absent = sum(1 for r in records if r.status == "Absent")
+	return {
+		"records": records,
+		"present": present,
+		"late": late,
+		"absent": absent,
+		"total": len(records),
+	}
+
+
+@frappe.whitelist()
 def create_class_log(timetable_slot: str) -> str:
 	"""
 	Create a Class Conducted Log for today's timetable slot.
@@ -162,13 +186,16 @@ def mark_attendance(class_log: str, qr_id: str, scan_time: str = None) -> dict:
 		}
 
 	scan = get_time(scan_time) if scan_time else datetime.now().time()
-	actual_start = get_time(log.actual_start) if log.actual_start else None
+	# Use scheduled_start for lateness so an early-starting teacher doesn't penalise students
+	ref_time = get_time(log.scheduled_start) if log.scheduled_start else (
+		get_time(log.actual_start) if log.actual_start else None
+	)
 	late_minutes = 0
 	status = "Present"
-	if actual_start:
-		diff = _time_to_minutes(scan) - _time_to_minutes(actual_start)
+	if ref_time:
+		diff = _time_to_minutes(scan) - _time_to_minutes(ref_time)
 		if diff > 5:
-			late_minutes = diff
+			late_minutes = diff - 5  # minutes past the grace period, not total time since start
 			status = "Late"
 
 	att = frappe.get_doc({
