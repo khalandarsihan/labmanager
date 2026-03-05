@@ -19,6 +19,7 @@
   "column_break_nl2",
   "meta_message_id",
   "error_message",
+  "is_read",
   "section_break_message",
   "message_preview"
  ],
@@ -55,7 +56,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Message Type",
-   "options": "Absent Alert\nDaily Summary\nAssignment\nFee Reminder\nLeave Update\nWeekly Report\nNo Class"
+   "options": "Absent Alert\nDaily Summary\nAssignment\nFee Reminder\nLeave Update\nWeekly Report\nNo Class\nBroadcast"
   },
   {
    "fieldname": "whatsapp_number",
@@ -97,6 +98,13 @@
    "fieldname": "error_message",
    "fieldtype": "Small Text",
    "label": "Error Message",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_read",
+   "fieldtype": "Check",
+   "label": "Read by Parent",
    "read_only": 1
   },
   {

@@ -347,6 +347,34 @@ def _dispatch_assignment_notification(
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Template 3a — Broadcast Alert
+# Called from: BroadcastAlertTE.send_alert (via enqueue)
+# ══════════════════════════════════════════════════════════════════════════════
+
+def send_broadcast_alert(nlog_name: str, title: str, message: str):
+	"""
+	Dispatch a broadcast WhatsApp message to a parent.
+
+	Template: broadcast_alert
+	Params  : {{1}} title  {{2}} message
+	"""
+	try:
+		nlog = frappe.get_doc("Notification Log TE", nlog_name)
+		if not nlog.whatsapp_number:
+			nlog.mark_failed("No WhatsApp number on Parent Contact")
+			return
+		send_whatsapp(
+			to=nlog.whatsapp_number,
+			template_name="broadcast_alert",
+			components=[_body(title, message)],
+			nlog_name=nlog_name,
+		)
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "WhatsApp send_broadcast_alert")
+		_nlog_failed(nlog_name, "Internal error — see Error Log")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Template 3b — No Class Today
 # Called from: scheduler at 21:00 for unconducted slots
 # ══════════════════════════════════════════════════════════════════════════════

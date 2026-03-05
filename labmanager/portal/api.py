@@ -225,14 +225,15 @@ def get_student_dashboard(token: str, student_id: str) -> dict:
 	# ── Today's schedule ──────────────────────────────────────────────────────
 	schedule_today = _get_schedule_today(student_id, today)
 
-	# ── Notifications (last 10) ───────────────────────────────────────────────
+	# ── Notifications (last 20) ───────────────────────────────────────────────
 	notifs = frappe.get_all(
 		"Notification Log TE",
 		filters={"student": student_id},
-		fields=["message_type", "sent_at", "message_preview"],
+		fields=["name", "message_type", "sent_at", "message_preview", "is_read", "delivery_status"],
 		order_by="creation desc",
-		limit=10,
+		limit=20,
 	)
+	unread_count = sum(1 for n in notifs if not n.is_read)
 
 	return {
 		"attendance": {
@@ -253,6 +254,7 @@ def get_student_dashboard(token: str, student_id: str) -> dict:
 		"fees": fees,
 		"schedule_today": schedule_today,
 		"notifications": [dict(n) for n in notifs],
+		"unread_count": unread_count,
 	}
 
 
@@ -342,6 +344,20 @@ def get_day_attendance(token: str, student_id: str, date: str) -> dict:
 		"day_name": target.strftime("%A"),
 		"classes": classes,
 	}
+
+
+@frappe.whitelist(allow_guest=True)
+def mark_notifications_read(token: str, student_id: str) -> dict:
+	"""Mark all unread Notification Log TE records as read for this student."""
+	parent = _get_parent_by_token(token)
+	if not parent or student_id not in _get_authorized_students(parent):
+		return {"error": "unauthorized"}
+	frappe.db.sql(
+		"UPDATE `tabNotification Log TE` SET is_read = 1 WHERE student = %s AND is_read = 0",
+		student_id,
+	)
+	frappe.db.commit()
+	return {"ok": True}
 
 
 # ── Admin API (whitelisted, not guest) ────────────────────────────────────────

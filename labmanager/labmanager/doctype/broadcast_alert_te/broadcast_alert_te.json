@@ -1,0 +1,156 @@
+{
+ "actions": [],
+ "allow_import": 0,
+ "allow_rename": 0,
+ "autoname": "format:ALRT-{###}",
+ "creation": "2026-03-06 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_content",
+  "title",
+  "message",
+  "section_break_target",
+  "target_type",
+  "batch",
+  "column_break_target1",
+  "student",
+  "section_break_result",
+  "status",
+  "sent_at",
+  "column_break_result1",
+  "sent_count",
+  "failed_count"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_content",
+   "fieldtype": "Section Break",
+   "label": "Alert Content"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "message",
+   "fieldtype": "Text",
+   "label": "Message",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_target",
+   "fieldtype": "Section Break",
+   "label": "Send To"
+  },
+  {
+   "default": "All Students",
+   "fieldname": "target_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Target",
+   "options": "All Students\nBatch\nIndividual Student",
+   "reqd": 1
+  },
+  {
+   "fieldname": "batch",
+   "fieldtype": "Link",
+   "label": "Batch",
+   "options": "Batch TE",
+   "depends_on": "eval:doc.target_type=='Batch'",
+   "mandatory_depends_on": "eval:doc.target_type=='Batch'"
+  },
+  {
+   "fieldname": "column_break_target1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "student",
+   "fieldtype": "Link",
+   "label": "Student",
+   "options": "Student Profile",
+   "depends_on": "eval:doc.target_type=='Individual Student'",
+   "mandatory_depends_on": "eval:doc.target_type=='Individual Student'"
+  },
+  {
+   "fieldname": "section_break_result",
+   "fieldtype": "Section Break",
+   "label": "Result"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Draft\nSending\nSent\nFailed",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sent_at",
+   "fieldtype": "Datetime",
+   "label": "Sent At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_result1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "sent_count",
+   "fieldtype": "Int",
+   "label": "Sent",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "failed_count",
+   "fieldtype": "Int",
+   "label": "Failed",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-03-06 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "LabManager",
+ "name": "Broadcast Alert TE",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Academics User",
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [
+  { "color": "Gray",   "title": "Draft"    },
+  { "color": "Yellow", "title": "Sending"  },
+  { "color": "Green",  "title": "Sent"     },
+  { "color": "Red",    "title": "Failed"   }
+ ]
+}

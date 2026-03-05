@@ -49,6 +49,7 @@ app_include_js = ["/assets/labmanager/js/lab_dockerfile.js"]
 doctype_js = {
     "Lab Dockerfile": "public/js/lab_dockerfile.js",
     "Parent Contact": "labmanager/labmanager/doctype/parent_contact/parent_contact.js",
+    "Broadcast Alert TE": "labmanager/labmanager/doctype/broadcast_alert_te/broadcast_alert_te.js",
 }
 
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
@@ -308,6 +309,7 @@ whitelisted_methods = {
     "labmanager.portal.api.get_student_dashboard": True,
     "labmanager.portal.api.submit_leave_request": True,
     "labmanager.portal.api.get_day_attendance": True,
+    "labmanager.portal.api.mark_notifications_read": True,
     # Parent Portal (admin — logged-in only)
     "labmanager.portal.api.generate_and_save_token": True,
     "labmanager.portal.api.send_portal_link_whatsapp": True,

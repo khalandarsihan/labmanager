@@ -69,10 +69,11 @@ export default function Dashboard({ token, students, parentName }) {
 	const [activeStudentId, setActiveStudentId] = useState(
 		students?.length > 0 ? students[0].student_id : null
 	);
-	const [activeTab, setActiveTab] = useState("today");
-	const [dashData, setDashData]   = useState(null);
-	const [loading, setLoading]     = useState(false);
-	const [showLeave, setShowLeave] = useState(false);
+	const [activeTab, setActiveTab]   = useState("today");
+	const [dashData, setDashData]     = useState(null);
+	const [loading, setLoading]       = useState(false);
+	const [showLeave, setShowLeave]   = useState(false);
+	const [unreadCount, setUnreadCount] = useState(0);
 
 	const activeStudent = students?.find((s) => s.student_id === activeStudentId);
 
@@ -84,7 +85,10 @@ export default function Dashboard({ token, students, parentName }) {
 			const data = await apiCall("labmanager.portal.api.get_student_dashboard", {
 				token, student_id: studentId,
 			});
-			if (data && !data.error) setDashData(data);
+			if (data && !data.error) {
+				setDashData(data);
+				setUnreadCount(data.unread_count || 0);
+			}
 		} catch (e) {
 			console.error("Dashboard fetch error:", e);
 		} finally {
@@ -99,6 +103,16 @@ export default function Dashboard({ token, students, parentName }) {
 	const handleStudentSelect = (id) => {
 		setActiveStudentId(id);
 		setActiveTab("today");
+	};
+
+	const handleTabChange = (tabId) => {
+		setActiveTab(tabId);
+		if (tabId === "notifications" && unreadCount > 0 && activeStudentId) {
+			setUnreadCount(0);
+			apiCall("labmanager.portal.api.mark_notifications_read", {
+				token, student_id: activeStudentId,
+			}).catch(() => {});
+		}
 	};
 
 	// Pull-to-refresh
@@ -296,8 +310,9 @@ export default function Dashboard({ token, students, parentName }) {
 			<nav className="fixed bottom-0 left-0 right-0 z-50 flex" style={{ background: "rgba(255,255,255,0.97)", backdropFilter: "blur(12px)", borderTop: "1px solid #F3F4F6", boxShadow: "0 -4px 24px rgba(0,0,0,0.08)", paddingBottom: "env(safe-area-inset-bottom,0px)" }}>
 				{NAV_ITEMS.map(({ id, Icon, label }) => {
 					const active = activeTab === id;
+					const showBadge = id === "notifications" && unreadCount > 0;
 					return (
-						<button key={id} onClick={() => setActiveTab(id)}
+						<button key={id} onClick={() => handleTabChange(id)}
 							className="flex-1 flex flex-col items-center justify-center gap-1 py-3 border-none cursor-pointer transition-all duration-200"
 							style={{ background: "none", minHeight: "58px" }}
 						>
@@ -305,7 +320,21 @@ export default function Dashboard({ token, students, parentName }) {
 							<div className="flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all duration-200"
 								style={{ background: active ? "linear-gradient(135deg, #1B4332, #166534)" : "transparent" }}
 							>
-								<span style={{ color: active ? "#D4AF37" : "#9CA3AF" }}><Icon /></span>
+								<span style={{ color: active ? "#D4AF37" : "#9CA3AF", position: "relative", display: "inline-flex" }}>
+									<Icon />
+									{showBadge && (
+										<span style={{
+											position: "absolute", top: "-6px", right: "-8px",
+											background: "#EF4444", color: "#fff",
+											borderRadius: "9999px", fontSize: "9px", fontWeight: 700,
+											minWidth: "16px", height: "16px",
+											display: "flex", alignItems: "center", justifyContent: "center",
+											padding: "0 3px", lineHeight: 1,
+										}}>
+											{unreadCount > 99 ? "99+" : unreadCount}
+										</span>
+									)}
+								</span>
 								<span className="text-[10px] font-bold" style={{ color: active ? "#1B4332" : "#9CA3AF" }}>
 									{label}
 								</span>
