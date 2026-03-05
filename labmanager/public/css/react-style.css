@@ -3474,10 +3474,6 @@ video {
   background-color: rgb(69 10 10 / 0.95);
 }
 
-.bg-rose-400\/90 {
-  background-color: rgb(251 113 133 / 0.9);
-}
-
 .bg-rose-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(244 63 94 / var(--tw-bg-opacity, 1));
@@ -7585,11 +7581,6 @@ video {
   .md\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .md\:text-xs {
-    font-size: 0.75rem;
-    line-height: 1rem;
   }
 
   .md\:opacity-30 {

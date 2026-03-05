@@ -1737,6 +1737,92 @@ def get_all_sections():
         return {"error": str(e), "status": "error"}
 
 @frappe.whitelist(allow_guest=True)
+def get_all_batches():
+	"""Return all active Batch TE records for the class schedule selector."""
+	batches = frappe.get_all(
+		"Batch TE",
+		filters={"is_active": 1},
+		fields=["name", "batch_name", "academic_year"],
+		order_by="batch_name",
+	)
+	return [{"id": b.name, "name": b.batch_name, "academic_year": b.academic_year or ""} for b in batches]
+
+
+@frappe.whitelist(allow_guest=True)
+def get_timetable_schedule(batch):
+	"""
+	Return the full weekly timetable for a Batch TE.
+
+	Response shape:
+	  days      – sorted list of days that have at least one slot
+	  periods   – sorted list of {id, period_number, start, end}
+	  classes   – {day: [{period_number, subject, teacher, teacher_name, room, start, end}]}
+	  subjects  – [{name}] unique subjects in this timetable
+	"""
+	if not batch:
+		return {"days": [], "periods": [], "classes": {}, "subjects": []}
+
+	slots = frappe.get_all(
+		"Timetable Master",
+		filters={"batch": batch, "is_active": 1},
+		fields=["name", "day_of_week", "period_number", "subject", "teacher", "room",
+				"scheduled_start", "scheduled_end"],
+		order_by="day_of_week, period_number",
+	)
+
+	# Resolve teacher full names in one pass
+	teacher_names = {}
+	for s in slots:
+		if s.teacher and s.teacher not in teacher_names:
+			fn = frappe.db.get_value("User", s.teacher, "full_name")
+			teacher_names[s.teacher] = fn or s.teacher
+
+	day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+	days_seen = []
+	classes = {}
+	periods_map = {}  # period_number → {start, end}
+
+	for slot in slots:
+		day = slot.day_of_week
+		if day not in days_seen:
+			days_seen.append(day)
+		if day not in classes:
+			classes[day] = []
+
+		pn = slot.period_number
+		start = str(slot.scheduled_start)[:5] if slot.scheduled_start else ""
+		end = str(slot.scheduled_end)[:5] if slot.scheduled_end else ""
+
+		if pn not in periods_map:
+			periods_map[pn] = {"start": start, "end": end}
+
+		classes[day].append({
+			"period_number": pn,
+			"subject": slot.subject or "",
+			"teacher": slot.teacher or "",
+			"teacher_name": teacher_names.get(slot.teacher, slot.teacher or ""),
+			"room": slot.room or "",
+			"start": start,
+			"end": end,
+		})
+
+	days_seen.sort(key=lambda d: day_order.index(d) if d in day_order else 99)
+	periods = [
+		{"id": pn, "period_number": pn, "start": info["start"], "end": info["end"]}
+		for pn, info in sorted(periods_map.items())
+	]
+
+	seen_subjects = set()
+	subjects = []
+	for slot in slots:
+		if slot.subject and slot.subject not in seen_subjects:
+			seen_subjects.add(slot.subject)
+			subjects.append({"name": slot.subject})
+
+	return {"days": days_seen, "periods": periods, "classes": classes, "subjects": subjects}
+
+
+@frappe.whitelist(allow_guest=True)
 def get_exam_dates(**kwargs):
     """
     Get exam dates for a specific grade and section

@@ -1,46 +1,46 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, Info, BookOpen, Clock, MapPin, Users, Filter, Printer } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Printer } from 'lucide-react';
 import BackgroundPattern from './BackgroundPattern';
 
+const SUBJECT_COLORS = [
+  'bg-emerald-500/90', 'bg-amber-500/90', 'bg-fuchsia-400/90', 'bg-blue-500/90',
+  'bg-yellow-500/90', 'bg-pink-500/90', 'bg-purple-500/90', 'bg-green-500/90',
+  'bg-cyan-500/90', 'bg-lime-500/90', 'bg-rose-500/90', 'bg-orange-500/90',
+  'bg-teal-500/90', 'bg-red-500/90', 'bg-sky-500/90', 'bg-violet-500/90',
+  'bg-indigo-500/90', 'bg-pink-400/90', 'bg-sky-400/90', 'bg-fuchsia-600/90',
+];
+
+const getTimeBlock = (timeStr) => {
+  if (!timeStr) return 'other';
+  const h = parseInt(timeStr.split(':')[0], 10);
+  if (h >= 6 && h < 9) return 'morning';
+  if (h >= 10 && h < 13) return 'noon';
+  if (h >= 14 && h < 17) return 'afternoon';
+  if (h >= 18 && h < 20) return 'evening';
+  if (h >= 21) return 'night';
+  return 'other';
+};
+
 const ClassSchedule = () => {
-  // State for UI and data
-  const [currentGrade, setCurrentGrade] = useState('Plus One');
-  const [currentSection, setCurrentSection] = useState('Section A');  // Default to section A
+  const [currentBatch, setCurrentBatch] = useState('');
+  const [batchList, setBatchList] = useState([]);
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedTimeBlock, setSelectedTimeBlock] = useState('all');
-  const [scheduleData, setScheduleData] = useState({
-    days: [],
-    time_slots: [],
-    classes: {}
-  });
-  const [hasValidSelection, setHasValidSelection] = useState(true);  
-  const [gradesList, setGradesList] = useState([]);
-  const [sectionsList, setSectionsList] = useState([]);
+  const [scheduleData, setScheduleData] = useState({ days: [], periods: [], classes: {} });
   const [subjects, setSubjects] = useState([]);
-  const [teachers, setTeachers] = useState([]);
-  const [rooms, setRooms] = useState([]);
-  const [scheduleId, setScheduleId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
   const [viewMode, setViewMode] = useState('daily');
-  // Add viewport width detection (true mobile only - under 640px)
   const [isMobile, setIsMobile] = useState(false);
 
-  // Track screen width changes
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    
-    // Set initial value
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
     handleResize();
-    
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Time blocks for filtering
   const timeBlocks = [
     { id: 'all', name: 'All Blocks' },
     { id: 'morning', name: 'Morning (6:30 - 9:00 AM)' },
@@ -50,379 +50,138 @@ const ClassSchedule = () => {
     { id: 'night', name: 'Night (9:00 - 10:00 PM)' },
   ];
 
-  const getSubjectColor = (code) => {
-    // Map colors directly based on subject code with opacity
-    switch(code) {
-      case 'QIR': return 'bg-emerald-500/90';
-      case 'ADK': return 'bg-amber-500/90';
-      case 'CAR': return 'bg-fuchsia-400/90';
-      case 'PHY': return 'bg-blue-500/90';
-      case 'MTH': return 'bg-yellow-500/90';
-      case 'ENG': return 'bg-pink-500/90';
-      case 'CS': return 'bg-purple-500/90';
-      case 'CHM': return 'bg-green-500/90';
-      case 'AEE': return 'bg-cyan-500/90';
-      case 'FQS': return 'bg-lime-500/90';
-      case 'AQD': return 'bg-rose-500/90';
-      case 'PE': return 'bg-orange-500/90';
-      case 'FQH': return 'bg-teal-500/90';
-      case 'SRH': return 'bg-red-500/90';
-      case 'TRK': return 'bg-sky-500/90';
-      case 'ADB': return 'bg-violet-500/90';
-      case 'SL': return 'bg-indigo-500/90';
-      case 'MAS': return 'bg-pink-400/90';
-      case 'ELF': return 'bg-sky-400/90';
-      case 'AMA': return 'bg-fuchsia-600/90';
-      case 'AEA': return 'bg-rose-400/90';
-      default: return 'bg-gray-700/90';
-    }
-  };
- 
-  useEffect(() => {
-    const fetchSections = async () => {
-      try {
-        const response = await fetch('/api/method/labmanager.api.api.get_all_sections', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        
-        const data = await response.json();
-        
-        if (data && data.message && Array.isArray(data.message)) {
-            setSectionsList(data.message);
-        }
-      } catch (err) {
-        console.error("Error fetching sections:", err);
-      }
-    };
-    
-    fetchSections();
-  }, []);
+  // Build subject → color map (stable, index-based)
+  const subjectColorMap = {};
+  subjects.forEach((s, i) => {
+    subjectColorMap[s.name] = SUBJECT_COLORS[i % SUBJECT_COLORS.length];
+  });
+  const getSubjectColor = (name) => subjectColorMap[name] || 'bg-gray-700/90';
 
-  // Initialize grades and fetch data on component mount
+  // Fetch all batches on mount
   useEffect(() => {
-    const fetchGrades = async () => {
+    const fetchBatches = async () => {
       try {
         setLoading(true);
-        
-        // Fetch grades from API
-        const response = await fetch('/api/method/labmanager.api.api.get_all_grades', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        
-        const data = await response.json();
-        
-        // Check for nested message structure
-        if (data && data.message) {
-          const grades = data.message.message || data.message;
-          
-          if (Array.isArray(grades) && grades.length > 0) {
-            setGradesList(grades);
-            
-            if (!currentGrade) {
-              setCurrentGrade(grades[0].id);
-            }
-          } else {
-            console.error('Invalid grades data format:', data);
-            setError('Failed to load grades. Please try again later.');
-          }
+        const res = await fetch('/api/method/labmanager.api.api.get_all_batches');
+        const data = await res.json();
+        const list = data.message || [];
+        setBatchList(list);
+        if (list.length > 0) {
+          setCurrentBatch(list[0].id);
         } else {
-          console.error('Invalid API response format:', data);
-          setError('Failed to load grades data. Please try again later.');
+          setLoading(false);
         }
-        
-        setLoading(false);
       } catch (err) {
-        console.error("Error fetching grades:", err);
-        setError('Failed to load grades. Please try again later.');
+        console.error('Error fetching batches:', err);
+        setError('Failed to load batches.');
         setLoading(false);
       }
     };
-    
-    fetchGrades();
+    fetchBatches();
   }, []);
 
-  // Find the current day of the week and set it as the default selected day
+  // Set default selected day when schedule loads
   useEffect(() => {
-    if (scheduleData.days && scheduleData.days.length > 0) {
-      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const currentDayIndex = new Date().getDay();
-      const currentDay = daysOfWeek[currentDayIndex];
-      
-      // Check if the current day exists in the schedule days
-      if (scheduleData.days.includes(currentDay)) {
-        setSelectedDay(currentDay);
-      } else {
-        // Find the next available day
-        const nextAvailableDay = findNextAvailableDay(scheduleData.days, currentDayIndex);
-        setSelectedDay(nextAvailableDay);
+    if (scheduleData.days.length === 0) return;
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const today = daysOfWeek[new Date().getDay()];
+    if (scheduleData.days.includes(today)) {
+      setSelectedDay(today);
+    } else {
+      // Next available day
+      const todayIdx = new Date().getDay();
+      for (let i = 1; i <= 7; i++) {
+        const candidate = daysOfWeek[(todayIdx + i) % 7];
+        if (scheduleData.days.includes(candidate)) {
+          setSelectedDay(candidate);
+          return;
+        }
       }
-    } else if (scheduleData.days && scheduleData.days.length === 0) {
-      // Default to Monday if no days are available
-      setSelectedDay('Monday');
+      setSelectedDay(scheduleData.days[0]);
     }
   }, [scheduleData.days]);
 
-  // Helper function to find the next available day in the schedule
-  const findNextAvailableDay = (availableDays, currentDayIndex) => {
-    if (!availableDays || availableDays.length === 0) return 'Monday';
-    
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    
-    // Try the next 7 days (full week) starting from current day
-    for (let i = 1; i <= 7; i++) {
-      const nextDayIndex = (currentDayIndex + i) % 7;
-      const nextDay = daysOfWeek[nextDayIndex];
-      
-      if (availableDays.includes(nextDay)) {
-        return nextDay;
-      }
-    }
-    
-    // If no day is found, return the first available day in the schedule
-    return availableDays[0];
-  };
-
-  // Load schedule when grade/section changes
+  // Fetch timetable whenever batch changes
   useEffect(() => {
-    // Only load if both grade and section are selected (not on "Select" options)
-    if (currentGrade && currentGrade !== 'Select Grade' && 
-        currentSection && currentSection !== 'Select Section') {
-      setHasValidSelection(true);
-      loadScheduleData();
-    } else {
-      setHasValidSelection(false);
-      // Clear schedule data when no valid selection
-      setScheduleData({
-        days: [],
-        time_slots: [],
-        classes: {}
-      });
-    }
-  }, [currentGrade, currentSection]);
-
-  const handleGradeChange = (e) => {
-    const newGrade = e.target.value;
-    setCurrentGrade(newGrade);
-    
-    // If selection is reset to "Select Grade", clear section too for consistency
-    if (newGrade === 'Select Grade') {
-      setCurrentSection('Select Section');
-    }
-  };
-  
-  const handleSectionChange = (e) => {
-    setCurrentSection(e.target.value);
-  };
-
-  // Load schedule data from API
-  const loadScheduleData = async () => {
-    try {
-      setLoading(true);
-      setError(null);  // Clear any previous errors
-      
-      // Make sure we have string values, not undefined
-      const gradeParam = currentGrade || "";
-      const sectionParam = currentSection || "A";
-      
-      // Call the backend API with grade and section if available
-      const response = await fetch('/api/method/labmanager.api.api.get_class_schedule', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          grade: gradeParam,
-          section: sectionParam
-        })
-      });
-        
-      const responseData = await response.json();
-      
-      // Debug log
-      console.log("API Response Data:", responseData);
-      
-      // The data is nested inside message
-      if (responseData && responseData.message) {
-        const data = responseData.message;
-        
-        if (data.error) {
-          setError(data.error || 'Failed to load schedule data');
-          setLoading(false);
-          return;
-        }
-        
-        // Extract schedule data
-        if (data.schedule_data) {
-          setScheduleData(data.schedule_data);
-        } else {
-          console.error('Missing schedule_data in response');
-          setError('Incomplete data received from server');
-        }
-        
-        // Set schedule ID for updates
-        if (data.schedule_id) {
-          setScheduleId(data.schedule_id);
-        }
-        
-        // Set available grade if first load
-        if (data.grade && !currentGrade) {
-          setCurrentGrade(data.grade);
-        }
-        
-        // Set available section if first load
-        if (data.section && !currentSection) {
-          setCurrentSection(data.section);
-        }
-        
-        // Process rooms data to ensure we have name and id properties
-        let processedRooms = [];
-        if (data.rooms) {
-          processedRooms = data.rooms.map(room => {
-            return {
-              ...room,
-              // Ensure every room has a name property
-              name: room.name || room.room_name || room.number || room.room_number || String(room.id),
-              // Ensure every room has a number property if available
-              number: room.number || room.room_number || room.id
-            };
-          });
-          setRooms(processedRooms);
-        }
-        
-        // Set subjects and teachers
-        if (data.subjects) {
-          // Just set subjects without modifying them, we'll use getSubjectColor instead
-          setSubjects(data.subjects);
-          console.log("Loaded subjects:", data.subjects);
-        }
-        
-        if (data.teachers) setTeachers(data.teachers);
-
-        // Set sections from response
-        if (data.sections && Array.isArray(data.sections)) {
-          setSectionsList(data.sections);
-        }
-      } else if (responseData.error) {
-        setError(responseData.error || 'Failed to load schedule data');
-      } else {
-        setError('Incomplete data received from server');
+    if (!currentBatch) return;
+    const loadSchedule = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch('/api/method/labmanager.api.api.get_timetable_schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ batch: currentBatch }),
+        });
+        const data = await res.json();
+        const msg = data.message || {};
+        setScheduleData({
+          days: msg.days || [],
+          periods: msg.periods || [],
+          classes: msg.classes || {},
+        });
+        setSubjects(msg.subjects || []);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching timetable:', err);
+        setError('Failed to load class schedule.');
+        setLoading(false);
       }
-      
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching schedule data:', err);
-      setError('Failed to load class schedule. Please try again later.');
-      setLoading(false);
-    }
-  };
-  
-  // Helper function to get default color based on subject category
-  const getDefaultSubjectColor = (category) => {
-    const colorMap = {
-      'Core': 'bg-blue-500/90',
-      'Islamic': 'bg-emerald-500/90',
-      'Elective': 'bg-purple-600',
-      'Specialization': 'bg-indigo-600'
     };
-    return colorMap[category] || 'bg-gray-500/90';
+    loadSchedule();
+  }, [currentBatch]);
+
+  const getClassDetails = (periodNumber, day) => {
+    const dayClasses = scheduleData.classes[day] || [];
+    return dayClasses.find((c) => c.period_number === periodNumber) || null;
   };
 
-  // Helper function to find class details for a specific time slot and day
-  const getClassDetails = (timeSlotId, day) => {
-    try {
-      const classes = scheduleData.classes || {};
-      const dayClasses = classes[day] || [];
-      
-      // Convert timeSlotId to number for comparison
-      const slotId = Number(timeSlotId);
-      
-      // Find the class session for this time slot
-      const classInfo = dayClasses.find(item =>
-        Number(item.timeSlotId) === slotId);
-      
-      if (!classInfo) return null;
-      
-      // Get the corresponding objects from subjects, teachers, and rooms arrays
-      const subject = subjects.find(s => s.id === classInfo.subject);
-      const teacher = teachers.find(t => t.id === classInfo.teacher);
-      const room = rooms.find(r => r.id === classInfo.classroom);
-      
-      return {
-        subject,
-        teacher,
-        room
-      };
-    } catch (error) {
-      console.error("Error in getClassDetails:", error, {
-        timeSlotId,
-        day,
-        scheduleData
-      });
-      return null;
-    }
-  };
-
-  // Get filtered time slots based on selected block
-  const getFilteredTimeSlots = () => {
-    const timeSlots = scheduleData.time_slots || [];
+  const getFilteredPeriods = () => {
+    const periods = scheduleData.periods || [];
     return selectedTimeBlock === 'all'
-      ? timeSlots
-      : timeSlots.filter(slot => slot.block === selectedTimeBlock);
+      ? periods
+      : periods.filter((p) => getTimeBlock(p.start) === selectedTimeBlock);
   };
 
-  // Handle print functionality
-  const handlePrint = () => {
-    window.print();
-  };
+  const handlePrint = () => window.print();
 
-  // Render the daily schedule view - mobile optimized
+  // ─── Daily view ────────────────────────────────────────────────────────────
   const renderDailySchedule = () => {
-    const filteredTimeSlots = getFilteredTimeSlots();
-    
+    const periods = getFilteredPeriods();
+
     if (isMobile) {
-      // Mobile view with cards instead of table
       return (
         <div className="bg-white/95 rounded-lg p-2 shadow-inner">
           <div className="space-y-2">
-            {filteredTimeSlots.map((timeSlot) => {
-              const classDetails = getClassDetails(timeSlot.id, selectedDay);
-              
+            {periods.map((period) => {
+              const cls = getClassDetails(period.period_number, selectedDay);
               return (
                 <div
-                  key={timeSlot.id}
-                  className={`border rounded-lg overflow-hidden ${classDetails ? 'shadow-sm' : 'border-dashed'}`}
-                  onClick={() => classDetails && setSelectedClass(classDetails)}
+                  key={period.id}
+                  className={`border rounded-lg overflow-hidden ${cls ? 'shadow-sm' : 'border-dashed'}`}
+                  onClick={() => cls && setSelectedClass(cls)}
                 >
                   <div className="bg-gray-100 py-1.5 px-3 flex justify-between items-center">
-                    <span className="text-xs font-medium">{timeSlot.start} - {timeSlot.end}</span>
-                    {classDetails && classDetails.subject && (
-                      <span className="text-xs bg-gray-200 rounded-full px-2 py-0.5">{classDetails.subject.code}</span>
-                    )}
+                    <span className="text-xs font-medium">{period.start} - {period.end}</span>
+                    <span className="text-xs text-gray-500">Period {period.period_number}</span>
                   </div>
-                  
                   <div className="p-2">
-                    {classDetails && classDetails.subject ? (
+                    {cls ? (
                       <div>
-                        <div className={`inline-flex mb-1.5 items-center px-2 py-1 rounded-md ${getSubjectColor(classDetails.subject.code)} text-white`}>
-                          <span className="font-medium text-sm">{classDetails.subject.name}</span>
+                        <div className={`inline-flex mb-1.5 items-center px-2 py-1 rounded-md ${getSubjectColor(cls.subject)} text-white`}>
+                          <span className="font-medium text-sm">{cls.subject}</span>
                         </div>
-                        
                         <div className="flex flex-col text-xs space-y-1">
                           <div className="flex items-center">
                             <Users className="w-3 h-3 mr-1 text-gray-500" />
-                            <span className="text-gray-800">{classDetails.teacher ? classDetails.teacher.name : 'TBA'}</span>
+                            <span className="text-gray-800">{cls.teacher_name || 'TBA'}</span>
                           </div>
-                          
-                          <div className="flex items-center">
-                            <MapPin className="w-3 h-3 mr-1 text-gray-500" />
-                            <span className="text-gray-800">{classDetails.room ? classDetails.room.name : 'TBA'}</span>
-                          </div>
+                          {cls.room && (
+                            <div className="flex items-center">
+                              <MapPin className="w-3 h-3 mr-1 text-gray-500" />
+                              <span className="text-gray-800">{cls.room}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     ) : (
@@ -438,8 +197,7 @@ const ClassSchedule = () => {
         </div>
       );
     }
-    
-    // Desktop view with table
+
     return (
       <div className="bg-white/95 rounded-lg p-4 shadow-inner">
         <div className="overflow-x-auto">
@@ -453,48 +211,44 @@ const ClassSchedule = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredTimeSlots.map((timeSlot) => {
-                const classDetails = getClassDetails(timeSlot.id, selectedDay);
-                  
+              {periods.map((period) => {
+                const cls = getClassDetails(period.period_number, selectedDay);
                 return (
                   <tr
-                    key={timeSlot.id}
-                    className={`border-t hover:bg-gray-50 cursor-pointer ${classDetails ? 'hover:scale-[1.005] transition-transform' : ''}`}
-                    onClick={() => classDetails && setSelectedClass(classDetails)}
+                    key={period.id}
+                    className={`border-t hover:bg-gray-50 cursor-pointer ${cls ? 'hover:scale-[1.005] transition-transform' : ''}`}
+                    onClick={() => cls && setSelectedClass(cls)}
                   >
-                    <td className="p-3 text-sm font-medium">
-                      {timeSlot.start} - {timeSlot.end}
+                    <td className="p-3 text-sm font-medium whitespace-nowrap">
+                      {period.start} - {period.end}
                     </td>
                     <td className="p-3">
-                      {classDetails && classDetails.subject ? (
-                        <div className={`inline-flex items-center px-2 py-1 rounded-md ${getSubjectColor(classDetails.subject.code)} text-white`}>
-                          <span className="font-medium">{classDetails.subject.name}</span>
-                          <span className="ml-2 text-xs bg-white/20 px-1.5 py-0.5 rounded">
-                            {classDetails.subject.code}
-                          </span>
+                      {cls ? (
+                        <div className={`inline-flex items-center px-2 py-1 rounded-md ${getSubjectColor(cls.subject)} text-white`}>
+                          <span className="font-medium">{cls.subject}</span>
                         </div>
                       ) : (
                         <div className="text-sm text-gray-400">-</div>
                       )}
                     </td>
                     <td className="p-3">
-                      {classDetails && classDetails.teacher ? (
+                      {cls ? (
                         <div className="flex items-center">
                           <Users className="w-4 h-4 mr-2 text-gray-500" />
-                          <span>{classDetails.teacher.name}</span>
+                          <span>{cls.teacher_name || 'TBA'}</span>
                         </div>
                       ) : (
                         <div className="text-sm text-gray-400">-</div>
                       )}
                     </td>
                     <td className="p-3">
-                      {classDetails && classDetails.room ? (
+                      {cls && cls.room ? (
                         <div className="flex items-center">
                           <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-                          <span>{classDetails.room.name}</span>
+                          <span>{cls.room}</span>
                         </div>
                       ) : (
-                        <div className="text-sm text-gray-400">TBD</div>
+                        <div className="text-sm text-gray-400">-</div>
                       )}
                     </td>
                   </tr>
@@ -507,67 +261,56 @@ const ClassSchedule = () => {
     );
   };
 
-  // Render the weekly schedule view - mobile optimized
+  // ─── Weekly view ───────────────────────────────────────────────────────────
   const renderWeeklySchedule = () => {
-    const filteredTimeSlots = getFilteredTimeSlots();
+    const periods = getFilteredPeriods();
     const days = scheduleData.days || [];
-    
+
     if (isMobile) {
-      // Mobile view with accordion-style days
       return (
         <div className="bg-white/95 rounded-lg p-2 shadow-inner">
           <div className="space-y-2">
-            {days.map(day => (
-              <div 
+            {days.map((day) => (
+              <div
                 key={day}
                 className={`border rounded-lg overflow-hidden ${selectedDay === day ? 'ring-2 ring-amber-400' : ''}`}
               >
-                <div 
-                  className={`py-2 px-3 flex justify-between items-center cursor-pointer ${
-                    selectedDay === day ? 'bg-amber-100' : 'bg-gray-100'
-                  }`}
+                <div
+                  className={`py-2 px-3 flex justify-between items-center cursor-pointer ${selectedDay === day ? 'bg-amber-100' : 'bg-gray-100'}`}
                   onClick={() => setSelectedDay(day)}
                 >
-                  <span className={`font-medium ${selectedDay === day ? 'text-amber-900' : 'text-gray-700'}`}>
-                    {day}
-                  </span>
+                  <span className={`font-medium ${selectedDay === day ? 'text-amber-900' : 'text-gray-700'}`}>{day}</span>
                   <span className="text-xs bg-white rounded-full px-2 py-0.5 text-gray-700">
-                    {filteredTimeSlots.length} periods
+                    {periods.length} periods
                   </span>
                 </div>
-                
                 {selectedDay === day && (
                   <div className="p-2 space-y-2">
-                    {filteredTimeSlots.map(timeSlot => {
-                      const classDetails = getClassDetails(timeSlot.id, day);
-                      
+                    {periods.map((period) => {
+                      const cls = getClassDetails(period.period_number, day);
                       return (
                         <div
-                          key={`${day}-${timeSlot.id}`}
-                          className={`border rounded-lg overflow-hidden ${classDetails ? 'shadow-sm' : 'border-dashed'}`}
-                          onClick={() => classDetails && setSelectedClass(classDetails)}
+                          key={`${day}-${period.id}`}
+                          className={`border rounded-lg overflow-hidden ${cls ? 'shadow-sm' : 'border-dashed'}`}
+                          onClick={() => cls && setSelectedClass(cls)}
                         >
                           <div className="bg-gray-50 py-1 px-2 text-xs font-medium">
-                            {timeSlot.start} - {timeSlot.end}
+                            {period.start} - {period.end}
                           </div>
-                          
                           <div className="p-2">
-                            {classDetails && classDetails.subject ? (
-                              <div className={`p-2 rounded-md ${getSubjectColor(classDetails.subject.code)} text-white`}>
-                                <div className="font-medium text-sm flex items-center justify-between">
-                                  <span>{classDetails.subject.name}</span>
-                                  <span className="bg-white/20 text-white text-xs px-1.5 py-0.5 rounded ml-1">
-                                    {classDetails.subject.code}
-                                  </span>
-                                </div>
+                            {cls ? (
+                              <div className={`p-2 rounded-md ${getSubjectColor(cls.subject)} text-white`}>
+                                <div className="font-medium text-sm">{cls.subject}</div>
                                 <div className="text-xs text-white/90 mt-1 flex items-center">
                                   <Users className="w-3 h-3 mr-1" />
-                                  {classDetails.teacher ? classDetails.teacher.name : 'TBD'}
+                                  {cls.teacher_name || 'TBD'}
                                 </div>
-                                <div className="text-xs text-white/80 flex items-center">
-                                  <MapPin className="w-3 h-3 mr-1" />
-                                  {classDetails.room ? classDetails.room.name : 'TBD'}
-                                </div>
+                                {cls.room && (
+                                  <div className="text-xs text-white/80 flex items-center">
+                                    <MapPin className="w-3 h-3 mr-1" />
+                                    {cls.room}
+                                  </div>
+                                )}
                               </div>
                             ) : (
                               <div className="text-xs text-gray-400 h-12 flex items-center justify-center">
@@ -586,8 +329,7 @@ const ClassSchedule = () => {
         </div>
       );
     }
-    
-    // Desktop view with table
+
     return (
       <div className="bg-white/95 rounded-lg p-4 shadow-inner">
         <div className="overflow-x-auto">
@@ -595,7 +337,7 @@ const ClassSchedule = () => {
             <thead className="bg-gray-100">
               <tr>
                 <th className="p-3 text-left font-medium text-gray-500">Time</th>
-                {days.map(day => (
+                {days.map((day) => (
                   <th
                     key={day}
                     className={`p-3 text-left font-medium ${selectedDay === day ? 'text-amber-600' : 'text-gray-500'}`}
@@ -606,35 +348,32 @@ const ClassSchedule = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredTimeSlots.map((timeSlot) => (
-                <tr key={timeSlot.id} className="border-t">
+              {periods.map((period) => (
+                <tr key={period.id} className="border-t">
                   <td className="p-3 text-sm font-medium whitespace-nowrap">
-                    {timeSlot.start} - {timeSlot.end}
+                    {period.start} - {period.end}
                   </td>
-                  {days.map(day => {
-                    const classDetails = getClassDetails(timeSlot.id, day);
+                  {days.map((day) => {
+                    const cls = getClassDetails(period.period_number, day);
                     return (
                       <td
-                        key={`${day}-${timeSlot.id}`}
+                        key={`${day}-${period.id}`}
                         className="p-3 border-l"
-                        onClick={() => classDetails && setSelectedClass(classDetails)}
+                        onClick={() => cls && setSelectedClass(cls)}
                       >
-                        {classDetails && classDetails.subject ? (
-                          <div className={`p-2 rounded-md ${getSubjectColor(classDetails.subject.code)} text-white cursor-pointer hover:shadow-md transition-shadow`}>
-                            <div className="font-medium text-sm flex items-center justify-between">
-                              <span>{classDetails.subject.name}</span>
-                              <span className="bg-white/20 text-white text-xs px-1.5 py-0.5 rounded ml-1">
-                                {classDetails.subject.code}
-                              </span>
-                            </div>
+                        {cls ? (
+                          <div className={`p-2 rounded-md ${getSubjectColor(cls.subject)} text-white cursor-pointer hover:shadow-md transition-shadow`}>
+                            <div className="font-medium text-sm">{cls.subject}</div>
                             <div className="text-xs text-white/90 mt-1 flex items-center">
                               <Users className="w-3 h-3 mr-1" />
-                              {classDetails.teacher ? classDetails.teacher.name : 'TBD'}
+                              {cls.teacher_name || 'TBD'}
                             </div>
-                            <div className="text-xs text-white/80 flex items-center">
-                              <MapPin className="w-3 h-3 mr-1" />
-                              {classDetails.room ? classDetails.room.name : 'TBD'}
-                            </div>
+                            {cls.room && (
+                              <div className="text-xs text-white/80 flex items-center">
+                                <MapPin className="w-3 h-3 mr-1" />
+                                {cls.room}
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div className="text-sm text-gray-400 h-16 flex items-center justify-center border border-dashed border-gray-200 rounded-md">-</div>
@@ -651,7 +390,6 @@ const ClassSchedule = () => {
     );
   };
 
-  // For loading state
   if (loading) {
     return (
       <div className="relative">
@@ -662,8 +400,7 @@ const ClassSchedule = () => {
       </div>
     );
   }
-    
-  // For error state
+
   if (error) {
     return (
       <div className="relative">
@@ -675,91 +412,62 @@ const ClassSchedule = () => {
     );
   }
 
+  const noSchedule = scheduleData.days.length === 0;
+
   return (
     <div className="relative">
       <BackgroundPattern />
-        
+
       <div className="relative z-10 bg-gray-800/80 backdrop-blur-sm border border-gray-600 rounded-lg p-4 md:p-6 shadow-xl">
-        {/* Header section */}
+        {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-6 gap-3">
           <h2 className="text-xl md:text-2xl font-bold text-amber-200 flex items-center">
             <Calendar className="w-5 h-5 md:w-6 md:h-6 mr-1 md:mr-2" />
             Class Schedule
           </h2>
-            
-          {/* Controls */}
-          <div className="flex flex-wrap gap-2 w-full md:w-auto">
-            {/* Grade and Section Selection */}
-            <div className="flex gap-2 w-full md:w-auto">
-              <select
-                className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 text-sm p-1 outline-none focus:ring-2 focus:ring-amber-300 md:w-auto"
-                value={currentGrade}
-                onChange={handleGradeChange}
-              >
-                <option value="Select Grade">Select Grade</option>
-                {gradesList.map(grade => (
-                  <option key={grade.id} value={grade.id}>{grade.name}</option>
-                ))}
-              </select>
 
-              <select
-                className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 text-sm p-1 outline-none focus:ring-2 focus:ring-amber-300 md:w-auto"
-                value={currentSection}
-                onChange={handleSectionChange}
-              >
-                <option value="Select Section">Select Section</option>
-                {sectionsList.map(section => (
-                  <option key={section.id} value={section.id}>{section.name}</option>
-                ))}
-              </select>
-                  
-              <button
-                className="bg-gray-700 text-gray-200 p-1 rounded-md border border-gray-600 hover:bg-amber-300 hover:text-gray-900 transition-colors duration-200 flex items-center"
-                onClick={handlePrint}
-              >
-                <Printer className="w-5 h-5" />
-              </button>
-            </div>
+          <div className="flex gap-2 w-full md:w-auto">
+            <select
+              className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 text-sm p-1 outline-none focus:ring-2 focus:ring-amber-300"
+              value={currentBatch}
+              onChange={(e) => setCurrentBatch(e.target.value)}
+            >
+              {batchList.length === 0 && <option value="">No batches found</option>}
+              {batchList.map((b) => (
+                <option key={b.id} value={b.id}>{b.name}</option>
+              ))}
+            </select>
+
+            <button
+              className="bg-gray-700 text-gray-200 p-1 rounded-md border border-gray-600 hover:bg-amber-300 hover:text-gray-900 transition-colors duration-200 flex items-center"
+              onClick={handlePrint}
+            >
+              <Printer className="w-5 h-5" />
+            </button>
           </div>
         </div>
-          
-       {/* Add print styles */}
+
+        {/* Print styles */}
         <style jsx global>{`
           @media print {
-            body * {
-              visibility: hidden;
-            }
+            body * { visibility: hidden; }
             .bg-gray-800\\/80, .bg-gray-800\\/80 * {
               visibility: visible;
               background-color: white !important;
               color: black !important;
               border-color: #ddd !important;
             }
-            .bg-gray-800\\/80 {
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 100%;
-            }
-            .print-hide, button, .backdrop-blur-sm {
-              display: none !important;
-            }
-            .text-amber-200, .text-amber-300 {
-              color: black !important;
-            }
-            th, td {
-              border: 1px solid #ddd !important;
-              padding: 8px !important;
-            }
-            /* Ensure colored cells are visible in print */
-            [class*="bg-"] {
-              -webkit-print-color-adjust: exact !important;
-              print-color-adjust: exact !important;
-            }
+            .bg-gray-800\\/80 { position: absolute; left: 0; top: 0; width: 100%; }
+            button, .backdrop-blur-sm { display: none !important; }
+            .text-amber-200, .text-amber-300 { color: black !important; }
+            th, td { border: 1px solid #ddd !important; padding: 8px !important; }
+            [class*="bg-"] { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           }
+          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+          .scrollbar-hide::-webkit-scrollbar { display: none; }
         `}</style>
-          
-        {/* Class Details Modal - mobile optimized */}
+
+        {/* Class Details Modal */}
         {selectedClass && (
           <div
             className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
@@ -767,35 +475,29 @@ const ClassSchedule = () => {
           >
             <div
               className="bg-gray-800 p-4 md:p-6 rounded-lg max-w-md w-full border border-gray-600 shadow-xl"
-              onClick={e => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className={`w-full h-1 ${selectedClass.subject ? getSubjectColor(selectedClass.subject.code) : 'bg-gray-500'} rounded-full mb-3 md:mb-4`}></div>
-                
-              <h3 className="text-lg md:text-xl font-semibold text-amber-300 mb-2">{selectedClass.subject?.name || 'Subject'}</h3>
-              <p className="text-gray-200 mb-4">
-                Course Code: <span className="bg-gray-700 text-white text-xs px-2 py-1 rounded">{selectedClass.subject?.code || 'N/A'}</span>
-              </p>
-                
+              <div className={`w-full h-1 ${getSubjectColor(selectedClass.subject)} rounded-full mb-3 md:mb-4`}></div>
+              <h3 className="text-lg md:text-xl font-semibold text-amber-300 mb-4">{selectedClass.subject}</h3>
+
               <div className="flex flex-col gap-3 text-sm">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-amber-300" />
-                  <span className="text-gray-200">
-                    Teacher: {selectedClass.teacher?.name || 'To be assigned'}
-                  </span>
+                  <span className="text-gray-200">Teacher: {selectedClass.teacher_name || 'To be assigned'}</span>
                 </div>
-                  
                 <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-amber-300" />
-                  <span className="text-gray-200">Location: {selectedClass.room?.name || 'To be assigned'}</span>
+                  <Clock className="w-4 h-4 text-amber-300" />
+                  <span className="text-gray-200">Time: {selectedClass.start} – {selectedClass.end}</span>
                 </div>
-                  
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-amber-300" />
-                  <span className="capitalize text-gray-200">Category: {selectedClass.subject?.category || 'N/A'}</span>
-                </div>
+                {selectedClass.room && (
+                  <div className="flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-amber-300" />
+                    <span className="text-gray-200">Room: {selectedClass.room}</span>
+                  </div>
+                )}
               </div>
-                
-              <div className="flex justify-end gap-2 mt-6">
+
+              <div className="flex justify-end mt-6">
                 <button
                   className="px-3 py-1.5 md:px-4 md:py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600 transition-colors text-sm"
                   onClick={() => setSelectedClass(null)}
@@ -806,150 +508,107 @@ const ClassSchedule = () => {
             </div>
           </div>
         )}
-          
-        {/* Day and Time Block Selection - mobile optimized */}
-      
 
-{/* Day and Time Block Selection - improved desktop/landscape spacing */}
-<div className="mb-4 md:mb-6">
-  {/* Desktop layout - use flex-row directly on wider screens */}
-  <div className="hidden md:flex md:flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
-    {/* Days row */}
-    <div className="flex flex-wrap gap-2 w-full lg:w-auto">
-      {(scheduleData.days || []).map(day => (
-        <button
-          key={day}
-          className={`px-3 py-1 text-sm rounded-md transition-colors ${
-            selectedDay === day
-              ? 'bg-amber-300 text-gray-900'
-              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-          }`}
-          onClick={() => setSelectedDay(day)}
-        >
-          {day}
-        </button>
-      ))}
-    </div>
-      
-    {/* Time blocks row */}
-    <div className="flex flex-wrap gap-2 mt-2 lg:mt-0">
-      {timeBlocks.map(block => (
-        <button
-          key={block.id}
-          className={`px-3 py-1 text-sm rounded-md transition-colors ${
-            selectedTimeBlock === block.id
-              ? 'bg-amber-300 text-gray-900'
-              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-          }`}
-          onClick={() => setSelectedTimeBlock(block.id)}
-        >
-          {block.id === 'all' ? block.name : <span className="flex items-center"><Clock className="w-3 h-3 mr-1" />{block.name}</span>}
-        </button>
-      ))}
-    </div>
-  </div>
-  
-  {/* Mobile layout - stacked with scrolling days */}
-  <div className="md:hidden space-y-3">
-    {/* Day selection - horizontal scrollable on mobile with wider container */}
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1 -mx-4 px-4">
-      {(scheduleData.days || []).map(day => (
-        <button
-          key={day}
-          className={`px-3 py-2 text-xs rounded-md transition-colors whitespace-nowrap flex-shrink-0 ${
-            selectedDay === day
-              ? 'bg-amber-300 text-gray-900'
-              : 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-          }`}
-          onClick={() => setSelectedDay(day)}
-        >
-          {day}
-        </button>
-      ))}
-    </div>
-    
-    {/* Time blocks as dropdown on mobile */}
-    <div className="w-full">
-      <select 
-        className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-2 text-sm outline-none focus:ring-2 focus:ring-amber-300 w-full"
-        value={selectedTimeBlock}
-        onChange={(e) => setSelectedTimeBlock(e.target.value)}
-      >
-        {timeBlocks.map(block => (
-          <option key={block.id} value={block.id}>
-            {block.name}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
-</div>
-
-
-<style jsx global>{`
-  /* Hide scrollbar but maintain functionality */
-  .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari, Opera */
-  }
-`}</style>
-
-
-        {/* Schedule View Container */}
-        <div className="transition-all duration-300 ease-in-out">
-          {/* View mode switcher */}
-          <div className="flex justify-end mb-3 md:mb-4">
-            <div className="flex border border-gray-700 rounded-md overflow-hidden">
-              <button
-                className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
-                onClick={() => setViewMode('daily')}
-              >
-                {isMobile ? 'Daily' : 'Daily View'}
-              </button>
-              <button
-                className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
-                onClick={() => setViewMode('weekly')}
-              >
-                {isMobile ? 'Weekly' : 'Weekly View'}
-              </button>
+        {/* No data message */}
+        {noSchedule ? (
+          <div className="bg-white/95 rounded-lg p-8 shadow-inner flex items-center justify-center">
+            <div className="text-gray-500 text-center">
+              {batchList.length === 0
+                ? 'No batches configured yet. Please add Batch TE records.'
+                : 'No timetable slots found for this batch.'}
             </div>
           </div>
-         
-          {/* Schedule Content */}
-          {hasValidSelection ? (
-            viewMode === 'daily' ? renderDailySchedule() : renderWeeklySchedule()
-          ) : (
-            <div className="bg-white/95 rounded-lg p-4 md:p-8 shadow-inner flex items-center justify-center">
-              <div className="text-sm md:text-lg text-gray-500 text-center">
-                <p>Please select both Grade and Section to view schedule</p>
+        ) : (
+          <>
+            {/* Day + time block selectors */}
+            <div className="mb-4 md:mb-6">
+              <div className="hidden md:flex md:flex-col lg:flex-row justify-between items-start lg:items-center gap-3">
+                <div className="flex flex-wrap gap-2 w-full lg:w-auto">
+                  {scheduleData.days.map((day) => (
+                    <button
+                      key={day}
+                      className={`px-3 py-1 text-sm rounded-md transition-colors ${selectedDay === day ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                      onClick={() => setSelectedDay(day)}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2 mt-2 lg:mt-0">
+                  {timeBlocks.map((block) => (
+                    <button
+                      key={block.id}
+                      className={`px-3 py-1 text-sm rounded-md transition-colors ${selectedTimeBlock === block.id ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                      onClick={() => setSelectedTimeBlock(block.id)}
+                    >
+                      {block.id === 'all' ? block.name : <span className="flex items-center"><Clock className="w-3 h-3 mr-1" />{block.name}</span>}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
 
-          {/* Subject Legend - only show when valid selection, mobile optimized */}
-          {hasValidSelection && (
-            <div className="bg-white/95 rounded-lg p-3 md:p-4 mt-3 md:mt-4 shadow-inner">
-              <h3 className="text-base md:text-lg font-medium text-gray-800 mb-2 md:mb-3">
-                Subject Legend
-              </h3>
-              <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-1 md:gap-2">
-                {subjects.map(subject => (
-                  <div
-                    key={subject.id}
-                    className="flex items-center p-1 rounded hover:bg-gray-100"
-                  >
-                    <div className={`w-3 h-3 md:w-4 md:h-4 rounded ${getSubjectColor(subject.code)} mr-1 md:mr-2`}></div>
-                    <span className="text-xs md:text-sm">{subject.name}</span>
-                    <span className="text-[10px] md:text-xs bg-gray-200 rounded px-1 ml-1">{subject.code}</span>
-                  </div>
-                ))}
+              <div className="md:hidden space-y-3">
+                <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1 -mx-4 px-4">
+                  {scheduleData.days.map((day) => (
+                    <button
+                      key={day}
+                      className={`px-3 py-2 text-xs rounded-md transition-colors whitespace-nowrap flex-shrink-0 ${selectedDay === day ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                      onClick={() => setSelectedDay(day)}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+                <select
+                  className="bg-gray-700 text-gray-200 rounded-md border border-gray-600 p-2 text-sm outline-none focus:ring-2 focus:ring-amber-300 w-full"
+                  value={selectedTimeBlock}
+                  onChange={(e) => setSelectedTimeBlock(e.target.value)}
+                >
+                  {timeBlocks.map((block) => (
+                    <option key={block.id} value={block.id}>{block.name}</option>
+                  ))}
+                </select>
               </div>
             </div>
-          )}
-        </div>
+
+            {/* View mode switcher */}
+            <div className="transition-all duration-300 ease-in-out">
+              <div className="flex justify-end mb-3 md:mb-4">
+                <div className="flex border border-gray-700 rounded-md overflow-hidden">
+                  <button
+                    className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'daily' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                    onClick={() => setViewMode('daily')}
+                  >
+                    {isMobile ? 'Daily' : 'Daily View'}
+                  </button>
+                  <button
+                    className={`px-2 md:px-3 py-1 text-xs md:text-sm ${viewMode === 'weekly' ? 'bg-amber-300 text-gray-900' : 'bg-gray-700 text-gray-200 hover:bg-gray-600'}`}
+                    onClick={() => setViewMode('weekly')}
+                  >
+                    {isMobile ? 'Weekly' : 'Weekly View'}
+                  </button>
+                </div>
+              </div>
+
+              {viewMode === 'daily' ? renderDailySchedule() : renderWeeklySchedule()}
+
+              {/* Subject legend */}
+              {subjects.length > 0 && (
+                <div className="bg-white/95 rounded-lg p-3 md:p-4 mt-3 md:mt-4 shadow-inner">
+                  <h3 className="text-base md:text-lg font-medium text-gray-800 mb-2 md:mb-3">Subject Legend</h3>
+                  <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-1 md:gap-2">
+                    {subjects.map((subject) => (
+                      <div key={subject.name} className="flex items-center p-1 rounded hover:bg-gray-100">
+                        <div className={`w-3 h-3 md:w-4 md:h-4 rounded ${getSubjectColor(subject.name)} mr-1 md:mr-2`}></div>
+                        <span className="text-xs md:text-sm">{subject.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
