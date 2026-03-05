@@ -301,6 +301,7 @@ whitelisted_methods = {
     "labmanager.portal.api.verify_portal_token": True,
     "labmanager.portal.api.get_student_dashboard": True,
     "labmanager.portal.api.submit_leave_request": True,
+    "labmanager.portal.api.get_day_attendance": True,
     # Parent Portal (admin — logged-in only)
     "labmanager.portal.api.generate_and_save_token": True,
     "labmanager.portal.api.send_portal_link_whatsapp": True,

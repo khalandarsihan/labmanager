@@ -130,8 +130,8 @@ export default function Dashboard({ token, students, parentName }) {
 		);
 
 		switch (activeTab) {
-			case "today":       return <div className="space-y-4"><ScheduleCard schedule={dashData.schedule_today} /><AttendanceCard attendance={dashData.attendance} /></div>;
-			case "attendance":  return <AttendanceCard attendance={dashData.attendance} />;
+			case "today":       return <div className="space-y-4"><ScheduleCard schedule={dashData.schedule_today} /><AttendanceCard attendance={dashData.attendance} token={token} studentId={activeStudentId} /></div>;
+			case "attendance":  return <AttendanceCard attendance={dashData.attendance} token={token} studentId={activeStudentId} />;
 			case "assignments": return <AssignmentCard assignments={dashData.assignments} />;
 			case "fees":        return <FeeCard fees={dashData.fees} />;
 			default:            return null;

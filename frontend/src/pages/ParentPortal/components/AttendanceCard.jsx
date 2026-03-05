@@ -55,7 +55,7 @@ function StatChip({ icon, label, value, color, bg }) {
 	);
 }
 
-export default function AttendanceCard({ attendance }) {
+export default function AttendanceCard({ attendance, token, studentId }) {
 	const [showSubjects, setShowSubjects] = useState(false);
 
 	if (!attendance) return null;
@@ -95,7 +95,7 @@ export default function AttendanceCard({ attendance }) {
 				<div className="h-px mb-5" style={{ background: "#F3F4F6" }} />
 
 				{/* Week calendar */}
-				<WeekCalendar days={recent_7_days} />
+				<WeekCalendar days={recent_7_days} token={token} studentId={studentId} />
 
 				{/* Subject-wise toggle */}
 				{subject_wise.length > 0 && (

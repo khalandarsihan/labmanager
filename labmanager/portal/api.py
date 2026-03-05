@@ -272,6 +272,56 @@ def submit_leave_request(
 	return {"leave_id": todo.name, "status": "Pending"}
 
 
+@frappe.whitelist(allow_guest=True)
+def get_day_attendance(token: str, student_id: str, date: str) -> dict:
+	"""Return per-class attendance for a student on a specific date."""
+	parent = _get_parent_by_token(token)
+	if not parent or student_id not in _get_authorized_students(parent):
+		return {"error": "unauthorized"}
+
+	try:
+		target = getdate(date)
+	except Exception:
+		return {"error": "invalid_date"}
+
+	rows = frappe.db.sql(
+		"""
+		SELECT
+			sa.status,
+			ccl.subject,
+			ccl.actual_start,
+			ccl.scheduled_start,
+			ccl.scheduled_end,
+			ccl.teacher
+		FROM `tabStudent Attendance TE` sa
+		JOIN `tabClass Conducted Log` ccl ON ccl.name = sa.class_log
+		WHERE sa.student = %s AND sa.date = %s
+		ORDER BY ccl.scheduled_start ASC
+		""",
+		(student_id, str(target)),
+		as_dict=True,
+	)
+
+	classes = []
+	for r in rows:
+		teacher_name = ""
+		if r.teacher:
+			teacher_name = frappe.db.get_value("User", r.teacher, "full_name") or r.teacher
+		classes.append({
+			"subject": r.subject or "Unknown",
+			"status": r.status or "Unknown",
+			"start_time": _fmt_timedelta(r.scheduled_start),
+			"end_time": _fmt_timedelta(r.scheduled_end),
+			"teacher_name": teacher_name,
+		})
+
+	return {
+		"date": str(target),
+		"day_name": target.strftime("%A"),
+		"classes": classes,
+	}
+
+
 # ── Admin API (whitelisted, not guest) ────────────────────────────────────────
 
 
