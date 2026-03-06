@@ -57,6 +57,7 @@ function StatChip({ icon, label, value, color, bg }) {
 
 export default function AttendanceCard({ attendance, token, studentId }) {
 	const [showSubjects, setShowSubjects] = useState(false);
+	const [dayDetail, setDayDetail]       = useState(null); // { date, day_name, classes } | null
 
 	if (!attendance) return null;
 
@@ -65,6 +66,27 @@ export default function AttendanceCard({ attendance, token, studentId }) {
 		present = 0, absent = 0, late = 0, on_leave = 0,
 		subject_wise = [], recent_7_days = [],
 	} = attendance;
+
+	// When a day is selected compute its counts from the class-level detail
+	const dayCounts = dayDetail
+		? dayDetail.classes.reduce(
+			(acc, cls) => {
+				const s = (cls.status || "").toLowerCase();
+				if (s === "present")       acc.present++;
+				else if (s === "absent")   acc.absent++;
+				else if (s === "late")     acc.late++;
+				else if (s === "on leave") acc.on_leave++;
+				return acc;
+			},
+			{ present: 0, absent: 0, late: 0, on_leave: 0 }
+		  )
+		: null;
+
+	const chipPeriod = dayDetail
+		? new Date(dayDetail.date).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" })
+		: "This Month";
+
+	const chipValues = dayCounts ?? { present, absent, late, on_leave };
 
 	return (
 		<div className="rounded-3xl overflow-hidden" style={{ background: "#fff", boxShadow: "0 8px 32px rgba(27,67,50,0.1)" }}>
@@ -84,18 +106,28 @@ export default function AttendanceCard({ attendance, token, studentId }) {
 				</div>
 
 				{/* Stat chips */}
-				<div className="flex gap-2 mb-5">
-					<StatChip icon="✅" label="Present" value={present}  color="#16A34A" bg="#DCFCE7" />
-					<StatChip icon="❌" label="Absent"  value={absent}   color="#DC2626" bg="#FEE2E2" />
-					<StatChip icon="⏰" label="Late"    value={late}     color="#D97706" bg="#FEF3C7" />
-					<StatChip icon="🏖" label="Leave"   value={on_leave} color="#2563EB" bg="#DBEAFE" />
+				<div className="mb-1">
+					<div className="text-[10px] font-bold mb-2 text-center" style={{ color: "#9CA3AF", letterSpacing: "0.05em" }}>
+						{chipPeriod.toUpperCase()}
+					</div>
+					<div className="flex gap-2">
+						<StatChip icon="✅" label="Present" value={chipValues.present}  color="#16A34A" bg="#DCFCE7" />
+						<StatChip icon="❌" label="Absent"  value={chipValues.absent}   color="#DC2626" bg="#FEE2E2" />
+						<StatChip icon="⏰" label="Late"    value={chipValues.late}     color="#D97706" bg="#FEF3C7" />
+						<StatChip icon="🏖" label="Leave"   value={chipValues.on_leave} color="#2563EB" bg="#DBEAFE" />
+					</div>
 				</div>
 
 				{/* Divider */}
-				<div className="h-px mb-5" style={{ background: "#F3F4F6" }} />
+				<div className="h-px my-5" style={{ background: "#F3F4F6" }} />
 
-				{/* Week calendar */}
-				<WeekCalendar days={recent_7_days} token={token} studentId={studentId} />
+				{/* Week calendar — owns selected state, reports day detail back */}
+				<WeekCalendar
+					days={recent_7_days}
+					token={token}
+					studentId={studentId}
+					onDayDetail={setDayDetail}
+				/>
 
 				{/* Subject-wise toggle */}
 				{subject_wise.length > 0 && (

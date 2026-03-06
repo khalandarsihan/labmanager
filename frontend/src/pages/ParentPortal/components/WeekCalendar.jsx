@@ -27,7 +27,7 @@ function fmtFull(dateStr) {
 	} catch { return dateStr; }
 }
 
-export default function WeekCalendar({ days, token, studentId }) {
+export default function WeekCalendar({ days, token, studentId, onDayDetail }) {
 	const [selected, setSelected] = useState(null);   // date string
 	const [detail, setDetail]     = useState(null);   // { date, day_name, classes }
 	const [loading, setLoading]   = useState(false);
@@ -40,15 +40,20 @@ export default function WeekCalendar({ days, token, studentId }) {
 		if (selected === date) {
 			setSelected(null);
 			setDetail(null);
+			onDayDetail?.(null);
 			return;
 		}
 		setSelected(date);
 		setDetail(null);
+		onDayDetail?.(null);
 		if (!token || !studentId) return;
 		setLoading(true);
 		try {
 			const d = await fetchDayAttendance(token, studentId, date);
-			if (d && !d.error) setDetail(d);
+			if (d && !d.error) {
+				setDetail(d);
+				onDayDetail?.(d);
+			}
 		} catch (e) {
 			console.error("Day attendance fetch:", e);
 		} finally {
